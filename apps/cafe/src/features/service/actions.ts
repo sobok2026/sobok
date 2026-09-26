@@ -1,55 +1,22 @@
 import { CUSTOMER_HABITS } from '../../content/customers'
 import { type Costs, INGREDIENTS } from '../../content/ingredients'
-import { recipeFor, recipeLabel, recipePrice } from '../../content/recipes'
+import { recipeFor } from '../../content/recipes'
 import { tableIds } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { nextStep } from '../crafting/rules'
-import { cupKindFor, cupService, cupSize, SERVICE_NAMES } from '../inventory/cups'
+import { cupKindFor, cupService, cupSize } from '../inventory/cups'
 import { addAmounts } from '../inventory/inventory'
-import { customerToCondiment, customerToPickup, orderSizes } from './customer'
+import { customerToCondiment } from './customer'
+import { currentTicket } from './orders'
 
-export function handleOrderActions(work: WorkContext, action: Extract<Action, { type: 'ticket' | 'serve' }>) {
+export function handleOrderActions(work: WorkContext, action: Extract<Action, { type: 'serve' }>) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
   switch (action.type) {
-    case 'ticket':
-      if (s.phase !== 'open' && !s.ticket) {
-        fail('새 주문은 마감했어요.')
-        break
-      }
-      if (s.cup) {
-        fail('제조 중인 컵을 정리한 뒤 주문을 수정해주세요.')
-        break
-      }
-      if (!s.customer || s.customer.visit || (!s.ticket && s.customer.stage !== 'ordering')) {
-        fail(
-          s.customer?.stage === 'entering'
-            ? '손님이 POS에 도착하면 주문을 받아주세요.'
-            : '응대 중인 손님이 나가면 다음 주문을 받을 수 있어요.',
-        )
-        break
-      }
-      if (!orderSizes(action.recipe, action.service).includes(action.size)) {
-        fail('이 메뉴·이용 방식에서는 선택한 사이즈를 주문할 수 없어요.')
-        break
-      }
-      s.ticket = { recipe: action.recipe, service: action.service, size: action.size }
-      if (s.customer.stage === 'ordering') customerToPickup(s.customer)
-      say(
-        s,
-        `${SERVICE_NAMES[action.service]} · ${recipeLabel(action.recipe, action.size)} 주문을 접수했어요.`,
-        'success',
-      )
-      break
     case 'serve': {
-      if (
-        s.customer?.stage !== 'pickup' ||
-        s.customer.visit ||
-        s.customer.orderNumber !== s.orderNumber ||
-        s.customer.recipe !== s.request
-      ) {
+      if (s.customer?.stage !== 'pickup' || s.customer.visit || s.customer.orderNumber !== s.orderNumber) {
         fail(
           s.customer?.stage === 'to-pickup'
             ? '손님이 픽업대로 오고 있어요. 도착하면 전달해주세요.'
@@ -57,7 +24,8 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         )
         break
       }
-      if (!s.ticket || !s.cup || nextStep(s)) {
+      const ticket = currentTicket(s)
+      if (!ticket || !s.cup || nextStep(s)) {
         fail('아직 완성된 음료가 없어요.')
         break
       }
@@ -70,14 +38,19 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         break
       }
       if (
-        s.cup.recipe !== s.request ||
-        s.cup.craft.kind !== cupKindFor(s.request, s.customer.service, s.customer.size)
+        s.cup.recipe !== ticket.recipe ||
+        s.cup.orderLineId !== ticket.id ||
+        s.cup.craft.kind !== cupKindFor(ticket.recipe, ticket.service, ticket.size)
       ) {
-        fail('손님이 요청한 메뉴·사이즈 또는 매장·포장 컵과 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
+        fail('현재 제조할 주문과 다른 컵이에요. 컵을 정리하고 주문표에 맞게 다시 준비해주세요.')
         break
       }
-      const price = recipePrice(s.cup.recipe, cupSize(s.cup.craft.kind))
-      const servingVessel = recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind), cupService(s.cup.craft.kind)).vesselId
+      const servingVessel = recipeFor(
+        s.cup.recipe,
+        cupSize(s.cup.craft.kind),
+        cupService(s.cup.craft.kind),
+        s.cup.craft.customizations,
+      ).vesselId
       const leftovers: Costs = { ...s.cup.craft.stockHeld }
       for (const [id, vessel] of Object.entries(s.cup.craft.vessels)) {
         if (id === servingVessel) continue
@@ -87,16 +60,19 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         }
       }
       addAmounts(s.totals.disposed, leftovers)
-      s.cash += price
-      s.totals.revenue += price
+      ticket.served++
       s.totals.served++
-      s.ticket = null
       s.cup = null
+      if (currentTicket(s)) {
+        say(s, '음료를 전달했어요. 다음 잔을 제조해주세요.', 'success')
+        break
+      }
+      const dineIn = s.customer.items.some((item) => item.service === 'dine-in')
       s.customer.visit = {
-        table: s.customer.service === 'dine-in' ? tableIds[Math.floor(Math.random() * tableIds.length)] : null,
-        returnCup: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.returnCup,
-        dirtyTable: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.stain,
-        dirtyReturn: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.stain,
+        table: dineIn ? tableIds[Math.floor(Math.random() * tableIds.length)] : null,
+        returnCup: dineIn && Math.random() < CUSTOMER_HABITS.returnCup,
+        dirtyTable: dineIn && Math.random() < CUSTOMER_HABITS.stain,
+        dirtyReturn: dineIn && Math.random() < CUSTOMER_HABITS.stain,
         usesSugar: Math.random() < CUSTOMER_HABITS.sugar,
       }
       if (Math.random() < CUSTOMER_HABITS.stain) {
@@ -106,7 +82,7 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
       customerToCondiment(s.customer)
       say(
         s,
-        s.customer.service === 'takeout'
+        !dineIn
           ? '포장 손님이 음료를 받았어요. 소모품을 챙긴 뒤 나가요.'
           : '매장 손님이 음료를 받았어요. 소모품을 챙기고 테이블을 이용해요.',
         'success',

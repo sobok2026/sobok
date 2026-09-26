@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { customizationSchema } from '../content/customizations'
 import { drinkSizeIds } from '../content/drink-sizes'
 import { ingredientIds } from '../content/ingredients'
-import { RECIPES, recipeIds } from '../content/recipes'
+import { recipeFor, recipeIds } from '../content/recipes'
 import { isCupSurface, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/cold-brew/rules'
@@ -14,14 +15,14 @@ import {
   disposableCupKinds,
   isReusableCup,
   REUSABLE_CUPS_PER_KIND,
-  reusableCupFor,
   reusableCupKinds,
   serviceModes,
 } from '../features/inventory/cups'
 import { SUPPLY_CAPACITY, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationIds } from '../features/preparation/rules'
 import { productionStateSchema } from '../features/production/workflow'
-import { customerHasCup, customerStages, orderSizes } from '../features/service/customer'
+import { customerStages } from '../features/service/customer'
+import { currentTicket, customerCupCounts, orderMatchesRequest, salePaid, saleTotal } from '../features/service/orders'
 import { washItems } from '../features/washing/rules'
 
 const quantity = z.number().finite().min(0).max(100000000)
@@ -34,13 +35,59 @@ const ingredientAmounts = z
     '등록되지 않은 재료가 포함되어 있어요.',
   )
 const customerPoint = z.tuple([z.number().finite().min(-7).max(7), z.number().finite().min(0).max(7)])
+const orderItemSchema = z.object({
+  recipe: z.enum(recipeIds),
+  service: z.enum(serviceModes),
+  size: z.enum(drinkSizeIds),
+  customizations: customizationSchema,
+})
+const requestedItemSchema = orderItemSchema.extend({ quantity: z.number().int().min(1).max(99) })
+const orderLineSchema = requestedItemSchema.extend({
+  id: z.string().min(1).max(100),
+  served: z.number().int().min(0).max(99),
+})
+const paymentSchema = z.object({
+  id: z.string().min(1).max(100),
+  method: z.enum(['cash', 'card']),
+  amount: z.number().int().positive().max(100000000),
+  tendered: z.number().int().positive().max(100000000),
+})
+const saleSchema = z
+  .object({
+    customerId: z.string().min(1).max(100),
+    lines: z.array(orderLineSchema).min(1).max(50),
+    payments: z.array(paymentSchema).max(20),
+    paidAt: timestamp.nullable(),
+  })
+  .superRefine((sale, context) => {
+    const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+    try {
+      for (const line of sale.lines) recipeFor(line.recipe, line.size, line.service, line.customizations)
+      if (new Set(sale.lines.map((line) => line.id)).size !== sale.lines.length) invalid('주문 항목이 중복됩니다.')
+      if (new Set(sale.payments.map((payment) => payment.id)).size !== sale.payments.length)
+        invalid('결제 내역이 중복됩니다.')
+      if (sale.lines.some((line) => line.served > line.quantity || (sale.paidAt === null && line.served > 0)))
+        invalid('전달 수량을 확인해주세요.')
+      if (
+        sale.payments.some(
+          (payment) =>
+            payment.tendered < payment.amount || (payment.method === 'card' && payment.tendered !== payment.amount),
+        )
+      )
+        invalid('받은 금액을 확인해주세요.')
+      const total = saleTotal(sale),
+        paid = salePaid(sale)
+      if (paid > total || (sale.paidAt === null ? paid >= total : paid !== total))
+        invalid('주문 금액과 결제 상태가 맞지 않아요.')
+    } catch {
+      invalid('주문할 수 없는 커스텀이나 메뉴가 포함되어 있어요.')
+    }
+  })
 const customerSchema = z
   .object({
     id: z.string().max(100),
     orderNumber: z.number().int().min(1).max(100000),
-    recipe: z.enum(recipeIds),
-    service: z.enum(serviceModes),
-    size: z.enum(drinkSizeIds),
+    items: z.array(requestedItemSchema).min(1).max(50),
     stage: z.enum(customerStages),
     position: customerPoint,
     yaw: z.number().finite(),
@@ -58,7 +105,15 @@ const customerSchema = z
       .nullable(),
   })
   .refine(
-    (customer) => orderSizes(customer.recipe, customer.service).includes(customer.size),
+    (customer) =>
+      customer.items.every((item) => {
+        try {
+          recipeFor(item.recipe, item.size, item.service, item.customizations)
+          return true
+        } catch {
+          return false
+        }
+      }),
     '손님 주문의 사이즈를 확인해주세요.',
   )
   .refine((customer) => customer.nextPoint <= customer.path.length, '손님 이동 위치가 경로를 벗어났어요.')
@@ -71,7 +126,9 @@ const customerSchema = z
   .refine(
     (customer) =>
       !customer.visit ||
-      (customer.service === 'dine-in' ? customer.visit.table !== null : customer.visit.table === null),
+      (customer.items.some((item) => item.service === 'dine-in')
+        ? customer.visit.table !== null
+        : customer.visit.table === null),
     '손님의 이용 방식과 테이블 정보가 맞지 않아요.',
   )
 const batchSchema = z.object({
@@ -106,12 +163,15 @@ const totalsSchema = z.object({
   suppliesUsed: z.partialRecord(z.enum(supplyIds), quantity.int()),
   served: quantity,
   revenue: quantity,
+  cashSales: quantity,
+  cardSales: quantity,
   wastedCups: quantity,
   cleaned: quantity,
   washed: quantity,
   prepared: quantity,
 })
 const craftSchema = productionStateSchema.extend({
+  customizations: customizationSchema,
   kind: z.enum(cupKinds),
   location: z.union([z.literal('hand'), z.enum(stationIds)]),
   lidded: z.boolean(),
@@ -187,15 +247,8 @@ export const stateSchema = z
     phase: z.enum(['open', 'closing', 'summary']),
     cash: quantity,
     orderNumber: z.number().int().min(1).max(100000),
-    request: z.enum(recipeIds).nullable(),
     customer: customerSchema.nullable(),
-    ticket: z
-      .object({ recipe: z.enum(recipeIds), service: z.enum(serviceModes), size: z.enum(drinkSizeIds) })
-      .refine(
-        (ticket) => orderSizes(ticket.recipe, ticket.service).includes(ticket.size),
-        '주문표의 사이즈를 확인해주세요.',
-      )
-      .nullable(),
+    sale: saleSchema.nullable(),
     preparation: preparationSchema.nullable(),
     coldBrew: coldBrewSchema.nullable(),
     washing: washingSchema.nullable(),
@@ -212,12 +265,19 @@ export const stateSchema = z
       .object({
         id: z.string().max(100),
         recipe: z.enum(recipeIds),
+        orderLineId: z.string().min(1).max(100),
         craft: craftSchema,
       })
       .refine((cup) => {
-        const serving = RECIPES[cup.recipe]?.sizes[cupSize(cup.craft.kind)]
-        const plan = serving?.plans[cupService(cup.craft.kind)]
-        return !!plan && cup.craft.cursor <= plan.length
+        try {
+          return (
+            cup.craft.cursor <=
+            recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind), cup.craft.customizations).steps
+              .length
+          )
+        } catch {
+          return false
+        }
       }, '메뉴·용기·제조 단계가 올바르지 않아요.')
       .refine((cup) => !isReusableCup(cup.craft.kind) || !cup.craft.lidded, '매장용 잔의 리드 상태가 올바르지 않아요.')
       .nullable(),
@@ -245,19 +305,36 @@ export const stateSchema = z
       z.number().finite(),
     ]),
   })
+  .refine((state) => {
+    if (!state.cup) return true
+    const ticket = currentTicket(state)
+    return (
+      !!ticket &&
+      state.cup.orderLineId === ticket.id &&
+      state.cup.recipe === ticket.recipe &&
+      JSON.stringify(state.cup.craft.customizations) === JSON.stringify(ticket.customizations) &&
+      state.cup.craft.kind === cupKindFor(ticket.recipe, ticket.service, ticket.size)
+    )
+  }, '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.')
   .refine(
     (state) =>
-      !state.cup ||
-      (!!state.ticket &&
-        orderSizes(state.ticket.recipe, state.ticket.service).includes(state.ticket.size) &&
-        state.cup.recipe === state.ticket.recipe &&
-        state.cup.craft.kind === cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size)),
-    '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.',
+      (!state.customer || state.customer.orderNumber === state.orderNumber) &&
+      (!state.sale || state.sale.customerId === state.customer?.id),
+    '손님과 현재 주문 정보가 맞지 않아요.',
   )
   .refine(
     (state) =>
-      !state.customer || (state.customer.orderNumber === state.orderNumber && state.customer.recipe === state.request),
-    '손님과 현재 주문 정보가 맞지 않아요.',
+      !state.sale ||
+      (state.sale.paidAt === null
+        ? state.customer?.stage === 'ordering'
+        : orderMatchesRequest(state) && !['entering', 'ordering'].includes(state.customer?.stage ?? '')),
+    '결제 상태와 손님 주문이 맞지 않아요.',
+  )
+  .refine(
+    (state) =>
+      !state.customer?.visit ||
+      (!!state.sale && state.sale.paidAt !== null && state.sale.lines.every((line) => line.served === line.quantity)),
+    '모든 음료를 전달한 뒤 손님이 매장을 이용할 수 있어요.',
   )
   .refine(
     (state) => !state.preparation || state.cup?.craft.location !== 'prep',
@@ -314,13 +391,7 @@ export const stateSchema = z
       reusableCupKinds.every((kind) => {
         const stock = state.reusableCups[kind]
         const washing = state.washing?.item === kind && state.washing.stage !== 'ready' ? 1 : 0
-        const customer =
-          state.customer?.service === 'dine-in' &&
-          state.customer.size !== 'trenta' &&
-          customerHasCup(state.customer) &&
-          reusableCupFor(state.customer.recipe, state.customer.size) === kind
-            ? 1
-            : 0
+        const customer = customerCupCounts(state)[kind]
         const surfaces = state.condiment.cups[kind] + tableIds.reduce((sum, id) => sum + state.tables[id].cups[kind], 0)
         return (
           stock.clean +
@@ -347,3 +418,6 @@ export type ColdBrew = z.infer<typeof coldBrewSchema>
 export type Washing = z.infer<typeof washingSchema>
 export type Cleaning = z.infer<typeof cleaningSchema>
 export type Customer = z.infer<typeof customerSchema>
+export type OrderItem = z.infer<typeof orderItemSchema>
+export type OrderLine = z.infer<typeof orderLineSchema>
+export type Sale = z.infer<typeof saleSchema>

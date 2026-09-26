@@ -28,7 +28,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
   const craft = cup.craft
   const place = cup.craft.location
   const step = operationFor(cup.recipe, craft)
-  const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind))
+  const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations)
   const nextStation = step?.station ?? 'pickup'
   const job = state.jobs.find((item) => item.cupId === cup.id)
   const needsMove = nextStation !== place && !job

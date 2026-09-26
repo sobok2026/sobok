@@ -1,0 +1,818 @@
+{
+  "black-glazed-latte:hot": {
+    "family": "블랙 글레이즈드 라떼",
+    "category": "espresso"
+  },
+  "black-glazed-latte:iced": {
+    "family": "블랙 글레이즈드 라떼",
+    "category": "espresso"
+  },
+  "cold-brew:iced": {
+    "family": "콜드 브루",
+    "category": "brew"
+  },
+  "glazed-foam-black-tea:iced": {
+    "family": "글레이즈드 폼 블랙 티",
+    "category": "tea"
+  },
+  "hoji-glazed-tea-latte:hot": {
+    "family": "호지 글레이즈드 티 라떼",
+    "category": "tea"
+  },
+  "hoji-glazed-tea-latte:iced": {
+    "family": "호지 글레이즈드 티 라떼",
+    "category": "tea"
+  },
+  "matcha-glazed-tea-latte:hot": {
+    "family": "말차 글레이즈드 티 라떼",
+    "category": "tea"
+  },
+  "matcha-glazed-tea-latte:iced": {
+    "family": "말차 글레이즈드 티 라떼",
+    "category": "tea"
+  },
+  "pure-hojicha:hot": {
+    "family": "퓨어 호지차",
+    "category": "tea"
+  },
+  "pure-hojicha:iced": {
+    "family": "퓨어 호지차",
+    "category": "tea"
+  },
+  "pure-matcha:hot": {
+    "family": "퓨어 말차",
+    "category": "tea"
+  },
+  "pure-matcha:iced": {
+    "family": "퓨어 말차",
+    "category": "tea"
+  },
+  "광화문-믹사토:iced": {
+    "family": "광화문 믹사토",
+    "category": "other"
+  },
+  "더-멜론-오브-멜론-프라푸치노:iced": {
+    "family": "더 멜론 오브 멜론 프라푸치노",
+    "category": "blended"
+  },
+  "더블-머스캣-블렌디드:iced": {
+    "family": "더블 머스캣 블렌디드",
+    "category": "blended"
+  },
+  "더블-에스프레소-칩-프라푸치노:iced": {
+    "family": "더블 에스프레소 칩 프라푸치노",
+    "category": "blended"
+  },
+  "더블-에스프레소-크림-라떼:hot": {
+    "family": "더블 에스프레소 크림 라떼",
+    "category": "espresso"
+  },
+  "더블-에스프레소-크림-라떼:iced": {
+    "family": "더블 에스프레소 크림 라떼",
+    "category": "espresso"
+  },
+  "돌체-콜드브루:iced": {
+    "family": "돌체 콜드브루",
+    "category": "brew"
+  },
+  "딸기-딜라이트-요거트-블렌디드:iced": {
+    "family": "딸기 딜라이트 요거트 블렌디드",
+    "category": "blended"
+  },
+  "딸기-레몬-보드카-블렌디드:iced": {
+    "family": "딸기 레몬 보드카 블렌디드",
+    "category": "blended"
+  },
+  "딸기-아사이-레모네이드-스타벅스-리프레셔:iced": {
+    "family": "딸기 아사이 레모네이드 스타벅스 리프레셔",
+    "category": "other"
+  },
+  "라떼-위스키-마티니:iced": {
+    "family": "라떼 위스키 마티니",
+    "category": "tea"
+  },
+  "라이트-유자-레몬-블렌디드:iced": {
+    "family": "라이트 유자 레몬 블렌디드",
+    "category": "blended"
+  },
+  "라이트-핑크-자몽-피지오:iced": {
+    "family": "라이트 핑크 자몽 피지오",
+    "category": "other"
+  },
+  "레드-와인-뱅쇼:hot": {
+    "family": "레드 와인 뱅쇼",
+    "category": "other"
+  },
+  "레드빈-말차-코코-프라푸치노:iced": {
+    "family": "레드빈 말차 코코 프라푸치노",
+    "category": "blended"
+  },
+  "레드빈-빙수-블렌디드:iced": {
+    "family": "레드빈 빙수 블렌디드",
+    "category": "blended"
+  },
+  "레몬-캐모마일-블렌디-티:hot": {
+    "family": "레몬 캐모마일 블렌디 티",
+    "category": "blended"
+  },
+  "레몬-캐모마일-블렌디-티:iced": {
+    "family": "레몬 캐모마일 블렌디 티",
+    "category": "blended"
+  },
+  "로스티드-마카다미아-라떼:hot": {
+    "family": "로스티드 마카다미아 라떼",
+    "category": "tea"
+  },
+  "로스티드-마카다미아-라떼:iced": {
+    "family": "로스티드 마카다미아 라떼",
+    "category": "tea"
+  },
+  "리저브-다크-초콜릿-모카:hot": {
+    "family": "리저브 다크 초콜릿 모카",
+    "category": "espresso"
+  },
+  "리저브-민트-콜드-브루:iced": {
+    "family": "리저브 민트 콜드 브루",
+    "category": "brew"
+  },
+  "리저브-사케라또-비안코-오버-아이스:iced": {
+    "family": "리저브 사케라또 비안코 오버 아이스",
+    "category": "other"
+  },
+  "리저브-사케라또-아포가토:iced": {
+    "family": "리저브 사케라또 아포가토",
+    "category": "other"
+  },
+  "리저브-스파클링-시트러스-에스프레소:iced": {
+    "family": "리저브 스파클링 시트러스 에스프레소",
+    "category": "espresso"
+  },
+  "리저브-아이스-다크-초콜릿-모카:iced": {
+    "family": "리저브 아이스 다크 초콜릿 모카",
+    "category": "espresso"
+  },
+  "리저브-코르타도:hot": {
+    "family": "리저브 코르타도",
+    "category": "other"
+  },
+  "리저브-클래식-민트-모카:hot": {
+    "family": "리저브 클래식 민트 모카",
+    "category": "espresso"
+  },
+  "마롱-에스프레소-크림-라떼:hot": {
+    "family": "마롱 에스프레소 크림 라떼",
+    "category": "espresso"
+  },
+  "마롱-에스프레소-크림-라떼:iced": {
+    "family": "마롱 에스프레소 크림 라떼",
+    "category": "espresso"
+  },
+  "마티니:iced": {
+    "family": "마티니",
+    "category": "tea"
+  },
+  "망고-바나나-블렌디드:iced": {
+    "family": "망고 바나나 블렌디드",
+    "category": "blended"
+  },
+  "망고-패션-프루트-블렌디드:iced": {
+    "family": "망고 패션 프루트 블렌디드",
+    "category": "blended"
+  },
+  "밀크카라멜-라떼:hot": {
+    "family": "밀크카라멜 라떼",
+    "category": "espresso"
+  },
+  "밀크카라멜-라떼:iced": {
+    "family": "밀크카라멜 라떼",
+    "category": "espresso"
+  },
+  "바닐라-라떼:hot": {
+    "family": "바닐라 라떼",
+    "category": "espresso"
+  },
+  "바닐라-라떼:iced": {
+    "family": "바닐라 라떼",
+    "category": "espresso"
+  },
+  "바닐라-아인슈페너-콜드-브루:iced": {
+    "family": "바닐라 아인슈페너 콜드 브루",
+    "category": "brew"
+  },
+  "바닐라-크림-콜드-브루:iced": {
+    "family": "바닐라 크림 콜드 브루",
+    "category": "brew"
+  },
+  "바삭-피스타치오-바닐라-크림-콜드브루:iced": {
+    "family": "바삭 피스타치오 바닐라 크림 콜드브루",
+    "category": "brew"
+  },
+  "바삭-피스타치오-초콜릿-프라푸치노:iced": {
+    "family": "바삭 피스타치오 초콜릿 프라푸치노",
+    "category": "blended"
+  },
+  "버즈-키위-팝-에너지-피지오:iced": {
+    "family": "버즈 키위 팝 에너지 피지오",
+    "category": "other"
+  },
+  "베르가못-콜드-브루:iced": {
+    "family": "베르가못 콜드 브루",
+    "category": "brew"
+  },
+  "베이스볼-매실-그린-티:iced": {
+    "family": "베이스볼 매실 그린 티",
+    "category": "tea"
+  },
+  "별다방-바닐라-라떼:hot": {
+    "family": "별다방 바닐라 라떼",
+    "category": "espresso"
+  },
+  "별다방-바닐라-라떼:iced": {
+    "family": "별다방 바닐라 라떼",
+    "category": "espresso"
+  },
+  "복숭아-아이스-티:hot": {
+    "family": "복숭아 아이스 티",
+    "category": "tea"
+  },
+  "복숭아-아이스-티:iced": {
+    "family": "복숭아 아이스 티",
+    "category": "tea"
+  },
+  "복숭아-아이스-티:iced-trenta": {
+    "family": "복숭아 아이스 티",
+    "category": "tea"
+  },
+  "붉은-로즈-초콜릿:hot": {
+    "family": "붉은 로즈 초콜릿",
+    "category": "other"
+  },
+  "붉은-로즈-초콜릿:iced": {
+    "family": "붉은 로즈 초콜릿",
+    "category": "other"
+  },
+  "블론드-바닐라-더블-샷-마키아또:hot": {
+    "family": "블론드 바닐라 더블 샷 마키아또",
+    "category": "espresso"
+  },
+  "블론드-바닐라-더블-샷-마키아또:iced": {
+    "family": "블론드 바닐라 더블 샷 마키아또",
+    "category": "espresso"
+  },
+  "블론드-에스프레소-라떼:hot": {
+    "family": "블론드 에스프레소 라떼",
+    "category": "espresso"
+  },
+  "블론드-에스프레소-라떼:iced": {
+    "family": "블론드 에스프레소 라떼",
+    "category": "espresso"
+  },
+  "블루베리-딜라이트-요거트-블렌디드:iced": {
+    "family": "블루베리 딜라이트 요거트 블렌디드",
+    "category": "blended"
+  },
+  "살구-조이풀-메들리-쉐이큰-티:iced": {
+    "family": "살구 조이풀 메들리 쉐이큰 티",
+    "category": "tea"
+  },
+  "수박-주스-블렌디드:iced": {
+    "family": "수박 주스 블렌디드",
+    "category": "blended"
+  },
+  "슈-폼-딸기-라떼:iced": {
+    "family": "슈 폼 딸기 라떼",
+    "category": "espresso"
+  },
+  "슈-폼-라떼:hot": {
+    "family": "슈 폼 라떼",
+    "category": "espresso"
+  },
+  "슈-폼-말차-라떼:hot": {
+    "family": "슈 폼 말차 라떼",
+    "category": "tea"
+  },
+  "슈-폼-말차-라떼:iced": {
+    "family": "슈 폼 말차 라떼",
+    "category": "tea"
+  },
+  "슈크림-딸기-라떼:iced": {
+    "family": "슈크림 딸기 라떼",
+    "category": "espresso"
+  },
+  "슈크림-라떼:hot": {
+    "family": "슈크림 라떼",
+    "category": "espresso"
+  },
+  "슈크림-라떼:iced": {
+    "family": "슈크림 라떼",
+    "category": "espresso"
+  },
+  "슈크림-말차-라떼:hot": {
+    "family": "슈크림 말차 라떼",
+    "category": "tea"
+  },
+  "슈크림-말차-라떼:iced": {
+    "family": "슈크림 말차 라떼",
+    "category": "tea"
+  },
+  "스노우-말차-라떼:hot": {
+    "family": "스노우 말차 라떼",
+    "category": "tea"
+  },
+  "스노우-말차-라떼:iced": {
+    "family": "스노우 말차 라떼",
+    "category": "tea"
+  },
+  "스위트-밀크-커피:iced": {
+    "family": "스위트 밀크 커피",
+    "category": "other"
+  },
+  "스타벅스-더블-샷:vanilla": {
+    "family": "스타벅스 더블 샷",
+    "category": "other"
+  },
+  "스타벅스-더블-샷:hazelnut": {
+    "family": "스타벅스 더블 샷",
+    "category": "other"
+  },
+  "스타벅스-더블-샷:classic": {
+    "family": "스타벅스 더블 샷",
+    "category": "other"
+  },
+  "스타벅스-돌체-라떼:hot": {
+    "family": "스타벅스 돌체 라떼",
+    "category": "espresso"
+  },
+  "스타벅스-딸기-라떼:iced": {
+    "family": "스타벅스 딸기 라떼",
+    "category": "espresso"
+  },
+  "스타벅스-망고-라떼:iced": {
+    "family": "스타벅스 망고 라떼",
+    "category": "espresso"
+  },
+  "스타벅스-멜론-라떼:iced": {
+    "family": "스타벅스 멜론 라떼",
+    "category": "espresso"
+  },
+  "스타벅스-에어로카노:iced": {
+    "family": "스타벅스 에어로카노",
+    "category": "other"
+  },
+  "스타벅스-자몽-허니-에어로카노:iced": {
+    "family": "스타벅스 자몽 허니 에어로카노",
+    "category": "other"
+  },
+  "스타벅스-클래식-밀크-티:hot": {
+    "family": "스타벅스 클래식 밀크 티",
+    "category": "tea"
+  },
+  "스타벅스-클래식-밀크-티:iced": {
+    "family": "스타벅스 클래식 밀크 티",
+    "category": "tea"
+  },
+  "스팀-우유:hot": {
+    "family": "스팀 우유",
+    "category": "other"
+  },
+  "스팀-우유:kids": {
+    "family": "스팀 우유",
+    "category": "other"
+  },
+  "시그니처-핫-초콜릿:hot": {
+    "family": "시그니처 초콜릿",
+    "category": "other"
+  },
+  "시그니처-핫-초콜릿:kids": {
+    "family": "시그니처 초콜릿",
+    "category": "other"
+  },
+  "시트러스-콜드브루-마티니:iced": {
+    "family": "시트러스 콜드브루 마티니",
+    "category": "brew"
+  },
+  "씨솔트-카라멜-콜드브루:iced": {
+    "family": "씨솔트 카라멜 콜드브루",
+    "category": "brew"
+  },
+  "씨솔트-폼-블랙티:iced": {
+    "family": "씨솔트 폼 블랙티",
+    "category": "tea"
+  },
+  "아이스-두바이-초콜릿-말차:iced": {
+    "family": "두바이 초콜릿 말차",
+    "category": "tea"
+  },
+  "아이스-두바이-초콜릿-모카:iced": {
+    "family": "두바이 초콜릿 모카",
+    "category": "espresso"
+  },
+  "아이스-스타벅스-돌체-라떼:iced": {
+    "family": "스타벅스 돌체 라떼",
+    "category": "espresso"
+  },
+  "아이스-시그니처-초콜릿:iced": {
+    "family": "시그니처 초콜릿",
+    "category": "other"
+  },
+  "아이스-아메리카노:iced": {
+    "family": "카페 아메리카노",
+    "category": "espresso"
+  },
+  "아이스-자몽-허니-블랙-티:iced": {
+    "family": "자몽 허니 블랙 티",
+    "category": "tea"
+  },
+  "아이스-카라멜-마키아또:iced": {
+    "family": "카라멜 마키아또",
+    "category": "espresso"
+  },
+  "아이스-카페-라떼:iced": {
+    "family": "카페 라떼",
+    "category": "espresso"
+  },
+  "아이스-카페-모카:iced": {
+    "family": "카페 모카",
+    "category": "espresso"
+  },
+  "아이스-카푸치노:iced": {
+    "family": "카푸치노",
+    "category": "espresso"
+  },
+  "아이스-커피:iced": {
+    "family": "커피",
+    "category": "brew"
+  },
+  "아이스-풀-리프-티:홍차": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "아이스-풀-리프-티:허브-티": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "아이스-풀-리프-티:화이트-티": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "아이스-풀-리프-티:녹차": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "아이스-화이트-초콜릿-모카:iced": {
+    "family": "화이트 초콜릿 모카",
+    "category": "espresso"
+  },
+  "아페롤-스프릿츠:iced": {
+    "family": "아페롤 스프릿츠",
+    "category": "other"
+  },
+  "애플망고-빙수-블렌디드:iced": {
+    "family": "애플망고 빙수 블렌디드",
+    "category": "blended"
+  },
+  "얼-그레이-바닐라-티-라떼:hot": {
+    "family": "얼 그레이 바닐라 티 라떼",
+    "category": "tea"
+  },
+  "얼-그레이-바닐라-티-라떼:iced": {
+    "family": "얼 그레이 바닐라 티 라떼",
+    "category": "tea"
+  },
+  "에스프레소:solo": {
+    "family": "에스프레소",
+    "category": "espresso"
+  },
+  "에스프레소:doppio": {
+    "family": "에스프레소",
+    "category": "espresso"
+  },
+  "에스프레소-마키아또:solo": {
+    "family": "에스프레소 마키아또",
+    "category": "espresso"
+  },
+  "에스프레소-마키아또:doppio": {
+    "family": "에스프레소 마키아또",
+    "category": "espresso"
+  },
+  "에스프레소-마티니:iced": {
+    "family": "에스프레소 마티니",
+    "category": "tea"
+  },
+  "에스프레소-콘-파나:solo": {
+    "family": "에스프레소 콘 파나",
+    "category": "espresso"
+  },
+  "에스프레소-콘-파나:doppio": {
+    "family": "에스프레소 콘 파나",
+    "category": "espresso"
+  },
+  "에스프레소-크림-프렌치-바닐라-라떼:hot": {
+    "family": "에스프레소 크림 프렌치 바닐라 라떼",
+    "category": "espresso"
+  },
+  "에스프레소-크림-프렌치-바닐라-라떼:iced": {
+    "family": "에스프레소 크림 프렌치 바닐라 라떼",
+    "category": "espresso"
+  },
+  "에스프레소-프라푸치노:iced": {
+    "family": "에스프레소 프라푸치노",
+    "category": "blended"
+  },
+  "오늘의-커피:hot": {
+    "family": "오늘의 커피",
+    "category": "brew"
+  },
+  "오미자-유스베리-모히토:iced": {
+    "family": "오미자 유스베리 모히토",
+    "category": "other"
+  },
+  "오트-콜드-브루:iced": {
+    "family": "오트 콜드 브루",
+    "category": "brew"
+  },
+  "우디-카우보이-쿠키-콜드브루:iced": {
+    "family": "우디 카우보이 쿠키 콜드브루",
+    "category": "brew"
+  },
+  "월리-체리-푸딩-크림-프라푸치노:iced": {
+    "family": "월리 체리 푸딩 크림 프라푸치노",
+    "category": "blended"
+  },
+  "위스키-레몬-하이볼:iced": {
+    "family": "위스키 레몬 하이볼",
+    "category": "other"
+  },
+  "위스키-인퓨즈드-콜드브루:iced": {
+    "family": "위스키 인퓨즈드 콜드브루",
+    "category": "brew"
+  },
+  "윈터-스카치-바닐라-라떼:hot": {
+    "family": "윈터 스카치 바닐라 라떼",
+    "category": "espresso"
+  },
+  "윈터-스카치-바닐라-라떼:iced": {
+    "family": "윈터 스카치 바닐라 라떼",
+    "category": "espresso"
+  },
+  "유자-v-피지오:iced": {
+    "family": "유자 V 피지오",
+    "category": "tea"
+  },
+  "유자-말차-v-피지오:iced": {
+    "family": "유자 말차 V 피지오",
+    "category": "tea"
+  },
+  "유자-민트-티:hot": {
+    "family": "유자 민트 티",
+    "category": "tea"
+  },
+  "유자-민트-티:iced": {
+    "family": "유자 민트 티",
+    "category": "tea"
+  },
+  "유자-배-캐모마일-티:hot": {
+    "family": "유자 배 캐모마일 티",
+    "category": "tea"
+  },
+  "유자-배-캐모마일-티:iced": {
+    "family": "유자 배 캐모마일 티",
+    "category": "tea"
+  },
+  "자몽-망고-코코-프라푸치노:iced": {
+    "family": "자몽 망고 코코 프라푸치노",
+    "category": "blended"
+  },
+  "자몽-허니-레몬-블렌디드:iced": {
+    "family": "자몽 허니 레몬 블렌디드",
+    "category": "blended"
+  },
+  "자몽-허니-블랙-티:hot": {
+    "family": "자몽 허니 블랙 티",
+    "category": "tea"
+  },
+  "자바-칩-프라푸치노:iced": {
+    "family": "자바 칩 프라푸치노",
+    "category": "blended"
+  },
+  "제시-슈트로베리-프라푸치노:iced": {
+    "family": "제시 슈트로베리 프라푸치노",
+    "category": "blended"
+  },
+  "제주-말차-라떼:hot": {
+    "family": "제주 말차 라떼",
+    "category": "tea"
+  },
+  "제주-말차-라떼:iced": {
+    "family": "제주 말차 라떼",
+    "category": "tea"
+  },
+  "제주-말차-크림-프라푸치노:iced": {
+    "family": "제주 말차 크림 프라푸치노",
+    "category": "blended"
+  },
+  "체리-자두-에너지-피지오:iced": {
+    "family": "체리&자두 에너지 피지오",
+    "category": "other"
+  },
+  "체리블라썸-백도-크림-프라푸치노:iced": {
+    "family": "체리블라썸 백도 크림 프라푸치노",
+    "category": "blended"
+  },
+  "초콜릿-크림-칩-프라푸치노:iced": {
+    "family": "초콜릿 크림 칩 프라푸치노",
+    "category": "blended"
+  },
+  "카라멜-마키아또:hot": {
+    "family": "카라멜 마키아또",
+    "category": "espresso"
+  },
+  "카라멜-프라푸치노:iced": {
+    "family": "카라멜 프라푸치노",
+    "category": "blended"
+  },
+  "카스텔라-고구마-라떼:hot": {
+    "family": "카스텔라 고구마 라떼",
+    "category": "espresso"
+  },
+  "카스텔라-고구마-라떼:iced": {
+    "family": "카스텔라 고구마 라떼",
+    "category": "espresso"
+  },
+  "카페-라떼:hot": {
+    "family": "카페 라떼",
+    "category": "espresso"
+  },
+  "카페-모카:hot": {
+    "family": "카페 모카",
+    "category": "espresso"
+  },
+  "카페-브륄레-프라푸치노:iced": {
+    "family": "카페 브륄레 프라푸치노",
+    "category": "blended"
+  },
+  "카페-아메리카노:hot": {
+    "family": "카페 아메리카노",
+    "category": "espresso"
+  },
+  "카푸치노:hot": {
+    "family": "카푸치노",
+    "category": "espresso"
+  },
+  "카푸치노:dry": {
+    "family": "카푸치노",
+    "category": "espresso"
+  },
+  "카푸치노:wet": {
+    "family": "카푸치노",
+    "category": "espresso"
+  },
+  "캐모마일-허니-티-라떼:hot": {
+    "family": "캐모마일 허니 티 라떼",
+    "category": "tea"
+  },
+  "캐모마일-허니-티-라떼:iced": {
+    "family": "캐모마일 허니 티 라떼",
+    "category": "tea"
+  },
+  "코르타도:hot": {
+    "family": "코르타도",
+    "category": "other"
+  },
+  "코코-말차:iced": {
+    "family": "코코 말차",
+    "category": "tea"
+  },
+  "코코-콜드-브루:iced": {
+    "family": "코코 콜드 브루",
+    "category": "brew"
+  },
+  "쿨-라임-피지오:iced": {
+    "family": "쿨 라임 피지오",
+    "category": "other"
+  },
+  "클래식-뱅쇼-히비스커스-티:hot": {
+    "family": "클래식 뱅쇼 히비스커스 티",
+    "category": "tea"
+  },
+  "클래식-뱅쇼-히비스커스-티:iced": {
+    "family": "클래식 뱅쇼 히비스커스 티",
+    "category": "tea"
+  },
+  "파인애플-블루-코코-프라푸치노:iced": {
+    "family": "파인애플 블루 코코 프라푸치노",
+    "category": "blended"
+  },
+  "패션-탱고티-코스모폴리탄:iced": {
+    "family": "패션 탱고티 코스모폴리탄",
+    "category": "tea"
+  },
+  "퍼플-망고-용과-피나콜라다:iced": {
+    "family": "퍼플 망고 용과 피나콜라다",
+    "category": "other"
+  },
+  "풀-리프-핫-티:english-breakfast": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:earl-grey": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:chai": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:hibiscus": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:chamomile": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:mint": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:youthberry": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "풀-리프-핫-티:green-tea": {
+    "family": "풀 리프 티",
+    "category": "tea"
+  },
+  "퓨어-말차-모히토:iced": {
+    "family": "퓨어 말차 모히토",
+    "category": "tea"
+  },
+  "프렌즈-시나몬-돌체-폼-카푸치노:hot": {
+    "family": "프렌즈 시나몬 돌체 폼 카푸치노",
+    "category": "espresso"
+  },
+  "프렌즈-시나몬-돌체-폼-카푸치노:iced": {
+    "family": "프렌즈 시나몬 돌체 폼 카푸치노",
+    "category": "espresso"
+  },
+  "프렌즈-얼-그레이-베리-티-라떼:hot": {
+    "family": "프렌즈 얼 그레이 베리 티 라떼",
+    "category": "tea"
+  },
+  "프렌즈-얼-그레이-베리-티-라떼:iced": {
+    "family": "프렌즈 얼 그레이 베리 티 라떼",
+    "category": "tea"
+  },
+  "프렌치-바닐라-콜드-브루:iced": {
+    "family": "프렌치 바닐라 콜드 브루",
+    "category": "brew"
+  },
+  "플랫-화이트:hot": {
+    "family": "플랫 화이트",
+    "category": "espresso"
+  },
+  "플랫-화이트:iced": {
+    "family": "플랫 화이트",
+    "category": "espresso"
+  },
+  "피치-딸기-피지오:iced": {
+    "family": "피치 딸기 피지오",
+    "category": "other"
+  },
+  "피치-망고-선셋-블렌디드:iced": {
+    "family": "피치 망고 선셋 블렌디드",
+    "category": "blended"
+  },
+  "핑크-자몽-럼-토닉:iced": {
+    "family": "핑크 자몽 럼 토닉",
+    "category": "other"
+  },
+  "핑크-팝-캐모마일-릴렉서:hot": {
+    "family": "핑크 팝 캐모마일 릴렉서",
+    "category": "tea"
+  },
+  "핑크-팝-캐모마일-릴렉서:iced": {
+    "family": "핑크 팝 캐모마일 릴렉서",
+    "category": "tea"
+  },
+  "핑크-피치-리프레셔:iced": {
+    "family": "핑크 피치 리프레셔",
+    "category": "other"
+  },
+  "핑크-피치-코코넛-리프레셔:iced": {
+    "family": "핑크 피치 코코넛 리프레셔",
+    "category": "other"
+  },
+  "헤이즐넛-오트-아이스-쉐이큰-에스프레소:iced": {
+    "family": "헤이즐넛 오트 아이스 쉐이큰 에스프레소",
+    "category": "espresso"
+  },
+  "화이트-모스카토-상그리아:iced": {
+    "family": "화이트 모스카토 상그리아",
+    "category": "other"
+  },
+  "화이트-초콜릿-모카:hot": {
+    "family": "화이트 초콜릿 모카",
+    "category": "espresso"
+  }
+}

@@ -1,11 +1,10 @@
-import { orderSequence } from '../../content/customers'
 import { RECIPES } from '../../content/recipes'
 import { type CupSurfaceId, STATIONS } from '../../content/stations'
 import { say } from '../../simulation/feedback'
 import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
 import { cupSurface } from '../cleaning/rules'
-import { type ReusableCupKind, reusableCupFor } from '../inventory/cups'
+import type { ReusableCupCounts } from '../inventory/cups'
 import { SUPPLIES, type SupplyId } from '../inventory/supplies'
 import {
   CUSTOMER_SECONDS,
@@ -17,10 +16,11 @@ import {
   customerWalking,
   moveCustomer,
 } from './customer'
+import { customerCupCounts } from './orders'
 
-function customerSurface(s: GameState, station: CupSurfaceId, cup: ReusableCupKind | null, dirty: boolean) {
+function customerSurface(s: GameState, station: CupSurfaceId, cups: ReusableCupCounts | null, dirty: boolean) {
   const surface = cupSurface(s, station)
-  if (cup) surface.cups[cup]++
+  if (cups) for (const [kind, count] of Object.entries(cups)) surface.cups[kind as keyof ReusableCupCounts] += count
   if (dirty) {
     surface.dirty = true
     if (s.cleaning?.station === station) s.cleaning.progress = 0
@@ -57,9 +57,9 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       case 'leaving':
         if (customer.visit) {
           s.orderNumber++
-          s.request = orderSequence.length ? orderSequence[(s.orderNumber - 1) % orderSequence.length] : null
         }
-        s.customer = s.phase === 'open' && s.request !== null ? createCustomer(s.orderNumber, s.request) : null
+        s.sale = null
+        s.customer = s.phase === 'open' ? createCustomer(s.orderNumber) : null
         say(
           s,
           s.customer
@@ -76,7 +76,9 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
   customer.elapsed += seconds
   if (customer.stage === 'condiment' && customer.elapsed >= CUSTOMER_SECONDS.condiment) {
     const supplies: SupplyId[] = ['napkins']
-    if (RECIPES[customer.recipe].temperature === 'iced') supplies.push('straws')
+    for (const item of customer.items)
+      if (RECIPES[item.recipe].temperature === 'iced')
+        for (let count = 0; count < item.quantity; count++) supplies.push('straws')
     if (customer.visit.usesSugar) supplies.push('sugar')
     const missing: string[] = []
     for (const id of supplies) {
@@ -86,13 +88,13 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       } else missing.push(SUPPLIES[id].name)
     }
     if (missing.length) say(s, `컨디먼트 바에 ${missing.join('·')} 보충이 필요해요. 손님은 이용을 계속해요.`)
-    if (customer.service === 'takeout') customerLeave(customer)
+    if (customer.items.every((item) => item.service === 'takeout')) customerLeave(customer)
     else customerToTable(customer)
   } else if (customer.stage === 'drinking' && customer.visit.table && customer.elapsed >= CUSTOMER_SECONDS.drinking) {
     customerSurface(
       s,
       customer.visit.table,
-      customer.visit.returnCup ? null : reusableCupFor(customer.recipe, customer.size),
+      customer.visit.returnCup ? null : customerCupCounts(s),
       customer.visit.dirtyTable,
     )
     if (customer.visit.returnCup) customerToReturn(customer)
@@ -101,7 +103,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       customerLeave(customer)
     }
   } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
-    customerSurface(s, 'condiment', reusableCupFor(customer.recipe, customer.size), customer.visit.dirtyReturn)
+    customerSurface(s, 'condiment', customerCupCounts(s), customer.visit.dirtyReturn)
     say(s, '손님이 컨디먼트 바에 컵을 반납했어요.')
     customerLeave(customer)
   }

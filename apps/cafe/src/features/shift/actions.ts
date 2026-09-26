@@ -4,6 +4,7 @@ import { say } from '../../simulation/feedback'
 import { completeJobs } from '../../simulation/jobs'
 import type { WorkContext } from '../../simulation/work-context'
 import { createCustomer, customerLeave } from '../service/customer'
+import { currentTicket } from '../service/orders'
 import { closingTasks, emptyTotals } from './rules'
 export function handleShiftActions(
   work: WorkContext,
@@ -13,8 +14,15 @@ export function handleShiftActions(
   const fail = (text: string) => say(s, text, 'error')
   switch (action.type) {
     case 'close':
+      if (s.sale?.paidAt === null && s.sale.payments.length) {
+        fail('진행 중인 결제를 완료하거나 취소한 뒤 마감해주세요.')
+        break
+      }
       s.phase = 'closing'
-      if (s.customer && !s.customer.visit && !s.ticket) customerLeave(s.customer)
+      if (s.customer && !s.customer.visit && !currentTicket(s)) {
+        s.sale = null
+        customerLeave(s.customer)
+      }
       say(s, '신규 주문을 마감했어요. 남은 주문과 정리 업무를 마쳐주세요.')
       break
     case 'finish': {
@@ -36,7 +44,8 @@ export function handleShiftActions(
       s.day++
       s.time = Math.max(next, s.time + 3600)
       s.phase = 'open'
-      s.customer = s.request ? createCustomer(s.orderNumber, s.request) : null
+      s.customer = createCustomer(s.orderNumber)
+      s.sale = null
       s.totals = emptyTotals(s.cash)
       s.position = staffStartPosition()
       s.batches = s.batches.filter((b) => b.amount > 0)

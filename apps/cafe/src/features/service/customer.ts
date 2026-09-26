@@ -1,7 +1,9 @@
+import { orderSequence } from '../../content/customers'
+import { type Customizations, canOmit, countAmount, noCustomizations } from '../../content/customizations'
 import type { DrinkSize } from '../../content/drink-sizes'
-import { RECIPES, type RecipeId, recipeServices, recipeSizes } from '../../content/recipes'
+import { RECIPES, type RecipeId, recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
 import { STATIONS, type TableId } from '../../content/stations'
-import type { Customer } from '../../simulation/state'
+import type { Customer, GameState } from '../../simulation/state'
 import type { ServiceMode } from '../inventory/cups'
 
 export const customerStages = [
@@ -42,8 +44,11 @@ export const CUSTOMER_STATUS: Record<CustomerStage, string> = {
   leaving: '퇴장 중',
 }
 export const customerWalking = (customer: Customer | null) => !!customer && customer.nextPoint < customer.path.length
-export const customerHasCup = (customer: Customer) =>
-  !!customer.visit && (customer.service === 'takeout' || customer.stage !== 'leaving')
+export const customerHasCup = (state: Pick<GameState, 'customer' | 'sale'>) =>
+  !!state.customer &&
+  !!state.sale?.lines.some(
+    (line) => line.served > 0 && (line.service === 'takeout' || state.customer?.stage !== 'leaving'),
+  )
 const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
 export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] => {
@@ -54,18 +59,57 @@ export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] 
   )
 }
 
-export function createCustomer(orderNumber: number, recipe: RecipeId): Customer | null {
-  if (!RECIPES[recipe]) return null
-  const services = recipeServices(recipe).filter((service) => orderSizes(recipe, service).length > 0)
-  if (!services.length) return null
-  const service = services[Math.floor(Math.random() * services.length)]
-  const sizes = orderSizes(recipe, service)
+export function createCustomer(orderNumber: number): Customer | null {
+  if (!orderSequence.length) return null
+  const preferredService = Math.random() < 0.5 ? 'dine-in' : 'takeout'
+  const items: Customer['items'] = Array.from({ length: 1 + (orderNumber % 3) }, (_, index) => {
+    const recipe = orderSequence[(orderNumber - 1 + index) % orderSequence.length]
+    const services = recipeServices(recipe).filter((service) => orderSizes(recipe, service).length > 0)
+    const service = services.includes(preferredService) ? preferredService : services[0]
+    const sizes = orderSizes(recipe, service)
+    const size = sizes[Math.floor(Math.random() * sizes.length)]
+    let customizations = noCustomizations()
+    if (index === 0 && orderNumber % 2 === 0) {
+      const plan = recipeFor(recipe, size, service).steps
+      const candidates: Customizations[] = []
+      const step = plan.find(
+        (step) =>
+          step.operation.action === 'espresso' ||
+          (step.operation.action === 'add' &&
+            step.operation.amount.kind === 'count' &&
+            step.operation.amount.unit === 'pump'),
+      )
+      const amount = step && countAmount(step)
+      if (step && amount)
+        candidates.push({
+          ...noCustomizations(),
+          quantities: { [step.id]: amount.unit === 'shot' ? amount.value + 1 : Math.max(0, amount.value - 1) },
+        })
+      if (plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular'))
+        candidates.push({ ...noCustomizations(), coffee: 'decaf' })
+      if (plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk'))
+        candidates.push({ ...noCustomizations(), milk: '두유' })
+      const omission = plan.find(canOmit)
+      if (omission) candidates.push({ ...noCustomizations(), omitted: [omission.id] })
+      if (omission) candidates.push({ ...noCustomizations(), levels: { [omission.id]: 'less' } })
+      if (plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup'))
+        candidates.push({ ...noCustomizations(), syrups: { '바닐라-시럽': 2 } })
+      const proposed = candidates[Math.floor(orderNumber / 2) % candidates.length]
+      if (proposed) {
+        try {
+          recipeFor(recipe, size, service, proposed)
+          customizations = proposed
+        } catch {
+          /* Only request options supported by this recipe's complete workflow. */
+        }
+      }
+    }
+    return { recipe, service, size, quantity: orderNumber % 3 === 0 ? 2 : 1, customizations }
+  })
   return {
     id: crypto.randomUUID(),
     orderNumber,
-    recipe,
-    service,
-    size: sizes[Math.floor(Math.random() * sizes.length)],
+    items,
     stage: 'entering',
     position: [...CUSTOMER_ENTRANCE],
     yaw: Math.PI,

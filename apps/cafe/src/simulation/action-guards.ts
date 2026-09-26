@@ -11,18 +11,59 @@ import type { WorkContext } from './work-context'
 export function canDispatch(work: WorkContext, action: Action) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
-  if (carriedBatch(s) && !['return-batch', 'store-batch', 'ticket', 'close'].includes(action.type)) {
+  if (
+    carriedBatch(s) &&
+    ![
+      'return-batch',
+      'store-batch',
+      'pos-add',
+      'pos-update',
+      'pos-remove',
+      'pos-split',
+      'pos-clear',
+      'pos-pay',
+      'pos-void',
+      'close',
+    ].includes(action.type)
+  ) {
     fail('들고 있는 배합 용기를 보관하거나 원래 작업대에 먼저 내려놓아주세요.')
     return false
   }
   if (
     s.coldBrew?.tool &&
-    !['cold-tool', 'cold-use', 'cold-confirm', 'discard-cold-brew', 'ticket', 'close'].includes(action.type)
+    ![
+      'cold-tool',
+      'cold-use',
+      'cold-confirm',
+      'discard-cold-brew',
+      'pos-add',
+      'pos-update',
+      'pos-remove',
+      'pos-split',
+      'pos-clear',
+      'pos-pay',
+      'pos-void',
+      'close',
+    ].includes(action.type)
   ) {
     fail('콜드 브루 계량 도구를 G로 먼저 내려놓아주세요.')
     return false
   }
-  if (s.supplyDelivery && !['place-supply', 'return-supply', 'ticket', 'close'].includes(action.type)) {
+  if (
+    s.supplyDelivery &&
+    ![
+      'place-supply',
+      'return-supply',
+      'pos-add',
+      'pos-update',
+      'pos-remove',
+      'pos-split',
+      'pos-clear',
+      'pos-pay',
+      'pos-void',
+      'close',
+    ].includes(action.type)
+  ) {
     fail('들고 있는 소모품을 컨디먼트 바에 채우거나 창고에 먼저 내려놓아주세요.')
     return false
   }
@@ -35,7 +76,13 @@ export function canDispatch(work: WorkContext, action: Action) {
     'clean-confirm',
     'leave-cleaning',
   ].includes(action.type)
-  if (cleaningHandsBusy(s.cleaning) && !cleaningAction && !['ticket', 'close'].includes(action.type)) {
+  if (
+    cleaningHandsBusy(s.cleaning) &&
+    !cleaningAction &&
+    !['pos-add', 'pos-update', 'pos-remove', 'pos-split', 'pos-clear', 'pos-pay', 'pos-void', 'close'].includes(
+      action.type,
+    )
+  ) {
     fail(
       cupCount(s.cleaning!.heldCups)
         ? '회수한 컵을 세척대에 먼저 내려놓아주세요.'

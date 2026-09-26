@@ -268,7 +268,7 @@ function CafeGame(props: CafeSessionProps) {
               <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{money(state.totals.revenue)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted">완료 주문</p>
+              <p className="text-xs text-muted">전달 음료</p>
               <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
                 {state.totals.served}
                 <span className="ml-1 text-sm font-normal text-muted">잔</span>

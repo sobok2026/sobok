@@ -5,6 +5,7 @@ import { handleStockActions } from '../features/inventory/actions'
 import { expirePreparation, handlePreparationActions } from '../features/preparation/actions'
 import { handleOrderActions } from '../features/service/actions'
 import { advanceCustomer } from '../features/service/customer-progress'
+import { handlePosActions } from '../features/service/pos-actions'
 import { handleShiftActions } from '../features/shift/actions'
 import { handleWashingActions } from '../features/washing/actions'
 import { canDispatch } from './action-guards'
@@ -48,7 +49,15 @@ export class CafeStore {
     expireDrink(work, s.time)
     if (canDispatch(work, action)) {
       switch (action.type) {
-        case 'ticket':
+        case 'pos-add':
+        case 'pos-update':
+        case 'pos-remove':
+        case 'pos-split':
+        case 'pos-clear':
+        case 'pos-pay':
+        case 'pos-void':
+          handlePosActions(work, action)
+          break
         case 'serve':
           handleOrderActions(work, action)
           break

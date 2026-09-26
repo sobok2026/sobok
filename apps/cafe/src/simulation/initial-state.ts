@@ -1,4 +1,3 @@
-import { orderSequence } from '../content/customers'
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition } from '../content/stations'
 import {
@@ -17,16 +16,14 @@ import type { GameState } from './state'
 
 const START = Date.UTC(2026, 8, 1, 9) / 1000
 export function initialState(): GameState {
-  const request = orderSequence[0] ?? null
   return {
     day: 1,
     time: START,
     phase: 'open',
     cash: 50000,
     orderNumber: 1,
-    request,
-    customer: request ? createCustomer(1, request) : null,
-    ticket: null,
+    customer: createCustomer(1),
+    sale: null,
     cup: null,
     preparation: null,
     coldBrew: null,

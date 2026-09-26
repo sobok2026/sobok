@@ -1,223 +1,579 @@
-import { useEffect, useMemo, useState } from 'react'
-import { customerNames } from '../../content/customers'
-import { DRINK_SIZES, type DrinkSize } from '../../content/drink-sizes'
-import { RECIPES, type RecipeId, recipeIds, recipeLabel, recipePrice, recipeServices } from '../../content/recipes'
+import { useEffect, useRef, useState } from 'react'
+import { noCustomizations } from '../../content/customizations'
+import { DRINK_SIZES, type DrinkSize, drinkSizeIds } from '../../content/drink-sizes'
+import { RECIPES, type RecipeId, recipeLabel, recipeSizes } from '../../content/recipes'
 import { money } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
-import type { GameState } from '../../simulation/state'
+import type { GameState, OrderItem, OrderLine } from '../../simulation/state'
 import { nextStep } from '../crafting/rules'
 import { SERVICE_NAMES, type ServiceMode } from '../inventory/cups'
-import { CUSTOMER_STATUS, orderSizes } from './customer'
+import ShiftControls from '../shift/ShiftControls'
+import ShiftLedger from '../shift/ShiftLedger'
+import { CUSTOMER_STATUS } from './customer'
+import { currentTicket, itemCustomizations, itemPrice, salePaid, saleQuantity, saleTotal } from './orders'
+import { PosCheckout } from './PosCheckout'
+import { NumericPad, PosButton, PosDialog } from './PosControls'
+import { PosCustomize } from './PosCustomize'
+import { PosMenu, temperatureVariant } from './PosMenu'
 
-type TemperatureFilter = 'all' | 'hot' | 'iced'
-type PosSelection = { recipe: RecipeId | null; service: ServiceMode | null; size: DrinkSize | null }
-const searchText = (value: string) => value.toLocaleLowerCase('ko-KR').replace(/\s+/g, '')
-
-function selectRecipe(
-  recipe: RecipeId | null,
-  preferredService?: ServiceMode | null,
-  preferredSize?: DrinkSize | null,
-): PosSelection {
-  if (!recipe || !RECIPES[recipe]) return { recipe: null, service: null, size: null }
-  const services = recipeServices(recipe).filter((service) => orderSizes(recipe, service).length > 0)
-  const service = preferredService && services.includes(preferredService) ? preferredService : (services[0] ?? null)
-  const sizes = service ? orderSizes(recipe, service) : []
-  const size = preferredSize && sizes.includes(preferredSize) ? preferredSize : (sizes[0] ?? null)
-  return { recipe, service, size }
+type View = 'order' | 'custom' | 'checkout'
+type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | null
+export default function PosPanel({
+  state,
+  act,
+  onClose,
+  onEscape,
+}: {
+  state: GameState
+  act: (action: Action) => void
+  onClose: () => void
+  onEscape: () => void
+}) {
+  const [view, setView] = useState<View>(
+    state.sale?.payments.length || state.sale?.paidAt != null ? 'checkout' : 'order',
+  )
+  const [dialog, setDialog] = useState<Dialog>(null)
+  const [selectedId, setSelectedId] = useState<string | null>('new')
+  const [temperature, setTemperature] = useState<'hot' | 'iced'>('iced')
+  const [size, setSize] = useState<DrinkSize>('tall')
+  const [service, setService] = useState<ServiceMode>('dine-in')
+  const [quantity, setQuantity] = useState('1')
+  const screen = useRef<HTMLElement>(null)
+  const list = useRef<HTMLFieldSetElement>(null)
+  const sale = state.sale
+  const selected =
+    selectedId === 'new'
+      ? null
+      : (sale?.lines.find((line) => line.id === selectedId) ?? currentTicket(state) ?? sale?.lines.at(-1) ?? null)
+  const paid = !!sale && sale.paidAt !== null
+  const editable = state.phase === 'open' && state.customer?.stage === 'ordering' && !paid && !sale?.payments.length
+  const total = saleTotal(sale)
+  const count = saleQuantity(sale)
+  useEffect(() => {
+    screen.current?.focus()
+  }, [])
+  function update(line: OrderLine, item: OrderItem = line, quantity = line.quantity) {
+    act({ type: 'pos-update', id: line.id, item, quantity })
+  }
+  function select(line: OrderLine) {
+    setSelectedId(line.id)
+    setTemperature(RECIPES[line.recipe].temperature)
+    setSize(line.size)
+    setService(line.service)
+  }
+  function add(recipe: RecipeId, chosenSize: DrinkSize, chosenService: ServiceMode) {
+    act({
+      type: 'pos-add',
+      item: { recipe, size: chosenSize, service: chosenService, customizations: noCustomizations() },
+    })
+    setSelectedId(null)
+    setSize(chosenSize)
+    setService(chosenService)
+    requestAnimationFrame(() => list.current?.scrollTo({ top: list.current.scrollHeight }))
+  }
+  const availableSizes = selected ? recipeSizes(selected.recipe, selected.service) : drinkSizeIds
+  const shownTemperature = selected ? RECIPES[selected.recipe].temperature : temperature
+  const shownSize = selected?.size ?? size
+  const shownService = selected?.service ?? service
+  const nextTemperature = shownTemperature === 'hot' ? 'iced' : 'hot'
+  const otherTemperature = selected ? temperatureVariant(selected.recipe, nextTemperature) : null
+  const date = new Date(state.time * 1000).toISOString().slice(5, 10).replace('-', '.')
+  const closeDialog = () => setDialog(null)
+  return (
+    <div className="absolute inset-0 z-12 bg-black/35 p-3 compact:p-2">
+      <section
+        ref={screen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="POS 주문"
+        tabIndex={-1}
+        className="relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault()
+            event.stopPropagation()
+            if (view !== 'order' && !paid) setView('order')
+            else onEscape()
+          } else if (event.key === 'Tab') {
+            const controls = [
+              ...event.currentTarget.querySelectorAll<HTMLElement>(
+                'button:not(:disabled), input:not(:disabled), summary',
+              ),
+            ].filter((item) => item.checkVisibility())
+            if (
+              event.shiftKey &&
+              (document.activeElement === controls[0] || document.activeElement === screen.current)
+            ) {
+              event.preventDefault()
+              controls.at(-1)?.focus()
+            } else if (
+              !event.shiftKey &&
+              (document.activeElement === controls.at(-1) || document.activeElement === screen.current)
+            ) {
+              event.preventDefault()
+              controls[0]?.focus()
+            }
+          } else if (!['KeyH', 'KeyM'].includes(event.code)) event.stopPropagation()
+        }}
+      >
+        <aside className="flex min-h-0 min-w-0 flex-col rounded-md bg-white p-2.5">
+          <header className="shrink-0 pb-3">
+            <div className="flex justify-between text-xs text-pos-panel">
+              <span>소복점 · POS 01</span>
+              <span>영업일 {date}</span>
+            </div>
+            <div className="py-3 text-center text-2xl font-bold tracking-widest">DAY SHIFT</div>
+            <div className="flex justify-between text-xs">
+              <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
+              <span>{state.customer ? CUSTOMER_STATUS[state.customer.stage] : '응대 중인 손님 없음'}</span>
+            </div>
+          </header>
+          {state.customer && !state.customer.visit ? (
+            <div className="mb-3 rounded bg-pos-soft/70 p-2.5 text-xs">
+              <button
+                type="button"
+                onClick={() => setDialog('request')}
+                className="mb-1 flex w-full items-center justify-between text-left font-semibold"
+              >
+                <span>손님 요청</span>
+                <span>상세 보기 ›</span>
+              </button>
+              {state.customer.items.map((item, index) => (
+                <p key={`${index}-${item.recipe}`} className="mt-1 leading-relaxed">
+                  {recipeLabel(item.recipe, item.size)} · {SERVICE_NAMES[item.service]} {item.quantity}잔
+                  {itemCustomizations(item).length ? ` · ${itemCustomizations(item).join(', ')}` : ''}
+                </p>
+              ))}
+            </div>
+          ) : null}
+          <fieldset ref={list} className="min-h-0 flex-1 space-y-1 overflow-y-auto" aria-label="주문 목록">
+            {sale?.lines.map((line, index) => (
+              <div
+                key={line.id}
+                className={`rounded border ${selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white'}`}
+              >
+                <button
+                  type="button"
+                  onClick={() => select(line)}
+                  aria-pressed={selected?.id === line.id}
+                  aria-label={`주문 ${index + 1} ${RECIPES[line.recipe].name} 선택`}
+                  className="w-full p-2.5 text-left"
+                >
+                  <div className="flex items-start gap-2">
+                    <span className="mt-0.5 text-xs opacity-75">{String(index + 1).padStart(2, '0')}</span>
+                    <span
+                      className={`shrink-0 rounded px-1.5 py-1 text-xs text-white ${RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]'}`}
+                    >
+                      {DRINK_SIZES[line.size].name.slice(0, 1)}
+                    </span>
+                    <span className="min-w-0 flex-1 text-sm font-semibold leading-snug">
+                      {RECIPES[line.recipe].name}
+                    </span>
+                    <span className="text-sm tabular-nums">{line.quantity}</span>
+                  </div>
+                  <div className="mt-2 flex justify-between gap-2 text-xs">
+                    <span>
+                      {RECIPES[line.recipe].temperature.toUpperCase()} · {DRINK_SIZES[line.size].name} ·{' '}
+                      {SERVICE_NAMES[line.service]}
+                    </span>
+                    <strong className="text-sm tabular-nums">
+                      {(itemPrice(line) * line.quantity).toLocaleString('ko-KR')}
+                    </strong>
+                  </div>
+                  {itemCustomizations(line).map((label) => (
+                    <p key={label} className="mt-1 pl-6 text-xs leading-snug">
+                      {label}
+                    </p>
+                  ))}
+                  {paid ? (
+                    <p className="mt-2 text-xs">
+                      전달 {line.served} / {line.quantity}잔 {line.served === line.quantity ? '✓' : ''}
+                    </p>
+                  ) : null}
+                </button>
+                {selected?.id === line.id && editable ? (
+                  <div className="flex justify-end px-2 pb-2">
+                    <button
+                      type="button"
+                      className="rounded bg-white/90 px-2 py-1 text-xs text-pos-ink"
+                      onClick={() => act({ type: 'pos-remove', id: line.id })}
+                    >
+                      항목 삭제 ×
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+            {!sale ? (
+              <p className="flex h-full items-center justify-center text-sm text-pos-panel">선택된 메뉴가 없습니다.</p>
+            ) : null}
+          </fieldset>
+          <div className="mt-3 grid shrink-0 grid-cols-5 gap-1">
+            <PosButton disabled={!editable || !sale} onClick={() => setDialog('clear')} className="px-1 text-xs">
+              전체
+              <br />
+              삭제
+            </PosButton>
+            <PosButton
+              disabled={!editable || !selected || selected.quantity < 2}
+              onClick={() => selected && act({ type: 'pos-split', id: selected.id })}
+              className="px-1 text-xs"
+            >
+              수량
+              <br />
+              나누기
+            </PosButton>
+            <PosButton
+              disabled={!editable || !selected}
+              onClick={() => {
+                setQuantity(String(selected?.quantity ?? 1))
+                setDialog('quantity')
+              }}
+              className="px-1 text-xs"
+            >
+              수량
+              <br />
+              변경
+            </PosButton>
+            <div className="grid gap-1">
+              <PosButton
+                disabled={!editable || !selected || selected.quantity >= 99}
+                onClick={() => selected && update(selected, selected, selected.quantity + 1)}
+                className="min-h-8 py-1 text-lg"
+                aria-label="수량 늘리기"
+              >
+                +
+              </PosButton>
+              <PosButton
+                disabled={!editable || !selected || selected.quantity <= 1}
+                onClick={() => selected && update(selected, selected, selected.quantity - 1)}
+                className="min-h-8 py-1 text-lg"
+                aria-label="수량 줄이기"
+              >
+                −
+              </PosButton>
+            </div>
+            <div className="grid gap-1">
+              <PosButton
+                tone="dark"
+                onClick={() => list.current?.scrollBy({ top: -200, behavior: 'smooth' })}
+                className="min-h-8 py-1"
+                aria-label="주문 목록 위로"
+              >
+                ⌃
+              </PosButton>
+              <PosButton
+                tone="dark"
+                onClick={() => list.current?.scrollBy({ top: 200, behavior: 'smooth' })}
+                className="min-h-8 py-1"
+                aria-label="주문 목록 아래로"
+              >
+                ⌄
+              </PosButton>
+            </div>
+          </div>
+          <div className="flex shrink-0 justify-between gap-2 py-3 text-sm">
+            <span>
+              총계 <strong className="ml-2 tabular-nums">{total.toLocaleString('ko-KR')}</strong>
+            </span>
+            <span>
+              할인 <span className="ml-1 text-[#d87150]">0</span>
+            </span>
+          </div>
+          <PosButton
+            tone="dark"
+            disabled={!sale}
+            onClick={() => setView(view === 'checkout' && !paid ? 'order' : 'checkout')}
+            className="flex min-h-16 shrink-0 items-center justify-between gap-2 px-2"
+          >
+            <span className="rounded bg-white px-2 py-3 text-sm text-pos-ink">
+              음료 <strong>{count}잔</strong>
+            </span>
+            <span className="text-lg tabular-nums">
+              {paid
+                ? '결제 완료'
+                : view === 'checkout'
+                  ? '‹ 주문으로 돌아가기'
+                  : `${total.toLocaleString('ko-KR')} 결제`}
+            </span>
+          </PosButton>
+        </aside>
+        <div className="flex min-h-0 min-w-0 flex-col gap-2">
+          <header className="flex min-h-10 shrink-0 items-center justify-between gap-3 px-2 text-sm text-white">
+            <span>
+              제조중{' '}
+              <strong className="ml-2">
+                {paid ? sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) : 0}
+              </strong>
+            </span>
+            <span className="text-xs text-white/75">
+              {paid
+                ? '결제한 주문을 제조해주세요.'
+                : salePaid(sale)
+                  ? `남은 결제금액 ${money(total - salePaid(sale))}`
+                  : '주문 · 커스텀 · 결제'}
+            </span>
+            <PosButton tone="dark" onClick={onClose} aria-label="POS 닫기" className="min-h-9">
+              ×
+            </PosButton>
+          </header>
+          <div className="flex min-h-0 flex-1 gap-1.5">
+            {view === 'checkout' ? (
+              <PosCheckout state={state} act={act} onBack={() => setView('order')} onClose={onClose} />
+            ) : (
+              <>
+                {view === 'order' ? (
+                  <nav className="flex w-22 shrink-0 flex-col gap-1" aria-label="주문 규격">
+                    <PosButton
+                      tone="active"
+                      disabled={!selected}
+                      onClick={() => setView('custom')}
+                      className="min-h-16"
+                    >
+                      주문
+                      <br />
+                      커스텀
+                    </PosButton>
+                    <PosButton
+                      tone={shownTemperature}
+                      disabled={
+                        !editable ||
+                        (!!selected &&
+                          (!otherTemperature ||
+                            !recipeSizes(otherTemperature, selected.service).includes(selected.size)))
+                      }
+                      className="min-h-16"
+                      onClick={() => {
+                        const next = nextTemperature
+                        setTemperature(next)
+                        if (selected) {
+                          const other = temperatureVariant(selected.recipe, next)
+                          if (other && recipeSizes(other, selected.service).includes(selected.size))
+                            update(selected, { ...selected, recipe: other, customizations: noCustomizations() })
+                        }
+                      }}
+                    >
+                      HOT ICED
+                      <br />
+                      <span className="text-xs">{shownTemperature === 'hot' ? '● HOT' : '● ICED'}</span>
+                    </PosButton>
+                    <div className="my-1 h-px bg-white/15" />
+                    {drinkSizeIds
+                      .filter((id) => id !== 'single' || selected?.size === 'single')
+                      .map((id) => (
+                        <PosButton
+                          key={id}
+                          tone="dark"
+                          aria-pressed={shownSize === id}
+                          disabled={!editable || !availableSizes.includes(id)}
+                          className="min-h-9 flex-1 px-1"
+                          onClick={() => {
+                            setSize(id)
+                            if (selected) update(selected, { ...selected, size: id })
+                          }}
+                        >
+                          {DRINK_SIZES[id].name}
+                        </PosButton>
+                      ))}
+                    <div className="my-1 h-px bg-white/15" />
+                    {(['dine-in', 'takeout'] as const).map((mode) => (
+                      <PosButton
+                        key={mode}
+                        tone="dark"
+                        aria-pressed={shownService === mode}
+                        disabled={
+                          !editable || (!!selected && !recipeSizes(selected.recipe, mode).includes(selected.size))
+                        }
+                        className="min-h-13 px-1"
+                        onClick={() => {
+                          setService(mode)
+                          if (selected) update(selected, { ...selected, service: mode })
+                        }}
+                      >
+                        {mode === 'dine-in' ? '매장컵' : '일회용컵'}
+                      </PosButton>
+                    ))}
+                  </nav>
+                ) : null}
+                {view === 'custom' ? (
+                  <PosCustomize
+                    onBack={() => setView('order')}
+                    line={selected}
+                    disabled={!editable}
+                    onChange={(customizations) => selected && update(selected, { ...selected, customizations })}
+                  />
+                ) : (
+                  <PosMenu
+                    temperature={shownTemperature}
+                    size={shownSize}
+                    service={shownService}
+                    disabled={!editable}
+                    onAdd={add}
+                  />
+                )}
+              </>
+            )}
+            <nav className="flex w-16 shrink-0 flex-col gap-1" aria-label="POS 도구">
+              <PosButton tone="dark" className="flex-1 px-1" onClick={() => setDialog('store')}>
+                매장
+                <br />
+                현황
+              </PosButton>
+              <PosButton tone="dark" className="flex-1 px-1" onClick={() => setDialog('request')}>
+                손님
+                <br />
+                요청
+              </PosButton>
+              <PosButton tone="dark" className="flex-1 px-1" onClick={() => setDialog('calculator')}>
+                계산기
+              </PosButton>
+            </nav>
+          </div>
+          <footer className="grid min-h-14 shrink-0 grid-cols-5 gap-1">
+            <PosButton
+              tone="dark"
+              disabled={!editable}
+              onClick={() => {
+                setSelectedId('new')
+                setView('order')
+              }}
+            >
+              + 새 음료
+            </PosButton>
+            <PosButton tone="dark" aria-pressed={view === 'order'} onClick={() => setView('order')}>
+              주문
+            </PosButton>
+            <PosButton
+              tone="dark"
+              disabled={!selected}
+              aria-pressed={view === 'custom'}
+              onClick={() => setView('custom')}
+            >
+              커스텀
+            </PosButton>
+            <PosButton
+              tone="dark"
+              disabled={!sale}
+              aria-pressed={view === 'checkout'}
+              onClick={() => setView('checkout')}
+            >
+              결제
+            </PosButton>
+            <PosButton tone="dark" onClick={() => setDialog('store')}>
+              영업 관리
+            </PosButton>
+          </footer>
+        </div>
+        {dialog === 'request' ? (
+          <PosDialog title="손님 요청" onClose={closeDialog}>
+            {state.customer?.items.map((item, index) => (
+              <div key={`${index}-${item.recipe}`} className="border-b border-pos-soft py-3">
+                <p className="font-semibold">
+                  {recipeLabel(item.recipe, item.size)} · {SERVICE_NAMES[item.service]} {item.quantity}잔
+                </p>
+                <p className="mt-2 text-sm">{itemCustomizations(item).join(' · ') || '기본 레시피'}</p>
+              </div>
+            )) ?? <p>응대 중인 손님이 없습니다.</p>}
+          </PosDialog>
+        ) : null}
+        {dialog === 'store' ? (
+          <PosDialog title="매장 현황 · 영업 관리" onClose={closeDialog} wide>
+            <ShiftLedger state={state} />
+            <ShiftControls state={state} act={act} />
+          </PosDialog>
+        ) : null}
+        {dialog === 'clear' ? (
+          <PosDialog title="주문 전체 삭제" onClose={closeDialog}>
+            <p className="mb-6">담은 음료 {count}잔을 모두 삭제할까요?</p>
+            <div className="grid grid-cols-2 gap-2">
+              <PosButton onClick={closeDialog}>취소</PosButton>
+              <PosButton
+                tone="active"
+                onClick={() => {
+                  act({ type: 'pos-clear' })
+                  setSelectedId(null)
+                  closeDialog()
+                }}
+              >
+                전체 삭제
+              </PosButton>
+            </div>
+          </PosDialog>
+        ) : null}
+        {dialog === 'quantity' && selected ? (
+          <PosDialog title="수량 변경" onClose={closeDialog}>
+            <input
+              aria-label="주문 수량"
+              inputMode="numeric"
+              value={quantity}
+              onChange={(event) => {
+                if (/^\d{0,2}$/.test(event.target.value)) setQuantity(event.target.value)
+              }}
+              className="mb-3 min-h-13 w-full rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-xl"
+            />
+            <NumericPad
+              value={quantity}
+              onChange={setQuantity}
+              onConfirm={() => {
+                if (Number(quantity) >= 1 && Number(quantity) <= 99) {
+                  update(selected, selected, Number(quantity))
+                  closeDialog()
+                }
+              }}
+            />
+          </PosDialog>
+        ) : null}
+        {dialog === 'calculator' ? (
+          <PosDialog title="계산기" onClose={closeDialog}>
+            <PosCalculator />
+          </PosDialog>
+        ) : null}
+      </section>
+    </div>
+  )
 }
 
-export default function PosPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const [selection, setSelection] = useState(() =>
-    selectRecipe(
-      state.ticket?.recipe ?? state.request,
-      state.ticket?.service ?? state.customer?.service,
-      state.ticket?.size ?? state.customer?.size,
-    ),
-  )
-  const [query, setQuery] = useState('')
-  const [temperature, setTemperature] = useState<TemperatureFilter>('all')
-  const customerId = state.customer?.id
-  const customerService = state.customer?.service
-  const customerSize = state.customer?.size
-  const ticketRecipe = state.ticket?.recipe
-  const ticketService = state.ticket?.service
-  const ticketSize = state.ticket?.size
-  useEffect(() => {
-    if (!customerId || !customerService) return
-    setSelection(
-      selectRecipe(ticketRecipe ?? state.request, ticketService ?? customerService, ticketSize ?? customerSize),
-    )
-    setQuery('')
-    setTemperature('all')
-  }, [customerId, customerService, customerSize, ticketRecipe, ticketService, ticketSize, state.request])
-
-  const filteredRecipes = useMemo(() => {
-    const needle = searchText(query)
-    return recipeIds.filter((id) => {
-      const menu = RECIPES[id]
-      return (temperature === 'all' || menu.temperature === temperature) && searchText(recipeLabel(id)).includes(needle)
-    })
-  }, [query, temperature])
-  const selectedRecipe = selection.recipe && filteredRecipes.includes(selection.recipe) ? selection.recipe : null
-  const services = selectedRecipe
-    ? recipeServices(selectedRecipe).filter((service) => orderSizes(selectedRecipe, service).length > 0)
-    : []
-  const selectedService = selection.service && services.includes(selection.service) ? selection.service : null
-  const sizes = selectedRecipe && selectedService ? orderSizes(selectedRecipe, selectedService) : []
-  const selectedSize = selection.size && sizes.includes(selection.size) ? selection.size : null
-  const price = selectedRecipe && selectedSize ? recipePrice(selectedRecipe, selectedSize) : null
-  const canTakeOrder =
-    !!state.customer &&
-    !state.customer.visit &&
-    state.customer.stage !== 'leaving' &&
-    (state.customer.stage === 'ordering' || !!state.ticket)
-  const locked = !!state.cup || !canTakeOrder
-  const customer = customerNames[(state.orderNumber - 1) % customerNames.length]
-
-  if (!recipeIds.length) {
-    return <p className="rounded-md bg-control p-4 text-sm text-muted">현재 주문할 수 있는 메뉴가 없어요.</p>
+function PosCalculator() {
+  const [value, setValue] = useState('')
+  const [left, setLeft] = useState<number | null>(null)
+  const [operator, setOperator] = useState<'+' | '−' | '×' | '÷'>('+')
+  const compute = () => {
+    if (left === null) return
+    const right = Number(value)
+    const result =
+      operator === '+'
+        ? left + right
+        : operator === '−'
+          ? left - right
+          : operator === '×'
+            ? left * right
+            : right
+              ? left / right
+              : 0
+    setValue(String(Math.round(result * 100) / 100))
+    setLeft(null)
   }
-
   return (
     <>
-      {(state.phase === 'open' || state.ticket) &&
-      state.customer &&
-      !state.customer.visit &&
-      state.customer.stage !== 'leaving' ? (
-        <>
-          <div className="mb-5.5 rounded-[0.1875rem] border-l-2 border-[#a9b495] bg-[#eaeade] p-4 compact:mb-4 compact:p-3">
-            <span className="text-xs text-muted">손님 주문</span>
-            <p className="mt-2.25 mb-0 text-body leading-[1.7] text-[#4b6248]">
-              {recipeLabel(state.customer.recipe, state.customer.size)} · {SERVICE_NAMES[state.customer.service]}
-            </p>
-          </div>
-          <label className="mb-2 block text-xs text-muted" htmlFor="pos-search">
-            전체 메뉴 검색
-          </label>
-          <div className="mb-3 flex gap-2">
-            <input
-              className="min-w-0 flex-1 rounded-xl border border-control-line bg-control px-3 py-2.5 text-sm text-ink"
-              id="pos-search"
-              type="search"
-              value={query}
-              placeholder="메뉴 이름 검색"
-              disabled={locked}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <select
-              className="rounded-xl border border-control-line bg-control px-3 py-2.5 text-sm text-ink"
-              aria-label="음료 온도"
-              value={temperature}
-              disabled={locked}
-              onChange={(event) => setTemperature(event.target.value as TemperatureFilter)}
-            >
-              <option value="all">전체</option>
-              <option value="hot">HOT</option>
-              <option value="iced">ICED</option>
-            </select>
-          </div>
-          <label className="mb-2 block text-xs text-muted" htmlFor="pos-menu">
-            메뉴 선택 · {filteredRecipes.length}개
-          </label>
-          <select
-            className="mb-3.5 w-full rounded-xl border border-control-line bg-control p-3 text-sm text-ink"
-            id="pos-menu"
-            value={selectedRecipe ?? ''}
-            disabled={locked || !filteredRecipes.length}
-            onChange={(event) => setSelection(selectRecipe(event.target.value, selection.service, selection.size))}
-          >
-            <option value="" disabled>
-              {filteredRecipes.length ? '메뉴를 선택하세요' : '검색 결과가 없어요'}
-            </option>
-            {filteredRecipes.map((id) => (
-              <option key={id} value={id}>
-                {recipeLabel(id)}
-              </option>
-            ))}
-          </select>
-          {!filteredRecipes.length ? (
-            <p className="mb-4 text-sm text-muted" role="status">
-              검색어나 온도를 바꿔 메뉴를 찾아보세요.
-            </p>
-          ) : null}
-          {services.length ? (
-            <fieldset
-              className={`mb-4 grid gap-2 disabled:opacity-45 ${services.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}
-              disabled={locked}
-            >
-              <legend className="mb-2 text-xs text-muted">이용 방식</legend>
-              {services.map((service) => (
-                <label key={service} className="cursor-pointer">
-                  <input
-                    className="peer sr-only"
-                    type="radio"
-                    name="pos-service"
-                    value={service}
-                    checked={selectedService === service}
-                    onChange={() => setSelection(selectRecipe(selection.recipe, service, selection.size))}
-                  />
-                  <span className="block rounded-xl border border-control-line bg-control px-3 py-2.5 text-center text-sm peer-checked:border-brand peer-checked:bg-brand peer-checked:text-on-brand peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
-                    {SERVICE_NAMES[service]}
-                  </span>
-                </label>
-              ))}
-            </fieldset>
-          ) : null}
-          {sizes.length > 0 && selectedRecipe ? (
-            <fieldset
-              className={`mb-4 grid gap-2 disabled:opacity-45 ${sizes.length === 1 ? 'grid-cols-1' : sizes.length > 3 ? 'grid-cols-2' : 'grid-cols-3'}`}
-              disabled={locked}
-            >
-              <legend className="mb-2 text-xs text-muted">제공 규격</legend>
-              {sizes.map((size) => {
-                const definition = DRINK_SIZES[size]
-                return (
-                  <label key={size} className="cursor-pointer">
-                    <input
-                      className="peer sr-only"
-                      type="radio"
-                      name="pos-size"
-                      value={size}
-                      checked={selectedSize === size}
-                      onChange={() => setSelection({ ...selection, size })}
-                    />
-                    <span className="flex flex-col gap-1 rounded-xl border border-control-line bg-control px-3 py-2.5 text-center text-sm peer-checked:border-brand peer-checked:bg-brand peer-checked:text-on-brand peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
-                      <span className="font-medium">{definition.name}</span>
-                      {definition.ml !== null ? (
-                        <span className="text-xs">
-                          {definition.label} · {definition.ml}ml
-                        </span>
-                      ) : null}
-                      <span className="tabular-nums">{money(recipePrice(selectedRecipe, size))}</span>
-                    </span>
-                  </label>
-                )
-              })}
-            </fieldset>
-          ) : null}
-          {selectedRecipe && !services.length ? (
-            <p className="mb-4 text-sm text-muted" role="status">
-              선택한 메뉴를 주문할 수 없어요. 다른 메뉴를 선택해주세요.
-            </p>
-          ) : null}
-          <Button
-            disabled={locked || !selectedRecipe || !selectedService || !selectedSize || price === null}
+      <output className="mb-3 block min-h-14 rounded bg-pos-soft p-3 text-right text-2xl tabular-nums">
+        {value || '0'}
+      </output>
+      <div className="mb-2 grid grid-cols-4 gap-1">
+        {(['+', '−', '×', '÷'] as const).map((op) => (
+          <PosButton
+            key={op}
             onClick={() => {
-              if (selectedRecipe && selectedService && selectedSize) {
-                act({ type: 'ticket', recipe: selectedRecipe, service: selectedService, size: selectedSize })
-              }
+              setLeft(Number(value))
+              setOperator(op)
+              setValue('')
             }}
           >
-            {state.ticket ? '주문표 수정' : canTakeOrder ? '주문 접수' : '손님 도착 대기'}
-            {price !== null ? ` · ${money(price)}` : ''}
-          </Button>
-        </>
-      ) : (
-        <div className="mb-5 rounded-md bg-[#eaeade] p-4 text-sm leading-relaxed text-muted">
-          <p>{state.customer ? `${customer} 님 · ${CUSTOMER_STATUS[state.customer.stage]}` : '응대 중인 손님 없음'}</p>
-        </div>
-      )}
+            {op}
+          </PosButton>
+        ))}
+      </div>
+      <NumericPad value={value} onChange={setValue} onConfirm={compute} />
     </>
   )
 }

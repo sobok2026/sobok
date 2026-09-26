@@ -21,8 +21,10 @@ export default function ShiftLedger({ state }: { state: GameState }) {
       <dl className="divide-y divide-line border-y border-line">
         {[
           ['시작 잔액', totals.openingCash],
+          ['현금 판매', totals.cashSales],
+          ['카드 판매', totals.cardSales],
           ['입고 지출', spent],
-          ['현금 증감', totals.revenue - spent],
+          ['운영 자금 증감', totals.revenue - spent],
           ['현재 잔액', state.cash],
         ].map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 py-3 last:font-semibold">

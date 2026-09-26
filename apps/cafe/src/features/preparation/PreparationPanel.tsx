@@ -5,13 +5,14 @@ import { formatAmount } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import { cupHandsBusy } from '../../simulation/hands'
-import type { GameState } from '../../simulation/state'
+import type { GameState, OrderLine } from '../../simulation/state'
 import { available } from '../inventory/inventory'
+import { currentTicket } from '../service/orders'
 import { PreparationInstructions } from './Guide'
 import { PREPARATIONS, preparationForMaterial, preparationIds, unavailablePreparations } from './rules'
 
 const choices = preparationIds.map((id) => PREPARATIONS[id]).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
-function orderPreparationMaterials(ticket: GameState['ticket']) {
+function orderPreparationMaterials(ticket: OrderLine | null) {
   const needed = new Set<string>()
   if (!ticket) return needed
   const visited = new Set<string>()
@@ -23,7 +24,7 @@ function orderPreparationMaterials(ticket: GameState['ticket']) {
     needed.add(materialId)
     for (const step of definition.steps) for (const input of Object.keys(step.costs)) visit(input)
   }
-  for (const step of recipeFor(ticket.recipe, ticket.size, ticket.service).steps)
+  for (const step of recipeFor(ticket.recipe, ticket.size, ticket.service, ticket.customizations).steps)
     for (const materialId of Object.keys(step.costs)) visit(materialId)
   return needed
 }
@@ -33,7 +34,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
   const [query, setQuery] = useState('')
   const [selection, setSelection] = useState<string | null>(null)
   const search = query.trim().toLocaleLowerCase('ko')
-  const needed = orderPreparationMaterials(state.ticket)
+  const needed = orderPreparationMaterials(currentTicket(state))
   const options = choices
     .filter((item) =>
       `${item.name} ${INGREDIENTS[item.output.materialId].name}`.toLocaleLowerCase('ko').includes(search),
@@ -57,7 +58,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
         placeholder="준비할 재료 이름"
         className="mb-3 min-h-11 w-full rounded-lg border border-control-line bg-control px-3 text-sm text-ink"
       />
-      {state.ticket ? <p className="mb-3 text-xs text-muted">현재 주문에 필요한 부재료부터 표시해요.</p> : null}
+      {currentTicket(state) ? <p className="mb-3 text-xs text-muted">현재 주문에 필요한 부재료부터 표시해요.</p> : null}
       <fieldset className="max-h-64 min-w-0 space-y-2 overflow-y-auto border-0 p-0 pr-1">
         <legend className="sr-only">준비할 제조법</legend>
         {options.map((item) => (

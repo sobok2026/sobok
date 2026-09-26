@@ -7,10 +7,12 @@ import { cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/
 import { available } from '../features/inventory/inventory'
 import { supplyIds } from '../features/inventory/supplies'
 import { preparationForMaterial, preparationStep } from '../features/preparation/rules'
+import { currentTicket } from '../features/service/orders'
 import { washDestination, washItems, washStock } from '../features/washing/rules'
 import type { GameState } from './state'
 
 function plannedStation(state: GameState): StationId {
+  const ticket = currentTicket(state)
   const carrying = carriedBatch(state)
   if (carrying)
     return carrying.expiresAt !== null && carrying.expiresAt <= state.time
@@ -68,8 +70,8 @@ function plannedStation(state: GameState): StationId {
     return state.cup.craft.location !== 'hand' && state.cup.craft.location !== 'pickup'
       ? state.cup.craft.location
       : 'pickup'
-  if (state.ticket) {
-    const kind = cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size)
+  if (ticket) {
+    const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
     if (cleanCupCount(state, kind)) return 'cups'
     if (!isReusableCup(kind)) return 'stock'
     if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) return 'wash'

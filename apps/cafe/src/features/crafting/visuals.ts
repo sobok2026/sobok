@@ -53,7 +53,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         return
       }
       const craft = cup.craft
-      const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind))
+      const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations)
       const step = operationFor(cup.recipe, craft) ?? undefined
       const operation = step?.operation
       const servingId = definition.vesselId

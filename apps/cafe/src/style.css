@@ -14,6 +14,11 @@
   --color-control-line: #dfe3d8;
   --color-danger: #ad4934;
   --color-focus: #c8a55c;
+  --color-pos-shell: #123f35;
+  --color-pos-panel: #315b50;
+  --color-pos-soft: #d7e9e3;
+  --color-pos-active: #009b7a;
+  --color-pos-ink: #203c34;
 
   --text-label: 0.8125rem;
   --text-label--line-height: 1.5;
@@ -45,6 +50,8 @@
 }
 
 /* Keep controls reachable when the game viewport is short. */
+@custom-variant pos-compact (@media (height <= 50rem));
+
 @custom-variant compact (@media (height <= 40.625rem));
 
 @layer base {

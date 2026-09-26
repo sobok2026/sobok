@@ -9,7 +9,6 @@ import ShelfPanel from '../features/inventory/ShelfPanel'
 import SupplyPanel from '../features/inventory/SupplyPanel'
 import PreparationPanel from '../features/preparation/PreparationPanel'
 import PosPanel, { PickupPanel } from '../features/service/PosPanel'
-import ShiftControls from '../features/shift/ShiftControls'
 import WashingPanel, { ToolRack } from '../features/washing/WashingPanel'
 import type { Action } from '../simulation/actions'
 import type { GameState } from '../simulation/state'
@@ -23,9 +22,19 @@ export default function StationPanel({
   state: GameState
   panel: StationId | null
   act: (action: Action) => void
-  closePanel: () => void
+  closePanel: (lock?: boolean) => void
 }) {
   if (!panel) return null
+  if (panel === 'pos')
+    return (
+      <PosPanel
+        key={state.customer?.id ?? 'empty-pos'}
+        state={state}
+        act={act}
+        onClose={() => closePanel()}
+        onEscape={() => closePanel(false)}
+      />
+    )
   const actionJob = state.jobs.find((job) => job.station === panel)
 
   return (
@@ -38,7 +47,7 @@ export default function StationPanel({
           <button
             type="button"
             className="pointer-events-auto grid size-10 shrink-0 place-items-center rounded-full border-0 border-line bg-transparent text-[1.625rem] text-[#8e9881]"
-            onClick={closePanel}
+            onClick={() => closePanel()}
             aria-label="작업대 닫기"
           >
             ×
@@ -50,12 +59,6 @@ export default function StationPanel({
             <span>{actionJob.label}</span>
             <strong className="text-stat font-medium">{Math.ceil(actionJob.endsAt - state.time)}초 남음</strong>
           </div>
-        ) : null}
-        {panel === 'pos' ? (
-          <>
-            <PosPanel state={state} act={act} />
-            <ShiftControls state={state} act={act} />
-          </>
         ) : null}
         {panel === 'cups' ? <CupRack state={state} act={act} /> : null}
         {['espresso', 'steam', 'brew', 'water', 'ice', 'sauce', 'mix', 'topping'].includes(panel) ? (

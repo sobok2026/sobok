@@ -3,6 +3,7 @@ import { recipeFor } from '../../content/recipes'
 import type { GameState } from '../../simulation/state'
 import { PREPARATIONS, preparationForMaterial } from '../preparation/rules'
 import type { ProductionState, WorkStep } from '../production/workflow'
+import { currentTicket } from '../service/orders'
 import { cupService, cupSize } from './cups'
 import { available } from './inventory'
 
@@ -39,17 +40,18 @@ export function inventorySummary(state: GameState) {
       for (const [id, amount] of Object.entries(step.costs)) add(id, amount * remaining * batches)
     }
   }
+  const ticket = currentTicket(state)
+  const requested = state.customer?.items[0]
   const recipe =
-    state.cup?.recipe ??
-    state.ticket?.recipe ??
-    (state.phase === 'open' && state.customer && !state.customer.visit && state.customer.stage !== 'leaving'
-      ? state.request
-      : null)
-  const size = state.cup ? cupSize(state.cup.craft.kind) : (state.ticket?.size ?? state.customer?.size)
-  const service = state.cup ? cupService(state.cup.craft.kind) : (state.ticket?.service ?? state.customer?.service)
-  if (recipe && size && service) {
-    addPlan(recipeFor(recipe, size, service).steps, state.cup && !state.cup.craft.fault ? state.cup.craft : null)
-  }
+    state.cup?.recipe ?? ticket?.recipe ?? (state.customer?.stage === 'ordering' ? requested?.recipe : null)
+  const size = state.cup ? cupSize(state.cup.craft.kind) : (ticket?.size ?? requested?.size)
+  const service = state.cup ? cupService(state.cup.craft.kind) : (ticket?.service ?? requested?.service)
+  const customizations = state.cup?.craft.customizations ?? ticket?.customizations ?? requested?.customizations
+  if (recipe && size && service)
+    addPlan(
+      recipeFor(recipe, size, service, customizations).steps,
+      state.cup && !state.cup.craft.fault ? state.cup.craft : null,
+    )
   const prep = state.preparation && !state.preparation.fault ? state.preparation : null
   const activeOutput = prep && prep.stage !== 'ready' ? PREPARATIONS[prep.recipe].output : null
   if (activeOutput && prep) addPlan(PREPARATIONS[prep.recipe].steps, prep)

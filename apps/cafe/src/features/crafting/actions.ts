@@ -14,6 +14,7 @@ import {
   workIsBusy,
 } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
+import { currentTicket } from '../service/orders'
 import { craftStations, createCraft, nextStep, operationFor, toolName } from './rules'
 
 export function handleCraftActions(
@@ -26,18 +27,24 @@ export function handleCraftActions(
   const s = work.state
   const fail = (message: string) => say(s, message, 'error')
   if (action.type === 'take-cup') {
-    if (!s.ticket || s.cup || s.preparation?.tool) {
+    const ticket = currentTicket(s)
+    if (!ticket || s.cup || s.preparation?.tool) {
       fail('주문표와 들고 있는 도구를 확인해주세요.')
       return
     }
-    const kind = cupKindFor(s.ticket.recipe, s.ticket.service, s.ticket.size)
+    const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
     if (!cleanCupCount(s, kind)) {
       fail(`${CUP_NAMES[kind]}를 먼저 준비해주세요.`)
       return
     }
     if (isReusableCup(kind)) s.reusableCups[kind].clean--
     else s.disposableCups[kind].bar--
-    s.cup = { id: uid(), recipe: s.ticket.recipe, craft: createCraft(kind) }
+    s.cup = {
+      id: uid(),
+      recipe: ticket.recipe,
+      orderLineId: ticket.id,
+      craft: createCraft(kind, ticket.customizations),
+    }
     say(s, `${CUP_NAMES[kind]}를 집었어요.`)
     return
   }
@@ -95,7 +102,7 @@ export function handleCraftActions(
   }
   if (!step || step.station !== action.station || session.fault || workIsBusy(work, owner)) return
   if (action.type === 'confirm-craft' && step.kind === 'condition') {
-    const steps = recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind)).steps
+    const steps = recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind), session.customizations).steps
     if (!action.observation || !decideObservation(steps, session, action.observation.id, action.observation.value)) {
       fail('현재 단계에서 관찰한 상태를 선택해주세요.')
       return
@@ -122,7 +129,10 @@ export function handleCraftActions(
   } else if (action.type === 'use-start') beginProduction(work, session, step, { ...owner, station: action.station })
   else if (action.type === 'confirm-craft') {
     if (!confirmProduction(work, session, step, { ...owner, station: action.station })) return
-    skipObservedSteps(recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind)).steps, session)
+    skipObservedSteps(
+      recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind), session.customizations).steps,
+      session,
+    )
     if (step.operation.action === 'serve') session.lidded = step.operation.lid === 'always'
     if (!nextStep(s)) releaseProductionTool(work, session)
     say(s, nextStep(s) ? `${step.label} 완료.` : '음료가 완성됐어요.', 'success')

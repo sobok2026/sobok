@@ -129,7 +129,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
               <dd className="mt-2 text-2xl font-semibold tabular-nums">{money(state.totals.revenue)}</dd>
             </div>
             <div>
-              <dt className="text-xs text-muted">완료 주문</dt>
+              <dt className="text-xs text-muted">전달 음료</dt>
               <dd className="mt-2 text-2xl font-semibold tabular-nums">
                 {state.totals.served}
                 <span className="ml-1 text-sm font-normal text-muted">잔</span>

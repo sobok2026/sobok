@@ -2,6 +2,7 @@ import { money } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
+import { currentTicket } from '../service/orders'
 import { CUP_NAMES, CUP_SUPPLY, cupKindFor, disposableCupKinds, reusableCupKinds } from './cups'
 
 export default function CupInventory({
@@ -13,7 +14,8 @@ export default function CupInventory({
   act?: (action: Action) => void
   purchasing?: boolean
 }) {
-  const needed = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
+  const ticket = currentTicket(state)
+  const needed = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
   return (
     <section className="divide-y divide-line" aria-label="컵 종류·사이즈별 재고">
       <div className="flex justify-between gap-3 py-2 text-xs text-muted">

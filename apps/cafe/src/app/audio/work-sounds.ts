@@ -228,7 +228,12 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     previous.cup?.id === current.cup.id &&
     current.cup.craft.cursor > previous.cup.craft.cursor &&
     current.cup.craft.cursor ===
-      recipeFor(current.cup.recipe, cupSize(current.cup.craft.kind), cupService(current.cup.craft.kind)).steps.length
+      recipeFor(
+        current.cup.recipe,
+        cupSize(current.cup.craft.kind),
+        cupService(current.cup.craft.kind),
+        current.cup.craft.customizations,
+      ).steps.length
   )
     return 'complete'
   if (action.type === 'use-start' && previous.cup && current.cup) {

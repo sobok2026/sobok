@@ -1,4 +1,5 @@
 import { recipeCatalog } from '../../content/catalog'
+import { type Customizations, noCustomizations } from '../../content/customizations'
 import { type RecipeId, recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import type { CraftState, GameState } from '../../simulation/state'
@@ -19,11 +20,17 @@ export const craftStations: StationId[] = [
   'pickup',
 ]
 export function operationFor(recipe: RecipeId, craft: CraftState): WorkStep | null {
-  const plan = recipeFor(recipe, cupSize(craft.kind), cupService(craft.kind)).steps
+  const plan = recipeFor(recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations).steps
   return currentWorkStep(plan, craft) ?? null
 }
-export function createCraft(kind: CupKind): CraftState {
-  return { ...createProductionState(), kind, location: 'hand', lidded: false }
+export function createCraft(kind: CupKind, customizations: Customizations = noCustomizations()): CraftState {
+  return {
+    ...createProductionState(),
+    customizations: structuredClone(customizations),
+    kind,
+    location: 'hand',
+    lidded: false,
+  }
 }
 export function nextStep(state: GameState): WorkStep | undefined {
   return state.cup ? (operationFor(state.cup.recipe, state.cup.craft) ?? undefined) : undefined

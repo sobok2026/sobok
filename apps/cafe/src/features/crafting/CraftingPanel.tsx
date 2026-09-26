@@ -3,12 +3,13 @@ import { TextButton } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { isReusableCup } from '../inventory/cups'
+import { currentTicket } from '../service/orders'
 export default function CraftingPanel({ state }: { state: GameState }) {
   return (
     <p className="py-4 text-sm text-muted">
       {state.cup
         ? `컵 위치 · ${state.cup.craft.location === 'hand' ? '손' : STATIONS[state.cup.craft.location].name}`
-        : state.ticket
+        : currentTicket(state)
           ? '컵 보관대에서 컵 준비'
           : 'POS에서 주문 접수'}
     </p>

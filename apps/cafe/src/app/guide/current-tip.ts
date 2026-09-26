@@ -14,12 +14,14 @@ import {
   SERVICE_NAMES,
 } from '../../features/inventory/cups'
 import { preparationTip } from '../../features/preparation/help'
+import { currentTicket } from '../../features/service/orders'
 import { closingTasks } from '../../features/shift/rules'
 import { washingTip } from '../../features/washing/help'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { GameState } from '../../simulation/state'
 
 export function currentTip(state: GameState, panel: StationId | null): Tip {
+  const ticket = currentTicket(state)
   const cup = state.cup
   const carrying = carriedBatch(state)
   if (carrying) {
@@ -62,20 +64,6 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       reason: cup.craft.fault,
       fault: true,
     }
-  if (
-    state.ticket &&
-    (state.ticket.recipe !== state.request ||
-      state.ticket.service !== state.customer?.service ||
-      state.ticket.size !== state.customer?.size)
-  )
-    return {
-      title: '손님 요청과 주문표가 달라요',
-      action: cup
-        ? 'POS 창의 현재 컵 관리에서 컵을 정리하고 주문표를 수정하세요.'
-        : 'POS에서 손님이 요청한 메뉴·온도·사이즈·매장/포장으로 주문표를 수정하세요.',
-      reason: '요청 메뉴·사이즈·이용 방식에 맞는 컵이어야 전달할 수 있어요.',
-      fault: true,
-    }
   if (cup) return craftTip(state, cup)
   if (state.phase === 'closing')
     return {
@@ -91,18 +79,18 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       action: '손님이 나가면 다음 손님이 들어와요. 피처 세척·재료 보충을 해두세요.',
       reason: '라떼에 쓸 우유·폼과 메뉴에 맞는 바모카·호지차 샷을 준비해두세요.',
     }
-  if (!state.ticket)
+  if (!ticket)
     return {
       title: '손님 요청을 POS에 입력하세요',
       action:
         panel === 'pos'
           ? state.customer?.stage === 'ordering'
-            ? '메뉴·온도·사이즈·매장/포장을 확인하고 주문 접수 버튼을 누르세요.'
+            ? '메뉴·온도·사이즈·매장/포장을 확인하고 음료를 담고 결제를 완료하세요.'
             : '손님이 POS에 도착할 때까지 기다려주세요.'
           : 'WASD로 이동하고 마우스로 POS를 본 뒤 E를 누르세요.',
       reason: '손님 요청과 주문표는 별개예요. 카운터 안쪽에서 주문을 받아요.',
     }
-  const kind = cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size)
+  const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
   if (!cleanCupCount(state, kind))
     return {
       title: `${CUP_NAMES[kind]}를 준비하세요`,
@@ -120,6 +108,6 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   return {
     title: `${CUP_NAMES[kind]}를 집으세요`,
     action: '컵 보관대를 보고 E를 누르세요.',
-    reason: `${SERVICE_NAMES[state.ticket.service]} · ${RECIPES[state.ticket.recipe].shortName} 제조를 시작해요.`,
+    reason: `${SERVICE_NAMES[ticket.service]} · ${RECIPES[ticket.recipe].shortName} 제조를 시작해요.`,
   }
 }

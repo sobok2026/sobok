@@ -255,7 +255,7 @@ export function createBlender(scene: THREE.Scene) {
         PREPARATIONS[prep.recipe].steps.some((entry) => entry.equipmentId === 'blender')
       const drinkJar =
         !!cup &&
-        recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind)).steps.some(
+        recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind), cup.craft.customizations).steps.some(
           (entry) => entry.equipmentId === 'blender',
         )
       const jarInUse = prepJar || drinkJar

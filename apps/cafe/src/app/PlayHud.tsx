@@ -1,6 +1,6 @@
 import { DRINK_SIZES } from '../content/drink-sizes'
 import { INGREDIENTS } from '../content/ingredients'
-import { RECIPES, recipeLabel } from '../content/recipes'
+import { RECIPES } from '../content/recipes'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import CleaningHud from '../features/cleaning/CleaningHud'
@@ -11,6 +11,7 @@ import { batchDestination, batchOrigin, carriedBatch } from '../features/invento
 import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, SERVICE_NAMES } from '../features/inventory/cups'
 import { SUPPLIES } from '../features/inventory/supplies'
 import PreparationHud from '../features/preparation/PreparationHud'
+import { currentTicket, itemCustomizations } from '../features/service/orders'
 import { WASH_NAMES, washDestination } from '../features/washing/rules'
 import WashingHud from '../features/washing/WashingHud'
 import type { Action } from '../simulation/actions'
@@ -49,12 +50,13 @@ export default function PlayHud({
   moveCup: (station: StationId) => void
   pause: (mode?: 'pause' | 'overview') => void
 }) {
+  const ticket = currentTicket(state)
   const step = nextStep(state)
   const canTakeOrder =
     !!state.customer &&
     !state.customer.visit &&
     state.customer.stage !== 'leaving' &&
-    (state.customer.stage === 'ordering' || !!state.ticket)
+    state.customer.stage === 'ordering'
   const heldBatch = carriedBatch(state)
   const showPreparation = !heldBatch && !!state.preparation && target === 'prep'
   const showColdBrew = !heldBatch && !!state.coldBrew && target === 'cold-prep'
@@ -70,11 +72,6 @@ export default function PlayHud({
     !!state.cleaning &&
     (target === state.cleaning.station || (target === 'wash' && cupCount(state.cleaning.heldCups) > 0))
   const focusedWork = !panel && (showPreparation || showColdBrew || showWashing || showCrafting || showCleaning)
-  const mismatch =
-    !!state.ticket &&
-    (state.ticket.recipe !== state.request ||
-      state.ticket.service !== state.customer?.service ||
-      state.ticket.size !== state.customer?.size)
   const carried = heldBatch
     ? {
         name: `${INGREDIENTS[heldBatch.ingredient].name} 용기`,
@@ -92,7 +89,7 @@ export default function PlayHud({
           : state.cup?.craft.location === 'hand'
             ? { name: CUP_NAMES[state.cup.craft.kind], destination: step?.station ?? ('pickup' as const) }
             : null
-  const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
+  const selectedCupKind = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
   const targetAction =
     cupCount(state.cleaning?.heldCups) && target === 'wash'
       ? '사용한 컵 내려놓기'
@@ -126,7 +123,7 @@ export default function PlayHud({
 
   return (
     <>
-      {!panel && state.ticket ? (
+      {!panel && ticket ? (
         <aside
           className="pointer-events-none absolute top-21 left-6 z-6 w-64 rounded-xl border border-white/60 bg-surface/95 p-4 shadow-hud max-tablet:left-4 max-tablet:w-56"
           aria-label="현재 주문"
@@ -134,21 +131,18 @@ export default function PlayHud({
           <div className="mb-1.5 flex items-center justify-between gap-3 text-xs text-muted">
             <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
             <span className="font-medium">
-              {SERVICE_NAMES[state.ticket.service]} · {RECIPES[state.ticket.recipe].variant}
+              {SERVICE_NAMES[ticket.service]} · {RECIPES[ticket.recipe].variant}
             </span>
           </div>
           <h2 className="text-base leading-snug font-semibold tracking-tight">
-            {RECIPES[state.ticket.recipe].shortName}
-            <span className="mt-1 block text-sm font-medium text-muted">{DRINK_SIZES[state.ticket.size].name}</span>
+            {RECIPES[ticket.recipe].shortName}
+            <span className="mt-1 block text-sm font-medium text-muted">{DRINK_SIZES[ticket.size].name}</span>
           </h2>
-          {mismatch ? (
-            <p className="mt-3 border-t border-line pt-3 text-xs text-danger">
-              요청: {state.customer ? SERVICE_NAMES[state.customer.service] : ''} ·{' '}
-              {state.request ? recipeLabel(state.request, state.customer?.size) : '요청 없음'}
-              <br />
-              {state.cup ? '컵 정리 후 POS에서 주문 수정' : 'POS에서 주문 수정'}
-            </p>
-          ) : null}
+          <p className="mt-2 text-xs text-muted">
+            전달 {state.sale?.lines.reduce((sum, line) => sum + line.served, 0)} /{' '}
+            {state.sale?.lines.reduce((sum, line) => sum + line.quantity, 0)}잔
+          </p>
+          {ticket ? <p className="mt-1 text-xs text-muted">{itemCustomizations(ticket).join(' · ')}</p> : null}
         </aside>
       ) : null}
       {!panel && !focusedWork && (target || carried || needsStaffAccess) ? (

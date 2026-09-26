@@ -3,10 +3,12 @@ import { dirtyTableCount } from '../cleaning/rules'
 import { carriedBatch } from '../inventory/batches'
 import { cupCount } from '../inventory/cups'
 import { CUSTOMER_STATUS } from '../service/customer'
+import { currentTicket } from '../service/orders'
 import { washItems, washStock } from '../washing/rules'
 export function closingTasks(state: GameState) {
   return [
-    state.ticket || state.cup ? '남은 주문 마무리' : '',
+    currentTicket(state) || state.cup ? '남은 주문 마무리' : '',
+    state.sale?.paidAt === null && state.sale.payments.length ? '진행 중인 결제 마무리 또는 취소' : '',
     state.customer ? `손님 ${CUSTOMER_STATUS[state.customer.stage]} · 퇴장까지 응대` : '',
     state.preparation ? '부재료 준비 마무리' : '',
     state.coldBrew && state.coldBrew.stage !== 'extracting' ? '콜드 브루 계량·회수·보관 마무리' : '',
@@ -41,6 +43,8 @@ export const emptyTotals = (openingCash: number): GameState['totals'] => ({
   suppliesUsed: {},
   served: 0,
   revenue: 0,
+  cashSales: 0,
+  cardSales: 0,
   wastedCups: 0,
   cleaned: 0,
   washed: 0,

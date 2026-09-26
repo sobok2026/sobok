@@ -67,9 +67,15 @@ export function createCustomerVisuals(scene: THREE.Scene) {
   const cup = new THREE.Group()
   person.add(cup)
   cup.scale.setScalar(0.64)
-  const bodies = new Map(cupKinds.map((kind) => [kind, createCupBody(cup, kind)]))
-  const liquidMaterial = new THREE.MeshStandardMaterial({ color: '#493022', roughness: 0.5 })
-  const liquid = cylinder(cup, 0.1, 0.008, liquidMaterial)
+  const cupDisplays = Array.from({ length: 3 }, () => {
+    const root = new THREE.Group()
+    cup.add(root)
+    const bodies = new Map(cupKinds.map((kind) => [kind, createCupBody(root, kind)]))
+    const liquidMaterial = new THREE.MeshStandardMaterial({ color: '#493022', roughness: 0.5 })
+    const liquid = cylinder(root, 0.1, 0.008, liquidMaterial)
+    return { root, bodies, liquidMaterial, liquid }
+  })
+  let shownCups = ''
   const palette = ['#bc997d', '#708a83', '#ad806c', '#8a8e6d', '#978697', '#8c9aaa']
   let shownId: string | null = null
   let visualTime = 0
@@ -91,14 +97,6 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         root.position.copy(position)
         root.rotation.y = customer.yaw
         shirt.color.set(palette[(customer.orderNumber - 1) % palette.length])
-        liquidMaterial.color.set(RECIPES[customer.recipe].color)
-        const kind = cupKindFor(customer.recipe, customer.service, customer.size)
-        for (const [id, body] of bodies) {
-          body.root.visible = id === kind
-          body.lid.visible = customer.service === 'takeout'
-        }
-        liquid.position.y = CUP_DIMENSIONS[kind].height - 0.014
-        liquid.scale.setScalar((CUP_DIMENSIONS[kind].top - 0.006) / 0.1)
         visualTime = state.time
       } else if (running) root.position.lerp(position, 1 - Math.exp(-delta * 20))
       if (running) visualTime += delta
@@ -115,12 +113,37 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         leg.hip.rotation.x = (-Math.PI / 2) * sitting + stride * (i ? -0.38 : 0.38)
         leg.knee.rotation.x = (Math.PI / 2) * sitting
       })
-      const holding = customerHasCup(customer)
-      arms[0].rotation.x = walking ? -stride * 0.3 : 0.05
+      const holding = customerHasCup(state)
+      const received = (state.sale?.lines ?? [])
+        .flatMap((line) =>
+          line.service === 'takeout' || customer.stage !== 'leaving'
+            ? Array.from({ length: line.served }, () => line)
+            : [],
+        )
+        .slice(0, 3)
+      const cupKey = received.map((line) => `${line.id}:${line.recipe}:${line.size}:${line.service}`).join('|')
+      if (cupKey !== shownCups) {
+        shownCups = cupKey
+        cupDisplays.forEach((display, index) => {
+          const line = received[index]
+          display.root.visible = !!line
+          if (!line) return
+          const kind = cupKindFor(line.recipe, line.service, line.size)
+          display.root.position.x = (index - (received.length - 1) / 2) * 0.24
+          display.liquidMaterial.color.set(RECIPES[line.recipe].color)
+          for (const [id, body] of display.bodies) {
+            body.root.visible = id === kind
+            body.lid.visible = line.service === 'takeout'
+          }
+          display.liquid.position.y = CUP_DIMENSIONS[kind].height - 0.014
+          display.liquid.scale.setScalar((CUP_DIMENSIONS[kind].top - 0.006) / 0.1)
+        })
+      }
+      arms[0].rotation.x = received.length > 1 ? -0.8 : walking ? -stride * 0.3 : 0.05
       arms[1].rotation.x = holding ? -0.8 - sitting * 0.6 - sipping * 0.6 : stride * 0.3
       cup.visible = holding
       cup.position.set(
-        0.29 - sipping * 0.14,
+        (received.length > 1 ? 0 : 0.29) - sipping * 0.14,
         0.97 + 0.27 * sitting + sipping * 0.3,
         0.37 + sitting * 0.14 - sipping * 0.09,
       )

@@ -2,9 +2,11 @@ import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { CUP_STYLE_NAMES, cupKindFor, cupStyle } from '../inventory/cups'
+import { currentTicket } from '../service/orders'
 import { WASH_NAMES, washItems, washStock } from './rules'
 export default function WashingPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const needed = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
+  const ticket = currentTicket(state)
+  const needed = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
   const washingQueue = (['pitcher', 'hot-mug', 'iced-glass'] as const)
     .map((group) => {
       const items = washItems.filter((item) => (item === 'pitcher' ? item : cupStyle(item)) === group)

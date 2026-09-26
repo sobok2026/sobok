@@ -28,7 +28,7 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
           : state.customer?.stage === 'pickup'
             ? '손님 요청을 확인하고 F로 전달하세요.'
             : '손님이 픽업대에 도착하면 F로 전달하세요.',
-      reason: '전달이 완료되면 매출과 완료 주문에 반영돼요.',
+      reason: '한 잔씩 전달하고, 마지막 잔을 받으면 손님이 매장을 이용해요.',
     }
   const job = state.jobs.find((item) => item.cupId === cup.id)
   if (job)

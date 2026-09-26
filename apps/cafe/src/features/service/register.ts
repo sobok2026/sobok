@@ -1,6 +1,5 @@
 import * as THREE from 'three'
-import { DRINK_SIZES } from '../../content/drink-sizes'
-import { RECIPES, recipePrice } from '../../content/recipes'
+import { RECIPES } from '../../content/recipes'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -10,6 +9,7 @@ import {
   equipmentTube as tube,
 } from '../../shared/visuals/equipment-geometry'
 import type { GameState } from '../../simulation/state'
+import { saleTotal } from './orders'
 
 export function createRegister(scene: THREE.Scene) {
   const root = new THREE.Group()
@@ -128,9 +128,9 @@ export function createRegister(scene: THREE.Scene) {
   let previous = ''
   return {
     update(state: GameState) {
-      const ticket = state.ticket
-      receipt.visible = !!ticket
-      const key = `${state.phase}:${state.orderNumber}:${ticket?.recipe}:${ticket?.size}:${ticket?.service}:${state.customer?.stage}`
+      const sale = state.sale
+      receipt.visible = !!sale && sale.paidAt !== null
+      const key = `${state.phase}:${state.orderNumber}:${JSON.stringify(sale)}:${state.customer?.stage}`
       if (key === previous) return
       previous = key
       const texture = (screen.material as THREE.MeshStandardMaterial).map!
@@ -138,55 +138,67 @@ export function createRegister(scene: THREE.Scene) {
       const ctx = canvas.getContext('2d')!,
         w = canvas.width,
         h = canvas.height
-      ctx.fillStyle = '#edf0ec'
+      ctx.fillStyle = '#123f35'
       ctx.fillRect(0, 0, w, h)
-      ctx.fillStyle = '#163e33'
-      ctx.fillRect(0, 0, w, h * 0.17)
       ctx.fillStyle = '#ffffff'
-      ctx.font = `600 ${h * 0.07}px sans-serif`
+      ctx.fillRect(w * 0.012, h * 0.02, w * 0.31, h * 0.86)
+      ctx.fillStyle = '#203c34'
+      ctx.textAlign = 'center'
+      ctx.font = `600 ${h * 0.054}px sans-serif`
+      ctx.fillText('DAY SHIFT', w * 0.17, h * 0.1)
       ctx.textAlign = 'left'
-      ctx.fillText('DAY SHIFT', w * 0.055, h * 0.115)
-      ctx.font = `${h * 0.045}px sans-serif`
-      ctx.textAlign = 'right'
-      ctx.fillText('ORDER  /  POS', w * 0.95, h * 0.105)
-      const labels = ['COFFEE', 'LATTE', 'TEA', 'COLD BREW', 'HOT', 'ICED']
-      labels.forEach((label, i) => {
-        const x = w * (0.05 + (i % 3) * 0.19),
-          y = h * (0.25 + Math.floor(i / 3) * 0.28)
-        ctx.fillStyle = i < 3 ? '#dae3dc' : '#e6ddd0'
-        ctx.beginPath()
-        ctx.roundRect(x, y, w * 0.17, h * 0.23, 7)
-        ctx.fill()
-        ctx.fillStyle = '#3e6052'
-        ctx.beginPath()
-        ctx.roundRect(x + w * 0.064, y + h * 0.05, w * 0.044, h * 0.074, 5)
-        ctx.fill()
-        ctx.textAlign = 'center'
-        ctx.font = `500 ${h * 0.036}px sans-serif`
-        ctx.fillText(label, x + w * 0.085, y + h * 0.186)
-      })
-      ctx.fillStyle = '#ffffff'
-      ctx.fillRect(w * 0.65, h * 0.23, w * 0.31, h * 0.54)
-      ctx.fillStyle = '#274c3f'
-      ctx.textAlign = 'left'
-      ctx.font = `600 ${h * 0.044}px sans-serif`
-      ctx.fillText(ticket ? `주문 #${state.orderNumber}` : '주문 대기', w * 0.68, h * 0.32)
-      if (ticket) {
-        ctx.font = `${h * 0.032}px sans-serif`
-        ctx.fillText(RECIPES[ticket.recipe].name, w * 0.68, h * 0.43, w * 0.26)
-        ctx.fillText(
-          `${DRINK_SIZES[ticket.size].name} · ${ticket.service === 'dine-in' ? '매장' : '포장'}`,
-          w * 0.68,
-          h * 0.51,
-        )
-        ctx.font = `600 ${h * 0.064}px sans-serif`
-        ctx.fillText(`${recipePrice(ticket.recipe, ticket.size).toLocaleString('ko-KR')}원`, w * 0.68, h * 0.7)
+      ctx.font = `${h * 0.032}px sans-serif`
+      ctx.fillText(`주문 ${String(state.orderNumber).padStart(3, '0')}`, w * 0.03, h * 0.18)
+      if (!sale) ctx.fillText('주문 대기', w * 0.1, h * 0.46)
+      for (const [index, line] of (sale?.lines.slice(0, 4) ?? []).entries()) {
+        const y = h * (0.23 + index * 0.1)
+        ctx.fillStyle = index === 0 ? '#009b7a' : '#d7e9e3'
+        ctx.fillRect(w * 0.022, y, w * 0.289, h * 0.087)
+        ctx.fillStyle = index === 0 ? '#ffffff' : '#203c34'
+        ctx.font = `${h * 0.029}px sans-serif`
+        ctx.fillText(RECIPES[line.recipe].name, w * 0.03, y + h * 0.035, w * 0.21)
+        ctx.fillText(`${line.quantity}잔`, w * 0.265, y + h * 0.055)
       }
-      ctx.fillStyle = '#c6d6ca'
-      ctx.fillRect(0, h * 0.86, w, h * 0.14)
-      ctx.fillStyle = '#254b3a'
-      ctx.font = `${h * 0.04}px sans-serif`
-      ctx.fillText('주문 접수', w * 0.06, h * 0.95)
+      ctx.fillStyle = '#d7e9e3'
+      ctx.fillRect(w * 0.025, h * 0.9, w * 0.29, h * 0.08)
+      ctx.fillStyle = '#203c34'
+      ctx.font = `600 ${h * 0.04}px sans-serif`
+      ctx.fillText(
+        `${saleTotal(sale).toLocaleString('ko-KR')} ${sale?.paidAt != null ? '결제 완료' : '결제'}`,
+        w * 0.035,
+        h * 0.957,
+      )
+      ctx.fillStyle = '#ffffff'
+      ctx.font = `${h * 0.031}px sans-serif`
+      ctx.fillText('주문 / 커스텀', w * 0.35, h * 0.075)
+      const categories = ['즐겨찾기', '에스프레소', '콜드 브루', '티바나']
+      categories.forEach((label, index) => {
+        ctx.fillStyle = index === 0 ? '#009b7a' : '#315b50'
+        ctx.fillRect(w * (0.4 + index * 0.146), h * 0.12, w * 0.14, h * 0.1)
+        ctx.fillStyle = '#ffffff'
+        ctx.font = `${h * 0.029}px sans-serif`
+        ctx.fillText(label, w * (0.41 + index * 0.146), h * 0.18, w * 0.12)
+      })
+      for (let index = 0; index < 20; index++) {
+        const x = w * (0.4 + (index % 5) * 0.117),
+          y = h * (0.24 + Math.floor(index / 5) * 0.16)
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(x, y, w * 0.11, h * 0.145)
+        ctx.fillStyle = '#315b50'
+        ctx.font = `${h * 0.026}px sans-serif`
+        ctx.fillText(
+          ['아메리카노', '카페 라떼', '콜드 브루', '말차', '호지차'][index % 5],
+          x + w * 0.006,
+          y + h * 0.04,
+          w * 0.1,
+        )
+      }
+      for (let index = 0; index < 5; index++) {
+        ctx.fillStyle = index === 1 ? '#009b7a' : '#315b50'
+        ctx.fillRect(w * 0.335, h * (0.24 + index * 0.128), w * 0.055, h * 0.12)
+      }
+      ctx.fillStyle = '#315b50'
+      ctx.fillRect(w * 0.335, h * 0.9, w * 0.65, h * 0.08)
       texture.needsUpdate = true
     },
   }

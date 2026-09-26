@@ -4,11 +4,13 @@ import type { StationId } from '../../content/stations'
 import { craftStations, nextStep } from '../../features/crafting/rules'
 import { carriedBatch } from '../../features/inventory/batches'
 import { cleanCupCount, cupCount, cupKindFor } from '../../features/inventory/cups'
+import { currentTicket } from '../../features/service/orders'
 import { washDestination } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 
 export function interactionAt(current: GameState, id: StationId): Action | 'work' | 'panel' {
+  const ticket = currentTicket(current)
   const carrying = carriedBatch(current)
   if (carrying && id !== 'pos') {
     if (id === 'stock' || id === 'shelf')
@@ -48,9 +50,9 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
   }
   if (
     id === 'cups' &&
-    current.ticket &&
+    ticket &&
     !current.cup &&
-    cleanCupCount(current, cupKindFor(current.ticket.recipe, current.ticket.service, current.ticket.size)) > 0
+    cleanCupCount(current, cupKindFor(ticket.recipe, ticket.service, ticket.size)) > 0
   ) {
     return { type: 'take-cup' }
   }

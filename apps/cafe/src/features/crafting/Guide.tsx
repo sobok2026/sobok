@@ -4,13 +4,15 @@ import { STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { cupService, cupSize } from '../inventory/cups'
 import { operationDetails } from '../production/presentation'
+import { currentTicket } from '../service/orders'
 
 export function RecipeGuide({ state }: { state: GameState }) {
-  const recipe = state.cup?.recipe ?? state.ticket?.recipe
-  const size = state.cup ? cupSize(state.cup.craft.kind) : state.ticket?.size
-  const service = state.cup ? cupService(state.cup.craft.kind) : state.ticket?.service
+  const ticket = currentTicket(state)
+  const recipe = state.cup?.recipe ?? ticket?.recipe
+  const size = state.cup ? cupSize(state.cup.craft.kind) : ticket?.size
+  const service = state.cup ? cupService(state.cup.craft.kind) : ticket?.service
   if (!recipe || !size || !service) return null
-  const definition = recipeFor(recipe, size, service)
+  const definition = recipeFor(recipe, size, service, state.cup?.craft.customizations ?? ticket?.customizations)
   return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">

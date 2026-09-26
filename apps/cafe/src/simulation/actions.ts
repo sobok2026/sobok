@@ -1,15 +1,22 @@
-import type { DrinkSize } from '../content/drink-sizes'
 import type { IngredientId } from '../content/ingredients'
-import type { RecipeId } from '../content/recipes'
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
-import type { DisposableCupKind, ServiceMode } from '../features/inventory/cups'
+import type { DisposableCupKind } from '../features/inventory/cups'
 import type { SupplyId } from '../features/inventory/supplies'
 import type { PreparationId } from '../features/preparation/rules'
 import type { WashItem } from '../features/washing/rules'
+import type { OrderItem } from './state'
 
+export type PosAction =
+  | { type: 'pos-add'; item: OrderItem }
+  | { type: 'pos-update'; id: string; item: OrderItem; quantity: number }
+  | { type: 'pos-remove'; id: string }
+  | { type: 'pos-split'; id: string }
+  | { type: 'pos-clear' }
+  | { type: 'pos-pay'; id: string; method: 'cash' | 'card'; tendered: number }
+  | { type: 'pos-void'; id: string }
 export type Action =
-  | { type: 'ticket'; recipe: RecipeId; service: ServiceMode; size: DrinkSize }
+  | PosAction
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }
   | { type: 'prep-use' }

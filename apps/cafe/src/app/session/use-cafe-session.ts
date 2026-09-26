@@ -132,9 +132,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     flags.current.panel = null
     setPanel(null)
   }
-  function closePanel() {
+  function closePanel(lock = true) {
     dismissPanel()
-    scene.current?.lock()
+    if (lock) scene.current?.lock()
   }
   function beginWork() {
     dismissPanel()
