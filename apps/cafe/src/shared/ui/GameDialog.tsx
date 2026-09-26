@@ -34,7 +34,8 @@ export default function GameDialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={[
-          'max-h-full w-full overflow-y-auto rounded-2xl bg-surface p-7 shadow-dialog outline-none [scrollbar-width:thin]',
+          'max-h-full w-full overflow-y-auto rounded-2xl bg-surface p-7 shadow-dialog outline-none',
+          '[scrollbar-width:thin]',
           wide ? 'max-w-140' : 'max-w-100',
         ].join(' ')}
         onKeyDown={(event) => {
