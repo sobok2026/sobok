@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import type { StationId } from '../content/stations'
 import { isCupSurface, STATIONS } from '../content/stations'
 import CleaningPanel from '../features/cleaning/CleaningPanel'
@@ -40,13 +41,13 @@ export default function StationPanel({
   return (
     <div className="pointer-events-none absolute inset-0 z-8 bg-[linear-gradient(90deg,#263c281f,transparent_70%)]">
       <section
-        className={[
-          'pointer-events-auto absolute top-21 bottom-6 left-6 w-90 [scrollbar-width:thin]',
-          '[scrollbar-color:#c6cdb9_transparent] overflow-auto rounded-2xl border border-white/60',
-          'bg-surface p-6 shadow-panel compact:top-20 compact:p-5 max-wide:left-5',
-          'max-tablet:top-21 max-tablet:bottom-4 max-tablet:left-3',
-          'max-tablet:max-w-[calc(100vw-1.5rem)]',
-        ].join(' ')}
+        className={clsx(
+          'pointer-events-auto absolute top-21 bottom-6 left-6',
+          'w-90 [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent] overflow-auto',
+          'rounded-2xl border border-white/60 bg-surface p-6 shadow-panel',
+          'compact:top-20 compact:p-5 max-wide:left-5',
+          'max-tablet:top-21 max-tablet:bottom-4 max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]',
+        )}
       >
         <div className="flex items-center justify-between">
           <div>
@@ -54,10 +55,10 @@ export default function StationPanel({
           </div>
           <button
             type="button"
-            className={[
-              'pointer-events-auto grid size-10 shrink-0 place-items-center rounded-full border-0',
-              'border-line bg-transparent text-[1.625rem] text-[#8e9881]',
-            ].join(' ')}
+            className={clsx(
+              'pointer-events-auto grid size-10 shrink-0 place-items-center',
+              'rounded-full border-0 border-line bg-transparent text-[1.625rem] text-[#8e9881]',
+            )}
             onClick={() => closePanel()}
             aria-label="작업대 닫기"
           >

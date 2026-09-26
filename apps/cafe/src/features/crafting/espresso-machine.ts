@@ -50,18 +50,22 @@ export function createEspressoMachine(scene: THREE.Scene) {
     steel,
     [-0.4, -0.2, 0, 0.2, 0.4].map((x) => [x, 0.044, 0.22]),
   )
+
   for (const x of [-0.46, 0.46]) {
     box(root, [0.12, 0.045, 0.12], [x, 0.017, -0.08], rubber)
     box(root, [0.12, 0.045, 0.12], [x, 0.017, 0.43], rubber)
   }
+
   // Recessed stainless back, separate copper shoulders, and a projecting brew group.
   box(root, [0.99, 0.52, 0.3], [0, 0.32, -0.065], black, 0.035)
   box(root, [0.79, 0.29, 0.02], [0, 0.275, 0.095], steel)
   box(root, [1.04, 0.052, 0.38], [0, 0.588, -0.045], black, 0.025)
+
   for (const x of [-0.46, 0.46]) {
     box(root, [0.16, 0.48, 0.35], [x, 0.31, 0.045], copper, 0.048)
     box(root, [0.022, 0.49, 0.37], [x + Math.sign(x) * 0.08, 0.31, 0.035], black, 0.009)
   }
+
   box(root, [0.32, 0.105, 0.35], [-0.23, 0.53, 0.23], copper, 0.035)
   const brewControl = new THREE.Group()
   brewControl.position.set(-0.23, 0.585, 0.31)
@@ -69,6 +73,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
   root.add(brewControl)
   const face = mesh(brewControl, new THREE.CylinderGeometry(0.13, 0.13, 0.027, 48), black)
   face.rotation.x = Math.PI / 2
+
   panel(
     brewControl,
     0.23,
@@ -86,6 +91,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ctx.font = canvasFont(w * 0.074, 500)
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
+
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2 - Math.PI / 2
         const x = w / 2 + Math.cos(a) * w * 0.37,
@@ -97,6 +103,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
         ctx.fillStyle = '#263034'
         ctx.fillText(String((i % 3) + 1), x, y)
       }
+
       ctx.fillStyle = '#dfece5'
       ctx.font = canvasFont(w * 0.055)
       ctx.fillText('ESPRESSO', w / 2, h * 0.44)
@@ -104,6 +111,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
     },
     true,
   )
+
   box(root, [0.17, 0.052, 0.125], [-0.23, 0.442, 0.44], black)
   const outlet = mesh(root, new THREE.CylinderGeometry(0.019, 0.014, 0.043, 24), chrome, [-0.23, 0.438, 0.49])
   outlet.castShadow = false
@@ -113,6 +121,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
   console.rotation.x = -0.48
   root.add(console)
   box(console, [0.29, 0.15, 0.045], [0, 0, 0], black, 0.018)
+
   panel(
     console,
     0.26,
@@ -130,11 +139,13 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ctx.font = canvasFont(h * 0.11)
       ctx.fillText('READY TO BREW', w * 0.51, h * 0.62)
       ctx.fillStyle = '#9aa5aa'
+
       for (const x of [0.04, 0.9])
         for (let i = 0; i < 3; i++) ctx.fillRect(w * x, h * (0.12 + i * 0.26), w * 0.06, h * 0.17)
     },
     true,
   )
+
   const dial = mesh(console, new THREE.CylinderGeometry(0.021, 0.023, 0.025, 24), rubber, [-0.1, -0.053, 0.035])
   dial.rotation.x = Math.PI / 2
 
@@ -166,6 +177,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ]),
     )
   }
+
   // Chrome steam assembly with insulated grip, gauge, and curved wand.
   const steamHead = mesh(root, new THREE.CylinderGeometry(0.073, 0.073, 0.21, 32), chrome, [0.4, 0.51, 0.24])
   steamHead.rotation.z = Math.PI / 2
@@ -191,6 +203,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
     0.023,
     black,
   )
+
   panel(root, 0.078, 0.078, [0.465, 0.29, 0.227], (ctx, w, h) => {
     ctx.fillStyle = '#11171a'
     ctx.beginPath()
@@ -199,6 +212,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
     ctx.strokeStyle = '#b9c1c2'
     ctx.lineWidth = 9
     ctx.stroke()
+
     for (let i = 0; i < 10; i++) {
       const a = 0.7 + (i / 9) * 4.9
       ctx.beginPath()
@@ -206,12 +220,14 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ctx.lineTo(w / 2 + Math.sin(a) * w * 0.4, h / 2 + Math.cos(a) * h * 0.4)
       ctx.stroke()
     }
+
     ctx.strokeStyle = '#f0e7d3'
     ctx.beginPath()
     ctx.moveTo(w / 2, h / 2)
     ctx.lineTo(w * 0.29, h * 0.28)
     ctx.stroke()
   })
+
   instances(
     root,
     new THREE.BoxGeometry(0.005, 0.12, 0.002),

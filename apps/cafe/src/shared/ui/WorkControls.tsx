@@ -1,15 +1,16 @@
+import clsx from 'clsx'
 import type { ComponentProps, ReactNode } from 'react'
 
 export function WorkHud({ children, ...props }: Omit<ComponentProps<'section'>, 'className'>) {
   return (
     <section
       {...props}
-      className={[
-        'group/work absolute bottom-6 left-1/2 z-6 max-h-[calc(100dvh-12rem)] w-110',
-        'max-w-[calc(100%-2rem)] -translate-x-1/2 overflow-y-auto rounded-panel border',
-        'border-white/70 bg-surface/97 p-5 shadow-hud [scrollbar-width:thin] compact:bottom-4',
-        'compact:p-4',
-      ].join(' ')}
+      className={clsx(
+        'group/work absolute bottom-6 left-1/2 z-6 -translate-x-1/2',
+        'max-h-[calc(100dvh-12rem)] w-110 max-w-[calc(100%-2rem)] overflow-y-auto [scrollbar-width:thin]',
+        'rounded-panel border border-white/70 bg-surface/97 p-5 shadow-hud',
+        'compact:bottom-4 compact:p-4',
+      )}
     >
       {children}
     </section>
@@ -19,10 +20,11 @@ export function WorkHud({ children, ...props }: Omit<ComponentProps<'section'>, 
 export function WorkTitle({ children }: { children: ReactNode }) {
   return (
     <h2
-      className={[
+      className={clsx(
         'mb-4 text-lg leading-snug font-semibold tracking-tight',
-        'group-data-[fault=true]/work:text-danger compact:mb-3',
-      ].join(' ')}
+        'group-data-[fault=true]/work:text-danger',
+        'compact:mb-3',
+      )}
     >
       {children}
     </h2>
@@ -41,12 +43,11 @@ export function WorkButton(props: WorkButtonProps) {
   return (
     <button
       type="button"
-      className={[
-        'flex min-h-11 w-full min-w-0 grow basis-36 touch-none items-center justify-center',
-        'gap-2 rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-sm',
-        'font-medium text-ink select-none data-[primary=true]:border-brand',
-        'data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
-      ].join(' ')}
+      className={clsx(
+        'flex min-h-11 w-full min-w-0 grow basis-36 touch-none items-center justify-center gap-2 select-none',
+        'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-sm font-medium text-ink',
+        'data-[primary=true]:border-brand data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
+      )}
       data-primary={props.primary && !props.disabled}
       disabled={props.disabled}
       onClick={props.hold ? undefined : props.onUse}
@@ -101,13 +102,14 @@ export function WorkMeter({
 }) {
   const scale = tolerance === undefined ? 1 : 1.3
   const reached = ratio >= 1 - (tolerance ?? 0) && (tolerance === undefined || ratio <= 1 + tolerance)
+
   return (
     <div className="mb-4 compact:mb-3">
       <div
-        className={[
-          'mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1.5 text-label',
-          'text-muted tabular-nums',
-        ].join(' ')}
+        className={clsx(
+          'mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1.5',
+          'text-label text-muted tabular-nums',
+        )}
       >
         <strong className="text-base font-semibold text-ink">{value}</strong>
         {tolerance !== undefined ? <span className="text-xs">{reached ? '목표 도달' : '목표 구간'}</span> : null}
@@ -134,10 +136,10 @@ export function WorkMeter({
           </>
         ) : null}
         <i
-          className={[
+          className={clsx(
             'absolute inset-y-0 left-0 bg-brand/65 transition-[width] duration-90 ease-linear',
             'motion-reduce:transition-none',
-          ].join(' ')}
+          )}
           style={{ width: `${Math.min(100, (ratio / scale) * 100)}%` }}
         />
       </div>

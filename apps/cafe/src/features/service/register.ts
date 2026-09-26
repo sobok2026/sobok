@@ -12,6 +12,8 @@ import {
 import type { GameState } from '../../simulation/state'
 import { saleTotal } from './orders'
 
+const KEY_COLORS: Partial<Record<number, string>> = { 9: '#ab5a4d', 11: '#436c51' }
+
 export function createRegister(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Counter POS terminal'
@@ -25,6 +27,7 @@ export function createRegister(scene: THREE.Scene) {
   // CX7's low, broad, chamfered black foot and short rear bracket define its silhouette.
   const footprint = new THREE.Shape()
   footprint.moveTo(-0.218, -0.15)
+
   for (const [x, z] of [
     [0.218, -0.15],
     [0.24, -0.128],
@@ -35,6 +38,7 @@ export function createRegister(scene: THREE.Scene) {
     [-0.24, -0.128],
   ])
     footprint.lineTo(x, z)
+
   footprint.closePath()
   const baseGeometry = new THREE.ExtrudeGeometry(footprint, {
     depth: 0.022,
@@ -48,8 +52,10 @@ export function createRegister(scene: THREE.Scene) {
   baseGeometry.scale(0.86, 0.75, 0.82)
   mesh(root, baseGeometry, black, [0, 0.024, 0.035])
   box(root, [0.4, 0.01, 0.254], [0, 0.009, 0.035], rubber, 0.004)
+
   for (const x of [-0.177, 0.177])
     for (const z of [-0.062, 0.135]) box(root, [0.036, 0.012, 0.03], [x, 0.007, z], rubber, 0.003)
+
   box(root, [0.11, 0.15, 0.086], [0, 0.125, -0.032], black, 0.006).rotation.x = -0.28
   const swivel = mesh(root, new THREE.CylinderGeometry(0.031, 0.031, 0.135, 24), black, [0, 0.205, -0.012])
   swivel.rotation.z = Math.PI / 2
@@ -66,12 +72,14 @@ export function createRegister(scene: THREE.Scene) {
     Array.from({ length: 12 }, (_, i) => [0, -0.05 + i * 0.009, -0.0165]),
   )
   const screen = panel(monitor, 0.592, 0.331, [0, 0.007, 0.019], () => {}, true)
+
   panel(monitor, 0.081, 0.011, [0, -0.171, 0.019], (ctx, w, h) => {
     ctx.fillStyle = '#d9dcdf'
     ctx.textAlign = 'center'
     ctx.font = canvasFont(h * 0.72, 500)
     ctx.fillText('NCR VOYIX', w / 2, h * 0.8)
   })
+
   tube(
     root,
     [
@@ -105,6 +113,7 @@ export function createRegister(scene: THREE.Scene) {
   reader.rotation.x = -0.76
   root.add(reader)
   box(reader, [0.125, 0.235, 0.045], [0, 0, 0], black, 0.015)
+
   panel(
     reader,
     0.1,
@@ -117,8 +126,9 @@ export function createRegister(scene: THREE.Scene) {
       ctx.textAlign = 'center'
       ctx.font = canvasFont(h * 0.075)
       ctx.fillText('READY', w / 2, h * 0.26)
+
       for (let i = 0; i < 12; i++) {
-        ctx.fillStyle = i === 11 ? '#436c51' : i === 9 ? '#ab5a4d' : '#a6afb1'
+        ctx.fillStyle = KEY_COLORS[i] ?? '#a6afb1'
         ctx.beginPath()
         ctx.roundRect(w * (0.09 + (i % 3) * 0.3), h * (0.49 + Math.floor(i / 3) * 0.11), w * 0.22, h * 0.075, 6)
         ctx.fill()
@@ -126,7 +136,9 @@ export function createRegister(scene: THREE.Scene) {
     },
     true,
   )
+
   let previous = ''
+
   return {
     update(state: GameState) {
       const sale = state.sale
@@ -139,6 +151,7 @@ export function createRegister(scene: THREE.Scene) {
       const ctx = canvas.getContext('2d')!,
         w = canvas.width,
         h = canvas.height
+
       paintTexture(texture, () => {
         ctx.fillStyle = '#123f35'
         ctx.fillRect(0, 0, w, h)
@@ -152,6 +165,7 @@ export function createRegister(scene: THREE.Scene) {
         ctx.font = canvasFont(h * 0.032)
         ctx.fillText(`주문 ${String(state.orderNumber).padStart(3, '0')}`, w * 0.03, h * 0.18)
         if (!sale) ctx.fillText('주문 대기', w * 0.1, h * 0.46)
+
         for (const [index, line] of (sale?.lines.slice(0, 4) ?? []).entries()) {
           const y = h * (0.23 + index * 0.1)
           ctx.fillStyle = index === 0 ? '#009b7a' : '#d7e9e3'
@@ -161,6 +175,7 @@ export function createRegister(scene: THREE.Scene) {
           ctx.fillText(RECIPES[line.recipe].name, w * 0.03, y + h * 0.035, w * 0.21)
           ctx.fillText(`${line.quantity}잔`, w * 0.265, y + h * 0.055)
         }
+
         ctx.fillStyle = '#d7e9e3'
         ctx.fillRect(w * 0.025, h * 0.9, w * 0.29, h * 0.08)
         ctx.fillStyle = '#203c34'
@@ -174,6 +189,7 @@ export function createRegister(scene: THREE.Scene) {
         ctx.font = canvasFont(h * 0.031)
         ctx.fillText('주문 / 커스텀', w * 0.35, h * 0.075)
         const categories = ['즐겨찾기', '에스프레소', '콜드 브루', '티바나']
+
         categories.forEach((label, index) => {
           ctx.fillStyle = index === 0 ? '#009b7a' : '#315b50'
           ctx.fillRect(w * (0.4 + index * 0.146), h * 0.12, w * 0.14, h * 0.1)
@@ -181,6 +197,7 @@ export function createRegister(scene: THREE.Scene) {
           ctx.font = canvasFont(h * 0.029)
           ctx.fillText(label, w * (0.41 + index * 0.146), h * 0.18, w * 0.12)
         })
+
         for (let index = 0; index < 20; index++) {
           const x = w * (0.4 + (index % 5) * 0.117),
             y = h * (0.24 + Math.floor(index / 5) * 0.16)
@@ -195,10 +212,12 @@ export function createRegister(scene: THREE.Scene) {
             w * 0.1,
           )
         }
+
         for (let index = 0; index < 5; index++) {
           ctx.fillStyle = index === 1 ? '#009b7a' : '#315b50'
           ctx.fillRect(w * 0.335, h * (0.24 + index * 0.128), w * 0.055, h * 0.12)
         }
+
         ctx.fillStyle = '#315b50'
         ctx.fillRect(w * 0.335, h * 0.9, w * 0.65, h * 0.08)
       })

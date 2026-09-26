@@ -33,6 +33,7 @@ export function createIceScoop(parent: THREE.Object3D, size: IceScoopSize) {
     columns = 20
   const left: [number, number, number][] = [],
     right: [number, number, number][] = []
+
   for (let row = 0; row <= rows; row++) {
     const t = row / rows,
       z = 0.025 - t * 0.19
@@ -41,9 +42,11 @@ export function createIceScoop(parent: THREE.Object3D, size: IceScoopSize) {
     const sideHeight = 0.066 * (1 - t ** 3 * 0.76)
     left.push([-radius, bottom + sideHeight, z])
     right.push([radius, bottom + sideHeight, z])
+
     for (let column = 0; column <= columns; column++) {
       const across = (column / columns) * 2 - 1
       vertices.push(across * radius, bottom + sideHeight * Math.abs(across) ** 5, z)
+
       if (row < rows && column < columns) {
         const a = row * (columns + 1) + column,
           b = a + columns + 1
@@ -51,6 +54,7 @@ export function createIceScoop(parent: THREE.Object3D, size: IceScoopSize) {
       }
     }
   }
+
   const bowl = new THREE.BufferGeometry()
   bowl.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
   bowl.setIndex(indices)

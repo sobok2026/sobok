@@ -19,10 +19,12 @@ export const craftStations: StationId[] = [
   'prep',
   'pickup',
 ]
+
 export function operationFor(recipe: RecipeId, craft: CraftState): WorkStep | null {
   const plan = recipeFor(recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations).steps
   return currentWorkStep(plan, craft) ?? null
 }
+
 export function createCraft(kind: CupKind, customizations: Customizations = noCustomizations()): CraftState {
   return {
     ...createProductionState(),
@@ -32,9 +34,11 @@ export function createCraft(kind: CupKind, customizations: Customizations = noCu
     lidded: false,
   }
 }
+
 export function nextStep(state: GameState): WorkStep | undefined {
   return state.cup ? (operationFor(state.cup.recipe, state.cup.craft) ?? undefined) : undefined
 }
+
 export function toolName(id: string): string {
   const separator = id.indexOf(':')
   const kind = id.slice(0, separator)

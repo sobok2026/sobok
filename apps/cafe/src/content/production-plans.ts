@@ -9,17 +9,22 @@ function hasUnknownAmount(operation: RecipeOperation) {
   const values = operation.amount.kind === 'by-size' ? Object.values(operation.amount.values) : [operation.amount]
   return values.some((amount) => amount.kind === 'unspecified')
 }
+
 export function productionPlan(variant: RecipeVariant, context: RecipeContext): PlannedStep[] {
   const alternatives: Record<string, string> = {}
+
   for (const step of variant.steps) {
     if (!step.operations.some(hasUnknownAmount)) continue
     const alternative = step.alternatives?.find((item) => !item.operations.some(hasUnknownAmount))
     if (alternative) alternatives[step.id] = alternative.label
   }
+
   const plan = planRecipe(variant, { ...context, alternatives: { ...alternatives, ...context.alternatives } })
   if (!plan.length) throw new Error('제조 순서가 없습니다.')
+
   for (const step of plan)
     if (hasUnknownAmount(step.operation)) throw new Error(`${step.label}: 계량 기준 확인이 필요합니다.`)
+
   return plan
 }
 
@@ -65,6 +70,7 @@ export function preparationVariant(
   if (path.has(materialId)) throw new Error(`${material.name}: 제조 경로가 순환합니다.`)
   const recipe = catalog.recipes.get(material.preparationId)!
   const reasons: string[] = []
+
   for (const variant of recipe.variants) {
     if (variant.output?.materialId !== materialId) continue
     try {
@@ -73,26 +79,33 @@ export function preparationVariant(
       reasons.push(error instanceof Error ? error.message : String(error))
     }
   }
+
   throw new Error(`${material.name}: ${[...new Set(reasons)].join(' ') || '부재료 제조법 확인이 필요합니다.'}`)
 }
 
 export function requirePreparationRoutes(catalog: RecipeCatalog, plan: PlannedStep[], path = new Set<string>()) {
   for (const step of plan) {
-    const operation = step.operation
-    const materialId =
-      operation.action === 'add' ||
-      operation.action === 'grind' ||
-      operation.action === 'squeeze' ||
-      operation.action === 'peel' ||
-      operation.action === 'cut' ||
-      operation.action === 'espresso'
-        ? operation.materialId
-        : operation.action === 'place' || operation.action === 'attach'
-          ? operation.itemId
-          : operation.action === 'charge'
-            ? operation.gasMaterialId
-            : undefined
+    const materialId = operationMaterialId(step.operation)
     if (!materialId || catalog.materials.get(materialId)?.kind !== 'prepared') continue
     preparationVariant(catalog, materialId, path)
+  }
+}
+
+function operationMaterialId(operation: PlannedStep['operation']) {
+  switch (operation.action) {
+    case 'add':
+    case 'grind':
+    case 'squeeze':
+    case 'peel':
+    case 'cut':
+    case 'espresso':
+      return operation.materialId
+    case 'place':
+    case 'attach':
+      return operation.itemId
+    case 'charge':
+      return operation.gasMaterialId
+    default:
+      return undefined
   }
 }

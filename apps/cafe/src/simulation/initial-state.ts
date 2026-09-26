@@ -15,6 +15,7 @@ import { uid } from '../shared/id'
 import type { GameState } from './state'
 
 const START = Date.UTC(2026, 8, 1, 9) / 1000
+
 export function initialState(): GameState {
   return {
     day: 1,

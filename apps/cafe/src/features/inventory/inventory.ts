@@ -10,6 +10,7 @@ export function addAmounts(target: Costs, amounts: Costs) {
     if (amount > 0) target[id] = (target[id] ?? 0) + amount
   }
 }
+
 export function newBatch(
   ingredient: IngredientId,
   amount: number,
@@ -26,6 +27,7 @@ export function newBatch(
     labelled: location === 'bar',
   }
 }
+
 function usableBatch(batch: Batch, ingredient: IngredientId, time: number) {
   return (
     batch.ingredient === ingredient &&
@@ -40,21 +42,26 @@ function usableBatches(state: GameState, ingredient: IngredientId, batchIds?: re
     (batch) => usableBatch(batch, ingredient, state.time) && (!batchIds || batchIds.includes(batch.id)),
   )
 }
+
 export function available(state: GameState, ingredient: IngredientId, batchIds?: readonly string[]) {
   return usableBatches(state, ingredient, batchIds).reduce((sum, batch) => sum + batch.amount, 0)
 }
+
 export function batchIdsFor(state: GameState, ingredient: IngredientId, amount: number): string[] {
   const ids: string[] = []
   let remaining = amount
   const batches = usableBatches(state, ingredient).sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
+
   for (const batch of batches) {
     if (remaining <= 1e-9) break
     if (batch.amount <= 0) continue
     ids.push(batch.id)
     remaining -= batch.amount
   }
+
   return ids
 }
+
 export function consume(
   state: GameState,
   costs: Costs,
@@ -67,12 +74,15 @@ export function consume(
       return null
     }
   }
+
   let earliestExpiry: number | null = null
+
   for (const [key, amount] of Object.entries(costs)) {
     let remaining = amount
     const batches = usableBatches(state, key as IngredientId, batchIds).sort(
       (a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity),
     )
+
     for (const batch of batches) {
       const used = Math.min(batch.amount, remaining)
       if (used > 0 && batch.expiresAt !== null)
@@ -82,5 +92,6 @@ export function consume(
       if (remaining <= 0) break
     }
   }
+
   return { earliestExpiry }
 }

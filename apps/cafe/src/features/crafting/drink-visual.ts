@@ -19,6 +19,7 @@ const groupColors: Record<Ingredient['visualGroup'], string> = {
   water: '#d7e9e1',
   other: '#dfc29b',
 }
+
 export type VesselVisualState = {
   fill: number
   color: string
@@ -27,22 +28,27 @@ export type VesselVisualState = {
   powder: boolean
   foam: boolean
 }
+
 export type DrinkVisualState = { kind: CupKind; lidded: boolean; vessel: VesselVisualState; targetFill?: number }
 
 const materialGroup = (id: string): Ingredient['visualGroup'] =>
-  INGREDIENTS[id]?.visualGroup ?? (id === 'water' ? 'water' : id === 'ice' ? 'ice' : 'other')
+  INGREDIENTS[id]?.visualGroup ?? (id === 'water' || id === 'ice' ? id : 'other')
+
 export function materialColor(id: string, fallback = '#dfc29b') {
   const material = INGREDIENTS[id]
   return material?.color ?? (material || id === 'water' || id === 'ice' ? groupColors[materialGroup(id)] : fallback)
 }
+
 export function projectVessel(session: ProductionState, vesselId: string, fallbackColor: string): VesselVisualState {
   const vessel = session.vessels[vesselId]
   const groups = new Map<Ingredient['visualGroup'], string>()
+
   for (const [id, amount] of Object.entries(vessel?.materials ?? {})) {
     if (amount <= 0) continue
     const group = materialGroup(id)
     groups.set(group, materialColor(id, fallbackColor))
   }
+
   const blendedWithIce = vessel?.processes.some((process) => process.startsWith('machine:blender/')) ?? false
   const mixed =
     blendedWithIce ||
@@ -55,16 +61,20 @@ export function projectVessel(session: ProductionState, vesselId: string, fallba
     .filter(([group]) => group !== 'ice' && group !== 'foam')
     .map(([, color]) => color)
   const blended = new THREE.Color(liquidColors[0] ?? fallbackColor)
+
   liquidColors.slice(1).forEach((color, index) => {
     blended.lerp(new THREE.Color(color), 1 / (index + 2))
   })
+
   const color = `#${blended.getHexString()}`
   const fill = Math.min(1, Math.max(0, vessel?.fill ?? 0))
   const foamFill = groups.has('foam') ? Math.min(fill, 0.12) : 0
-  const colors = mixed ? [color] : liquidColors.length ? liquidColors : [fallbackColor]
+  const layeredColors = liquidColors.length ? liquidColors : [fallbackColor]
+  const colors = mixed ? [color] : layeredColors
   // Equal color bands communicate ingredient presence; stock units are not volume ratios.
   const layers = colors.map((value) => ({ color: value, fill: (fill - foamFill) / colors.length }))
   if (foamFill > 0) layers.push({ color: groups.get('foam')!, fill: foamFill })
+
   return {
     fill,
     color,
@@ -74,15 +84,30 @@ export function projectVessel(session: ProductionState, vesselId: string, fallba
     foam: groups.has('foam'),
   }
 }
-export function operationVessel(operation: ResolvedOperation): string | null {
-  return 'into' in operation
-    ? operation.into
-    : 'vessel' in operation
-      ? operation.vessel
-      : 'from' in operation
-        ? operation.from
-        : null
+
+export function operationColor(
+  session: ProductionState,
+  operation: WorkStep['operation'] | undefined,
+  fallback: string,
+): string {
+  if (operation && 'materialId' in operation && operation.materialId) return materialColor(operation.materialId)
+  if (operation && 'from' in operation) return projectVessel(session, operation.from, fallback).color
+  return fallback
 }
+
+export function heldTool(session: ProductionState, step: WorkStep | null | undefined, steps: WorkStep[]) {
+  if (!session.tool) return null
+  if (step?.tool?.id === session.tool) return step.tool
+  return steps.find((item) => item.tool?.id === session.tool)?.tool ?? null
+}
+
+export function operationVessel(operation: ResolvedOperation): string | null {
+  if ('into' in operation) return operation.into
+  if ('vessel' in operation) return operation.vessel
+  if ('from' in operation) return operation.from
+  return null
+}
+
 export function workVesselShape(id: string, steps: WorkStep[]): 'pitcher' | 'shot' | 'blender' {
   if (
     steps.some(
@@ -120,21 +145,27 @@ export function createDrinkVisual(parent: THREE.Object3D) {
   const powder = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.0032, 0), standard('#a56d36'), 32)
   root.add(powder)
   let previousKind: CupKind | null = null
+
   function update(view: DrinkVisualState) {
     if (!bodies.has(view.kind)) bodies.set(view.kind, createCupBody(root, view.kind, true))
+
     for (const [kind, body] of bodies) {
       body.root.visible = kind === view.kind
       body.lid.visible = !body.reusable && view.lidded
     }
+
     const kindChanged = previousKind !== view.kind
     previousKind = view.kind
     const scale = cupScale(view.kind)
     target.visible = view.targetFill !== undefined && !view.lidded
+
     if (view.targetFill !== undefined) {
       target.position.y = cupFillY(view.kind, view.targetFill)
       target.scale.setScalar(cupRadius(view.kind, target.position.y) + 0.005)
     }
+
     let height = 0.008
+
     layers.forEach((layer, index) => {
       const band = view.vessel.layers[index]
       const value = Math.min(
@@ -143,23 +174,29 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       )
       layer.mesh.visible = value > 0.0001
       if (band) (layer.mesh.material as THREE.MeshStandardMaterial).color.set(band.color)
+
       if (kindChanged || layer.height !== height || layer.fill !== value) {
         const positions = layer.mesh.geometry.getAttribute('position')
+
         for (let vertex = 0; vertex < positions.count; vertex++) {
           const y = layer.vertices[vertex * 3 + 1]
           const radius = cupRadius(view.kind, height + value * (y + 0.5)) - 0.003
           positions.setXYZ(vertex, layer.vertices[vertex * 3] * radius, y, layer.vertices[vertex * 3 + 2] * radius)
         }
+
         positions.needsUpdate = true
         layer.mesh.scale.y = Math.max(0.0001, value)
         layer.mesh.position.y = height + value / 2
         layer.height = height
         layer.fill = value
       }
+
       height += value
     })
+
     ice.visible = view.vessel.ice && view.vessel.fill > 0
     ice.count = 8
+
     for (let i = 0; i < ice.count; i++) {
       matrix.position.set(
         Math.sin(i * 2.4) * 0.055 * scale,
@@ -171,8 +208,10 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       matrix.updateMatrix()
       ice.setMatrixAt(i, matrix.matrix)
     }
+
     ice.instanceMatrix.needsUpdate = true
     powder.visible = view.vessel.powder && !view.lidded && view.vessel.fill > 0
+
     for (let i = 0; i < powder.count; i++) {
       matrix.position.set(Math.sin(i * 5.1) * 0.046 * scale, height + 0.004, Math.cos(i * 2.3) * 0.047 * scale)
       matrix.rotation.set(i, i * 0.4, 0)
@@ -180,8 +219,10 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       matrix.updateMatrix()
       powder.setMatrixAt(i, matrix.matrix)
     }
+
     powder.instanceMatrix.needsUpdate = true
   }
+
   return { root, update }
 }
 
@@ -193,6 +234,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
   const radius = shape === 'shot' ? 0.045 : 0.14
   const cream = standard('#eee6cd')
   const steel = standard('#afbcb2', 0.6)
+
   if (!blender) {
     cylinder(
       root,
@@ -211,6 +253,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
       true,
     )
     cylinder(root, radius * 0.8, radius * 0.8, 0.006, cream, 0.003)
+
     if (shape === 'pitcher') {
       const handle = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.011, 8, 20), steel)
       handle.rotation.y = Math.PI / 2
@@ -218,15 +261,19 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
       root.add(handle)
     }
   }
+
   const liquid = blender?.liquid ?? cylinder(root, radius * 0.9, radius * 0.78, 1, standard('#dfc29b'))
   const lid = blender?.lid ?? cylinder(root, radius + 0.005, radius + 0.005, 0.02, standard('#446d55'), height + 0.01)
   const swirl =
     blender?.swirl ?? new THREE.Mesh(new THREE.TorusGeometry(radius * 0.55, 0.006, 8, 32, Math.PI * 1.5), cream)
+
   if (!blender) {
     swirl.rotation.x = Math.PI / 2
     root.add(swirl)
   }
+
   const label = blender?.label ?? box(root, radius * 0.85, height * 0.2, 0.005, cream, 0, height * 0.45, radius)
+
   function update(
     view: VesselVisualState,
     options: { lidded?: boolean; stirring?: boolean; labelled?: boolean; now: number },
@@ -243,6 +290,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
     swirl.position.y = bottom + liquidHeight + 0.006
     swirl.rotation.z = options.now / 100
   }
+
   return { root, height, update }
 }
 
@@ -256,6 +304,7 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
     'equipment:ice-scoop-grande': 'grande',
     'equipment:ice-scoop-venti': 'venti',
   }
+
   function model(appearance: ProductionTool['appearance']) {
     const cached = tools.get(appearance)
     if (cached) return cached
@@ -264,6 +313,7 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
     const material = standard('#dfc29b')
     const steel = standard('#adbbb2', 0.65)
     const cream = standard('#f8edcf')
+
     switch (appearance) {
       case 'bottle':
         cylinder(root, 0.052, 0.047, 0.21, material)
@@ -299,26 +349,32 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
         cylinder(root, 0.119, 0.117, 0.018, cream)
         break
     }
+
     const value = { root, material }
     tools.set(appearance, value)
     return value
   }
+
   return {
     update(tool: ProductionTool | null, color: string, servingSize = 'grande') {
       for (const cached of tools.values()) cached.root.visible = false
       for (const scoop of iceScoops.values()) scoop.visible = false
       if (!tool) return null
+
       if (tool.appearance === 'scoop' && (tool.id === 'equipment:ice-scoop' || scoopLabels[tool.id])) {
         const size =
           scoopLabels[tool.id] ?? (servingSize === 'tall' || servingSize === 'grande' ? servingSize : 'venti')
         let scoop = iceScoops.get(size)
+
         if (!scoop) {
           scoop = createIceScoop(parent, size)
           iceScoops.set(size, scoop)
         }
+
         scoop.visible = true
         return scoop
       }
+
       const selected = model(tool.appearance)
       selected.root.visible = true
       selected.material.color.set(color)
@@ -342,12 +398,15 @@ export function positionProductionTool(
     camera.getWorldQuaternion(model.quaternion)
     return
   }
+
   model.position.set(spot.x + 0.15, spot.y + 0.47, spot.z)
   model.rotation.set(0, 0, 0.85)
+
   if (step?.kind === 'mix') {
     model.position.set(spot.x + Math.sin(now / 120) * 0.04, spot.y + 0.26, spot.z + Math.cos(now / 120) * 0.04)
     model.rotation.z = 0.25
   }
+
   if (step?.operation.action === 'shake' || step?.operation.action === 'swirl') {
     model.position.set(spot.x + 0.12, spot.y + 0.42 + Math.sin(pulse * Math.PI * 4 + now / 100) * 0.06, spot.z)
     model.rotation.z = 0.35 + Math.sin(pulse * Math.PI * 4 + now / 100) * 0.22
@@ -367,9 +426,11 @@ export function createProductionEffects(parent: THREE.Object3D) {
   })
   const direction = new THREE.Vector3()
   const up = new THREE.Vector3(0, 1, 0)
+
   return {
     update(from: THREE.Vector3 | null, to: THREE.Vector3, color: string, steamAt: THREE.Vector3 | null, now: number) {
       stream.visible = from !== null
+
       if (from) {
         direction.subVectors(to, from)
         stream.position.copy(from).add(to).multiplyScalar(0.5)
@@ -377,6 +438,7 @@ export function createProductionEffects(parent: THREE.Object3D) {
         stream.scale.set(0.008, direction.length(), 0.008)
         ;(stream.material as THREE.MeshStandardMaterial).color.set(color)
       }
+
       for (const [index, cloud] of vapor.entries()) {
         cloud.visible = steamAt !== null
         if (!steamAt) continue

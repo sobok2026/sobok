@@ -16,6 +16,7 @@ export function inventorySummary(state: GameState) {
       (batch) => !expired.includes(batch) && !sealed.includes(batch) && (!batch.labelled || batch.location !== 'bar'),
     )
     const sum = (values: typeof batches) => values.reduce((amount, batch) => amount + batch.amount, 0)
+
     return {
       id,
       definition: INGREDIENTS[id],
@@ -28,9 +29,11 @@ export function inventorySummary(state: GameState) {
     }
   })
   const required: Costs = {}
+
   const add = (id: IngredientId, amount: number) => {
     required[id] = (required[id] ?? 0) + Math.max(0, amount)
   }
+
   const addPlan = (steps: WorkStep[], session: ProductionState | null, batches = 1) => {
     for (let index = session?.cursor ?? 0; index < steps.length; index++) {
       const step = steps[index]
@@ -40,6 +43,7 @@ export function inventorySummary(state: GameState) {
       for (const [id, amount] of Object.entries(step.costs)) add(id, amount * remaining * batches)
     }
   }
+
   const ticket = currentTicket(state)
   const requested = state.customer?.items[0]
   const recipe =
@@ -57,6 +61,7 @@ export function inventorySummary(state: GameState) {
   if (activeOutput && prep) addPlan(PREPARATIONS[prep.recipe].steps, prep)
   const plannedBatches: Record<string, number> = {}
   const queue = Object.keys(required)
+
   for (let index = 0; index < queue.length; index++) {
     const id = queue[index]
     const definition = preparationForMaterial(id)
@@ -71,16 +76,24 @@ export function inventorySummary(state: GameState) {
     addPlan(definition.steps, null, extra)
     queue.push(...new Set(definition.steps.flatMap((step) => Object.keys(step.costs))))
   }
+
   return items
     .map((item) => {
       const needed = required[item.id] ?? 0
       const shortage = Math.max(0, needed - item.amount)
+
       return {
         ...item,
         needed,
         shortage,
-        priority: shortage > 0.0001 ? 0 : item.expired > 0 ? 1 : item.pending > 0 ? 2 : 3,
+        priority: stockPriority(shortage, item),
       }
     })
     .sort((a, b) => a.priority - b.priority)
+}
+
+function stockPriority(shortage: number, item: { expired: number; pending: number }) {
+  if (shortage > 0.0001) return 0
+  if (item.expired > 0) return 1
+  return item.pending > 0 ? 2 : 3
 }

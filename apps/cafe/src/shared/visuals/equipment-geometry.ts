@@ -6,6 +6,7 @@ type Point = [number, number, number]
 
 export function equipmentMaterial(parameters: THREE.MeshStandardMaterialParameters) {
   const material = new THREE.MeshStandardMaterial(parameters)
+
   if ((parameters.metalness ?? 0) > 0.7 && (parameters.roughness ?? 1) >= 0.2) {
     const canvas = document.createElement('canvas')
     canvas.width = 256
@@ -14,12 +15,14 @@ export function equipmentMaterial(parameters: THREE.MeshStandardMaterialParamete
     context.fillStyle = '#c8c8c8'
     context.fillRect(0, 0, 256, 256)
     let seed = 173
+
     for (let y = 0; y < 256; y++) {
       seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
       const shade = 210 + ((seed >>> 24) % 15)
       context.fillStyle = `rgb(${shade} ${shade} ${shade})`
       context.fillRect(0, y, 256, 1)
     }
+
     const grain = new THREE.CanvasTexture(canvas)
     grain.wrapS = grain.wrapT = THREE.RepeatWrapping
     grain.repeat.set(1, 3)
@@ -27,6 +30,7 @@ export function equipmentMaterial(parameters: THREE.MeshStandardMaterialParamete
     material.bumpMap = grain
     material.bumpScale = 0.00003
   }
+
   material.userData.equipment = true
   return material
 }
@@ -97,6 +101,7 @@ export function equipmentBasin(
 ) {
   const root = new THREE.Group()
   parent.add(root)
+
   function outline(path: THREE.Path, w: number, d: number, radius: number) {
     const x = w / 2,
       z = d / 2
@@ -110,6 +115,7 @@ export function equipmentBasin(
     path.lineTo(-x, -z + radius)
     path.quadraticCurveTo(-x, -z, -x + radius, -z)
   }
+
   function walls(w: number, d: number, inset: number, rise: number, y: number) {
     const shape = new THREE.Shape()
     outline(shape, w, d, cornerRadius)
@@ -128,6 +134,7 @@ export function equipmentBasin(
     geometry.rotateX(-Math.PI / 2)
     equipmentMesh(root, geometry, material, [0, y, 0])
   }
+
   equipmentBox(root, [width - 0.01, 0.018, depth - 0.01], [0, 0.009, 0], material, 0.008)
   walls(width, depth, 0.018, height, 0)
   walls(width + 0.035, depth + 0.035, 0.035, 0.009, height)
@@ -142,9 +149,11 @@ export function equipmentInstances(
 ) {
   const mesh = new THREE.InstancedMesh(geometry, material, positions.length)
   const matrix = new THREE.Matrix4()
+
   positions.forEach((position, index) => {
     mesh.setMatrixAt(index, matrix.makeTranslation(...position))
   })
+
   mesh.computeBoundingSphere()
   mesh.castShadow = false
   mesh.receiveShadow = true

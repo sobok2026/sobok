@@ -4,6 +4,7 @@ import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { COLD_BREW_BEANS, COLD_BREW_COST, COLD_BREW_WATER } from './rules'
+
 export default function ColdBrewPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
   return (
     <>

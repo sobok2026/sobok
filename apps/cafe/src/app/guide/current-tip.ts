@@ -7,6 +7,7 @@ import { nextStep } from '../../features/crafting/rules'
 import { batchDestination, batchOrigin, carriedBatch } from '../../features/inventory/batches'
 import {
   CUP_NAMES,
+  type CupKind,
   cleanCupCount,
   cupCount,
   cupKindFor,
@@ -24,6 +25,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   const ticket = currentTicket(state)
   const cup = state.cup
   const carrying = carriedBatch(state)
+
   if (carrying) {
     const expired = carrying.expiresAt !== null && carrying.expiresAt <= state.time
     return {
@@ -34,6 +36,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       reason: `다시 놓으려면 ${STATIONS[batchOrigin(carrying)].name}로 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
     }
   }
+
   if (panel === 'cold-prep' && !state.coldBrew)
     return {
       title: '콜드 브루 한 배치를 준비하세요',
@@ -82,32 +85,40 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (!ticket)
     return {
       title: '손님 요청을 POS에 입력하세요',
-      action:
-        panel === 'pos'
-          ? state.customer?.stage === 'ordering'
-            ? '메뉴·온도·사이즈·매장/포장을 확인하고 음료를 담고 결제를 완료하세요.'
-            : '손님이 POS에 도착할 때까지 기다려주세요.'
-          : 'WASD로 이동하고 마우스로 POS를 본 뒤 E를 누르세요.',
+      action: orderEntryAction(state, panel),
       reason: '손님 요청과 주문표는 별개예요. 카운터 안쪽에서 주문을 받아요.',
     }
   const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
   if (!cleanCupCount(state, kind))
     return {
       title: `${CUP_NAMES[kind]}를 준비하세요`,
-      action: isReusableCup(kind)
-        ? state.reusableCups[kind].washed > 0
-          ? `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
-          : state.reusableCups[kind].dirty > 0
-            ? `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
-            : '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
-        : state.disposableCups[kind].reserve
-          ? '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
-          : '창고에서 해당 컵을 입고하고 보관대를 보충하세요.',
+      action: cupRestockAction(state, kind),
       reason: '매장은 다회용, 포장은 일회용 컵을 사용해요. HOT·ICED와 사이즈별 컵도 구분해요.',
     }
+
   return {
     title: `${CUP_NAMES[kind]}를 집으세요`,
     action: '컵 보관대를 보고 E를 누르세요.',
     reason: `${SERVICE_NAMES[ticket.service]} · ${RECIPES[ticket.recipe].shortName} 제조를 시작해요.`,
   }
+}
+
+function orderEntryAction(state: GameState, panel: StationId | null) {
+  if (panel !== 'pos') return 'WASD로 이동하고 마우스로 POS를 본 뒤 E를 누르세요.'
+  if (state.customer?.stage === 'ordering') {
+    return '메뉴·온도·사이즈·매장/포장을 확인하고 음료를 담고 결제를 완료하세요.'
+  }
+  return '손님이 POS에 도착할 때까지 기다려주세요.'
+}
+
+function cupRestockAction(state: GameState, kind: CupKind) {
+  if (isReusableCup(kind)) {
+    const cups = state.reusableCups[kind]
+    if (cups.washed > 0) return `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
+    if (cups.dirty > 0) return `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
+    return '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
+  }
+
+  if (state.disposableCups[kind].reserve) return '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
+  return '창고에서 해당 컵을 입고하고 보관대를 보충하세요.'
 }

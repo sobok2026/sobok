@@ -18,16 +18,21 @@ export type Obstacle = { x: number; z: number; width: number; depth: number }
 
 export function createShopInterior(scene: THREE.Scene) {
   const materials = new Map<string, THREE.MeshStandardMaterial>()
+
   const material = (color: string, metal = 0) => {
     const key = `${color}/${metal}`
     let value = materials.get(key)
+
     if (!value) {
       value = new THREE.MeshStandardMaterial({ color, roughness: metal ? 0.35 : 0.78, metalness: metal })
       materials.set(key, value)
     }
+
     return value
   }
+
   const obstacles: Obstacle[] = []
+
   function box(
     x: number,
     y: number,
@@ -46,6 +51,7 @@ export function createShopInterior(scene: THREE.Scene) {
     parent.add(mesh)
     return mesh
   }
+
   function cylinder(
     x: number,
     y: number,
@@ -64,20 +70,24 @@ export function createShopInterior(scene: THREE.Scene) {
     parent.add(mesh)
     return mesh
   }
+
   function repeatedBoxes(instances: [number, number, number, number, number, number][], color: string) {
     const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), material(color), instances.length)
     const transform = new THREE.Object3D()
+
     instances.forEach(([x, y, z, width, height, depth], index) => {
       transform.position.set(x, y, z)
       transform.scale.set(width, height, depth)
       transform.updateMatrix()
       mesh.setMatrixAt(index, transform.matrix)
     })
+
     mesh.computeBoundingSphere()
     mesh.castShadow = true
     mesh.receiveShadow = true
     scene.add(mesh)
   }
+
   function sign(text: string, width: number, height: number, background = '#123f35', foreground = '#f2e7ce') {
     const canvas = document.createElement('canvas')
     canvas.width = 1024
@@ -85,6 +95,7 @@ export function createShopInterior(scene: THREE.Scene) {
     const ctx = canvas.getContext('2d')!
     const texture = new THREE.CanvasTexture(canvas)
     texture.colorSpace = THREE.SRGBColorSpace
+
     paintTexture(texture, () => {
       ctx.fillStyle = background
       ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -93,15 +104,18 @@ export function createShopInterior(scene: THREE.Scene) {
       ctx.textBaseline = 'middle'
       const lines = text.split('\n')
       ctx.font = canvasFont(Math.min(95, canvas.height / (lines.length + 1)), 600)
+
       lines.forEach((line, i) => {
         ctx.fillText(line, 512, (canvas.height * (i + 1)) / (lines.length + 1), 950)
       })
     })
+
     return new THREE.Mesh(
       new THREE.PlaneGeometry(width, height),
       new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }),
     )
   }
+
   // Warm wooden floor and a cream envelope; the front glazing opens toward a small street.
   box(0, -0.08, 0, 14, 0.15, 12, '#ad9174')
   const floorSeams: [number, number, number, number, number, number][] = []
@@ -127,12 +141,14 @@ export function createShopInterior(scene: THREE.Scene) {
   for (const x of [-6.7, -2.2, 2.2, 6.7]) box(x, 1.95, 5.8, 0.07, 3.5, 0.12, '#244c3e')
   box(0, 3.55, 5.8, 14, 0.08, 0.12, '#244c3e')
   box(0, 0, 10, 25, 0.1, 8, '#c7c9b8')
+
   for (const x of [-10, 9]) {
     cylinder(x, 1.0, 11, 0.2, 0.25, 2, '#776651')
     const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(2.6, 1), material('#819576'))
     crown.position.set(x, 3.7, 11)
     scene.add(crown)
   }
+
   // Main bar with fluted wood facing.
   // The drop-in ice bin extends through the top into a cavity in the existing cabinet.
   box(-1.95, 0.48, -1.05, 7.6, 0.96, 1.18, '#946e4c')
@@ -147,10 +163,12 @@ export function createShopInterior(scene: THREE.Scene) {
   const barSlats: [number, number, number, number, number, number][] = []
   for (let x = -5.6; x <= 5.6; x += 0.18) barSlats.push([x, 0.47, -0.445, 0.035, 0.85, 0.025])
   repeatedBoxes(barSlats, '#795a3c')
+
   for (let x = -5.15; x < 5.5; x += 1.15) {
     box(x, 0.47, -1.655, 1.08, 0.83, 0.025, '#aaa48f')
     box(x, 0.79, -1.679, 0.22, 0.024, 0.025, '#45564a', scene, 0.5)
   }
+
   obstacles.push({ x: 0, z: -1.05, width: 11.7, depth: 1.4 })
   // The left staff entrance is the only route between the work aisle and the customer floor.
   box(-6.26, 0.019, BAR_CENTER_Z, 0.94, 0.025, 1.45, '#466050')
@@ -183,14 +201,17 @@ export function createShopInterior(scene: THREE.Scene) {
   menuSign.position.set(-4.6, 2.45, -5.71)
   scene.add(menuSign)
   box(3.0, 2.1, -5.4, 1.9, 0.08, 0.65, '#806749')
+
   for (let i = 0; i < 5; i++) {
     box(2.25 + i * 0.33, 2.37, -5.43, 0.23, 0.5, 0.22, i % 2 ? '#b28b58' : '#d5c1a0')
   }
+
   for (const x of [-4.1, -0.3, 3.5]) {
     cylinder(x, 3.25, -0.8, 0.015, 0.015, 0.7, '#594d3c')
     cylinder(x, 2.86, -0.8, 0.12, 0.32, 0.22, '#31483b')
     cylinder(x, 2.73, -0.8, 0.28, 0.28, 0.012, '#f2d8a0')
   }
+
   function plant(x: number, z: number, size = 1) {
     cylinder(x, 0.25 * size, z, 0.28 * size, 0.2 * size, 0.5 * size, '#c3aa84')
     for (let i = 0; i < 6; i++) {
@@ -205,6 +226,7 @@ export function createShopInterior(scene: THREE.Scene) {
       scene.add(leaf)
     }
   }
+
   plant(5.9, 4.6, 1.3)
   plant(-5.0, 3.7, 0.75)
   // Named work surfaces remain visually distinct at first-person distance.
@@ -266,15 +288,18 @@ export function createShopInterior(scene: THREE.Scene) {
   condimentSign.position.set(0, 1.55, 5.62)
   condimentSign.rotation.y = Math.PI
   scene.add(condimentSign)
+
   // Two quiet seating areas.
   for (const x of [3.2, -2.2]) {
     cylinder(x, 0.8, 3.7, 0.7, 0.7, 0.08, '#cfb18a')
     cylinder(x, 0.4, 3.7, 0.07, 0.12, 0.8, '#414f3d')
     obstacles.push({ x, z: 3.7, width: 1.2, depth: 1.2 })
+
     for (const z of [2.7, 4.7]) {
       box(x, 0.45, z, 0.55, 0.08, 0.55, '#778267')
       box(x, 0.77, z + (z < 3.7 ? -0.24 : 0.24), 0.55, 0.58, 0.06, '#778267')
     }
   }
+
   return { obstacles, blender, register, syrupStation, cupStacks }
 }

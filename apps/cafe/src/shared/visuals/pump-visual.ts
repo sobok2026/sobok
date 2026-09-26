@@ -24,6 +24,7 @@ export function createPumpVisual(parent: THREE.Object3D, kind: 'glaze' | 'classi
     depthWrite: false,
     side: THREE.DoubleSide,
   })
+
   if (syrup) {
     lathe(
       root,
@@ -64,12 +65,15 @@ export function createPumpVisual(parent: THREE.Object3D, kind: 'glaze' | 'classi
       cream,
     )
   }
+
   const collarY = syrup ? 0.354 : 0.335
   mesh(root, new THREE.CylinderGeometry(0.046, 0.046, 0.028, 32), black, [0, collarY, 0])
+
   for (const y of [collarY - 0.006, collarY + 0.005]) {
     const ring = mesh(root, new THREE.TorusGeometry(0.046, 0.0025, 6, 32), steel, [0, y, 0])
     ring.rotation.x = Math.PI / 2
   }
+
   mesh(root, new THREE.CylinderGeometry(0.011, 0.011, 0.1, 20), steel, [0, 0.38, 0])
   const head = new THREE.Group()
   head.position.y = 0.445
@@ -92,6 +96,7 @@ export function createPumpVisual(parent: THREE.Object3D, kind: 'glaze' | 'classi
     syrup ? black : steel,
     [0, -0.044, 0.36],
   )
+
   panel(root, 0.124, 0.125, [0, 0.168, syrup ? 0.0845 : 0.0995], (ctx, w, h) => {
     ctx.fillStyle = '#f1ead9'
     ctx.beginPath()
@@ -109,5 +114,6 @@ export function createPumpVisual(parent: THREE.Object3D, kind: 'glaze' | 'classi
     ctx.font = canvasFont(h * 0.08)
     ctx.fillText('소복다방  ·  BAR', w / 2, h * 0.8)
   })
+
   return { root, head, outlet }
 }

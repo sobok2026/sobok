@@ -13,6 +13,7 @@ import type { StationId } from '../../content/stations'
 import type { StockContext, StockNextAdd } from '../../content/stock-amounts'
 
 export const productionQuantity = z.number().min(0).max(100000000)
+
 export const productionStateSchema = z.object({
   cursor: z.number().int().min(0),
   decisions: z.record(z.string(), z.boolean()),
@@ -29,11 +30,13 @@ export const productionStateSchema = z.object({
   fault: z.string().nullable(),
 })
 export type ProductionState = z.infer<typeof productionStateSchema>
+
 export type ProductionTool = {
   id: string
   name: string
   appearance: 'bottle' | 'pitcher' | 'scoop' | 'stirrer' | 'shaker' | 'pack' | 'lid'
 }
+
 export type WorkStep = PlannedStep & {
   stockContext: StockContext
   nextStockAdd: StockNextAdd | null
@@ -55,7 +58,9 @@ export type WorkStep = PlannedStep & {
   inputRequirements: Costs | null
   requiresReusableTool: boolean
 }
+
 export const PRODUCTION_EPSILON = 1e-9
+
 export function createProductionState(): ProductionState {
   return {
     cursor: 0,
@@ -73,31 +78,41 @@ export function createProductionState(): ProductionState {
     fault: null,
   }
 }
+
 function repetitionBounds(repetitions?: number | { min: number; max: number }) {
-  return typeof repetitions === 'number'
-    ? [repetitions, repetitions]
-    : repetitions
-      ? [repetitions.min, repetitions.max]
-      : [1, 1]
+  if (typeof repetitions === 'number') return [repetitions, repetitions]
+  if (repetitions) return [repetitions.min, repetitions.max]
+  return [1, 1]
 }
+
 function durationBounds(duration: { seconds: number; atLeast?: boolean } | { minSeconds: number; maxSeconds: number }) {
   return 'seconds' in duration ? [duration.seconds, duration.seconds] : [duration.minSeconds, duration.maxSeconds]
 }
+
 export function operationSeconds(catalog: RecipeCatalog, operation: ResolvedOperation): number | null {
   const duration = 'duration' in operation ? operation.duration : undefined
   if (duration) return durationBounds(duration)[0]
+
   if (operation.action === 'run-machine') {
     const program = catalog.equipment.get(operation.equipmentId)?.programs.find((item) => item.id === operation.program)
     if (program?.duration) return durationBounds(program.duration)[0]
   }
+
   return null
 }
+
+function countMaximum(amount: Extract<RecipeAmount, { kind: 'count' | 'count-range' }>) {
+  if (amount.kind === 'count-range') return amount.max
+  return amount.atLeast ? null : amount.value
+}
+
 function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target' | 'maximum' | 'increment' | 'unit'> {
   const unit = amountLabel(amount)
   if (amount.kind === 'unspecified') throw new Error(`계량 기준 확인 필요: ${amount.description}`)
+
   if (amount.kind === 'count' || amount.kind === 'count-range') {
     const target = amount.kind === 'count' ? amount.value : amount.min
-    const maximum = amount.kind === 'count' ? (amount.atLeast ? null : amount.value) : amount.max
+    const maximum = countMaximum(amount)
     const precision = Math.max(
       ...[target, maximum ?? target].map((value) => (String(value).split('.')[1] ?? '').length),
     )
@@ -107,10 +122,12 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
       [target, maximum ?? target].reduce((step, value) => gcd(step, Math.round(value * scale)), scale) / scale
     return { kind: amount.unit === 'turn' ? 'pour' : 'count', target, maximum, increment, unit }
   }
+
   if (amount.kind === 'amount' || amount.kind === 'amount-range') {
     const [target, maximum] = amount.kind === 'amount' ? [amount.value, amount.value] : [amount.min, amount.max]
     return { kind: 'pour', target, maximum, increment: 1, unit: amount.unit }
   }
+
   if (amount.kind === 'fraction')
     return {
       kind: 'pour',
@@ -125,6 +142,7 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
     return { kind: 'pour', target: amount.minMillimeters, maximum: amount.maxMillimeters, increment: 1, unit: 'mm' }
   return { kind: 'pour', target: 1, maximum: 1, increment: 1, unit }
 }
+
 function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): ProductionTool | null {
   if ('toolIds' in operation && operation.toolIds?.length)
     return {
@@ -132,11 +150,13 @@ function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): Producti
       name: operation.toolIds.map((id) => catalog.equipment.get(id)!.name).join(' · '),
       appearance: 'stirrer',
     }
+
   if ('toolId' in operation && operation.toolId) {
     const tool = catalog.equipment.get(operation.toolId)!
     if (tool.kind === 'pump') return null
     return { id: `equipment:${tool.id}`, name: tool.name, appearance: tool.kind === 'scoop' ? 'scoop' : 'stirrer' }
   }
+
   if (operation.action === 'transfer' || operation.action === 'strain')
     return { id: `vessel:${operation.from}`, name: catalog.vessels.get(operation.from)!.name, appearance: 'pitcher' }
   if (operation.action === 'add' || operation.action === 'grind' || operation.action === 'squeeze')
@@ -154,12 +174,14 @@ function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): Producti
     return { id: 'service:lid', name: '리드', appearance: 'lid' }
   return null
 }
+
 function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
   if (owner) return owner
   if (operation.action === 'espresso' || operation.action === 'grind') return 'espresso'
   if (operation.action === 'steam' || operation.action === 'aerate') return 'steam'
   if (operation.action === 'serve') return 'pickup'
   if (operation.action === 'run-machine') return operation.equipmentId === 'hot-water-dispenser' ? 'water' : 'prep'
+
   if (operation.action === 'add') {
     if (operation.into !== 'serving-cup')
       return ['steam-pitcher', 'steam-pitcher-50-50'].includes(operation.into) ? 'steam' : 'mix'
@@ -170,10 +192,19 @@ function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
     if (operation.amount.kind === 'count' && operation.amount.unit === 'pump') return 'sauce'
     return 'mix'
   }
+
   if (operation.action === 'transfer' && ['steam-pitcher', 'steam-pitcher-50-50'].includes(operation.from))
     return 'steam'
   return 'mix'
 }
+
+const MIX_CONTROL_UNITS = { mix: '초', count: '회', confirm: '완료' } as const
+
+function mixControlKind(duration: unknown, repetitions: unknown) {
+  if (duration) return 'mix'
+  return repetitions ? 'count' : 'confirm'
+}
+
 export function compileWorkflow(
   catalog: RecipeCatalog,
   plan: PlannedStep[],
@@ -185,6 +216,7 @@ export function compileWorkflow(
   const destinations = plan.flatMap((step) => ('into' in step.operation ? [step.operation.into] : []))
   const servingVessel = destinations.includes('serving-cup') ? 'serving-cup' : (destinations.at(-1) ?? 'serving-cup')
   let supplyMix: string | null = null
+
   return plan.flatMap((source, index) => {
     const operation = source.operation
     let control: Pick<WorkStep, 'kind' | 'target' | 'maximum' | 'increment' | 'unit'> = {
@@ -197,6 +229,7 @@ export function compileWorkflow(
     let equipmentId: string | null = 'equipmentId' in operation ? (operation.equipmentId ?? null) : null
     let seconds = operationSeconds(catalog, operation)
     let mixesMaterialId: string | null = null
+
     if (operation.action === 'add' || operation.action === 'transfer') control = quantityControl(operation.amount)
     else if (operation.action === 'espresso') {
       control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '추출' }
@@ -227,19 +260,16 @@ export function compileWorkflow(
         ? durationBounds(duration)
         : repetitionBounds('repetitions' in operation ? operation.repetitions : undefined)
       const repetitions = 'repetitions' in operation ? operation.repetitions : undefined
-      control = {
-        kind: duration ? 'mix' : repetitions ? 'count' : 'confirm',
-        target,
-        maximum,
-        increment: 1,
-        unit: duration ? '초' : repetitions ? '회' : '완료',
-      }
+      const kind = mixControlKind(duration, repetitions)
+      control = { kind, target, maximum, increment: 1, unit: MIX_CONTROL_UNITS[kind] }
       seconds = null
+
       if ((operation.action === 'shake' || operation.action === 'mix') && !populated.has(operation.vessel)) {
         const next = plan[index + 1]?.operation
         if (next?.action === 'add' && next.into !== operation.vessel) mixesMaterialId = next.materialId
       }
     }
+
     if (source.portion !== undefined) control = { kind: 'pour', target: 1, maximum: 1, increment: 1, unit: '비율' }
     if ('into' in operation) populated.add(operation.into)
     if (operation.action === 'transfer' && operation.amount.kind === 'all') populated.delete(operation.from)
@@ -285,6 +315,7 @@ export function compileWorkflow(
       operation.duration.atLeast
     )
       step.maximum = null
+
     if (operation.action === 'remove' && operation.drain) {
       const draining: WorkStep = {
         ...step,
@@ -302,6 +333,7 @@ export function compileWorkflow(
       step.operation = removal
       return [draining, step]
     }
+
     if (operation.action === 'steam' && operation.airDuration) {
       const [target, maximum] = durationBounds(operation.airDuration)
       const air: WorkStep = {
@@ -322,6 +354,7 @@ export function compileWorkflow(
       step.operation = heating
       return [air, step]
     }
+
     return [step]
   })
 }

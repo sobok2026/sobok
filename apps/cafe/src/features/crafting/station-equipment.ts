@@ -44,10 +44,12 @@ export function createWaterStation(scene: THREE.Scene) {
   seam.castShadow = false
   mesh(root, new THREE.CylinderGeometry(0.0155, 0.0155, 0.02, 24), capSteel, [0, 0.565, 0.195])
   mesh(root, new THREE.CylinderGeometry(0.012, 0.012, 0.001, 20), black, [0, 0.555, 0.195])
+
   for (const z of [0.072, 0.135, 0.198]) {
     mesh(root, new THREE.CylinderGeometry(0.017, 0.017, 0.002, 24), capSteel, [0, 0.638, z])
     mesh(root, new THREE.CylinderGeometry(0.0145, 0.015, 0.004, 24), black, [0, 0.641, z])
   }
+
   mesh(root, new THREE.CylinderGeometry(0.043, 0.046, 0.007, 40), steel, [0, 0.0035, 0])
   // A flush drain leaves the pipe silhouette clear and keeps the serving cup on the worktop.
   box(root, [0.3, 0.004, 0.33], [0, 0.001, 0.195], capSteel, 0.002)
@@ -69,31 +71,32 @@ export function createIceBin(scene: THREE.Scene) {
   const steel = material({ color: '#b8bcbe', metalness: 0.91, roughness: 0.38 })
   const black = material({ color: '#101819', roughness: 0.88 })
   const well = basin(root, 0.5, 0.67, 0.31, steel, 0.014)
+
   // Subtle baked contact shading keeps the recessed liner distinct from the outer sheet metal.
   well.children.forEach((object, surface) => {
     if (!(object instanceof THREE.Mesh)) return
     const positions = object.geometry.getAttribute('position')
     const normals = object.geometry.getAttribute('normal')
     const colors = new Float32Array(positions.count * 3)
+
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i),
         y = positions.getY(i) + object.position.y,
         z = positions.getZ(i)
       const inward = x * normals.getX(i) + z * normals.getZ(i) < -0.01
       const edgeDistance = Math.min(0.25 - Math.abs(x), 0.335 - Math.abs(z))
-      const shade =
-        surface === 0
-          ? 0.28 + 0.2 * Math.min(1, Math.max(0, edgeDistance) / 0.12)
-          : inward && y < 0.307
-            ? 0.32 + (0.68 * Math.max(0, y)) / 0.31
-            : 1
+      let shade = 1
+      if (surface === 0) shade = 0.28 + 0.2 * Math.min(1, Math.max(0, edgeDistance) / 0.12)
+      else if (inward && y < 0.307) shade = 0.32 + (0.68 * Math.max(0, y)) / 0.31
       colors.set([shade, shade, shade], i * 3)
     }
+
     object.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
     const liner = steel.clone()
     liner.vertexColors = true
     object.material = liner
   })
+
   // Black lid channels sit inside a thin rolled stainless flange.
   for (const x of [-0.233, 0.233]) box(root, [0.018, 0.009, 0.633], [x, 0.317, 0], black, 0.002)
   for (const z of [-0.316, 0.316]) box(root, [0.478, 0.009, 0.018], [0, 0.317, z], black, 0.002)
@@ -115,6 +118,7 @@ export function createIceBin(scene: THREE.Scene) {
   const ice = new THREE.InstancedMesh(new RoundedBoxGeometry(0.062, 0.05, 0.064, 1, 0.009), iceMaterial, 48)
   ice.name = 'Stored ice'
   const transform = new THREE.Object3D()
+
   for (let i = 0; i < 48; i++) {
     transform.position.set(
       -0.183 + (i % 6) * 0.073,
@@ -125,6 +129,7 @@ export function createIceBin(scene: THREE.Scene) {
     transform.updateMatrix()
     ice.setMatrixAt(i, transform.matrix)
   }
+
   ice.computeBoundingSphere()
   root.add(ice)
   const rack = new THREE.Group()
@@ -136,10 +141,12 @@ export function createIceBin(scene: THREE.Scene) {
   box(rack, [0.6, 0.105, 0.005], [0, 0.055, -0.08], acrylic, 0.002)
   box(rack, [0.6, 0.105, 0.005], [0, 0.055, 0.08], acrylic, 0.002)
   for (const x of [-0.3, -0.1, 0.1, 0.3]) box(rack, [0.005, 0.105, 0.16], [x, 0.055, 0], acrylic, 0.002)
+
   for (const [i, size] of iceScoopSizes.entries()) {
     const scoop = createIceScoop(rack, size)
     scoop.position.set(-0.2 + i * 0.2, 0.045 + 0.165 * iceScoopScale[size], 0)
     scoop.rotation.set(-Math.PI / 2, Math.PI, 0, 'YXZ')
+
     panel(rack, 0.087, 0.033, [-0.2 + i * 0.2, 0.035, 0.084], (ctx, w, h) => {
       ctx.fillStyle = '#304f58'
       ctx.textAlign = 'center'
@@ -163,6 +170,7 @@ export function createSyrupStation(scene: THREE.Scene) {
   const bottles = { glaze: createPumpVisual(root, 'glaze'), classic: createPumpVisual(root, 'classic') }
   bottles.glaze.root.position.set(-0.175, 0.027, -0.03)
   bottles.classic.root.position.set(0.175, 0.027, -0.03)
+
   return {
     update(state: GameState) {
       const cup = state.cup

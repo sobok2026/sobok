@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
 import { noCustomizations } from '../../content/customizations'
 import { DRINK_SIZES, type DrinkSize, drinkSizeIds } from '../../content/drink-sizes'
@@ -19,6 +20,7 @@ import { PosMenu, temperatureVariant } from './PosMenu'
 
 type View = 'order' | 'custom' | 'checkout'
 type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | null
+
 export default function PosPanel({
   state,
   act,
@@ -41,6 +43,7 @@ export default function PosPanel({
   const [quantity, setQuantity] = useState('1')
   const screen = useRef<HTMLElement>(null)
   const list = useRef<HTMLFieldSetElement>(null)
+
   const sale = state.sale
   const selected =
     selectedId === 'new'
@@ -50,18 +53,22 @@ export default function PosPanel({
   const editable = state.phase === 'open' && state.customer?.stage === 'ordering' && !paid && !sale?.payments.length
   const total = saleTotal(sale)
   const count = saleQuantity(sale)
+
   useEffect(() => {
     screen.current?.focus()
   }, [])
+
   function update(line: OrderLine, item: OrderItem = line, quantity = line.quantity) {
     act({ type: 'pos-update', id: line.id, item, quantity })
   }
+
   function select(line: OrderLine) {
     setSelectedId(line.id)
     setTemperature(RECIPES[line.recipe].temperature)
     setSize(line.size)
     setService(line.service)
   }
+
   function add(recipe: RecipeId, chosenSize: DrinkSize, chosenService: ServiceMode) {
     act({
       type: 'pos-add',
@@ -72,6 +79,7 @@ export default function PosPanel({
     setService(chosenService)
     requestAnimationFrame(() => list.current?.scrollTo({ top: list.current.scrollHeight }))
   }
+
   const availableSizes = selected ? recipeSizes(selected.recipe, selected.service) : drinkSizeIds
   const shownTemperature = selected ? RECIPES[selected.recipe].temperature : temperature
   const shownSize = selected?.size ?? size
@@ -80,6 +88,7 @@ export default function PosPanel({
   const otherTemperature = selected ? temperatureVariant(selected.recipe, nextTemperature) : null
   const date = new Date(state.time * 1000).toISOString().slice(5, 10).replace('-', '.')
   const closeDialog = () => setDialog(null)
+
   return (
     <div className="absolute inset-0 z-12 bg-black/35 p-3 compact:p-2">
       <section
@@ -88,11 +97,11 @@ export default function PosPanel({
         aria-modal="true"
         aria-label="POS 주문"
         tabIndex={-1}
-        className={[
-          'relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2',
-          'overflow-hidden rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none',
+        className={clsx(
+          'relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden',
+          'rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none',
           'max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]',
-        ].join(' ')}
+        )}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault()
@@ -155,10 +164,10 @@ export default function PosPanel({
             {sale?.lines.map((line, index) => (
               <div
                 key={line.id}
-                className={[
+                className={clsx(
                   'rounded border',
                   selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white',
-                ].join(' ')}
+                )}
               >
                 <button
                   type="button"
@@ -170,10 +179,10 @@ export default function PosPanel({
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 text-xs opacity-75">{String(index + 1).padStart(2, '0')}</span>
                     <span
-                      className={[
+                      className={clsx(
                         'shrink-0 rounded px-1.5 py-1 text-xs text-white',
                         RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]',
-                      ].join(' ')}
+                      )}
                     >
                       {DRINK_SIZES[line.size].name.slice(0, 1)}
                     </span>
@@ -300,13 +309,7 @@ export default function PosPanel({
             <span className="rounded bg-white px-2 py-3 text-sm text-pos-ink">
               음료 <strong>{count}잔</strong>
             </span>
-            <span className="text-lg tabular-nums">
-              {paid
-                ? '결제 완료'
-                : view === 'checkout'
-                  ? '‹ 주문으로 돌아가기'
-                  : `${total.toLocaleString('ko-KR')} 결제`}
-            </span>
+            <span className="text-lg tabular-nums">{checkoutButtonLabel(paid, view, total)}</span>
           </PosButton>
         </aside>
         <div className="flex min-h-0 min-w-0 flex-col gap-2">
@@ -317,13 +320,7 @@ export default function PosPanel({
                 {paid ? sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) : 0}
               </strong>
             </span>
-            <span className="text-xs text-white/75">
-              {paid
-                ? '결제한 주문을 제조해주세요.'
-                : salePaid(sale)
-                  ? `남은 결제금액 ${money(total - salePaid(sale))}`
-                  : '주문 · 커스텀 · 결제'}
-            </span>
+            <span className="text-xs text-white/75">{orderStatus(paid, salePaid(sale), total)}</span>
             <PosButton tone="dark" onClick={onClose} aria-label="POS 닫기" className="min-h-9">
               ×
             </PosButton>
@@ -357,6 +354,7 @@ export default function PosPanel({
                       onClick={() => {
                         const next = nextTemperature
                         setTemperature(next)
+
                         if (selected) {
                           const other = temperatureVariant(selected.recipe, next)
                           if (other && recipeSizes(other, selected.service).includes(selected.size))
@@ -544,26 +542,38 @@ export default function PosPanel({
   )
 }
 
+function checkoutButtonLabel(paid: boolean, view: View, total: number) {
+  if (paid) return '결제 완료'
+  return view === 'checkout' ? '‹ 주문으로 돌아가기' : `${total.toLocaleString('ko-KR')} 결제`
+}
+
+function orderStatus(paid: boolean, paidAmount: number, total: number) {
+  if (paid) return '결제한 주문을 제조해주세요.'
+  return paidAmount ? `남은 결제금액 ${money(total - paidAmount)}` : '주문 · 커스텀 · 결제'
+}
+
+type Operator = '+' | '−' | '×' | '÷'
+
+function calculate(left: number, operator: Operator, right: number) {
+  if (operator === '+') return left + right
+  if (operator === '−') return left - right
+  if (operator === '×') return left * right
+  return right ? left / right : 0
+}
+
 function PosCalculator() {
   const [value, setValue] = useState('')
   const [left, setLeft] = useState<number | null>(null)
-  const [operator, setOperator] = useState<'+' | '−' | '×' | '÷'>('+')
+  const [operator, setOperator] = useState<Operator>('+')
+
   const compute = () => {
     if (left === null) return
     const right = Number(value)
-    const result =
-      operator === '+'
-        ? left + right
-        : operator === '−'
-          ? left - right
-          : operator === '×'
-            ? left * right
-            : right
-              ? left / right
-              : 0
+    const result = calculate(left, operator, right)
     setValue(String(Math.round(result * 100) / 100))
     setLeft(null)
   }
+
   return (
     <>
       <output className="mb-3 block min-h-14 rounded bg-pos-soft p-3 text-right text-2xl tabular-nums">
@@ -590,6 +600,7 @@ function PosCalculator() {
 
 export function PickupPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const step = nextStep(state)
+
   return (
     <>
       <div className="my-5.5 h-px bg-line" />

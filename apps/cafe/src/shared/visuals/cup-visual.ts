@@ -11,7 +11,9 @@ const BASE_DIMENSIONS = {
   'hot-mug': { top: 0.132, bottom: 0.12, height: 0.215 },
   'iced-glass': { top: 0.108, bottom: 0.092, height: 0.3 },
 } as const
+
 export const cupScale = (kind: CupKind) => drinkSizeModelScale(cupSize(kind))
+
 export const CUP_DIMENSIONS = Object.fromEntries(
   cupKinds.map((kind) => {
     const base = BASE_DIMENSIONS[cupStyle(kind)]
@@ -19,13 +21,23 @@ export const CUP_DIMENSIONS = Object.fromEntries(
     return [kind, { top: base.top * scale, bottom: base.bottom * scale, height: base.height * scale }]
   }),
 ) as Record<CupKind, { top: number; bottom: number; height: number }>
+
 export function cupFillY(kind: CupKind, fill: number) {
   return 0.008 + fill * (CUP_DIMENSIONS[kind].height - 0.02)
 }
+
 export function cupRadius(kind: CupKind, y: number) {
   const { top, bottom, height } = CUP_DIMENSIONS[kind]
   return bottom + (top - bottom) * Math.min(1, y / height)
 }
+
+const CUP_SURFACES = {
+  'iced-plastic': { color: '#d9eee8', roughness: 0.16, opacity: 0.18 },
+  'iced-glass': { color: '#d9eee8', roughness: 0.16, opacity: 0.26 },
+  'hot-mug': { color: '#dbe5d6', roughness: 0.24, opacity: 1 },
+  'hot-paper': { color: '#f9efdc', roughness: 0.7, opacity: 1 },
+} as const
+
 export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = false) {
   const root = new THREE.Group()
   parent.add(root)
@@ -35,13 +47,12 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   const clear = style === 'iced-plastic' || style === 'iced-glass'
   const glass = style === 'iced-glass'
   const material = new THREE.MeshStandardMaterial({
-    color: clear ? '#d9eee8' : style === 'hot-mug' ? '#dbe5d6' : '#f9efdc',
-    roughness: clear ? 0.16 : style === 'hot-mug' ? 0.24 : 0.7,
+    ...CUP_SURFACES[style],
     transparent: clear,
-    opacity: clear ? (glass ? 0.26 : 0.18) : 1,
     depthWrite: !clear,
     side: THREE.DoubleSide,
   })
+
   const cylinder = (r1: number, r2: number, h: number, y: number, mat: THREE.Material, open = false) => {
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, detailed ? 32 : 20, 1, open), mat)
     mesh.position.y = y
@@ -49,17 +60,20 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
     root.add(mesh)
     return mesh
   }
+
   cylinder(top, bottom, height, height / 2, material, true)
   cylinder(bottom, bottom, glass ? 0.022 : 0.007, glass ? 0.011 : 0.004, material)
   const rim = new THREE.Mesh(new THREE.TorusGeometry(top, glass ? 0.005 : 0.0035, 6, 32), material)
   rim.rotation.x = Math.PI / 2
   rim.position.y = height
   root.add(rim)
+
   if (style === 'hot-mug') {
     const handle = new THREE.Mesh(new THREE.TorusGeometry(0.057 * scale, 0.014 * scale, 8, 24), material)
     handle.position.set(top + 0.035 * scale, height * 0.53, 0)
     root.add(handle)
   }
+
   if (style === 'hot-paper') {
     const y = height * 0.47
     cylinder(
@@ -71,6 +85,7 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
       true,
     )
   }
+
   const lid = cylinder(
     top + 0.007,
     top + 0.005,
@@ -90,12 +105,15 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   )
   hole.position.set(0, clear ? 0.008 : 0.014, clear ? 0 : top * 0.72)
   lid.add(hole)
+
   if (detailed && clear) {
     const black = new THREE.MeshBasicMaterial({ color: '#263b32' })
     const white = new THREE.MeshBasicMaterial({ color: '#fff9e8' })
+
     for (const line of ['lower', 'middle', 'upper'] as const) {
       const fill = vesselLineFill(recipeCatalog, 'serving-cup', cupSize(kind), style, line)
       const y = cupFillY(kind, fill)
+
       for (const rotation of [0, Math.PI]) {
         for (const [offset, mat] of [
           [0, white],
@@ -112,5 +130,6 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
       }
     }
   }
+
   return { root, lid, reusable: isReusableCup(kind) }
 }

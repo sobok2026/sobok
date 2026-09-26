@@ -10,12 +10,15 @@ export default function ShiftLedger({ state }: { state: GameState }) {
   )
   if (totals.cupPurchases) purchases.push({ name: '컵', amount: totals.cupPurchases })
   if (totals.coldBrewPurchases) purchases.push({ name: '콜드 브루 원두', amount: totals.coldBrewPurchases })
+
   for (const id of supplyIds)
     if (totals.supplyPurchases[id]) purchases.push({ name: SUPPLIES[id].name, amount: totals.supplyPurchases[id]! })
+
   const spent = purchases.reduce((sum, item) => sum + item.amount, 0)
   const usedSupplies = supplyIds.filter((id) => (totals.suppliesUsed[id] ?? 0) > 0)
   const discarded = ingredientIds.filter((id) => (totals.disposed[id] ?? 0) > 0.0001)
   const hasWaste = discarded.length > 0 || totals.coldBrewDiscardedBeans > 0 || totals.wastedCups > 0
+
   return (
     <section aria-label="입고·폐기 기록" className="text-sm">
       <dl className="divide-y divide-line border-y border-line">

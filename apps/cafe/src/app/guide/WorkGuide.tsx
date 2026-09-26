@@ -32,6 +32,7 @@ export default function WorkGuide({
   started: boolean
 }) {
   const tip = currentTip(state, station)
+
   return (
     <div className="text-sm leading-relaxed">
       {started ? (

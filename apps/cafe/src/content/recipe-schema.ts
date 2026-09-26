@@ -5,6 +5,7 @@ const id = z
   .min(1)
   .max(160)
   .regex(/^[A-Za-z0-9가-힣][A-Za-z0-9가-힣._-]*$/)
+
 const text = z.string().trim().min(1)
 const positive = z.number().positive()
 const sizes = ['short', 'tall', 'grande', 'venti', 'trenta'] as const
@@ -14,6 +15,7 @@ export type CatalogSize = z.infer<typeof recipeSizeSchema>
 const referenceSize = z.union([recipeSizeSchema, z.enum(['one-size-smaller', 'one-size-larger'])])
 const physicalUnit = z.enum(['ml', 'l', 'g', 'kg', 'lb', 'oz'])
 const countUnit = z.enum(['pump', 'shot', 'scoop', 'pack', 'tap', 'turn', 'piece', 'cycle', 'drop', 'bag', 'cup'])
+
 export const amountSchema = z.discriminatedUnion('kind', [
   z.strictObject({
     kind: z.literal('amount'),
@@ -64,15 +66,19 @@ export const amountSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('unspecified'), description: text }),
 ])
 export type RecipeAmount = z.infer<typeof amountSchema>
+
 const amountChoice = z.union([
   amountSchema,
   z.strictObject({ kind: z.literal('by-size'), values: z.partialRecord(recipeSizeSchema, amountSchema) }),
 ])
+
 const duration = z.union([
   z.strictObject({ seconds: positive, approximate: z.boolean(), atLeast: z.boolean().optional() }),
   z.strictObject({ minSeconds: positive, maxSeconds: positive }),
 ])
+
 const repetitions = z.union([positive, z.strictObject({ min: positive, max: positive })])
+
 const temperature = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('celsius'), value: z.number() }),
   z.strictObject({ kind: z.literal('range'), min: z.number(), max: z.number() }),
@@ -80,6 +86,8 @@ const temperature = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('hot') }),
   z.strictObject({ kind: z.literal('cold') }),
 ])
+export type RecipeTemperature = z.infer<typeof temperature>
+
 export const recipeConditionSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('container'), value: z.enum(['standard-cup', 'personal-cup', 'tumbler']) }),
   z.strictObject({ kind: z.literal('service'), value: z.enum(['for-here', 'takeaway']) }),
@@ -91,6 +99,7 @@ export type RecipeCondition = z.infer<typeof recipeConditionSchema>
 const when = z.union([recipeConditionSchema, z.array(recipeConditionSchema).min(1)])
 const target = id
 const portion = z.enum(['all', 'liquid', 'foam'])
+
 function operation<T extends z.ZodRawShape>(shape: T) {
   return z.strictObject({ ...shape, when: when.optional() })
 }
@@ -238,6 +247,7 @@ const row = z.strictObject({
   when: when.optional(),
   alternatives: z.array(z.strictObject({ label: text, operations: z.array(operationSchema).min(1) })).optional(),
 })
+
 export const recipeDocumentSchema = z.strictObject({
   id,
   name: text,
@@ -272,6 +282,7 @@ export const equipmentSchema = z.array(
     notes: z.array(text),
   }),
 )
+
 export type Equipment = z.infer<typeof equipmentSchema>[number]
 
 export const materialSchema = z.array(
@@ -284,6 +295,7 @@ export const materialSchema = z.array(
     notes: z.array(text),
   }),
 )
+
 export type Material = z.infer<typeof materialSchema>[number]
 
 export const vesselSchema = z.array(
@@ -303,6 +315,7 @@ export const vesselSchema = z.array(
     notes: z.array(text),
   }),
 )
+
 export type RecipeVessel = z.infer<typeof vesselSchema>[number]
 
 export function selectedAmount(amount: z.infer<typeof amountChoice>, size: CatalogSize): RecipeAmount {

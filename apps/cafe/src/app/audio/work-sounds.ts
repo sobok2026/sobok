@@ -18,6 +18,7 @@ const assetIds = [
   'steam-milk',
   'wipe-table',
 ] as const
+
 // FLAC rather than a lossy codec: five of these loop, and only a lossless file decodes to the exact sample count
 // in every browser, without encoder padding that would put a gap at each wrap. Vite fingerprints each URL, so
 // the files can be cached forever.
@@ -43,6 +44,7 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   const buffers = new Map<Asset, AudioBuffer>()
   const voices = new Set<Voice>()
   const abort = new AbortController()
+
   const notify = (status: SoundStatus) => {
     if (!disposed) onStatus(muted ? 'off' : status)
   }
@@ -53,6 +55,7 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     voice.gain.gain.setTargetAtTime(0, context.currentTime, 0.006)
     voice.source.stop(context.currentTime + 0.03)
   }
+
   function stop() {
     generation++
     if (loop) stopVoice(loop.voice)
@@ -60,21 +63,21 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     for (const voice of voices) stopVoice(voice)
     voices.clear()
   }
+
   function configure(preferences: Preferences) {
     muted = preferences.muted
     volume = preferences.volume
     if (master && context) master.gain.setTargetAtTime(muted ? 0 : volume * 0.8, context.currentTime, 0.015)
     if (muted || volume === 0) stop()
-    notify(
-      loading
-        ? 'loading'
-        : !context
-          ? 'idle'
-          : context.state === 'running' && buffers.size === assetIds.length
-            ? 'ready'
-            : 'blocked',
-    )
+    notify(currentStatus())
   }
+
+  function currentStatus(): SoundStatus {
+    if (loading) return 'loading'
+    if (!context) return 'idle'
+    return context.state === 'running' && buffers.size === assetIds.length ? 'ready' : 'blocked'
+  }
+
   async function unlock() {
     if (disposed || muted) return
     try {
@@ -88,12 +91,15 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
           else if (buffers.size === assetIds.length) notify('ready')
         }
       }
+
       if (context.state !== 'running') await context.resume()
       if (disposed || muted) return
+
       if (context.state !== 'running') {
         notify('blocked')
         return
       }
+
       if (!loading && buffers.size !== assetIds.length) {
         notify('loading')
         const audioContext = context
@@ -112,12 +118,14 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
             loading = null
           })
       }
+
       if (loading) await loading
       notify('ready')
     } catch {
       notify('unavailable')
     }
   }
+
   function createVoice(asset: Asset, level: number, rate = 1, delay = 0, repeats = false): Voice | null {
     const buffer = buffers.get(asset)
     if (!context || !master || !buffer || muted || volume === 0 || context.state !== 'running' || disposed) return null
@@ -138,28 +146,34 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
       voices.delete(voice)
     }
     source.start(start)
+
     if (!repeats) {
       const end = start + buffer.duration / rate
       gain.gain.setValueAtTime(level, Math.max(start + 0.008, end - 0.015))
       gain.gain.linearRampToValueAtTime(0, end)
       source.stop(end + 0.01)
     }
+
     return voice
   }
+
   function hit(asset: Asset, level: number, rate = 1, delay = 0) {
     while (voices.size >= 3) {
       const first = voices.values().next().value as Voice
       stopVoice(first)
       voices.delete(first)
     }
+
     const voice = createVoice(asset, level, rate, delay)
     if (voice) voices.add(voice)
   }
+
   function play(sound: WorkSound) {
     if (!context || muted || volume === 0 || disposed || context.state !== 'running') return
     if (sound === lastCue && context.currentTime - lastCueAt < 0.06) return
     lastCue = sound
     lastCueAt = context.currentTime
+
     switch (sound) {
       case 'ice':
         hit('ice-cubes', 0.6)
@@ -172,19 +186,23 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
         break
     }
   }
+
   function setLoop(kind: WorkLoop | null) {
     if (muted || volume === 0 || context?.state !== 'running') kind = null
     if (loop?.kind === kind) return
     if (loop) stopVoice(loop.voice)
     loop = null
     if (!kind) return
-    const asset = kind === 'steam' ? (nextSteam % 2 === 0 ? 'steam-machine' : 'steam-milk') : kind
+    const steamAsset = nextSteam % 2 === 0 ? 'steam-machine' : 'steam-milk'
+    const asset = kind === 'steam' ? steamAsset : kind
     const voice = createVoice(asset, kind === 'wipe-table' ? 0.6 : 0.75, 1, 0, true)
+
     if (voice) {
       loop = { kind, voice }
       if (kind === 'steam') nextSteam++
     }
   }
+
   return {
     configure,
     unlock,
@@ -201,10 +219,12 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
       disposed = true
       abort.abort()
       buffers.clear()
+
       if (context) {
         context.onstatechange = null
         void context.close().catch(() => undefined)
       }
+
       context = null
       master = null
     },
@@ -215,6 +235,7 @@ function newError(previous: GameState, current: GameState) {
   const message = current.messages.at(-1)
   return message?.id !== previous.messages.at(-1)?.id && message?.tone === 'error'
 }
+
 function completedWork(previous: GameState, current: GameState) {
   return (
     current.totals.prepared > previous.totals.prepared ||
@@ -222,6 +243,7 @@ function completedWork(previous: GameState, current: GameState) {
     current.totals.cleaned > previous.totals.cleaned
   )
 }
+
 export function actionSound(action: Action, previous: GameState, current: GameState): WorkSound | null {
   if (newError(previous, current)) return null
   if (current.totals.served > previous.totals.served) return 'serve'
@@ -240,13 +262,16 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
       ).steps.length
   )
     return 'complete'
+
   if (action.type === 'use-start' && previous.cup && current.cup) {
     const op = operationFor(previous.cup.recipe, previous.cup.craft)
     if (current.cup.craft.progress > previous.cup.craft.progress)
       return op?.operation.action === 'add' && op.operation.materialId === 'ice' ? 'ice' : null
   }
+
   return null
 }
+
 export function tickSound(previous: GameState, current: GameState): WorkSound | null {
   if (newError(previous, current)) return null
   if (
@@ -256,9 +281,11 @@ export function tickSound(previous: GameState, current: GameState): WorkSound | 
     return 'complete'
   return null
 }
+
 export function workLoop(state: GameState, input: ActiveInput, position: GameState['position']): WorkLoop | null {
   if (input?.kind === 'clean') return state.cleaning?.stage === 'wipe' ? 'wipe-table' : null
   if (input?.kind === 'cold') return state.coldBrew?.step === 1 ? 'pour-cup' : null
+
   if (input?.kind === 'prep' && state.preparation) {
     const step = preparationStep(state.preparation)
     if (step?.kind === 'pour')
@@ -266,6 +293,7 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
         ? 'pour-milk'
         : 'pour-cup'
   }
+
   if (input?.kind === 'drink' && state.cup) {
     const op = operationFor(state.cup.recipe, state.cup.craft)
     if (op?.kind === 'pour')
@@ -273,6 +301,7 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
         ? 'pour-milk'
         : 'pour-cup'
   }
+
   const machine = state.jobs
     .filter(
       (job) =>
@@ -286,5 +315,6 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
     }))
     .filter((item) => item.distance <= 3.5)
     .sort((a, b) => a.distance - b.distance)[0]
-  return machine ? (machine.job.equipmentId === 'steam-wand' ? 'steam' : 'espresso') : null
+  if (!machine) return null
+  return machine.job.equipmentId === 'steam-wand' ? 'steam' : 'espresso'
 }

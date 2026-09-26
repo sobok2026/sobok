@@ -28,30 +28,37 @@ import { washItems } from '../features/washing/rules'
 const quantity = z.number().min(0).max(100000000)
 const reusableCounts = z.record(z.enum(reusableCupKinds), quantity.int())
 const timestamp = z.number().min(0).max(100000000000)
+
 const ingredientAmounts = z
   .record(z.string(), quantity)
   .refine(
     (amounts) => Object.keys(amounts).every((id) => ingredientIds.includes(id)),
     '등록되지 않은 재료가 포함되어 있어요.',
   )
+
 const customerPoint = z.tuple([z.number().min(-7).max(7), z.number().min(0).max(7)])
+
 const orderItemSchema = z.object({
   recipe: z.enum(recipeIds),
   service: z.enum(serviceModes),
   size: z.enum(drinkSizeIds),
   customizations: customizationSchema,
 })
+
 const requestedItemSchema = orderItemSchema.extend({ quantity: z.number().int().min(1).max(99) })
+
 const orderLineSchema = requestedItemSchema.extend({
   id: z.string().min(1).max(100),
   served: z.number().int().min(0).max(99),
 })
+
 const paymentSchema = z.object({
   id: z.string().min(1).max(100),
   method: z.enum(['cash', 'card']),
   amount: z.number().int().positive().max(100000000),
   tendered: z.number().int().positive().max(100000000),
 })
+
 const saleSchema = z
   .object({
     customerId: z.string().min(1).max(100),
@@ -83,6 +90,7 @@ const saleSchema = z
       invalid('주문할 수 없는 커스텀이나 메뉴가 포함되어 있어요.')
     }
   })
+
 const customerSchema = z
   .object({
     id: z.string().max(100),
@@ -131,6 +139,7 @@ const customerSchema = z
         : customer.visit.table === null),
     '손님의 이용 방식과 테이블 정보가 맞지 않아요.',
   )
+
 const batchSchema = z.object({
   id: z.string().max(100),
   ingredient: z.enum(ingredientIds),
@@ -140,6 +149,7 @@ const batchSchema = z.object({
   expiresAt: timestamp.nullable(),
   labelled: z.boolean(),
 })
+
 const jobSchema = z.object({
   id: z.string().max(100),
   kind: z.enum(['production', 'cold-brew']),
@@ -152,6 +162,7 @@ const jobSchema = z.object({
   equipmentId: z.string().optional(),
   preparationId: z.string().max(100).optional(),
 })
+
 const totalsSchema = z.object({
   openingCash: quantity,
   purchases: ingredientAmounts,
@@ -170,12 +181,14 @@ const totalsSchema = z.object({
   washed: quantity,
   prepared: quantity,
 })
+
 const craftSchema = productionStateSchema.extend({
   customizations: customizationSchema,
   kind: z.enum(cupKinds),
   location: z.union([z.literal('hand'), z.enum(stationIds)]),
   lidded: z.boolean(),
 })
+
 const preparationSchema = productionStateSchema
   .extend({
     id: z.string().max(100),
@@ -184,6 +197,7 @@ const preparationSchema = productionStateSchema
     batchId: z.string().max(100).nullable(),
   })
   .refine((prep) => prep.cursor <= PREPARATIONS[prep.recipe].steps.length, '부재료 준비 단계가 범위를 벗어났어요.')
+
 const coldBrewSchema = z
   .object({
     id: z.string().max(100),
@@ -205,6 +219,7 @@ const coldBrewSchema = z
     (brew) => !['finished', 'ready'].includes(brew.stage) || brew.completedAt !== null,
     '추출 완료 시각이 없어요.',
   )
+
 const washingSchema = z
   .object({
     id: z.string().max(100),
@@ -214,6 +229,7 @@ const washingSchema = z
     spongeHeld: z.boolean(),
   })
   .refine((washing) => washing.stage === 'scrub' || !washing.spongeHeld, '스펀지를 먼저 내려놓아주세요.')
+
 const cleaningSchema = z
   .object({
     id: z.string().max(100),
@@ -240,6 +256,7 @@ const cleaningSchema = z
     (cleaning) => cleaning.progress <= (cleaning.stage === 'collect' ? 0 : CLEANING_SECONDS[cleaning.stage]),
     '청소 진행량이 범위를 벗어났어요.',
   )
+
 export const stateSchema = z
   .object({
     day: z.number().int().min(1).max(10000),
@@ -303,6 +320,7 @@ export const stateSchema = z
   .refine((state) => {
     if (!state.cup) return true
     const ticket = currentTicket(state)
+
     return (
       !!ticket &&
       state.cup.orderLineId === ticket.id &&
@@ -359,6 +377,7 @@ export const stateSchema = z
     (state) =>
       state.batches.every((batch) => {
         if (!['prep', 'cold-prep', 'hand'].includes(batch.location)) return true
+
         return batch.ingredient === 'coldBrew'
           ? batch.location !== 'prep' && state.coldBrew?.stage === 'ready' && state.coldBrew.batchId === batch.id
           : !!state.preparation &&
@@ -371,6 +390,7 @@ export const stateSchema = z
   )
   .refine((state) => {
     const jobs = state.jobs.filter((job) => job.kind === 'cold-brew')
+
     return state.coldBrew?.stage === 'extracting'
       ? jobs.length === 1 && jobs[0].preparationId === state.coldBrew.id
       : jobs.length === 0
@@ -388,6 +408,7 @@ export const stateSchema = z
         const washing = state.washing?.item === kind && state.washing.stage !== 'ready' ? 1 : 0
         const customer = customerCupCounts(state)[kind]
         const surfaces = state.condiment.cups[kind] + tableIds.reduce((sum, id) => sum + state.tables[id].cups[kind], 0)
+
         return (
           stock.clean +
             stock.dirty +

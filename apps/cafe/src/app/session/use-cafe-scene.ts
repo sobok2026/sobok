@@ -8,7 +8,9 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
   const [graphicsError, setGraphicsError] = useState('')
   // Callbacks read mutable interaction flags, while the renderer stays alive for this store.
   const latest = useRef(options)
+
   latest.current = options
+
   useEffect(() => {
     let cancelled = false
     void import('../../world/scene')
@@ -42,6 +44,7 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
       .catch(() => {
         if (!cancelled) setGraphicsError('게임 화면을 불러오지 못했어요. 새로고침해주세요.')
       })
+
     return () => {
       cancelled = true
       store.stopActiveInput()
@@ -49,5 +52,6 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
       scene.current = null
     }
   }, [store, host])
+
   return { scene, sceneReady, graphicsError }
 }

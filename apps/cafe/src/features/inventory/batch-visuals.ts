@@ -3,6 +3,15 @@ import { INGREDIENTS } from '../../content/ingredients'
 import type { GameState } from '../../simulation/state'
 import { carriedBatch } from './batches'
 
+const BATCH_COLORS: Partial<Record<string, string>> = {
+  foam: '#eee0bf',
+  mocha: '#65422e',
+  hojicha: '#967345',
+  matcha: '#568438',
+}
+
+const BATCH_SCALES: Partial<Record<string, number>> = { coldBrew: 1.15, mocha: 1 }
+
 export function createBatchVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const vessel = new THREE.Group()
   vessel.position.set(0.25, -0.36, -0.7)
@@ -44,32 +53,26 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
     scene.add(cup)
     return cup
   })
+
   return {
     update(state: GameState) {
       const held = carriedBatch(state)
       vessel.visible = !!held
+
       if (held) {
-        drinkMaterial.color.set(
-          held.ingredient === 'foam'
-            ? '#eee0bf'
-            : held.ingredient === 'mocha'
-              ? '#65422e'
-              : held.ingredient === 'hojicha'
-                ? '#967345'
-                : held.ingredient === 'matcha'
-                  ? '#568438'
-                  : '#3e2c20',
-        )
+        drinkMaterial.color.set(BATCH_COLORS[held.ingredient] ?? '#3e2c20')
         handle.visible = held.ingredient !== 'hojicha' && held.ingredient !== 'matcha'
         const height = Math.max(0.012, 0.29 * Math.min(1, held.amount / INGREDIENTS[held.ingredient].pack))
         liquid.scale.y = height
         liquid.position.y = height / 2 + 0.006
         label.visible = held.labelled
-        vessel.scale.setScalar(held.ingredient === 'coldBrew' ? 1.15 : held.ingredient === 'mocha' ? 1 : 0.85)
+        vessel.scale.setScalar(BATCH_SCALES[held.ingredient] ?? 0.85)
       }
+
       const stored = state.batches.filter(
         (batch) => batch.ingredient === 'mocha' && batch.location === 'bar' && batch.amount > 0,
       ).length
+
       shelfCups.forEach((cup, index) => {
         cup.visible = index < stored
       })

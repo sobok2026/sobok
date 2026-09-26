@@ -4,6 +4,7 @@ import type { GameState } from '../../simulation/state'
 import { CUP_STYLE_NAMES, cupKindFor, cupStyle } from '../inventory/cups'
 import { currentTicket } from '../service/orders'
 import { WASH_NAMES, washItems, washStock } from './rules'
+
 export default function WashingPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const ticket = currentTicket(state)
   const needed = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
@@ -13,6 +14,7 @@ export default function WashingPanel({ state, act }: { state: GameState; act: (a
       const next = (key: 'dirty' | 'washed') =>
         items.find((item) => item === needed && washStock(state, item)[key] > 0) ??
         items.find((item) => washStock(state, item)[key] > 0)
+
       return {
         group,
         name: group === 'pitcher' ? WASH_NAMES.pitcher : CUP_STYLE_NAMES[group],
@@ -23,6 +25,7 @@ export default function WashingPanel({ state, act }: { state: GameState; act: (a
       }
     })
     .filter((stock) => stock.dirty > 0 || stock.washed > 0)
+
   return (
     <div className="divide-y divide-line">
       {washingQueue.length === 0 ? <p className="text-sm text-muted">세척할 용기 없음</p> : null}

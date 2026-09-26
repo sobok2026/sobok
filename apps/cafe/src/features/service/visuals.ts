@@ -14,6 +14,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
   const shirt = new THREE.MeshStandardMaterial({ color: '#bc997d', roughness: 0.9 })
   const trousers = new THREE.MeshStandardMaterial({ color: '#4c6253', roughness: 0.9 })
   const dark = new THREE.MeshStandardMaterial({ color: '#403b30', roughness: 0.9 })
+
   function cylinder(
     parent: THREE.Object3D,
     radius: number,
@@ -29,6 +30,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
     parent.add(mesh)
     return mesh
   }
+
   cylinder(person, 0.235, 0.64, shirt, 0, 1.11)
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.185, 16, 12), skin)
   head.position.set(0, 1.61, 0)
@@ -37,11 +39,13 @@ export function createCustomerVisuals(scene: THREE.Scene) {
   const hair = new THREE.Mesh(new THREE.SphereGeometry(0.194, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.44), dark)
   hair.position.copy(head.position)
   person.add(hair)
+
   for (const x of [-0.068, 0.068]) {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.014, 8, 6), dark)
     eye.position.set(x, 1.625, 0.17)
     person.add(eye)
   }
+
   const legs = [-0.12, 0.12].map((x) => {
     const hip = new THREE.Group()
     hip.position.set(x, 0.82, 0)
@@ -80,6 +84,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
   let shownId: string | null = null
   let visualTime = 0
   const position = new THREE.Vector3()
+
   return {
     reset() {
       shownId = null
@@ -87,11 +92,14 @@ export function createCustomerVisuals(scene: THREE.Scene) {
     update(state: GameState, delta: number, running: boolean) {
       const customer = state.customer
       root.visible = !!customer
+
       if (!customer) {
         shownId = null
         return
       }
+
       position.set(customer.position[0], 0, customer.position[1])
+
       if (shownId !== customer.id) {
         shownId = customer.id
         root.position.copy(position)
@@ -99,6 +107,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         shirt.color.set(palette[(customer.orderNumber - 1) % palette.length])
         visualTime = state.time
       } else if (running) root.position.lerp(position, 1 - Math.exp(-delta * 20))
+
       if (running) visualTime += delta
       const sitting = customerSitting({ ...customer, position: [root.position.x, root.position.z] })
       const walking = customerWalking(customer)
@@ -109,10 +118,12 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         root.rotation.y +=
           Math.atan2(Math.sin(yaw - root.rotation.y), Math.cos(yaw - root.rotation.y)) * Math.min(1, delta * 14)
       person.position.y = -0.27 * sitting + (walking ? Math.abs(stride) * 0.018 : 0)
+
       legs.forEach((leg, i) => {
         leg.hip.rotation.x = (-Math.PI / 2) * sitting + stride * (i ? -0.38 : 0.38)
         leg.knee.rotation.x = (Math.PI / 2) * sitting
       })
+
       const holding = customerHasCup(state)
       const received = (state.sale?.lines ?? [])
         .flatMap((line) =>
@@ -122,6 +133,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         )
         .slice(0, 3)
       const cupKey = received.map((line) => `${line.id}:${line.recipe}:${line.size}:${line.service}`).join('|')
+
       if (cupKey !== shownCups) {
         shownCups = cupKey
         cupDisplays.forEach((display, index) => {
@@ -131,15 +143,19 @@ export function createCustomerVisuals(scene: THREE.Scene) {
           const kind = cupKindFor(line.recipe, line.service, line.size)
           display.root.position.x = (index - (received.length - 1) / 2) * 0.24
           display.liquidMaterial.color.set(RECIPES[line.recipe].color)
+
           for (const [id, body] of display.bodies) {
             body.root.visible = id === kind
             body.lid.visible = line.service === 'takeout'
           }
+
           display.liquid.position.y = CUP_DIMENSIONS[kind].height - 0.014
           display.liquid.scale.setScalar((CUP_DIMENSIONS[kind].top - 0.006) / 0.1)
         })
       }
-      arms[0].rotation.x = received.length > 1 ? -0.8 : walking ? -stride * 0.3 : 0.05
+
+      const swing = walking ? -stride * 0.3 : 0.05
+      arms[0].rotation.x = received.length > 1 ? -0.8 : swing
       arms[1].rotation.x = holding ? -0.8 - sitting * 0.6 - sipping * 0.6 : stride * 0.3
       cup.visible = holding
       cup.position.set(

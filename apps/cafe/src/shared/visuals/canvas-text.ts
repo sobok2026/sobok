@@ -19,11 +19,13 @@ const latestDraw = new WeakMap<THREE.Texture, () => void>()
  */
 export function paintTexture(texture: THREE.Texture, draw: () => void) {
   const canvas = texture.image as HTMLCanvasElement
+
   const paint = () => {
     canvas.getContext('2d')!.clearRect(0, 0, canvas.width, canvas.height)
     draw()
     texture.needsUpdate = true
   }
+
   latestDraw.set(texture, draw)
   paint()
   if (document.fonts.status === 'loading')

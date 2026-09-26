@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useRef, useState } from 'react'
 import { money } from '../../shared/format'
 import { uid } from '../../shared/id'
@@ -17,11 +18,12 @@ export function PosCheckout({
   onBack: () => void
   onClose: () => void
 }) {
-  const [method, setMethod] = useState<'cash' | 'card' | null>(null)
+  const [method, setMethod] = useState<PaymentMethod | null>(null)
   const [value, setValue] = useState('')
   const [recognized, setRecognized] = useState(false)
   const [error, setError] = useState('')
   const attempt = useRef('')
+
   const sale = state.sale
   const total = saleTotal(sale),
     paid = salePaid(sale),
@@ -29,21 +31,26 @@ export function PosCheckout({
     change = saleChange(sale)
   const complete = !!sale && sale.paidAt !== null
   const matches = orderMatchesRequest(state)
+
   const pay = () => {
     if (!method || complete) return
     const tendered = Number(value)
+
     if (!Number.isSafeInteger(tendered) || tendered <= 0 || (method === 'card' && tendered > remaining)) {
       setError('결제 금액을 확인해주세요.')
       return
     }
+
     if (method === 'card' && !recognized) {
       setError('카드를 먼저 인식해주세요.')
       return
     }
+
     act({ type: 'pos-pay', id: attempt.current, method, tendered })
     setMethod(null)
     setError('')
   }
+
   return (
     <div
       className="grid min-h-0 min-w-0 flex-1 grid-cols-[minmax(10rem,0.75fr)_minmax(0,1.5fr)] gap-1.5"
@@ -97,15 +104,7 @@ export function PosCheckout({
       </section>
       <section
         className="flex min-h-0 min-w-0 flex-col overflow-y-auto rounded-md bg-white p-4 text-pos-ink"
-        aria-label={
-          complete
-            ? '결제 완료'
-            : method === 'cash'
-              ? '현금결제'
-              : method === 'card'
-                ? '신용카드 결제'
-                : '결제수단 선택'
-        }
+        aria-label={checkoutLabel(complete, method)}
       >
         {complete ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
@@ -123,7 +122,8 @@ export function PosCheckout({
               제조하러 가기 →
             </PosButton>
           </div>
-        ) : method ? (
+        ) : null}
+        {!complete && method ? (
           <form
             className="flex min-h-full flex-col gap-3 pos-compact:gap-2"
             onSubmit={(event) => {
@@ -166,10 +166,11 @@ export function PosCheckout({
                 onChange={(event) => {
                   if (/^\d{0,8}$/.test(event.target.value)) setValue(event.target.value)
                 }}
-                className={[
-                  'min-h-12 min-w-0 flex-1 pos-compact:min-h-10 rounded border-2 border-pos-active',
-                  'bg-[#fff2cb] px-3 text-right text-xl tabular-nums',
-                ].join(' ')}
+                className={clsx(
+                  'min-h-12 min-w-0 flex-1',
+                  'rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-right text-xl tabular-nums',
+                  'pos-compact:min-h-10',
+                )}
               />
             </label>
             <div className="mx-auto w-full max-w-sm">
@@ -197,12 +198,8 @@ export function PosCheckout({
                 <span role="alert" className="text-danger">
                   {error}
                 </span>
-              ) : method === 'cash' && Number(value) > remaining ? (
-                `거스름돈 ${money(Number(value) - remaining)}`
-              ) : Number(value) > 0 && Number(value) < remaining ? (
-                `결제 후 남은 금액 ${money(remaining - Number(value))}`
               ) : (
-                ''
+                paymentNote(method, Number(value), remaining)
               )}
             </div>
             <PosButton
@@ -214,7 +211,8 @@ export function PosCheckout({
               결제
             </PosButton>
           </form>
-        ) : (
+        ) : null}
+        {!complete && !method ? (
           <>
             <h2 className="mb-5 text-lg font-semibold">결제</h2>
             {!matches ? (
@@ -251,8 +249,22 @@ export function PosCheckout({
               ← 주문으로 돌아가기
             </PosButton>
           </>
-        )}
+        ) : null}
       </section>
     </div>
   )
+}
+
+type PaymentMethod = 'cash' | 'card'
+
+function checkoutLabel(complete: boolean, method: PaymentMethod | null) {
+  if (complete) return '결제 완료'
+  if (method === 'cash') return '현금결제'
+  return method === 'card' ? '신용카드 결제' : '결제수단 선택'
+}
+
+function paymentNote(method: PaymentMethod, tendered: number, remaining: number) {
+  if (method === 'cash' && tendered > remaining) return `거스름돈 ${money(tendered - remaining)}`
+  if (tendered > 0 && tendered < remaining) return `결제 후 남은 금액 ${money(remaining - tendered)}`
+  return ''
 }

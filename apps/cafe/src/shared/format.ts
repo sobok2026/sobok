@@ -15,6 +15,7 @@ export function batchDate(time: number | null, withSeconds = false) {
 export function formatAmount(value: number) {
   return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 1 }).format(value)
 }
+
 export function money(value: number) {
   return `${Math.round(value).toLocaleString('ko-KR')}원`
 }

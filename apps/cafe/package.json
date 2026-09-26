@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@sobok/typography": "workspace:*",
+    "clsx": "^2.1.1",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "three": "0.186.0",

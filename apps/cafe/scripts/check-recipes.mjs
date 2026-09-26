@@ -4,8 +4,10 @@ import { parseRecipeCatalog, recipeVariantExecutionIssues } from '../src/content
 
 const root = new URL('../data/', import.meta.url)
 const read = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'))
+
 async function recipesAt(folder) {
   const result = []
+
   for (const entry of await readdir(folder, { withFileTypes: true })) {
     const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), folder)
     if (entry.isDirectory()) result.push(...(await recipesAt(url)))
@@ -17,8 +19,10 @@ async function recipesAt(folder) {
       }
     }
   }
+
   return result
 }
+
 try {
   const [recipes, materials, equipment, vessels] = await Promise.all([
     recipesAt(new URL('recipes/', root)),

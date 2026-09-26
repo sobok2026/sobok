@@ -1,8 +1,9 @@
+import clsx from 'clsx'
 import { type ButtonHTMLAttributes, type ReactNode, useEffect, useId, useRef } from 'react'
 
 export function PosButton({
   tone = 'soft',
-  className = '',
+  className,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: 'soft' | 'dark' | 'active' | 'key' | 'hot' | 'iced' }) {
   const colors = {
@@ -13,16 +14,17 @@ export function PosButton({
     hot: 'bg-[#de835f] text-white',
     iced: 'bg-[#45a6c4] text-white',
   }
+
   return (
     <button
       type="button"
       {...props}
-      className={[
-        'min-h-10 rounded-[0.25rem] px-3 py-2 text-sm font-semibold leading-snug disabled:opacity-40',
-        'aria-pressed:bg-pos-active aria-pressed:text-white',
+      className={clsx(
+        'min-h-10 rounded-[0.25rem] px-3 py-2 text-sm font-semibold leading-snug',
+        'disabled:opacity-40 aria-pressed:bg-pos-active aria-pressed:text-white',
         colors[tone],
         className,
-      ].join(' ')}
+      )}
     />
   )
 }
@@ -40,17 +42,21 @@ export function PosDialog({
 }) {
   const id = useId()
   const dialog = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const previous = document.activeElement
     const field = dialog.current?.querySelector<HTMLInputElement>('input:not(:disabled)')
+
     if (field) {
       field.focus()
       field.select()
     } else dialog.current?.focus()
+
     return () => {
       if (previous instanceof HTMLElement && previous.isConnected) previous.focus()
     }
   }, [])
+
   return (
     <div className="absolute inset-0 z-30 grid place-items-center bg-black/50 p-5">
       <div
@@ -59,16 +65,18 @@ export function PosDialog({
         aria-modal="true"
         aria-labelledby={id}
         tabIndex={-1}
-        className={[
+        className={clsx(
           'max-h-full w-full overflow-auto rounded-lg bg-white p-5 text-pos-ink shadow-xl outline-none',
           wide ? 'max-w-3xl' : 'max-w-md',
-        ].join(' ')}
+        )}
         onKeyDown={(event) => {
           event.stopPropagation()
+
           if (event.key === 'Escape') {
             event.preventDefault()
             onClose()
           }
+
           if (event.key === 'Tab') {
             const items = [
               ...event.currentTarget.querySelectorAll<HTMLElement>(
@@ -102,6 +110,11 @@ export function PosDialog({
   )
 }
 
+function appendKey(value: string, key: string) {
+  if (key === '.5') return String(Math.floor(Number(value || 0)) + 0.5)
+  return value === '0' ? key : value + key
+}
+
 export function NumericPad({
   value,
   onChange,
@@ -118,9 +131,10 @@ export function NumericPad({
   disabled?: boolean
 }) {
   const append = (key: string) => {
-    const next = key === '.5' ? String(Math.floor(Number(value || 0)) + 0.5) : value === '0' ? key : value + key
+    const next = appendKey(value, key)
     if (next.length <= 8 && /^\d*(\.5)?$/.test(next)) onChange(next)
   }
+
   return (
     <fieldset className="grid grid-cols-4 gap-1" aria-label="숫자 키패드">
       {['7', '8', '9'].map((key) => (

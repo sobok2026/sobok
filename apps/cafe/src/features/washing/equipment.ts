@@ -51,6 +51,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
     chrome,
   )
   mesh(faucet, new THREE.CylinderGeometry(0.025, 0.025, 0.04, 24), chrome, [0, 0.53, 0.42])
+
   for (const x of [-0.12, 0.12]) {
     mesh(faucet, new THREE.CylinderGeometry(0.033, 0.039, 0.035, 24), chrome, [x, 0.05, 0])
     box(faucet, [0.085, 0.014, 0.029], [x + Math.sign(x) * 0.017, 0.075, 0], chrome)
@@ -61,6 +62,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
       [x, 0.085, 0],
     )
   }
+
   box(scene, [0.29, 0.045, 0.045], [-5, 1.52, -5.6], steel)
   tube(
     scene,
@@ -86,6 +88,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
   box(rack, [0.92, 0.018, 0.72], [0, 0.012, 0], steel)
   for (const x of [-0.443, 0.443]) box(rack, [0.014, 0.027, 0.72], [x, 0.027, 0], steel, 0.004)
   for (const z of [-0.35, 0.35]) box(rack, [0.9, 0.027, 0.014], [0, 0.027, z], steel, 0.004)
+
   for (const x of [-0.41, 0.41])
     for (const z of [-0.31, 0.31]) {
       tube(
@@ -99,6 +102,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
       )
       box(rack, [0.035, 0.028, 0.035], [x, 0.014, z], black, 0.008)
     }
+
   instances(
     rack,
     new THREE.BoxGeometry(0.86, 0.008, 0.008),
@@ -111,6 +115,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
     chrome,
     [-0.41, -0.2, 0, 0.2, 0.41].map((x) => [x, 0.319, 0]),
   )
+
   for (const z of [-0.33, 0.33])
     tube(
       rack,
@@ -121,6 +126,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
       0.007,
       chrome,
     )
+
   panel(rack, 0.37, 0.048, [0, 0.273, 0.334], (ctx, w, h) => {
     ctx.fillStyle = '#263c36'
     ctx.fillRect(0, 0, w, h)

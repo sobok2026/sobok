@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useId, useState } from 'react'
 import { INGREDIENTS } from '../../content/ingredients'
 import { recipeFor } from '../../content/recipes'
@@ -12,10 +13,12 @@ import { PreparationInstructions } from './Guide'
 import { PREPARATIONS, preparationForMaterial, preparationIds, unavailablePreparations } from './rules'
 
 const choices = preparationIds.map((id) => PREPARATIONS[id]).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+
 function orderPreparationMaterials(ticket: OrderLine | null) {
   const needed = new Set<string>()
   if (!ticket) return needed
   const visited = new Set<string>()
+
   const visit = (materialId: string) => {
     if (visited.has(materialId)) return
     visited.add(materialId)
@@ -24,8 +27,10 @@ function orderPreparationMaterials(ticket: OrderLine | null) {
     needed.add(materialId)
     for (const step of definition.steps) for (const input of Object.keys(step.costs)) visit(input)
   }
+
   for (const step of recipeFor(ticket.recipe, ticket.size, ticket.service, ticket.customizations).steps)
     for (const materialId of Object.keys(step.costs)) visit(materialId)
+
   return needed
 }
 
@@ -33,6 +38,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
   const searchId = useId()
   const [query, setQuery] = useState('')
   const [selection, setSelection] = useState<string | null>(null)
+
   const search = query.trim().toLocaleLowerCase('ko')
   const needed = orderPreparationMaterials(currentTicket(state))
   const options = choices
@@ -45,6 +51,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
   const busy =
     !!state.preparation || state.cup?.craft.location === 'prep' || state.jobs.some((job) => job.station === 'prep')
   const handsFull = cupHandsBusy(state.cup)
+
   return (
     <div>
       <label htmlFor={searchId} className="mb-2 block text-xs font-medium text-muted">
@@ -67,10 +74,10 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
             type="button"
             aria-pressed={selected?.id === item.id}
             onClick={() => setSelection(item.id)}
-            className={[
+            className={clsx(
               'w-full rounded-lg border border-control-line bg-control px-3 py-2.5 text-left text-sm',
               'aria-pressed:border-brand aria-pressed:bg-brand/10',
-            ].join(' ')}
+            )}
           >
             <span className="block font-medium">{item.name}</span>
             <span className="mt-1 flex flex-wrap justify-between gap-2 text-xs text-muted">
@@ -98,11 +105,8 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
           >
             준비 시작
           </Button>
-          {busy ? (
-            <p className="mt-2 text-xs text-muted">진행 중인 배합의 보관 또는 정리를 먼저 마쳐주세요.</p>
-          ) : handsFull ? (
-            <p className="mt-2 text-xs text-muted">음료 컵과 도구를 먼저 내려놓아주세요.</p>
-          ) : null}
+          {busy ? <p className="mt-2 text-xs text-muted">진행 중인 배합의 보관 또는 정리를 먼저 마쳐주세요.</p> : null}
+          {!busy && handsFull ? <p className="mt-2 text-xs text-muted">음료 컵과 도구를 먼저 내려놓아주세요.</p> : null}
           <PreparationInstructions definition={selected} />
         </section>
       ) : null}

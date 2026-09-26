@@ -14,6 +14,7 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
   })
   const dirty = new THREE.MeshStandardMaterial({ color: '#988665', roughness: 0.8 })
   const foam = new THREE.MeshStandardMaterial({ color: '#fcf6e3', transparent: true, opacity: 0.85 })
+
   function pitcher(parent: THREE.Object3D) {
     const group = new THREE.Group()
     parent.add(group)
@@ -33,6 +34,7 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
     group.add(stain)
     const reusable = new Map(reusableCupKinds.map((kind) => [kind, createCupBody(group, kind)]))
     const pitcherParts = [body, base, handle]
+
     return {
       group,
       stain,
@@ -42,6 +44,7 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
       },
     }
   }
+
   const working = pitcher(scene)
   const held = pitcher(camera)
   held.group.position.set(0.26, -0.37, -0.62)
@@ -88,21 +91,25 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
   scene.add(water)
   const hand = new THREE.Vector3()
   const quaternion = new THREE.Quaternion()
+
   return {
     update(state: GameState, active: boolean, now: number) {
       const washing = state.washing
       working.group.visible = !!washing && (washing.stage === 'scrub' || washing.stage === 'rinse')
       working.group.position.fromArray(WASH_SPOT)
+
       if (washing) {
         working.show(washing.item)
         held.show(washing.item)
       }
+
       const scrub = washing?.stage === 'scrub' ? washing.progress / WASH_STEPS.scrub.seconds : 1
       working.stain.visible = scrub < 1
       working.stain.scale.y = Math.max(0.01, 1 - scrub)
       held.group.visible = washing?.stage === 'carrying'
       held.stain.visible = false
       held.group.rotation.z = Math.sin(now / 650) * 0.025
+
       for (const [queue, key] of [
         [dirtyQueue, 'dirty'],
         [washedQueue, 'washed'],
@@ -111,15 +118,19 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
           Array.from({ length: Math.min(washStock(state, item)[key], queue.length) }, () => item),
         )
         const count = items.length
+
         queue.forEach((value, i) => {
           value.group.visible = i < count
           if (i < count) value.show(items[i])
         })
       }
+
       cleanQueue.forEach((value, i) => {
         value.group.visible = i < state.tools.clean
       })
+
       sponge.visible = !!washing?.spongeHeld
+
       if (sponge.visible) {
         if (active) {
           sponge.position.set(
@@ -136,6 +147,7 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
           sponge.quaternion.copy(quaternion)
         }
       }
+
       soap.forEach((mesh, i) => {
         mesh.visible =
           !!washing &&
@@ -145,7 +157,9 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
           washing?.stage === 'rinse' ? 1 - washing.progress / WASH_STEPS.rinse.seconds : Math.min(1, scrub * 2)
         mesh.scale.setScalar(Math.max(0.01, amount * (1 + Math.sin(now / 180 + i) * 0.06)))
       })
+
       water.visible = active && washing?.stage === 'rinse'
+
       if (water.visible && washing) {
         const vesselHeight = washing.item === 'pitcher' ? 0.23 : CUP_DIMENSIONS[washing.item].height
         const endY = WASH_SPOT[1] + vesselHeight * 0.7

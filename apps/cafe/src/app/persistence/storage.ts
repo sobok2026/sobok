@@ -3,6 +3,7 @@ import { defaultPreferences, type Preferences, preferencesSchema } from '../sess
 
 const DATABASE = 'sobok-cafe'
 let database: Promise<IDBDatabase> | undefined
+
 function open() {
   if (!database)
     database = new Promise((resolve, reject) => {
@@ -20,8 +21,10 @@ function open() {
     })
   return database
 }
+
 export async function loadGame(): Promise<{ state: GameState | null; recovered: boolean }> {
   const db = await open()
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction('saves', 'readonly')
     const store = tx.objectStore('saves')
@@ -32,23 +35,30 @@ export async function loadGame(): Promise<{ state: GameState | null; recovered: 
         resolve({ state: null, recovered: false })
         return
       }
+
       const parsed = stateSchema.safeParse(current.result)
+
       if (parsed.success) {
         resolve({ state: parsed.data, recovered: false })
         return
       }
+
       const fallback = stateSchema.safeParse(previous.result)
+
       if (fallback.success) {
         resolve({ state: fallback.data, recovered: true })
         return
       }
+
       reject(new Error('저장 형식을 읽을 수 없어요. 백업을 불러오거나 새 근무를 시작해주세요.'))
     }
     tx.onerror = () => reject(tx.error)
     tx.onabort = () => reject(tx.error)
   })
 }
+
 let writes: Promise<void> = Promise.resolve()
+
 export function saveGame(state: GameState): Promise<void> {
   const snapshot = stateSchema.parse(state)
   const write = writes
@@ -72,6 +82,7 @@ export function saveGame(state: GameState): Promise<void> {
   writes = write
   return write
 }
+
 export function exportGame(state: GameState) {
   const blob = new Blob([JSON.stringify(stateSchema.parse(state), null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -81,6 +92,7 @@ export function exportGame(state: GameState) {
   link.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+
 export async function importGame(file: File) {
   if (file.size > 2 * 1024 * 1024) throw new Error('백업 파일이 너무 커요.')
   return stateSchema.parse(JSON.parse(await file.text()))
@@ -102,7 +114,9 @@ export async function loadPreferences(): Promise<Preferences> {
     return defaultPreferences()
   }
 }
+
 let preferenceWrites: Promise<void> = Promise.resolve()
+
 export function savePreferences(preferences: Preferences) {
   const snapshot = preferencesSchema.parse(preferences)
   const write = preferenceWrites

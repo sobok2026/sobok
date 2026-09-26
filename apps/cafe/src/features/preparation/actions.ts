@@ -16,12 +16,15 @@ import type { WorkStep } from '../production/workflow'
 import { createPreparation, PREPARATIONS, preparationStep } from './rules'
 
 const ownerFor = (prep: Preparation) => ({ kind: 'preparation' as const, id: prep.id, station: 'prep' as const })
+
 function reserveTool(work: WorkContext, prep: Preparation, step: WorkStep) {
   if (!step.requiresReusableTool || prep.reservedTool) return true
+
   if (!work.state.tools.clean) {
     say(work.state, '깨끗한 제조 용기를 먼저 준비해주세요.', 'error')
     return false
   }
+
   work.state.tools.clean--
   prep.reservedTool = true
   return true
@@ -36,21 +39,26 @@ export function handlePreparationActions(
 ) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
+
   switch (action.type) {
     case 'start-preparation': {
       const definition = PREPARATIONS[action.recipe]
+
       if (!definition) {
         fail('이 제조법은 준비 경로를 먼저 확인해야 해요.')
         break
       }
+
       if (s.preparation || s.cup?.craft.location === 'prep' || s.jobs.some((job) => job.station === 'prep')) {
         fail('준비대를 사용 중이에요.')
         break
       }
+
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
         break
       }
+
       s.preparation = createPreparation(action.recipe)
       say(s, `${definition.name} 준비를 시작했어요.`)
       break
@@ -58,36 +66,45 @@ export function handlePreparationActions(
     case 'prep-tool': {
       const prep = s.preparation
       if (!prep || prep.stage === 'ready') break
+
       if (prep.tool) {
         prep.tool = null
         if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
         say(s, '준비 도구를 내려놓았어요.')
         break
       }
+
       if (prep.fault) {
         fail(prep.fault)
         break
       }
+
       if (expirePreparation(work, s.time)) break
+
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
         break
       }
+
       if (prep.stage !== 'measuring' || workIsBusy(work, ownerFor(prep))) break
       const step = preparationStep(prep)
+
       if (step?.tool && reserveTool(work, prep, step)) {
         prep.tool = step.tool.id
         say(s, `${step.tool.name}를 집었어요.`)
       }
+
       break
     }
     case 'prep-use': {
       const prep = s.preparation
       if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) break
+
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
         break
       }
+
       const step = preparationStep(prep)
       if (!step || !reserveTool(work, prep, step)) break
       beginProduction(work, prep, step, ownerFor(prep))
@@ -98,22 +115,27 @@ export function handlePreparationActions(
       const prep = s.preparation
       if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) break
       if (workIsBusy(work, ownerFor(prep))) break
+
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
         break
       }
+
       const step = preparationStep(prep)
       const steps = PREPARATIONS[prep.recipe].steps
+
       if (step?.kind === 'condition') {
         if (!action.observation || !decideObservation(steps, prep, action.observation.id, action.observation.value)) {
           fail('현재 단계에서 관찰한 상태를 선택해주세요.')
           break
         }
+
         if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
         if (prep.cursor === steps.length) finishPreparation(work, s.time)
         else say(s, '관찰한 상태를 반영했어요.', 'success')
         break
       }
+
       if (action.observation) break
       if (!step || !confirmProduction(work, prep, step, ownerFor(prep))) break
       skipObservedSteps(steps, prep)
@@ -125,6 +147,7 @@ export function handlePreparationActions(
       const prep = s.preparation
       if (!prep) break
       releaseProductionTool(work, prep)
+
       if (prep.batchId) {
         const batch = s.batches.find((item) => item.id === prep.batchId)
         if (batch) {
@@ -132,6 +155,7 @@ export function handlePreparationActions(
           batch.amount = 0
         }
       } else addAmounts(s.totals.disposed, prep.consumed)
+
       s.jobs = s.jobs.filter((job) => job.preparationId !== prep.id)
       if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
       s.preparation = null
@@ -188,6 +212,7 @@ export function finishPreparation(work: WorkContext, completedAt: number) {
 
 export function applyPreparation(work: WorkContext, step: WorkStep, delta: number) {
   const prep = work.state.preparation
+
   if (
     prep?.stage !== 'measuring' ||
     prep.fault ||
@@ -199,5 +224,6 @@ export function applyPreparation(work: WorkContext, step: WorkStep, delta: numbe
     work.input = null
     return
   }
+
   applyProduction(work, prep, step, delta)
 }

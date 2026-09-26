@@ -22,10 +22,12 @@ type AmountChoice = Extract<RecipeOperation, { action: 'add' }>['amount']
 
 function unique<T extends { id: string }>(items: T[], label: string): Map<string, T> {
   const result = new Map<string, T>()
+
   for (const item of items) {
     if (result.has(item.id)) throw new Error(`${label} ID가 중복됩니다: ${item.id}`)
     result.set(item.id, item)
   }
+
   return result
 }
 
@@ -46,11 +48,14 @@ function requireItem(catalog: RecipeCatalog, id: string, context: string) {
 
 function validateRanges(value: unknown, context: string) {
   if (!value || typeof value !== 'object') return
+
   if (Array.isArray(value)) {
     for (const item of value) validateRanges(item, context)
     return
   }
+
   const fields = value as Record<string, unknown>
+
   for (const [lower, upper] of [
     ['min', 'max'],
     ['minSeconds', 'maxSeconds'],
@@ -61,12 +66,14 @@ function validateRanges(value: unknown, context: string) {
     if (typeof min === 'number' && typeof max === 'number' && min > max)
       throw new Error(`${context}: ${lower}(${min})은 ${upper}(${max})보다 클 수 없습니다.`)
   }
+
   for (const child of Object.values(fields)) validateRanges(child, context)
 }
 
 function validateSizeKeys(values: Partial<Record<CatalogSize, unknown>>, sizes: CatalogSize[], context: string) {
   if (!sizes.length) throw new Error(`${context}: 사이즈가 없는 제조법에는 사이즈별 값을 지정할 수 없습니다.`)
   for (const size of sizes) if (values[size] === undefined) throw new Error(`${context}: ${size} 값이 없습니다.`)
+
   for (const size of Object.keys(values))
     if (!sizes.includes(size as CatalogSize)) throw new Error(`${context}: 지원하지 않는 ${size} 값입니다.`)
 }
@@ -97,6 +104,7 @@ function validateAmount(
   tool?: Equipment,
 ) {
   validateRanges(amount, context)
+
   if (
     'referenceSize' in amount &&
     (amount.referenceSize === 'one-size-smaller' || amount.referenceSize === 'one-size-larger')
@@ -106,6 +114,7 @@ function validateAmount(
     if (index < 0 || reference < 0 || reference >= orderedSizes.length)
       throw new Error(`${context}: ${size ?? '사이즈 미지정'}에서 ${amount.referenceSize} 기준을 선택할 수 없습니다.`)
   }
+
   if (tool) validateCountTool(amount, tool, context)
   if (amount.kind === 'line' && vessel && !vessel.lines.includes(amount.line))
     throw new Error(`${context}: ${vessel.name}에 '${amount.line}' 기준선이 정의되지 않았습니다.`)
@@ -143,13 +152,16 @@ function validateOperation(catalog: RecipeCatalog, operation: RecipeOperation, s
   if ('from' in operation) requireDefinition(catalog.vessels, operation.from, context)
   if ('vessel' in operation) requireDefinition(catalog.vessels, operation.vessel, context)
   const into = 'into' in operation ? requireDefinition(catalog.vessels, operation.into, context) : undefined
+
   if (operation.action === 'run-machine') {
     if (typeof operation.program !== 'string') validateSizeKeys(operation.program, sizes, `${context} 장비 프로그램`)
     const programs = typeof operation.program === 'string' ? [operation.program] : Object.values(operation.program)
+
     for (const program of programs)
       if (!equipment!.programs.some((entry) => entry.id === program))
         throw new Error(`${context}: '${equipment!.id}' 장비에 '${program}' 프로그램이 없습니다.`)
   }
+
   if ('amount' in operation && operation.amount)
     for (const selected of amountsForVariant(operation.amount, sizes, context))
       validateAmount(selected.amount, context, selected.size, into, tool)
@@ -177,12 +189,14 @@ function inputMaterials(operation: RecipeOperation): string[] {
 
 function preparationDependencies(catalog: RecipeCatalog, variant: RecipeVariant): Set<string> {
   const dependencies = new Set<string>()
+
   for (const step of variant.steps)
     for (const operation of stepOperations(step))
       for (const materialId of inputMaterials(operation)) {
         const preparationId = catalog.materials.get(materialId)?.preparationId
         if (preparationId) dependencies.add(preparationId)
       }
+
   return dependencies
 }
 
@@ -196,8 +210,10 @@ function validatePreparations(catalog: RecipeCatalog) {
     if (!recipe.variants.some((variant) => variant.output?.materialId === material.id))
       throw new Error(`${material.name}: '${recipe.id}' 제조법에 이 재료의 완성 결과가 없습니다.`)
   }
+
   const visiting: string[] = []
   const visited = new Set<string>()
+
   const visit = (recipeId: string) => {
     const cycleStart = visiting.indexOf(recipeId)
     if (cycleStart !== -1)
@@ -205,11 +221,14 @@ function validatePreparations(catalog: RecipeCatalog) {
     if (visited.has(recipeId)) return
     visiting.push(recipeId)
     const recipe = catalog.recipes.get(recipeId)!
+
     for (const variant of recipe.variants)
       for (const dependency of preparationDependencies(catalog, variant)) visit(dependency)
+
     visiting.pop()
     visited.add(recipeId)
   }
+
   for (const recipe of catalog.recipes.values()) if (recipe.kind === 'preparation') visit(recipe.id)
 }
 
@@ -228,10 +247,12 @@ export function parseRecipeCatalog(input: {
     equipment: unique(equipmentSchema.parse(input.equipment), '도구·장비'),
     vessels: unique(vesselSchema.parse(input.vessels), '용기'),
   }
+
   for (const equipment of catalog.equipment.values()) {
     unique(equipment.programs, `${equipment.name} 프로그램`)
     validateRanges(equipment.programs, `${equipment.name} 프로그램`)
   }
+
   for (const vessel of catalog.vessels.values()) {
     distinct(vessel.lines, `${vessel.name} 기준선`)
     distinct(vessel.marks ?? [], `${vessel.name} 표시`)
@@ -239,13 +260,17 @@ export function parseRecipeCatalog(input: {
       vessel.lineVolumes.map((entry) => `${entry.cupStyle ?? 'vessel'}/${entry.size}/${entry.line}`),
       `${vessel.name} 기준선 용량`,
     )
+
     for (const volume of vessel.lineVolumes)
       if (!vessel.lines.includes(volume.line))
         throw new Error(`${vessel.name}: 기준선 용량의 '${volume.line}' 기준선이 정의되지 않았습니다.`)
+
     const orderedLines = ['lower', 'middle', 'upper'] as const
+
     for (const volume of vessel.lineVolumes) {
       const position = orderedLines.indexOf(volume.line as (typeof orderedLines)[number])
       if (position === -1) continue
+
       for (const nextLine of orderedLines.slice(position + 1)) {
         const higher = lineVolume(catalog, vessel.id, volume.size, nextLine, volume.cupStyle)
         if (higher !== null && volume.milliliters >= higher)
@@ -253,16 +278,19 @@ export function parseRecipeCatalog(input: {
       }
     }
   }
+
   for (const recipe of catalog.recipes.values()) {
     unique(recipe.variants, `${recipe.name} 제조법`)
     for (const variant of recipe.variants) {
       const context = `${recipe.name} / ${variant.name}`
       unique(variant.steps, `${context} 단계`)
       distinct(variant.sizes, `${context} 사이즈`)
+
       if (variant.output) {
         requireDefinition(catalog.materials, variant.output.materialId, `${context} 완성 재료`)
         if (variant.output.amount) validateAmount(variant.output.amount, `${context} 완성 수량`)
       }
+
       for (const step of variant.steps) {
         const stepContext = `${context} / ${step.id}`
         for (const [index, operation] of stepOperations(step).entries())
@@ -270,6 +298,7 @@ export function parseRecipeCatalog(input: {
       }
     }
   }
+
   validatePreparations(catalog)
   return catalog
 }
@@ -284,6 +313,7 @@ export function recipeVariant(catalog: RecipeCatalog, recipeId: string, variantI
 export function recipeVariantExecutionIssues(catalog: RecipeCatalog, recipeId: string, variantId: string): string[] {
   const { recipe, variant } = recipeVariant(catalog, recipeId, variantId)
   const issues = variant.review.map((review) => `${recipe.name} / ${variant.name}: ${review}`)
+
   for (const step of variant.steps) {
     if (!step.operations.length) issues.push(`${step.label}: 제조 동작이 연결되지 않았습니다.`)
     for (const operation of stepOperations(step)) {
@@ -293,6 +323,7 @@ export function recipeVariantExecutionIssues(catalog: RecipeCatalog, recipeId: s
           issues.push(`${step.label}${size ? ` (${size})` : ''}: ${amount.description}`)
     }
   }
+
   return [...new Set(issues)]
 }
 
@@ -310,8 +341,11 @@ export function operationAmount(operation: Extract<RecipeOperation, { amount: un
 export function amountMilliliters(catalog: RecipeCatalog, amount: RecipeAmount, toolId?: string): number | null {
   if (amount.kind === 'amount') {
     if (amount.approximate) return null
-    return amount.unit === 'ml' ? amount.value : amount.unit === 'l' ? amount.value * 1000 : null
+    if (amount.unit === 'ml') return amount.value
+    if (amount.unit === 'l') return amount.value * 1000
+    return null
   }
+
   if (amount.kind !== 'count' || !toolId) return null
   const tool = requireDefinition(catalog.equipment, toolId, '계량 도구')
   validateCountTool(amount, tool, '계량 도구')

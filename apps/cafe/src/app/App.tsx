@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import ShiftLedger from '../features/shift/ShiftLedger'
 import ShiftOverview from '../features/shift/ShiftOverview'
@@ -23,6 +24,7 @@ function CupIcon() {
     </svg>
   )
 }
+
 function clock(time: number) {
   return new Date(time * 1000).toLocaleTimeString('ko-KR', {
     timeZone: 'UTC',
@@ -31,6 +33,7 @@ function clock(time: number) {
     minute: '2-digit',
   })
 }
+
 export default function App() {
   const [boot, setBoot] = useState<{
     store: CafeStore
@@ -38,6 +41,7 @@ export default function App() {
     notice: string
     preferences: Preferences
   } | null>(null)
+
   useEffect(() => {
     let cancelled = false
     const game = loadGame()
@@ -60,10 +64,12 @@ export default function App() {
           preferences,
         })
     })
+
     return () => {
       cancelled = true
     }
   }, [])
+
   return boot ? (
     <CafeGame {...boot} />
   ) : (
@@ -77,6 +83,7 @@ export default function App() {
 function CafeGame(props: CafeSessionProps) {
   const { hasSave, notice } = props
   const session = useCafeSession(props)
+
   const {
     state,
     preferences,
@@ -111,14 +118,15 @@ function CafeGame(props: CafeSessionProps) {
   } = session
   const running = mode === 'play' && state.phase !== 'summary'
   const canStart = sceneReady && hasLock === true && !graphicsError
+
   return (
     <main className="relative h-dvh overflow-hidden" data-mouse-mode={mouseMode}>
       <div ref={host} className="absolute inset-0 [&_canvas]:block [&_canvas]:size-full [&_canvas]:outline-none" />
       <div
-        className={[
+        className={clsx(
           'pointer-events-none absolute inset-0',
           'bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]',
-        ].join(' ')}
+        )}
       />
       <input
         ref={input}
@@ -134,16 +142,16 @@ function CafeGame(props: CafeSessionProps) {
       />
       {running ? (
         <header
-          className={[
-            'pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between',
-            'gap-4 max-tablet:inset-x-4 max-tablet:top-4',
-          ].join(' ')}
+          className={clsx(
+            'pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between gap-4',
+            'max-tablet:inset-x-4 max-tablet:top-4',
+          )}
         >
           <div
-            className={[
-              'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 px-4 py-2.5',
-              'text-xs shadow-hud',
-            ].join(' ')}
+            className={clsx(
+              'flex items-center gap-3',
+              'rounded-full border border-white/60 bg-surface/95 px-4 py-2.5 text-xs shadow-hud',
+            )}
           >
             <span className="text-muted">{state.day}일차</span>
             <span className="font-medium tabular-nums">{clock(state.time)}</span>
@@ -152,10 +160,10 @@ function CafeGame(props: CafeSessionProps) {
             </span>
           </div>
           <nav
-            className={[
-              'pointer-events-auto flex items-center gap-1 rounded-full border border-white/60',
-              'bg-surface/95 p-1 shadow-hud',
-            ].join(' ')}
+            className={clsx(
+              'pointer-events-auto flex items-center gap-1',
+              'rounded-full border border-white/60 bg-surface/95 p-1 shadow-hud',
+            )}
             aria-label="게임 메뉴"
           >
             <button
@@ -185,10 +193,10 @@ function CafeGame(props: CafeSessionProps) {
 
       {mode === 'welcome' ? (
         <div
-          className={[
-            'absolute inset-0 flex items-center',
-            'bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)] max-tablet:bg-surface/60',
-          ].join(' ')}
+          className={clsx(
+            'absolute inset-0 flex items-center bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)]',
+            'max-tablet:bg-surface/60',
+          )}
         >
           <section className="ml-[8vw] w-72 max-w-[80vw]">
             <div className="mb-5 text-brand">
@@ -198,17 +206,17 @@ function CafeGame(props: CafeSessionProps) {
               소복다방<span className="mt-3 block text-sm font-normal tracking-normal text-muted">카페 근무</span>
             </h1>
             <Button size="start" disabled={!canStart} onClick={() => start(false)}>
-              {sceneReady ? (hasSave ? '이어서 하기' : '시작하기') : '불러오는 중…'} <span aria-hidden="true">→</span>
+              {startLabel(sceneReady, hasSave)} <span aria-hidden="true">→</span>
             </Button>
             <div className="mt-3 flex items-center justify-between">
               <TextButton onClick={openGuide}>도움말</TextButton>
               <details className="relative text-xs text-muted">
                 <summary className="cursor-pointer py-3">저장 관리</summary>
                 <div
-                  className={[
-                    'absolute right-0 top-full z-10 grid w-40 rounded-xl border border-line bg-surface p-3',
-                    'shadow-hud',
-                  ].join(' ')}
+                  className={clsx(
+                    'absolute right-0 top-full z-10 grid w-40',
+                    'rounded-xl border border-line bg-surface p-3 shadow-hud',
+                  )}
                 >
                   <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
                     백업 불러오기
@@ -325,11 +333,11 @@ function CafeGame(props: CafeSessionProps) {
       ) : null}
       {graphicsError || hasLock === false ? (
         <div
-          className={[
-            'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2 rounded-[0.3125rem]',
-            'border border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 text-xs leading-[1.8]',
-            'text-[#995e3d] shadow-[0_4px_30px_#0002]',
-          ].join(' ')}
+          className={clsx(
+            'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2',
+            'rounded-[0.3125rem] border border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 shadow-[0_4px_30px_#0002]',
+            'text-xs leading-[1.8] text-[#995e3d]',
+          )}
           role="alert"
         >
           {graphicsError || '다른 창에서 이 매장을 열고 있어요. 그 창을 닫은 뒤 새로고침해주세요.'}
@@ -337,4 +345,9 @@ function CafeGame(props: CafeSessionProps) {
       ) : null}
     </main>
   )
+}
+
+function startLabel(sceneReady: boolean, hasSave: boolean) {
+  if (!sceneReady) return '불러오는 중…'
+  return hasSave ? '이어서 하기' : '시작하기'
 }

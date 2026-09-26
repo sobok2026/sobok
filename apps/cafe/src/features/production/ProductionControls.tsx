@@ -18,6 +18,7 @@ type Props = {
   onConfirm: () => void
   onObserve?: (id: string, value: boolean) => void
 }
+
 export function ProductionControls({
   session,
   step,
@@ -34,9 +35,12 @@ export function ProductionControls({
   const ready = readyWork(step, session.progress)
   const rightTool = session.tool === (step.tool?.id ?? null)
   const atMaximum = step.maximum !== null && session.progress + PRODUCTION_EPSILON >= step.maximum
+  const canUse = rightTool && !atMaximum
+  const continuous = continuousWork(step)
   const blocked = disabled || !!session.fault
   const details = operationDetails(step)
   const jobRatio = job ? (time - job.startedAt) / Math.max(PRODUCTION_EPSILON, job.endsAt - job.startedAt) : 0
+
   if (step.kind === 'condition') {
     const condition = step.condition
     return (
@@ -66,6 +70,7 @@ export function ProductionControls({
       </>
     )
   }
+
   return (
     <>
       <WorkTitle>{step.label}</WorkTitle>
@@ -104,28 +109,27 @@ export function ProductionControls({
                 : `${step.tool!.name} 집기`}
             </WorkButton>
           ) : null}
-          {rightTool && !atMaximum ? (
-            continuousWork(step) ? (
-              <WorkButton
-                shortcut="Space"
-                primary={!ready && !supplyNotice}
-                disabled={blocked || !!supplyNotice}
-                hold
-                onUse={onUse}
-                onStop={onStop}
-              >
-                {workUseLabel(step)}
-              </WorkButton>
-            ) : (
-              <WorkButton
-                shortcut="Space"
-                primary={!ready && !supplyNotice}
-                disabled={blocked || !!supplyNotice}
-                onUse={onUse}
-              >
-                {workUseLabel(step)}
-              </WorkButton>
-            )
+          {canUse && continuous ? (
+            <WorkButton
+              shortcut="Space"
+              primary={!ready && !supplyNotice}
+              disabled={blocked || !!supplyNotice}
+              hold
+              onUse={onUse}
+              onStop={onStop}
+            >
+              {workUseLabel(step)}
+            </WorkButton>
+          ) : null}
+          {canUse && !continuous ? (
+            <WorkButton
+              shortcut="Space"
+              primary={!ready && !supplyNotice}
+              disabled={blocked || !!supplyNotice}
+              onUse={onUse}
+            >
+              {workUseLabel(step)}
+            </WorkButton>
           ) : null}
           {ready && !session.tool ? (
             <WorkButton shortcut="F" primary disabled={blocked} onUse={onConfirm}>

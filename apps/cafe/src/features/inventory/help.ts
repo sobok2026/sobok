@@ -1,7 +1,7 @@
-import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
+import { INGREDIENTS, type Ingredient, type IngredientId } from '../../content/ingredients'
 import { STATIONS } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
-import type { GameState } from '../../simulation/state'
+import type { Batch, GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { preparationForMaterial } from '../preparation/rules'
 import { batchDestination, batchOrigin } from './batches'
@@ -19,15 +19,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
   if (pending)
     return {
       title: `${definition.name} 사용 준비`,
-      action: definition.prepared
-        ? pending.labelled
-          ? `E로 용기를 집어 ${STATIONS[batchDestination(pending)].name}로 운반하세요.`
-          : `${STATIONS[batchOrigin(pending)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
-        : `창고에서 ${
-            pending.labelled
-              ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
-              : '날짜 확인 후 라벨을 붙이세요.'
-          }`,
+      action: pendingAction(definition, pending),
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
   if (preparationForMaterial(ingredient))
@@ -50,9 +42,20 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
   const sealed = state.batches.some(
     (batch) => batch.ingredient === ingredient && batch.amount > 0 && batch.openedAt === null,
   )
+
   return {
     title: `${definition.name} 보충이 필요해요`,
     action: `창고에서 ${sealed ? '미개봉 원팩을 여세요.' : '원팩을 입고한 뒤 개봉하세요.'}`,
     reason: `라벨을 붙이고 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하면 사용할 수 있어요.`,
   }
+}
+
+function pendingAction(definition: Ingredient, batch: Batch) {
+  if (definition.prepared) {
+    if (batch.labelled) return `E로 용기를 집어 ${STATIONS[batchDestination(batch)].name}로 운반하세요.`
+    return `${STATIONS[batchOrigin(batch)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
+  }
+
+  if (!batch.labelled) return '창고에서 날짜 확인 후 라벨을 붙이세요.'
+  return `창고에서 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
 }

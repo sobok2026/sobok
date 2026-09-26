@@ -10,7 +10,7 @@ import {
   equipmentPanel as panel,
   equipmentTube as tube,
 } from '../../shared/visuals/equipment-geometry'
-import type { GameState } from '../../simulation/state'
+import type { GameState, Job } from '../../simulation/state'
 import { operationFor } from '../crafting/rules'
 import { cupService, cupSize } from '../inventory/cups'
 import { PREPARATIONS, preparationStep } from './rules'
@@ -34,6 +34,7 @@ export function createBlenderJar() {
   const shell = mesh(root, new THREE.CylinderGeometry(0.173, 0.127, 0.33, 4, 1, true), clear, [0, 0.18, 0])
   shell.rotation.y = Math.PI / 4
   box(root, [0.178, 0.027, 0.178], [0, 0.02, 0], clear)
+
   for (const x of [-1, 1])
     for (const z of [-1, 1])
       tube(
@@ -46,6 +47,7 @@ export function createBlenderJar() {
         0.003,
         edge,
       )
+
   const rim = tube(
     root,
     [
@@ -89,6 +91,7 @@ export function createBlenderJar() {
     ctx.lineWidth = 4
     ctx.font = canvasFont(w * 0.14)
     ctx.textAlign = 'right'
+
     for (let i = 0; i < 12; i++) {
       const y = h * (0.09 + i * 0.076)
       ctx.beginPath()
@@ -153,6 +156,7 @@ export function createBlender(scene: THREE.Scene) {
   control.position.set(0, 0.177, 0.214)
   control.rotation.x = -0.11
   box(control, [0.345, 0.12, 0.015], [0, 0, 0], rubber)
+
   const drawControls = (
     ctx: CanvasRenderingContext2D,
     w: number,
@@ -180,6 +184,7 @@ export function createBlender(scene: THREE.Scene) {
       h * 0.405,
       w * 0.37,
     )
+
     for (let i = 0; i < 6; i++) {
       const x = w * (0.195 + i * 0.104)
       ctx.fillStyle = blending && String(i + 1) === program ? '#39785d' : '#11181c'
@@ -193,12 +198,14 @@ export function createBlender(scene: THREE.Scene) {
       ctx.font = canvasFont(h * 0.19, 600)
       ctx.fillText(String(i + 1), x, h * 0.85)
     }
+
     ctx.fillStyle = '#dce2e3'
     ctx.font = canvasFont(h * 0.16)
     ctx.fillText('▲', w * 0.13, h * 0.39)
     ctx.fillText('▼', w * 0.13, h * 0.59)
     ctx.fillText('Ⅱ', w * 0.85, h * 0.4)
   }
+
   const controlFace = panel(control, 0.326, 0.104, [0, 0, 0.009], drawControls, true)
   let previousDisplay = ''
   const indicatorMaterial = material({ color: '#b8d6bd', emissive: '#77b391', emissiveIntensity: 0.5, roughness: 0.5 })
@@ -213,6 +220,7 @@ export function createBlender(scene: THREE.Scene) {
   box(cover, [0.405, 0.45, 0.004], [0, -0.22, 0.396], clear, 0.002)
   for (const x of [-0.202, 0.202]) box(cover, [0.004, 0.45, 0.39], [x, -0.22, 0.195], clear, 0.002)
   box(cover, [0.408, 0.004, 0.398], [0, 0.006, 0.198], clear, 0.002)
+
   for (const x of [-0.201, 0.201])
     tube(
       cover,
@@ -225,27 +233,18 @@ export function createBlender(scene: THREE.Scene) {
       0.006,
       edge,
     )
+
   box(cover, [0.4, 0.009, 0.014], [0, -0.446, 0.394], edge, 0.004)
   box(cover, [0.3, 0.038, 0.022], [0, -0.354, 0.41], silver, 0.015)
   box(root, [0.412, 0.45, 0.005], [0, 0.497, -0.203], clear, 0.002)
   for (const x of [-0.2, 0.2]) box(root, [0.025, 0.46, 0.026], [x, 0.49, -0.193], black)
+
   return {
     update(state: GameState) {
       const prep = state.preparation
       const cup = state.cup
-      const prepStep = prep ? preparationStep(prep) : undefined
-      const drinkStep = cup ? operationFor(cup.recipe, cup.craft) : null
       const job = state.jobs.find((item) => item.kind === 'production' && item.equipmentId === 'blender')
-      const step =
-        job?.preparationId && job.preparationId === prep?.id
-          ? prepStep
-          : job?.cupId && job.cupId === cup?.id
-            ? drinkStep
-            : prepStep?.equipmentId === 'blender'
-              ? prepStep
-              : drinkStep?.equipmentId === 'blender'
-                ? drinkStep
-                : undefined
+      const step = blenderStep(job, prep, cup)
       const program =
         step?.operation.action === 'run-machine' && step.operation.equipmentId === 'blender'
           ? step.operation.program
@@ -265,6 +264,7 @@ export function createBlender(scene: THREE.Scene) {
       cover.rotation.x = jarInUse && !blending ? -1.05 : 0
       indicatorMaterial.emissiveIntensity = blending ? 1.1 : 0.25
       const display = `${blending}:${program}`
+
       if (display !== previousDisplay) {
         const texture = (controlFace.material as THREE.MeshStandardMaterial).map!
         const canvas = texture.image as HTMLCanvasElement
@@ -274,4 +274,14 @@ export function createBlender(scene: THREE.Scene) {
       }
     },
   }
+}
+
+function blenderStep(job: Job | undefined, prep: GameState['preparation'], cup: GameState['cup']) {
+  const prepStep = prep ? preparationStep(prep) : undefined
+  const drinkStep = cup ? operationFor(cup.recipe, cup.craft) : null
+  if (job?.preparationId && job.preparationId === prep?.id) return prepStep
+  if (job?.cupId && job.cupId === cup?.id) return drinkStep
+  if (prepStep?.equipmentId === 'blender') return prepStep
+  if (drinkStep?.equipmentId === 'blender') return drinkStep
+  return undefined
 }

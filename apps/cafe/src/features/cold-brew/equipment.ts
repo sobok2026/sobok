@@ -26,8 +26,10 @@ export function createColdBrewTank(scene: THREE.Scene) {
   const stand = new THREE.Group()
   root.add(stand)
   box(stand, [0.35, 0.026, 0.32], [0, 0.285, 0], black)
+
   for (const x of [-0.14, 0.14])
     for (const z of [-0.12, 0.12]) box(stand, [0.03, 0.285, 0.03], [x, 0.1425, z], black, 0.009)
+
   const vessel = new THREE.Group()
   vessel.position.y = 0.3
   vessel.scale.set(0.65, 0.9, 0.65)
@@ -49,6 +51,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
     ],
     plastic,
   )
+
   for (const y of [0.4, 0.445, 0.482])
     lathe(
       vessel,
@@ -60,6 +63,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
       ],
       rim,
     )
+
   lathe(
     vessel,
     [
@@ -110,6 +114,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
     0.012,
     plastic,
   )
+
   panel(vessel, 0.22, 0.14, [0, 0.32, 0.242], (ctx, w, h) => {
     ctx.fillStyle = '#153e4c'
     ctx.beginPath()
@@ -122,6 +127,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
     ctx.font = canvasFont(h * 0.12)
     ctx.fillText('COMMERCIAL BREWER', w / 2, h * 0.68)
   })
+
   const valve = mesh(vessel, new THREE.CylinderGeometry(0.036, 0.036, 0.038, 24), plastic, [0, 0.088, 0.235])
   valve.rotation.x = Math.PI / 2
   tube(
@@ -199,6 +205,7 @@ export function createColdBrewDispenser(scene: THREE.Scene) {
     black,
   )
   box(root, [0.097, 0.16, 0.047], [0, 0.81, 0.156], black, 0.026)
+
   panel(root, 0.074, 0.105, [0, 0.81, 0.181], (ctx, w, h) => {
     ctx.fillStyle = '#e7ddbd'
     ctx.textAlign = 'center'

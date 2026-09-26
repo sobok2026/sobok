@@ -13,17 +13,21 @@ const menu = buildMenu(recipeCatalog, menuData)
 export const RECIPES = menu.available
 export const unavailableRecipes = menu.unavailable
 export const recipeIds = Object.keys(RECIPES)
+
 export const recipeSizes = (id: RecipeId, service?: ServiceMode): DrinkSize[] =>
   drinkSizeIds.filter((size) => {
     const serving = RECIPES[id]?.sizes[size]
     return !!serving && (!service || !!serving.plans[service])
   })
+
 export const recipeServices = (id: RecipeId): ServiceMode[] =>
   (['dine-in', 'takeout'] as const).filter((service) => recipeSizes(id, service).length)
+
 const customizedRecipes = new Map<
   string,
   { price: number; steps: ReturnType<typeof compileWorkflow>; vesselId: string }
 >()
+
 export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, custom?: Customizations) {
   const serving = RECIPES[id]?.sizes[size]
   const steps = serving?.plans[service]
@@ -53,11 +57,13 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
   customizedRecipes.set(key, result)
   return result
 }
+
 export function recipePrice(id: RecipeId, size: DrinkSize) {
   const serving = RECIPES[id]?.sizes[size]
   if (!serving) throw new Error(`판매 가격이 없습니다: ${id}/${size}`)
   return serving.price
 }
+
 export function recipeLabel(id: RecipeId, size?: DrinkSize) {
   const recipe = RECIPES[id]
   if (!recipe) throw new Error(`판매 메뉴가 없습니다: ${id}`)

@@ -11,6 +11,7 @@ import type { WorkContext } from './work-context'
 export function canDispatch(work: WorkContext, action: Action) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
+
   if (
     carriedBatch(s) &&
     ![
@@ -29,6 +30,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     fail('들고 있는 배합 용기를 보관하거나 원래 작업대에 먼저 내려놓아주세요.')
     return false
   }
+
   if (
     s.coldBrew?.tool &&
     ![
@@ -49,6 +51,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     fail('콜드 브루 계량 도구를 G로 먼저 내려놓아주세요.')
     return false
   }
+
   if (
     s.supplyDelivery &&
     ![
@@ -67,6 +70,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     fail('들고 있는 소모품을 컨디먼트 바에 채우거나 창고에 먼저 내려놓아주세요.')
     return false
   }
+
   const cleaningAction = [
     'start-cleaning',
     'collect-cup',
@@ -76,6 +80,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     'clean-confirm',
     'leave-cleaning',
   ].includes(action.type)
+
   if (
     cleaningHandsBusy(s.cleaning) &&
     !cleaningAction &&
@@ -90,10 +95,12 @@ export function canDispatch(work: WorkContext, action: Action) {
     )
     return false
   }
+
   if (cleaningAction && (craftingHandsBusy(s) || washingHandsBusy(s.washing))) {
     fail('컵과 제조·세척 도구를 먼저 내려놓은 뒤 청소해주세요.')
     return false
   }
+
   if (
     washingHandsBusy(s.washing) &&
     [
@@ -122,5 +129,6 @@ export function canDispatch(work: WorkContext, action: Action) {
     )
     return false
   }
+
   return true
 }

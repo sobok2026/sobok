@@ -19,7 +19,7 @@ export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.Perspectiv
       )
       mesh.position.set(
         x + (id === 'napkins' ? 0 : (i - 2) * 0.065),
-        1.15 + (id === 'straws' ? 0.06 : id === 'napkins' ? i * 0.017 : 0),
+        1.15 + (id === 'straws' ? 0.06 : 0) + (id === 'napkins' ? i * 0.017 : 0),
         5.42,
       )
       if (id === 'sugar') mesh.rotation.z = 0.25
@@ -40,12 +40,14 @@ export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.Perspectiv
   const label = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.07, 0.006), labelMaterial)
   label.position.set(0, 0, 0.113)
   held.add(label)
+
   return {
     update(state: GameState) {
       for (const supply of supplies)
         supply.items.forEach((mesh, i) => {
           mesh.visible = i < Math.ceil((state.supplies[supply.id].bar / SUPPLY_CAPACITY) * 5)
         })
+
       held.visible = !!state.supplyDelivery
       if (state.supplyDelivery) labelMaterial.color.set(SUPPLIES[state.supplyDelivery.supply].color)
     },

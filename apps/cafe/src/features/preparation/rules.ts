@@ -6,6 +6,7 @@ import { currentWorkStep } from '../production/runtime'
 import { compileWorkflow, createProductionState, type WorkStep } from '../production/workflow'
 
 export type PreparationId = string
+
 export type PreparationDefinition = {
   id: PreparationId
   recipeId: string
@@ -16,17 +17,20 @@ export type PreparationDefinition = {
   storageNote: string
   color?: string
 }
+
 export type UnavailablePreparation = { id: PreparationId; name: string; reason: string }
 
 function buildPreparations() {
   const available: Record<PreparationId, PreparationDefinition> = {}
   const unavailable: UnavailablePreparation[] = []
+
   for (const recipe of recipeCatalog.recipes.values()) {
     if (recipe.kind !== 'preparation') continue
     for (const variant of recipe.variants) {
       if (variant.output?.materialId === 'coldBrew') continue
       const id = `${recipe.id}:${variant.id}`
       const name = recipe.variants.length > 1 ? `${recipe.name} · ${variant.name}` : recipe.name
+
       try {
         const prepared = preparationPlan(recipeCatalog, recipe.id, variant.id)
         available[id] = {
@@ -44,6 +48,7 @@ function buildPreparations() {
       }
     }
   }
+
   return { available, unavailable }
 }
 
@@ -57,10 +62,12 @@ export function preparationForMaterial(materialId: string): PreparationDefinitio
   const routes = Object.values(PREPARATIONS).filter((definition) => definition.output.materialId === materialId)
   return routes.find((definition) => definition.recipeId === producer) ?? routes[0]
 }
+
 export function createPreparation(recipe: PreparationId): Preparation {
   if (!PREPARATIONS[recipe]) throw new Error('준비할 수 없는 제조법입니다.')
   return { ...createProductionState(), id: crypto.randomUUID(), recipe, stage: 'measuring', batchId: null }
 }
+
 export function preparationStep(prep: Preparation): WorkStep | undefined {
   return currentWorkStep(PREPARATIONS[prep.recipe].steps, prep)
 }

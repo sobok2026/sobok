@@ -3,6 +3,7 @@ const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
 // Reflect the original customer-facing fixtures toward the employee aisle.
 export const staffFacingZ = (z: number) => 2 * BAR_CENTER_Z - z
+
 export const STATIONS = {
   pos: { name: 'POS', x: -4.8, z: -1.4 },
   cups: { name: '컵 보관대', x: -3.7, z: -1.4 },
@@ -26,6 +27,7 @@ export const STATIONS = {
   condiment: { name: '컨디먼트 바', x: 0, z: 5.1 },
   trash: { name: '분리수거함', x: -5.4, z: 5.1 },
 } as const
+
 export type StationId = keyof typeof STATIONS
 export const stationIds = Object.keys(STATIONS) as StationId[]
 export const tableIds = ['table', 'table-left'] as const
@@ -34,6 +36,7 @@ export const isTable = (station: StationId): station is TableId => station === '
 export const cupSurfaceIds = [...tableIds, 'condiment'] as const
 export type CupSurfaceId = (typeof cupSurfaceIds)[number]
 export const isCupSurface = (station: StationId): station is CupSurfaceId => isTable(station) || station === 'condiment'
+
 export function canAccessStation(station: StationId, playerZ: number) {
   return isCupSurface(station) || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
 }

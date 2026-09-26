@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import menuLayout from '../../../data/shop/pos-menu.json'
 import type { DrinkSize } from '../../content/drink-sizes'
@@ -14,12 +15,15 @@ export const posCategories = {
   tea: '티바나',
   other: '기타 음료',
 } as const
+
 type Category = keyof typeof posCategories
 const layout: Record<string, { family: string; category: string }> = menuLayout
 export const menuFamily = (id: RecipeId) => layout[id]?.family ?? RECIPES[id].recipeId
+
 export function temperatureVariant(id: RecipeId, temperature: 'hot' | 'iced') {
   return recipeIds.find((other) => menuFamily(other) === menuFamily(id) && RECIPES[other].temperature === temperature)
 }
+
 export function PosMenu({
   temperature,
   size,
@@ -57,9 +61,11 @@ export function PosMenu({
       ),
     [temperature, category, query, favorites],
   )
+
   const pageCount = Math.max(1, Math.ceil(menus.length / 25))
   const currentPage = Math.min(page, pageCount - 1)
   const shown = menus.slice(currentPage * 25, currentPage * 25 + 25)
+
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1.5">
       <div className="flex gap-1">
@@ -118,19 +124,21 @@ export function PosMenu({
       <fieldset className="grid min-h-0 flex-1 grid-cols-5 grid-rows-5 gap-1.5" aria-label="상품 목록">
         {shown.map((id) => {
           const menu = RECIPES[id]
-          const services = recipeSizes(id, service).length ? service : service === 'dine-in' ? 'takeout' : 'dine-in'
+          const otherService = service === 'dine-in' ? 'takeout' : 'dine-in'
+          const services = recipeSizes(id, service).length ? service : otherService
           const sizes = recipeSizes(id, services)
-          const chosenSize = sizes.includes(size) ? size : sizes.includes('tall') ? 'tall' : sizes[0]
+          const chosenSize = chooseSize(sizes, size)
+
           return (
             <div key={id} className="relative min-h-0 min-w-0 rounded bg-white text-pos-ink">
               <button
                 type="button"
                 disabled={disabled || !chosenSize}
                 onClick={() => onAdd(id, chosenSize, services)}
-                className={[
-                  'flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm',
-                  'leading-snug disabled:opacity-60',
-                ].join(' ')}
+                className={clsx(
+                  'flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm leading-snug',
+                  'disabled:opacity-60',
+                )}
                 aria-label={`${menu.name} ${temperature === 'hot' ? 'HOT' : 'ICED'} 담기`}
               >
                 <span className="line-clamp-3 pr-3 font-semibold">{menu.name}</span>
@@ -149,6 +157,7 @@ export function PosMenu({
                 onClick={() => {
                   const next = favorites.includes(id) ? favorites.filter((value) => value !== id) : [...favorites, id]
                   setFavorites(next)
+
                   try {
                     localStorage.setItem('cafe-pos-favorites', JSON.stringify(next))
                   } catch {
@@ -183,4 +192,9 @@ export function PosMenu({
       </div>
     </div>
   )
+}
+
+function chooseSize(sizes: DrinkSize[], preferred: DrinkSize) {
+  if (sizes.includes(preferred)) return preferred
+  return sizes.includes('tall') ? 'tall' : sizes[0]
 }

@@ -6,6 +6,7 @@ export const preferencesSchema = z.object({
   mouseSensitivity: z.number().min(0.5).max(2),
 })
 export type Preferences = z.infer<typeof preferencesSchema>
+
 export const defaultPreferences = (): Preferences => ({
   muted: true,
   volume: 0.35,

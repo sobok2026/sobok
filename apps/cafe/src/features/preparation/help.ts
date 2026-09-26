@@ -22,6 +22,7 @@ export function preparationMissingIngredient(
         (amount ?? 0) * Math.max(0, 1 - prep.progress / step.target),
       ]),
     )
+
   return Object.entries(remaining).find(
     ([id, amount]) => available(state, id) + PRODUCTION_EPSILON < (amount ?? 0),
   )?.[0]
@@ -36,6 +37,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
       reason: prep.fault,
       fault: true,
     }
+
   if (prep.stage === 'ready') {
     const batch = state.batches.find((item) => item.id === prep.batchId)
     if (batch?.expiresAt != null && batch.expiresAt <= state.time)
@@ -47,6 +49,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
       }
     return materialTip(state, definition.output.materialId)
   }
+
   const step = preparationStep(prep)
   if (!step)
     return {
@@ -78,20 +81,20 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
       reason: `${step.label}에 사용할 용기가 없어요.`,
     }
   const ready = readyWork(step, prep.progress)
+
   return {
     title: `${definition.name} · ${step.label}`,
-    action:
-      prep.tool && (ready || prep.tool !== step.tool?.id)
-        ? 'G로 도구를 내려놓으세요.'
-        : ready
-          ? 'F로 현재 단계를 확인하세요.'
-          : step.tool && prep.tool !== step.tool.id
-            ? `G로 ${step.tool.name}를 집으세요.`
-            : continuousWork(step)
-              ? 'Space를 누르고 진행한 뒤 목표에 도달하면 손을 떼세요.'
-              : `Space로 ${workUseLabel(step)} 후 F로 확인하세요.`,
+    action: stepAction(prep, step, ready),
     reason: [step.measurement, ...operationDetails(step), step.instruction, step.note].filter(Boolean).join(' · '),
   }
+}
+
+function stepAction(prep: Preparation, step: WorkStep, ready: boolean) {
+  if (prep.tool && (ready || prep.tool !== step.tool?.id)) return 'G로 도구를 내려놓으세요.'
+  if (ready) return 'F로 현재 단계를 확인하세요.'
+  if (step.tool && prep.tool !== step.tool.id) return `G로 ${step.tool.name}를 집으세요.`
+  if (continuousWork(step)) return 'Space를 누르고 진행한 뒤 목표에 도달하면 손을 떼세요.'
+  return `Space로 ${workUseLabel(step)} 후 F로 확인하세요.`
 }
 
 export function preparationSupplyNotice(state: GameState, prep: Preparation, step: WorkStep): string | null {

@@ -1,8 +1,9 @@
+import clsx from 'clsx'
 import { useState } from 'react'
 import { STATIONS, tableIds } from '../../content/stations'
 import { money } from '../../shared/format'
 import GameDialog from '../../shared/ui/GameDialog'
-import type { GameState } from '../../simulation/state'
+import type { GameState, Washing } from '../../simulation/state'
 import CupInventory from '../inventory/CupInventory'
 import { cupCount } from '../inventory/cups'
 import { SUPPLIES, supplyIds } from '../inventory/supplies'
@@ -12,8 +13,14 @@ import { WASH_NAMES, washDestination, washItems, washStock } from '../washing/ru
 import { closingTasks } from './rules'
 import ShiftLedger from './ShiftLedger'
 
+const TABS = [
+  { id: 'work', label: '할 일' },
+  { id: 'ledger', label: '운영 기록' },
+] as const
+
 export default function ShiftOverview({ state, onClose }: { state: GameState; onClose: () => void }) {
-  const [tab, setTab] = useState<'work' | 'ledger'>('work')
+  const [tab, setTab] = useState<(typeof TABS)[number]['id']>('work')
+
   const expired = state.batches.filter(
     (batch) => batch.amount > 0 && batch.expiresAt !== null && batch.expiresAt <= state.time,
   ).length
@@ -44,6 +51,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
       : '',
     ...washItems.flatMap((item) => {
       const stock = washStock(state, item)
+
       return [
         stock.dirty ? `${WASH_NAMES[item]} 세척 ${stock.dirty}개` : '',
         stock.washed ? `씻은 ${WASH_NAMES[item]} 정리 ${stock.washed}개` : '',
@@ -51,42 +59,31 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
     }),
     state.trash ? `분리수거 ${state.trash}개` : '',
     expired ? `기한이 지난 배치 ${expired}개` : '',
-    state.washing
-      ? state.washing.stage === 'carrying'
-        ? `씻은 ${WASH_NAMES[state.washing.item]}를 ${STATIONS[washDestination(state.washing.item)].name}에 정리`
-        : `${WASH_NAMES[state.washing.item]} 세척 중`
-      : '',
+    washingTask(state.washing),
     state.preparation && state.preparation.stage !== 'processing'
       ? `${PREPARATIONS[state.preparation.recipe].name} 준비 중`
       : '',
     state.coldBrew && state.coldBrew.stage !== 'extracting' ? '콜드 브루 회수·보관' : '',
   ].filter(Boolean)
   const remaining = state.phase === 'closing' ? closingTasks(state) : tasks
+
   return (
     <GameDialog title="매장 현황" onClose={onClose} wide>
       <fieldset className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-control p-1" aria-label="현황 보기">
-        <button
-          type="button"
-          aria-pressed={tab === 'work'}
-          className={[
-            'rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink',
-            'aria-pressed:shadow-sm',
-          ].join(' ')}
-          onClick={() => setTab('work')}
-        >
-          할 일
-        </button>
-        <button
-          type="button"
-          aria-pressed={tab === 'ledger'}
-          className={[
-            'rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink',
-            'aria-pressed:shadow-sm',
-          ].join(' ')}
-          onClick={() => setTab('ledger')}
-        >
-          운영 기록
-        </button>
+        {TABS.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={tab === id}
+            className={clsx(
+              'rounded-lg py-2.5 text-sm text-muted',
+              'aria-pressed:bg-surface aria-pressed:text-ink aria-pressed:shadow-sm',
+            )}
+            onClick={() => setTab(id)}
+          >
+            {label}
+          </button>
+        ))}
       </fieldset>
       {tab === 'work' ? (
         <>
@@ -151,4 +148,12 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
       )}
     </GameDialog>
   )
+}
+
+function washingTask(washing: Washing | null) {
+  if (!washing) return ''
+  if (washing.stage === 'carrying') {
+    return `씻은 ${WASH_NAMES[washing.item]}를 ${STATIONS[washDestination(washing.item)].name}에 정리`
+  }
+  return `${WASH_NAMES[washing.item]} 세척 중`
 }

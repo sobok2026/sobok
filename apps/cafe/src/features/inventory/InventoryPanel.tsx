@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useState } from 'react'
 import { formatAmount, money } from '../../shared/format'
 import { InventoryButton, TextButton } from '../../shared/ui/Button'
@@ -10,17 +11,40 @@ import SupplyPanel from './SupplyPanel'
 import { inventorySummary } from './summary'
 
 type InventoryFilter = 'focus' | 'work' | 'all'
+type InventoryItem = ReturnType<typeof inventorySummary>[number]
 const searchName = (value: string) => value.toLocaleLowerCase('ko-KR').replace(/\s+/g, '')
-function inventoryPriority(item: ReturnType<typeof inventorySummary>[number]) {
+
+function inventoryPriority(item: InventoryItem) {
   if (item.needed > 0.0001) return item.shortage > 0.0001 ? 0 : 1
   if (item.expired > 0) return 2
   if (item.pending > 0) return 3
   return item.batches.length ? 4 : 5
 }
 
+function inventoryNote({
+  shortage,
+  expired,
+  pending,
+  needed,
+  amount,
+}: Pick<InventoryItem, 'shortage' | 'expired' | 'pending' | 'needed' | 'amount'>) {
+  if (shortage > 0.0001) return '현재 작업에 부족'
+  if (expired) return '만료 재료 있음'
+  if (pending) return '라벨·보관 필요'
+  if (needed > 0.0001) return '현재 작업에 필요'
+  return amount > 0 ? '' : '재고 없음'
+}
+
+function emptyMessage(needle: string, filter: InventoryFilter) {
+  if (needle) return '검색한 이름의 재료가 이 범위에 없어요.'
+  if (filter === 'work') return '현재 작업에 필요한 재료가 없어요.'
+  return '필요하거나 보유 중인 재료가 없어요.'
+}
+
 export default function InventoryPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<InventoryFilter>('focus')
+
   const inventory = inventorySummary(state)
   const shortages = inventory.filter((item) => item.shortage > 0.0001)
   const needed = inventory.filter((item) => item.needed > 0.0001)
@@ -31,12 +55,14 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
     { id: 'all', label: '전체 품목', count: inventory.length },
   ]
   const needle = searchName(query)
-  const filtered = (filter === 'focus' ? focused : filter === 'work' ? needed : inventory)
+  const scopes: Record<InventoryFilter, InventoryItem[]> = { focus: focused, work: needed, all: inventory }
+  const filtered = scopes[filter]
     .filter((item) => searchName(item.definition.name).includes(needle))
     .sort(
       (a, b) =>
         inventoryPriority(a) - inventoryPriority(b) || a.definition.name.localeCompare(b.definition.name, 'ko-KR'),
     )
+
   return (
     <>
       {shortages.length ? (
@@ -61,10 +87,10 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
             key={choice.id}
             type="button"
             aria-pressed={filter === choice.id}
-            className={[
+            className={clsx(
               'min-h-10 rounded-xl border border-control-line bg-control px-3 py-2 text-xs text-ink',
               'aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand',
-            ].join(' ')}
+            )}
             onClick={() => setFilter(choice.id)}
           >
             {choice.label} · {choice.count}
@@ -83,11 +109,11 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
           ({ id, definition, batches, sealed, amount, pending, expired, unopened, needed, shortage, priority }) => (
             <details className="group/inventory border-b border-line" key={id}>
               <summary
-                className={[
-                  'flex cursor-pointer list-none items-center justify-between gap-3 py-3.5 after:text-lg',
-                  "after:text-muted after:content-['+'] group-open/inventory:after:content-['−']",
+                className={clsx(
+                  'flex cursor-pointer list-none items-center justify-between gap-3 py-3.5',
+                  "after:text-lg after:text-muted after:content-['+'] group-open/inventory:after:content-['−']",
                   '[&::-webkit-details-marker]:hidden',
-                ].join(' ')}
+                )}
               >
                 <span className="flex-1 text-sm font-medium">
                   {definition.name}
@@ -96,17 +122,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       className="mt-1.25 block text-xs font-normal text-muted data-[attention=true]:text-danger"
                       data-attention={priority < 3}
                     >
-                      {shortage > 0.0001
-                        ? '현재 작업에 부족'
-                        : expired
-                          ? '만료 재료 있음'
-                          : pending
-                            ? '라벨·보관 필요'
-                            : needed > 0.0001
-                              ? '현재 작업에 필요'
-                              : amount > 0
-                                ? ''
-                                : '재고 없음'}
+                      {inventoryNote({ shortage, expired, pending, needed, amount })}
                     </small>
                   ) : null}
                 </span>
@@ -149,10 +165,10 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                 ) : null}
                 {needed > 0 ? (
                   <p
-                    className={[
+                    className={clsx(
                       'mb-4 rounded-md bg-[#e9eee1] px-3 py-2.5 text-label leading-[1.6] text-brand',
                       'data-[shortage=true]:bg-[#f4e6d4] data-[shortage=true]:text-[#805430]',
-                    ].join(' ')}
+                    )}
                     data-shortage={shortage > 0.0001}
                   >
                     남은 작업에 예상 {formatAmount(needed)}
@@ -195,13 +211,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
       </div>
       {!filtered.length ? (
         <div className="py-5 text-sm text-muted">
-          <p>
-            {needle
-              ? '검색한 이름의 재료가 이 범위에 없어요.'
-              : filter === 'work'
-                ? '현재 작업에 필요한 재료가 없어요.'
-                : '필요하거나 보유 중인 재료가 없어요.'}
-          </p>
+          <p>{emptyMessage(needle, filter)}</p>
           {query ? <TextButton onClick={() => setQuery('')}>검색어 지우기</TextButton> : null}
           {filter !== 'all' ? (
             <TextButton className="ml-3" onClick={() => setFilter('all')}>

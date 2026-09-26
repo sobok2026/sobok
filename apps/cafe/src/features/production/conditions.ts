@@ -3,6 +3,7 @@ import type { ProductionState, WorkStep } from './workflow'
 export function observationStep(step: WorkStep, session: ProductionState): WorkStep {
   const condition = step.conditions.find((item) => session.decisions[item.id] === undefined)
   if (!condition) return step
+
   return {
     ...step,
     id: `${step.id}:observe:${condition.id}`,

@@ -35,14 +35,17 @@ export function handleStockActions(
 ) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
+
   switch (action.type) {
     case 'cups': {
       const stock = s.disposableCups[action.kind]
       const amount = Math.min(CUP_SUPPLY.refill, stock.reserve, Math.max(0, CUP_SUPPLY.barCapacity - stock.bar))
+
       if (!amount) {
         fail('보충할 컵이 없거나 보관대가 가득 찼어요.')
         break
       }
+
       stock.reserve -= amount
       stock.bar += amount
       say(s, `${CUP_NAMES[action.kind]} ${amount}개를 보충했어요.`, 'success')
@@ -53,10 +56,12 @@ export function handleStockActions(
         fail('컵 입고비가 부족해요.')
         break
       }
+
       if (s.disposableCups[action.kind].reserve >= CUP_SUPPLY.reserveLimit) {
         fail('후방에 충분한 컵이 있어요.')
         break
       }
+
       s.cash -= CUP_SUPPLY.price
       s.totals.cupPurchases += CUP_SUPPLY.price
       s.disposableCups[action.kind].reserve += CUP_SUPPLY.pack
@@ -67,8 +72,10 @@ export function handleStockActions(
         fail('컵과 제조·세척 도구를 먼저 내려놓아주세요.')
         break
       }
+
       const supply = s.supplies[action.supply]
       const amount = Math.min(SUPPLY_CAPACITY - supply.bar, supply.stock)
+
       if (!amount) {
         fail(
           supply.bar >= SUPPLY_CAPACITY
@@ -77,6 +84,7 @@ export function handleStockActions(
         )
         break
       }
+
       supply.stock -= amount
       s.supplyDelivery = { supply: action.supply, amount }
       say(
@@ -107,6 +115,7 @@ export function handleStockActions(
         fail('소모품 입고비가 부족해요.')
         break
       }
+
       s.cash -= SUPPLY_PRICE
       s.supplies[action.supply].stock += SUPPLY_PACK
       s.totals.supplyPurchases[action.supply] = (s.totals.supplyPurchases[action.supply] ?? 0) + SUPPLY_PRICE
@@ -124,6 +133,7 @@ export function handleStockActions(
     case 'label-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
       if (!batch || batch.amount <= 0 || batch.openedAt === null || batch.labelled) break
+
       if (
         batch.location !== action.station ||
         action.station !== (batch.location === 'stock' ? 'stock' : batchOrigin(batch)) ||
@@ -132,10 +142,12 @@ export function handleStockActions(
         fail('용기가 놓인 작업대에서 라벨을 붙여주세요.')
         break
       }
+
       if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
         fail('기한이 지난 재료는 새 라벨로 연장할 수 없어요. 폐기해주세요.')
         break
       }
+
       batch.labelled = true
       say(
         s,
@@ -155,10 +167,12 @@ export function handleStockActions(
         action.station !== batchOrigin(batch)
       )
         break
+
       if (craftingHandsBusy(s)) {
         fail('컵과 도구를 먼저 내려놓아주세요.')
         break
       }
+
       if (!batch.labelled || batch.expiresAt === null || batch.expiresAt <= s.time || batch.amount <= 0) {
         fail(
           batch.expiresAt !== null && batch.expiresAt <= s.time
@@ -167,6 +181,7 @@ export function handleStockActions(
         )
         break
       }
+
       batch.location = 'hand'
       say(
         s,
@@ -176,10 +191,12 @@ export function handleStockActions(
     }
     case 'return-batch': {
       const batch = carriedBatch(s)
+
       if (!batch || action.station !== batchOrigin(batch)) {
         fail('용기를 집었던 작업대에 다시 내려놓아주세요.')
         break
       }
+
       batch.location = batchOrigin(batch)
       say(s, '배합 용기를 원래 자리에 내려놓았어요. 잔량·라벨·기한은 그대로예요.')
       break
@@ -187,6 +204,7 @@ export function handleStockActions(
     case 'store-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
       if (!batch || batch.amount <= 0 || batch.location === 'bar' || batch.openedAt === null) break
+
       if (
         INGREDIENTS[batch.ingredient].prepared
           ? batch.location !== 'hand' || action.station !== batchDestination(batch)
@@ -199,21 +217,26 @@ export function handleStockActions(
         )
         break
       }
+
       if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
         fail('기한이 지난 재료는 폐기해주세요.')
         break
       }
+
       if (!batch.labelled) {
         fail('날짜 라벨을 먼저 붙여주세요.')
         break
       }
+
       const definition = INGREDIENTS[batch.ingredient]
+
       if (action.storage !== definition.storage) {
         fail(
           `${definition.name}: ${definition.storage === 'fridge' ? '냉장' : '실온'} 보관이 필요해요. 라벨을 다시 확인해주세요.`,
         )
         break
       }
+
       batch.location = 'bar'
       if (s.preparation?.batchId === batch.id) s.preparation = null
       if (s.coldBrew?.batchId === batch.id) s.coldBrew = null
@@ -227,6 +250,7 @@ export function handleStockActions(
     case 'discard-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
       if (!batch || batch.amount <= 0) break
+
       if (
         batch.location === 'hand' ||
         (['prep', 'cold-prep'].includes(batch.location)
@@ -236,6 +260,7 @@ export function handleStockActions(
         fail('용기가 놓인 작업대에서 폐기해주세요.')
         break
       }
+
       addAmounts(s.totals.disposed, { [batch.ingredient]: batch.amount })
       batch.amount = 0
       if (s.preparation?.batchId === batch.id) s.preparation = null
@@ -246,10 +271,12 @@ export function handleStockActions(
     }
     case 'buy': {
       const ingredient = INGREDIENTS[action.ingredient]
+
       if (ingredient.prepared) {
         fail('준비대에서 제조하는 재료예요.')
         break
       }
+
       if (
         s.batches.filter((b) => b.location === 'stock' && b.ingredient === action.ingredient && b.amount > 0).length >=
         3
@@ -257,10 +284,12 @@ export function handleStockActions(
         fail('이 품목은 창고에 충분해요.')
         break
       }
+
       if (s.cash < ingredient.price) {
         fail('운영비가 부족해요.')
         break
       }
+
       s.cash -= ingredient.price
       addAmounts(s.totals.purchases, { [action.ingredient]: ingredient.price })
       s.batches.push(newBatch(action.ingredient, ingredient.pack, s.time, 'stock'))

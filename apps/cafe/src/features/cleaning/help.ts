@@ -18,15 +18,16 @@ export function cleaningTip(work: Cleaning): Tip {
       reason: '컵을 모두 세척대로 옮긴 뒤 얼룩을 닦아요.',
     }
   const ready = work.progress >= CLEANING_SECONDS[work.stage]
+
   return {
     title: work.stage === 'bag' ? '쓰레기를 정리하세요' : '얼룩을 닦으세요',
-    action: ready
-      ? work.clothHeld
-        ? 'G로 천을 놓고 F로 정리를 확인하세요.'
-        : 'F로 정리를 마치세요.'
-      : work.stage === 'wipe' && !work.clothHeld
-        ? 'G로 청소용 천을 집으세요.'
-        : 'Space나 작업 버튼을 누르고 있으면 진행돼요.',
+    action: cleaningAction(work, ready),
     reason: '손을 떼거나 자리를 떠나도 진행량은 남아 있어요.',
   }
+}
+
+function cleaningAction(work: Cleaning, ready: boolean) {
+  if (ready) return work.clothHeld ? 'G로 천을 놓고 F로 정리를 확인하세요.' : 'F로 정리를 마치세요.'
+  if (work.stage === 'wipe' && !work.clothHeld) return 'G로 청소용 천을 집으세요.'
+  return 'Space나 작업 버튼을 누르고 있으면 진행돼요.'
 }

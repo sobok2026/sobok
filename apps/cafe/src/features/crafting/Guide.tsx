@@ -13,6 +13,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
   const service = state.cup ? cupService(state.cup.craft.kind) : ticket?.service
   if (!recipe || !size || !service) return null
   const definition = recipeFor(recipe, size, service, state.cup?.craft.customizations ?? ticket?.customizations)
+
   return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">
@@ -22,6 +23,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
       <ol className="mt-4 space-y-4">
         {definition.steps.map((step, index) => {
           const details = operationDetails(step)
+
           return (
             <li
               key={step.id}
@@ -48,6 +50,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
     </details>
   )
 }
+
 export function CraftingGuide() {
   return (
     <details className="border-t border-line py-4">

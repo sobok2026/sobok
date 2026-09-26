@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useId, useState } from 'react'
 import { recipeCatalog } from '../../content/catalog'
 import { amountLabel, conditionLabel } from '../../content/recipe-plan'
@@ -9,45 +10,53 @@ const kindNames = { drink: '음료', preparation: '부재료', procedure: '작�
 const sizeNames = { short: 'Short', tall: 'Tall', grande: 'Grande', venti: 'Venti', trenta: 'Trenta' }
 const searchText = (text: string) => text.normalize('NFKC').replace(/\s/g, '').toLocaleLowerCase('ko')
 
+function secondsLabel(seconds: number) {
+  if (seconds % 3600 === 0) return `${seconds / 3600}시간`
+  if (seconds % 60 === 0) return `${seconds / 60}분`
+  return `${seconds}초`
+}
+
 function details(operation: RecipeOperation, size?: CatalogSize) {
   const text: string[] = []
   if ('materialId' in operation && operation.materialId)
     text.push(recipeCatalog.materials.get(operation.materialId)!.name)
+
   if ('amount' in operation && operation.amount) {
     const amount =
       operation.amount.kind === 'by-size' ? size && selectedAmount(operation.amount, size) : operation.amount
     if (amount) text.push(amountLabel(amount))
   }
+
   if ('toolId' in operation && operation.toolId) text.push(recipeCatalog.equipment.get(operation.toolId)!.name)
   if ('toolIds' in operation && operation.toolIds)
     text.push(...operation.toolIds.map((id) => recipeCatalog.equipment.get(id)!.name))
+
   if (operation.action === 'run-machine') {
     text.push(recipeCatalog.equipment.get(operation.equipmentId)!.name)
-    const program =
-      typeof operation.program === 'string' ? operation.program : size ? operation.program[size] : undefined
+    const program = typeof operation.program === 'string' ? operation.program : size && operation.program[size]
     if (program) text.push(`프로그램 ${program}`)
     text.push(
       (typeof operation.cycles === 'number' ? operation.cycles : `${operation.cycles.min}–${operation.cycles.max}`) +
         '회',
     )
   }
+
   if ('duration' in operation && operation.duration) {
     const duration = operation.duration
     if ('seconds' in duration) {
       const seconds = duration.seconds
-      text.push(
-        (duration.approximate ? '약 ' : '') +
-          (seconds % 3600 === 0 ? `${seconds / 3600}시간` : seconds % 60 === 0 ? `${seconds / 60}분` : `${seconds}초`) +
-          (duration.atLeast ? ' 이상' : ''),
-      )
+      text.push((duration.approximate ? '약 ' : '') + secondsLabel(seconds) + (duration.atLeast ? ' 이상' : ''))
     } else text.push(`${duration.minSeconds}–${duration.maxSeconds}초`)
   }
+
   if (operation.when) text.unshift(conditionLabel(operation.when))
   return text.join(' · ')
 }
+
 function VariantDetail({ variant }: { variant: RecipeVariant }) {
   const [size, setSize] = useState<CatalogSize | undefined>(variant.sizes[0])
   const selectId = useId()
+
   return (
     <div className="mt-4">
       {variant.sizes.length ? (
@@ -93,6 +102,7 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
             ))}
             {step.operations.map((operation, operationIndex) => {
               const label = details(operation, size)
+
               return label ? (
                 <p key={operationIndex} className="mt-1 text-xs text-brand">
                   {label}
@@ -131,16 +141,19 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
     </div>
   )
 }
+
 export default function RecipeLibrary() {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const searchId = useId()
   const categoryId = useId()
+
   const matches = documents.filter(
     (recipe) => (category === 'all' || category === recipe.kind) && searchText(recipe.name).includes(searchText(query)),
   )
   const selected = selectedId && matches.find((recipe) => recipe.id === selectedId)
+
   return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">전체 제조법 · {documents.length}개</summary>
@@ -189,10 +202,10 @@ export default function RecipeLibrary() {
               type="button"
               aria-pressed={selectedId === recipe.id}
               onClick={() => setSelectedId(recipe.id)}
-              className={[
-                'block w-full border-b border-line px-3 py-2 text-left text-xs last:border-0',
-                'hover:bg-control aria-pressed:bg-control',
-              ].join(' ')}
+              className={clsx(
+                'block w-full border-b border-line px-3 py-2 text-left text-xs',
+                'last:border-0 hover:bg-control aria-pressed:bg-control',
+              )}
             >
               {recipe.name} <span className="ml-2 text-muted">{kindNames[recipe.kind]}</span>
             </button>

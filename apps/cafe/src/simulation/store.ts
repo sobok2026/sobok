@@ -19,26 +19,34 @@ export class CafeStore {
   private state: GameState
   private listeners = new Set<() => void>()
   private input: ActiveInput = null
+
   constructor(state: GameState) {
     this.state = state
   }
+
   getSnapshot = () => this.state
+
   subscribe = (listener: () => void) => {
     this.listeners.add(listener)
     return () => this.listeners.delete(listener)
   }
+
   replace(state: GameState) {
     this.input = null
     this.state = state
     this.emit()
   }
+
   getActiveInput = () => this.input
+
   stopActiveInput = () => {
     this.input = null
   }
+
   private emit() {
     for (const listener of this.listeners) listener()
   }
+
   dispatch(action: Action) {
     this.input = null
     if (this.state.phase === 'summary' && action.type !== 'next-day') return
@@ -47,6 +55,7 @@ export class CafeStore {
     completeJobs(work)
     expirePreparation(work, s.time)
     expireDrink(work, s.time)
+
     if (canDispatch(work, action)) {
       switch (action.type) {
         case 'pos-add':
@@ -130,10 +139,12 @@ export class CafeStore {
       }
       s.batches = s.batches.filter((batch) => batch.amount > 0 || batch.location === 'stock')
     }
+
     this.input = work.input
     this.state = s
     this.emit()
   }
+
   tick(seconds: number) {
     if (this.state.phase === 'summary') return
     const work: WorkContext = { state: structuredClone(this.state), input: this.input }

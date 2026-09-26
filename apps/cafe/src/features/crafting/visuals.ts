@@ -13,7 +13,8 @@ import {
   createProductionEffects,
   createProductionToolVisual,
   createWorkVesselVisual,
-  materialColor,
+  heldTool,
+  operationColor,
   operationVessel,
   positionProductionTool,
   projectVessel,
@@ -39,6 +40,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   let previous = ''
   let previousProgress = 0
   let pulseUntil = 0
+
   return {
     update(state: GameState, active: boolean, now: number) {
       const cup = state.cup
@@ -48,10 +50,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       for (const pump of pumps.values()) pump.root.visible = false
       positions.clear()
       effects.update(null, end, '#dfc29b', null, now)
+
       if (!cup) {
         tools.update(null, '#dfc29b')
         return
       }
+
       const craft = cup.craft
       const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations)
       const step = operationFor(cup.recipe, craft) ?? undefined
@@ -72,13 +76,16 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
           : undefined
       view.update({ kind: craft.kind, lidded: craft.lidded, vessel: serving, targetFill })
       held.root.rotation.z = Math.sin(now / 650) * 0.018
+
       if (station) {
         bench.root.position.fromArray(cupSpot(station))
+
         if (station === 'espresso' && currentVessel !== servingId) {
           bench.root.position.x += 0.48
           bench.root.position.z -= 0.06
           bench.root.position.y = 1.075
         }
+
         positions.set(servingId, bench.root.position)
         const ids = new Set(
           Object.entries(craft.vessels)
@@ -89,14 +96,17 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         if (operation && 'from' in operation) ids.add(operation.from)
         ids.delete(servingId)
         let index = 0
+
         for (const id of ids) {
           const shape = workVesselShape(id, definition.steps)
           const key = `${shape}:${index++}`
           let model = auxiliaries.get(key)
+
           if (!model) {
             model = createWorkVesselVisual(scene, shape)
             auxiliaries.set(key, model)
           }
+
           model.root.visible = craft.tool !== `vessel:${id}`
           model.root.position.copy(bench.root.position).add(new THREE.Vector3(-0.32 * index, 0, 0.04))
           if (station === 'espresso' && currentVessel === id)
@@ -116,26 +126,20 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
           })
         }
       }
+
       const key = `${cup.id}:${step?.id}`
+
       if (key !== previous) {
         previous = key
         previousProgress = craft.progress
       }
+
       if (craft.progress > previousProgress && step && !['pour', 'mix'].includes(step.kind)) pulseUntil = now + 330
       previousProgress = craft.progress
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       spot.copy(positions.get(currentVessel ?? servingId) ?? bench.root.position)
-      const color =
-        operation && 'materialId' in operation && operation.materialId
-          ? materialColor(operation.materialId)
-          : operation && 'from' in operation
-            ? projectVessel(craft, operation.from, serving.color).color
-            : serving.color
-      const descriptor = craft.tool
-        ? step?.tool?.id === craft.tool
-          ? step.tool
-          : (definition.steps.find((item) => item.tool?.id === craft.tool)?.tool ?? null)
-        : null
+      const color = operationColor(craft, operation, serving.color)
+      const descriptor = heldTool(craft, step, definition.steps)
       const tool = tools.update(descriptor, color, cupSize(craft.kind))
       if (tool) positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
       const pumped =
@@ -143,22 +147,27 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
         operation.amount.unit === 'pump'
       let pump: ReturnType<typeof createPumpVisual> | undefined
+
       if (station && pumped && (operation.materialId === 'classic' || operation.materialId === 'glaze')) {
         const kind = operation.materialId
         pump = pumps.get(kind)
+
         if (!pump) {
           pump = createPumpVisual(scene, kind)
           pumps.set(kind, pump)
         }
+
         pump.root.visible = true
         pump.root.rotation.y = Math.PI
         pump.root.position.set(spot.x, spot.y, spot.z + 0.36)
         pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
       }
+
       const extraction = job?.equipmentId === 'espresso-machine' || (operation?.action === 'espresso' && pulse > 0)
       const dispensing = job?.equipmentId === 'hot-water-dispenser'
       const pouring = active && step?.kind === 'pour'
       const adding = pulse > 0 && operation?.action === 'add'
+
       if (station && (pouring || adding || extraction || dispensing)) {
         start.set(spot.x + 0.09, spot.y + 0.44, spot.z)
         if (extraction) start.fromArray(ESPRESSO_OUTLET)
@@ -172,6 +181,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         end.set(spot.x, spot.y + height, spot.z)
         effects.update(start, end, color, null, now)
       }
+
       const steaming = job?.equipmentId === 'steam-wand' || (operation?.action === 'steam' && pulse > 0)
       if (station && steaming) effects.update(null, end, color, spot, now)
     },

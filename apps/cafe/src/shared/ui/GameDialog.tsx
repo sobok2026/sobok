@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ReactNode, useEffect, useId, useRef } from 'react'
 
 export default function GameDialog({
@@ -13,19 +14,22 @@ export default function GameDialog({
 }) {
   const titleId = useId()
   const surface = useRef<HTMLElement>(null)
+
   useEffect(() => {
     const previous = document.activeElement
     surface.current?.focus()
+
     return () => {
       if (previous instanceof HTMLElement && previous.isConnected) previous.focus({ preventScroll: true })
     }
   }, [])
+
   return (
     <div
-      className={[
+      className={clsx(
         'absolute inset-0 z-20 flex items-center justify-center bg-ink/35 p-6 backdrop-blur-sm',
         'max-tablet:p-4',
-      ].join(' ')}
+      )}
     >
       <section
         ref={surface}
@@ -33,16 +37,17 @@ export default function GameDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={[
-          'max-h-full w-full overflow-y-auto rounded-2xl bg-surface p-7 shadow-dialog outline-none',
-          '[scrollbar-width:thin]',
+        className={clsx(
+          'max-h-full w-full overflow-y-auto [scrollbar-width:thin]',
+          'rounded-2xl bg-surface p-7 shadow-dialog outline-none',
           wide ? 'max-w-140' : 'max-w-100',
-        ].join(' ')}
+        )}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault()
             onClose?.()
           }
+
           if (event.key !== 'Tab') return
           const controls = Array.from(
             event.currentTarget.querySelectorAll<HTMLElement>(
@@ -51,6 +56,7 @@ export default function GameDialog({
           ).filter((element) => element.checkVisibility())
           const first = controls[0]
           const last = controls.at(-1)
+
           if (event.shiftKey && (document.activeElement === first || document.activeElement === surface.current)) {
             event.preventDefault()
             last?.focus()

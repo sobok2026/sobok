@@ -15,11 +15,13 @@ export function PreparationInstructions({
   const variant = recipeCatalog.recipes
     .get(definition.recipeId)!
     .variants.find((item) => item.id === definition.variantId)!
+
   return (
     <>
       <ol className="mt-4 list-decimal space-y-3 pl-5 text-xs text-muted" aria-label="부재료 제조 순서">
         {definition.steps.map((step, index) => {
           const details = operationDetails(step)
+
           return (
             <li
               key={step.id}
@@ -50,6 +52,7 @@ export function PreparationRecipeGuide({ state }: { state: GameState }) {
   const prep = state.preparation
   if (!prep) return null
   const definition = PREPARATIONS[prep.recipe]
+
   return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">{definition.name} 배합</summary>

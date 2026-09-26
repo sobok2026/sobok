@@ -3,8 +3,10 @@ import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { closingTasks } from './rules'
+
 export default function ShiftControls({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const closing = closingTasks(state)
+
   return (
     <details className="mt-6 border-t border-line pt-4 text-sm" open={state.phase !== 'open'}>
       <summary className="mb-3 cursor-pointer text-muted">영업 관리</summary>

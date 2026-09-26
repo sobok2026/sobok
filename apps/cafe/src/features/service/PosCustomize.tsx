@@ -16,6 +16,20 @@ import { NumericPad, PosButton, PosDialog } from './PosControls'
 type Input = { id: string; label: string; value: number; unit: 'shot' | 'pump'; extra?: keyof typeof extraSyrups }
 const groups = { all: '전체', coffee: '커피', syrup: '시럽', milk: '우유', topping: '얼음 · 토핑' } as const
 type Group = keyof typeof groups
+const levelNames = { less: '적게', extra: '많이' } as const
+
+function syrupLabel(custom: Customizations, id: keyof typeof extraSyrups) {
+  const pumps = custom.syrups[id]
+  if (pumps) return `${pumps}펌프`
+  return custom.milk === '두유' && id === '바닐라-시럽' ? '무료' : '+800원'
+}
+
+function toppingLabel(custom: Customizations, stepId: string) {
+  if (custom.omitted.includes(stepId)) return '없이'
+  const level = custom.levels[stepId]
+  return level ? levelNames[level] : '기본'
+}
+
 export function PosCustomize({
   onBack,
   line,
@@ -32,8 +46,10 @@ export function PosCustomize({
   const [levelStep, setLevelStep] = useState<PlannedStep | null>(null)
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
+
   const plan = line ? recipeFor(line.recipe, line.size, line.service).steps : []
   const custom = line?.customizations ?? noCustomizations()
+
   const change = (next: Customizations) => {
     if (!line) return
     try {
@@ -46,15 +62,19 @@ export function PosCustomize({
       setError(error instanceof Error ? error.message : '선택을 확인해주세요.')
     }
   }
+
   const shown = (kind: Group) => group === 'all' || group === kind
+
   const open = (input: Input) => {
     setInput(input)
     setValue(String(input.value))
     setError('')
   }
+
   const confirm = () => {
     if (!input || !value || !Number.isFinite(Number(value))) return
     const amount = Number(value)
+
     if (
       amount > 9 ||
       amount < (input.unit === 'shot' ? 0.5 : 0) ||
@@ -63,6 +83,7 @@ export function PosCustomize({
       setError(input.unit === 'shot' ? '0.5~9샷으로 입력해주세요.' : '0~9펌프로 입력해주세요.')
       return
     }
+
     if (input.extra) {
       const syrups = { ...custom.syrups }
       if (!amount) delete syrups[input.extra]
@@ -76,6 +97,7 @@ export function PosCustomize({
       change({ ...custom, quantities })
     }
   }
+
   return (
     <div className="flex min-h-0 flex-1 gap-1.5">
       <nav className="flex w-25 shrink-0 flex-col gap-1" aria-label="커스텀 분류">
@@ -125,6 +147,7 @@ export function PosCustomize({
             .map((step) => {
               const amount = countAmount(step)!
               const selected = custom.quantities[step.id] ?? amount.value
+
               return (
                 <PosButton
                   key={step.id}
@@ -157,13 +180,7 @@ export function PosCustomize({
                     onClick={() => open({ id, label, extra: id, value: custom.syrups[id] ?? 0, unit: 'pump' })}
                   >
                     {label}
-                    <span className="mt-3 block text-right text-xs">
-                      {custom.syrups[id]
-                        ? `${custom.syrups[id]}펌프`
-                        : custom.milk === '두유' && id === '바닐라-시럽'
-                          ? '무료'
-                          : '+800원'}
-                    </span>
+                    <span className="mt-3 block text-right text-xs">{syrupLabel(custom, id)}</span>
                   </PosButton>
                 ))
             : null}
@@ -191,15 +208,7 @@ export function PosCustomize({
                   onClick={() => setLevelStep(step)}
                 >
                   {step.label}
-                  <span className="mt-3 block text-right text-xs">
-                    {custom.omitted.includes(step.id)
-                      ? '없이'
-                      : custom.levels[step.id] === 'less'
-                        ? '적게'
-                        : custom.levels[step.id] === 'extra'
-                          ? '많이'
-                          : '기본'}
-                  </span>
+                  <span className="mt-3 block text-right text-xs">{toppingLabel(custom, step.id)}</span>
                 </PosButton>
               ))
             : null}

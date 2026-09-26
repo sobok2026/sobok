@@ -4,17 +4,11 @@ import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { isReusableCup } from '../inventory/cups'
 import { currentTicket } from '../service/orders'
+
 export default function CraftingPanel({ state }: { state: GameState }) {
-  return (
-    <p className="py-4 text-sm text-muted">
-      {state.cup
-        ? `컵 위치 · ${state.cup.craft.location === 'hand' ? '손' : STATIONS[state.cup.craft.location].name}`
-        : currentTicket(state)
-          ? '컵 보관대에서 컵 준비'
-          : 'POS에서 주문 접수'}
-    </p>
-  )
+  return <p className="py-4 text-sm text-muted">{cupStatus(state)}</p>
 }
+
 export function CupManagement({ state, act }: { state: GameState; act: (action: Action) => void }) {
   return state.cup ? (
     <details className="mt-6 border-t border-line pt-4 text-sm">
@@ -24,4 +18,12 @@ export function CupManagement({ state, act }: { state: GameState; act: (action: 
       </TextButton>
     </details>
   ) : null
+}
+
+function cupStatus(state: GameState) {
+  if (state.cup) {
+    const location = state.cup.craft.location
+    return `컵 위치 · ${location === 'hand' ? '손' : STATIONS[location].name}`
+  }
+  return currentTicket(state) ? '컵 보관대에서 컵 준비' : 'POS에서 주문 접수'
 }

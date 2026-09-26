@@ -3,11 +3,14 @@ import { CUP_NAMES, type ReusableCupKind, reusableCupKinds } from '../inventory/
 
 export const washItems = ['pitcher', ...reusableCupKinds] as const
 export type WashItem = (typeof washItems)[number]
+
 export const WASH_NAMES = {
   pitcher: '피처',
   ...Object.fromEntries(reusableCupKinds.map((kind) => [kind, CUP_NAMES[kind]])),
 } as Record<WashItem, string>
+
 export const washDestination = (item: WashItem) => (item === 'pitcher' ? ('rack' as const) : ('cups' as const))
+
 export function washStock(state: GameState, item: 'pitcher' | ReusableCupKind) {
   return item === 'pitcher' ? state.tools : state.reusableCups[item]
 }

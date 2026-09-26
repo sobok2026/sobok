@@ -5,6 +5,7 @@ import type { GameState } from '../../simulation/state'
 import { cupCount } from '../inventory/cups'
 import type { CleaningStation } from './rules'
 import { cupSurface } from './rules'
+
 export default function CleaningPanel({
   state,
   station: panel,
@@ -15,6 +16,7 @@ export default function CleaningPanel({
   act: (action: Action) => void
 }) {
   const actionJob = state.jobs.find((job) => job.station === panel)
+
   return (
     <>
       {isCupSurface(panel) ? (
@@ -23,13 +25,7 @@ export default function CleaningPanel({
             {cupCount(cupSurface(state, panel).cups)}
             <small className="mt-2 block text-xs text-muted">개 회수 대기</small>
           </div>
-          <p className="mb-4 text-sm leading-[1.9] text-muted">
-            {cupSurface(state, panel).dirty
-              ? '얼룩 있음'
-              : cupCount(cupSurface(state, panel).cups)
-                ? '컵 회수 필요'
-                : '정리 완료'}
-          </p>
+          <p className="mb-4 text-sm leading-[1.9] text-muted">{surfaceStatus(cupSurface(state, panel))}</p>
           <Button
             disabled={!cupSurface(state, panel).dirty && !cupCount(cupSurface(state, panel).cups)}
             onClick={() => act({ type: 'start-cleaning', station: panel })}
@@ -60,4 +56,9 @@ export default function CleaningPanel({
       ) : null}
     </>
   )
+}
+
+function surfaceStatus(surface: ReturnType<typeof cupSurface>) {
+  if (surface.dirty) return '얼룩 있음'
+  return cupCount(surface.cups) ? '컵 회수 필요' : '정리 완료'
 }

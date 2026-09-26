@@ -9,6 +9,7 @@ import { CLEANING_SECONDS, cupSurface } from './rules'
 export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const paper = new THREE.MeshStandardMaterial({ color: '#e6d6b6', roughness: 0.9 })
   const coffee = new THREE.MeshStandardMaterial({ color: '#79543a', roughness: 0.8 })
+
   function cup(parent: THREE.Object3D, x: number, y: number, z: number) {
     const root = new THREE.Group()
     root.position.set(x, y, z)
@@ -20,17 +21,20 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     root.add(residue)
     return { root, bodies }
   }
+
   function showCups(visuals: ReturnType<typeof cup>[], counts: ReusableCupCounts | undefined) {
     const kinds = reusableCupKinds.flatMap((kind) =>
       Array.from({ length: Math.min(counts?.[kind] ?? 0, visuals.length) }, () => kind),
     )
     const count = kinds.length
+
     visuals.forEach((visual, i) => {
       visual.root.visible = i < count
       const kind = kinds[i]
       for (const [id, body] of visual.bodies) body.root.visible = id === kind
     })
   }
+
   function stain(x: number, y: number, z: number) {
     const root = new THREE.Group()
     root.position.set(x, y + 0.001, z)
@@ -52,6 +56,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
       [0.205, -0.05, 0.016, 0.021],
     ]
     const geometry = new THREE.CircleGeometry(1, 24)
+
     for (const [dx, dz, width, depth] of patches) {
       const patch = new THREE.Mesh(geometry, material)
       patch.rotation.x = -Math.PI / 2
@@ -59,8 +64,10 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
       patch.scale.set(width, depth, 1)
       root.add(patch)
     }
+
     return { root, material }
   }
+
   const tables = cupSurfaceIds.map((id) => {
     const [x, y, z] = cleaningSpot(id)
     const cups = Array.from({ length: 8 }, (_, i) =>
@@ -91,10 +98,12 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     return mesh
   })
   const hand = new THREE.Vector3()
+
   return {
     update(state: GameState, active: boolean, now: number) {
       const cleaning = state.cleaning
       const ratio = cleaning?.stage === 'wipe' ? cleaning.progress / CLEANING_SECONDS.wipe : 0
+
       for (const table of tables) {
         showCups(table.cups, cupSurface(state, table.id).cups)
         table.stain.root.visible = cupSurface(state, table.id).dirty
@@ -102,6 +111,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
         table.stain.material.opacity = 0.58 * remaining
         table.stain.root.scale.setScalar(0.72 + remaining * 0.28)
       }
+
       barStain.root.visible = state.dirtyBar > 0
       const barRemaining = 1 - (cleaning?.station === 'mix' ? ratio : 0)
       barStain.material.opacity = 0.58 * barRemaining
@@ -109,6 +119,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
       held.visible = cupCount(cleaning?.heldCups) > 0
       showCups(heldCups, cleaning?.heldCups)
       cloth.visible = !!cleaning?.clothHeld
+
       if (cloth.visible && cleaning) {
         if (active) {
           const [x, y, z] = cleaningSpot(cleaning.station)
@@ -121,9 +132,11 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
           camera.getWorldQuaternion(cloth.quaternion)
         }
       }
+
       bag.visible = cleaning?.stage === 'bag'
       const bagRatio = cleaning?.stage === 'bag' ? cleaning.progress / CLEANING_SECONDS.bag : 0
       bag.scale.set(1, 0.5 + bagRatio * 0.8, 1)
+
       waste.forEach((value, i) => {
         value.visible = i < state.trash && !bag.visible
       })

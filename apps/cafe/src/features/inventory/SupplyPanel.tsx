@@ -22,6 +22,7 @@ export default function SupplyPanel({
         const definition = SUPPLIES[id]
         const supply = state.supplies[id]
         const amount = Math.min(SUPPLY_CAPACITY - supply.bar, supply.stock)
+
         return (
           <article className="border-b border-line py-3.5" key={id}>
             <div className="flex items-baseline justify-between gap-3 text-sm">
@@ -37,7 +38,7 @@ export default function SupplyPanel({
             <p className="mb-4 text-label leading-[1.7] text-muted">
               창고 {supply.stock}
               {definition.unit}
-              {supply.bar === 0 ? ' · 품절' : supply.bar <= 5 ? ' · 보충 필요' : ''}
+              {shelfNote(supply.bar)}
             </p>
             {location === 'stock' ? (
               <div className="mt-3 grid gap-2">
@@ -45,11 +46,7 @@ export default function SupplyPanel({
                   disabled={amount <= 0 || !!state.supplyDelivery}
                   onClick={() => act({ type: 'take-supply', supply: id })}
                 >
-                  {amount > 0
-                    ? `${definition.name} ${amount}${definition.unit} 집기`
-                    : supply.bar >= SUPPLY_CAPACITY
-                      ? `${definition.name} 진열대가 가득 찼어요`
-                      : `${definition.name} 후방 재고가 없어요`}
+                  {takeLabel(definition, amount, supply.bar)}
                 </InventoryButton>
                 <InventoryButton
                   disabled={state.cash < SUPPLY_PRICE || !!state.supplyDelivery}
@@ -65,4 +62,15 @@ export default function SupplyPanel({
       })}
     </section>
   )
+}
+
+function shelfNote(bar: number) {
+  if (bar === 0) return ' · 품절'
+  return bar <= 5 ? ' · 보충 필요' : ''
+}
+
+function takeLabel(definition: { name: string; unit: string }, amount: number, bar: number) {
+  if (amount > 0) return `${definition.name} ${amount}${definition.unit} 집기`
+  if (bar >= SUPPLY_CAPACITY) return `${definition.name} 진열대가 가득 찼어요`
+  return `${definition.name} 후방 재고가 없어요`
 }

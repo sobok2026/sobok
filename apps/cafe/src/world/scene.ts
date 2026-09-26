@@ -17,6 +17,7 @@ import { createShopInterior } from './interior'
 import { createPlayerControls } from './player-controls'
 
 export type MouseMode = 'look' | 'cursor' | 'fallback'
+
 export type SceneOptions = {
   getState: () => GameState
   canMove: () => boolean
@@ -33,6 +34,7 @@ export type SceneOptions = {
   onUnlock: () => void
   onError: (message: string) => void
 }
+
 export type CafeScene = {
   lock: () => void
   unlock: () => void
@@ -40,6 +42,19 @@ export type CafeScene = {
   capture: () => GameState['position']
   dispose: () => void
   reset: (position: GameState['position']) => void
+}
+
+function pickWidth(id: StationId) {
+  if (id === 'espresso') return 0.6
+  if (id === 'steam') return 0.66
+  if (isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf') return 1.3
+  if (id === 'wash') return 1.2
+  return 0.8
+}
+
+function pickHeight(id: StationId) {
+  if (id === 'espresso' || id === 'water') return 1.12
+  return isTable(id) ? 1 : 0.8
 }
 
 export function createCafeScene(container: HTMLDivElement, options: SceneOptions): CafeScene {
@@ -54,6 +69,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   let previousCleaning: string | null = null
   let needsRender = true
   let customerVisuals: ReturnType<typeof createCustomerVisuals> | undefined
+
   const reset = ([x, z, yaw, pitch]: GameState['position']) => {
     needsRender = true
     camera.position.set(x, 1.65, z)
@@ -65,6 +81,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     previousCleaning = state.cleaning?.id ?? null
     customerVisuals?.reset()
   }
+
   reset(options.getState().position)
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6))
@@ -98,22 +115,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(
-        id === 'espresso'
-          ? 0.6
-          : id === 'steam'
-            ? 0.66
-            : isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf'
-              ? 1.3
-              : id === 'wash'
-                ? 1.2
-                : 0.8,
-        id === 'espresso' || id === 'water' ? 1.12 : isTable(id) ? 1 : 0.8,
-        0.8,
-      ),
-      pickMaterial,
-    )
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(pickWidth(id), pickHeight(id), 0.8), pickMaterial)
     mesh.position.set(station.x, 1.2, station.z)
     mesh.userData.station = id
     scene.add(mesh)
@@ -145,6 +147,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const equipmentEnvironment = environmentGenerator.fromScene(environmentRoom, 0.04)
   environmentRoom.dispose()
   environmentGenerator.dispose()
+
   scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
@@ -154,6 +157,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       }
     }
   })
+
   const raycaster = new THREE.Raycaster()
   raycaster.far = 3.4
   const controls = createPlayerControls(renderer.domElement, camera, obstacles, options)
@@ -162,23 +166,28 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   let frame = 0
   let lastTime = performance.now()
   let disposed = false
+
   const contextLost = (event: Event) => {
     event.preventDefault()
     options.onError('그래픽 연결이 끊겼어요. 저장 후 새로고침해주세요.')
   }
+
   renderer.domElement.addEventListener('webglcontextlost', contextLost)
+
   function resize() {
     needsRender = true
     renderer.setSize(container.clientWidth, container.clientHeight)
     camera.aspect = container.clientWidth / Math.max(1, container.clientHeight)
     camera.updateProjectionMatrix()
   }
+
   const observer = new ResizeObserver(resize)
   observer.observe(container)
   resize()
   let renderedState: GameState | null = null
   let wasRunning = false
   let animationTime = 0
+
   function animate(now: number) {
     if (disposed) return
     frame = requestAnimationFrame(animate)
@@ -193,10 +202,12 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     needsRender = false
     if (running) animationTime += dt * 1000
     const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
+
     if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
       const spot = cupSpot(state.cup.craft.location)
       camera.lookAt(spot[0], spot[1] + 0.16, spot[2])
     }
+
     previousCupPlace = cupPlace
     if (state.preparation && state.preparation.id !== previousPreparation)
       camera.lookAt(PREP_SPOT[0], PREP_SPOT[1] + 0.17, PREP_SPOT[2])
@@ -204,10 +215,12 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     if (state.washing && state.washing.id !== previousWashing && state.washing.stage !== 'carrying')
       camera.lookAt(WASH_SPOT[0], WASH_SPOT[1] + 0.13, WASH_SPOT[2])
     previousWashing = state.washing?.id ?? null
+
     if (state.cleaning && state.cleaning.id !== previousCleaning) {
       const [x, y, z] = cleaningSpot(state.cleaning.station)
       camera.lookAt(x, y + 0.13, z)
     }
+
     previousCleaning = state.cleaning?.id ?? null
     controls.update(dt)
     camera.updateMatrixWorld()
@@ -217,11 +230,13 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     const blocked = pointed !== null && !canAccessStation(pointed, camera.position.z)
     const target = blocked ? null : pointed
     controls.setTarget(target)
+
     if (target !== hovered || blocked !== needsStaffAccess) {
       hovered = target
       needsStaffAccess = blocked
       options.onTarget(hovered, blocked)
     }
+
     const desired = suggestedStation(state)
     const anchor = STATIONS[desired]
     guideRing.position.set(anchor.x, 1.72 + Math.sin(animationTime / 600) * 0.025, anchor.z)
@@ -234,10 +249,12 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       (state.washing && state.washing.stage !== 'carrying' && target === 'wash') ||
       (state.cleaning && !cupCount(state.cleaning.heldCups) && target === state.cleaning.station)
     const fov = benchFocused ? 48 : 62
+
     if (Math.abs(camera.fov - fov) > 0.01) {
       camera.fov = THREE.MathUtils.lerp(camera.fov, fov, 0.12)
       camera.updateProjectionMatrix()
     }
+
     craftVisuals.update(
       state,
       options.activeStation() !== null && options.activeStation() === state.cup?.craft.location,
@@ -252,14 +269,18 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     blender.update(state)
     register.update(state)
     syrupStation.update(state)
+
     for (const stack of cupStacks)
       stack.cups.forEach((body, index) => {
         body.root.visible = index < cleanCupCount(state, stack.kind)
       })
+
     customerVisuals?.update(state, dt, running)
     renderer.render(scene, camera)
   }
+
   frame = requestAnimationFrame(animate)
+
   return {
     lock: controls.lock,
     unlock: controls.unlock,
@@ -274,6 +295,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       renderer.domElement.removeEventListener('webglcontextlost', contextLost)
       const geometries = new Set<THREE.BufferGeometry>()
       const usedMaterials = new Set<THREE.Material>()
+
       scene.traverse((object) => {
         if (object instanceof THREE.InstancedMesh) object.dispose()
         if (object instanceof THREE.Mesh) {
@@ -281,13 +303,16 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
           for (const m of Array.isArray(object.material) ? object.material : [object.material]) usedMaterials.add(m)
         }
       })
+
       for (const geometry of geometries) geometry.dispose()
       const usedTextures = new Set<THREE.Texture>()
+
       for (const value of usedMaterials) {
         for (const property of Object.values(value))
           if (property instanceof THREE.Texture && property !== equipmentEnvironment.texture) usedTextures.add(property)
         value.dispose()
       }
+
       for (const texture of usedTextures) texture.dispose()
       equipmentEnvironment.dispose()
       sunlight.shadow.dispose()

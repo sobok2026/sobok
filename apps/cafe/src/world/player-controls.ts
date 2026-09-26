@@ -23,6 +23,7 @@ export function createPlayerControls(
     z < -5.55 ||
     z > 5.45 ||
     obstacles.some((o) => Math.abs(x - o.x) < o.width / 2 + 0.22 && Math.abs(z - o.z) < o.depth / 2 + 0.22)
+
   function keydown(event: KeyboardEvent) {
     if (event.defaultPrevented) return
     if (!options.canMove() || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)
@@ -54,12 +55,14 @@ export function createPlayerControls(
     if (event.code === 'KeyE' && !event.repeat && hovered) options.onInteract(hovered)
     if (event.code === 'KeyG' && !event.repeat && hovered) options.onTool(hovered)
     if (event.code === 'KeyF' && !event.repeat && hovered) options.onConfirm(hovered)
+
     if (event.code === 'Space' && !event.repeat && hovered) {
       using = true
       pressedStation = hovered
       options.onUseStart(hovered)
     }
   }
+
   const keyup = (event: KeyboardEvent) => {
     keys.delete(event.code)
     if (event.code === 'Space') {
@@ -68,25 +71,30 @@ export function createPlayerControls(
       options.onUseEnd()
     }
   }
+
   let locked = false
   let dragging = false
   let releasingForCraft = false
   let wantsMouseLook = false
   let lockPending = false
+
   const clear = () => {
     keys.clear()
     dragging = false
+
     if (using || options.activeStation()) {
       using = false
       pressedStation = null
       options.onUseEnd()
     }
   }
+
   const lock = () => {
     if (!element.isConnected || !options.canMove()) return
     wantsMouseLook = true
     if (document.pointerLockElement === element || lockPending) return
     lockPending = true
+
     try {
       const result = element.requestPointerLock()
       void Promise.resolve(result)
@@ -101,21 +109,25 @@ export function createPlayerControls(
       options.onMouseMode('fallback')
     }
   }
+
   const unlock = () => {
     wantsMouseLook = false
     releasingForCraft = false
     options.onMouseMode('cursor')
     if (document.pointerLockElement === element) document.exitPointerLock()
   }
+
   const unlockForCraft = () => {
     wantsMouseLook = false
     releasingForCraft = true
     options.onMouseMode('cursor')
     if (document.pointerLockElement === element) document.exitPointerLock()
   }
+
   const pointerChanged = () => {
     const previous = locked
     locked = document.pointerLockElement === element
+
     if (locked) {
       if (!wantsMouseLook) {
         releasingForCraft = true
@@ -126,6 +138,7 @@ export function createPlayerControls(
       }
       return
     }
+
     if (previous && !locked) {
       clear()
       const intentional = releasingForCraft
@@ -135,19 +148,24 @@ export function createPlayerControls(
       else if (wantsMouseLook) lock()
     }
   }
+
   const pointerFailed = () => {
     if (wantsMouseLook) options.onMouseMode('fallback')
   }
+
   const pointerDown = (event: PointerEvent) => {
     if (event.button !== 0 || !options.canMove()) return
+
     if (carriedBatch(options.getState()) && hovered) {
       options.onInteract(hovered)
       return
     }
+
     if (options.getState().supplyDelivery && (hovered === 'condiment' || hovered === 'stock')) {
       options.onInteract(hovered)
       return
     }
+
     if (
       options.getState().washing?.stage === 'carrying' &&
       (hovered === washDestination(options.getState().washing!.item) || hovered === 'wash')
@@ -155,11 +173,14 @@ export function createPlayerControls(
       options.onInteract(hovered)
       return
     }
+
     if (cupCount(options.getState().cleaning?.heldCups) && hovered === 'wash') {
       options.onInteract(hovered)
       return
     }
+
     const c = options.getState().cup
+
     if (
       hovered &&
       ((c?.craft.location === hovered && craftStations.includes(hovered)) ||
@@ -176,12 +197,14 @@ export function createPlayerControls(
       lock()
     }
   }
+
   const pointerUp = () => {
     dragging = false
     using = false
     pressedStation = null
     options.onUseEnd()
   }
+
   const look = (event: MouseEvent) => {
     if (using || options.activeStation()) return
     if ((!locked && !dragging) || !options.canMove()) return
@@ -189,6 +212,7 @@ export function createPlayerControls(
     camera.rotation.y -= event.movementX * sensitivity
     camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * sensitivity, -1.1, 1.1)
   }
+
   document.addEventListener('pointerlockchange', pointerChanged)
   document.addEventListener('pointerlockerror', pointerFailed)
   document.addEventListener('mousemove', look)
@@ -213,11 +237,13 @@ export function createPlayerControls(
         let forward = Number(keys.has('KeyW')) - Number(keys.has('KeyS'))
         let sideways = Number(keys.has('KeyD')) - Number(keys.has('KeyA'))
         const length = Math.hypot(forward, sideways) || 1
+
         if ((forward || sideways) && (using || options.activeStation())) {
           using = false
           pressedStation = null
           options.onUseEnd()
         }
+
         forward /= length
         sideways /= length
         const yaw = camera.rotation.y

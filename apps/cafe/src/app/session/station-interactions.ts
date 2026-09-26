@@ -35,12 +35,14 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
   if (current.washing?.stage === 'carrying' && id === washDestination(current.washing.item)) {
     return { type: 'store-washed', station: id }
   }
+
   if (id === 'prep' && current.preparation) {
     const batch = current.batches.find((item) => item.id === current.preparation?.batchId)
     if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time)
       return { type: 'take-batch', id: batch.id, station: id }
     else return 'work'
   }
+
   if (id === 'cold-prep' && current.coldBrew) {
     const batch = current.batches.find((item) => item.id === current.coldBrew?.batchId)
     if (current.coldBrew.stage === 'finished') return { type: 'collect-cold-brew' }
@@ -48,6 +50,7 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
       return { type: 'take-batch', id: batch.id, station: id }
     else return 'work'
   }
+
   if (
     id === 'cups' &&
     ticket &&
@@ -97,6 +100,7 @@ export function confirmationAt(state: GameState, station: StationId): Action {
     else return { type: 'wash-confirm' }
   }
   const prep = state.preparation
+
   if (station === 'prep' && prep) {
     if (prep.fault) return { type: 'discard-preparation' }
     else if (prep.stage === 'ready' && prep.batchId) {
@@ -108,7 +112,9 @@ export function confirmationAt(state: GameState, station: StationId): Action {
       }
     } else return { type: 'prep-confirm' }
   }
+
   const brew = state.coldBrew
+
   if (station === 'cold-prep' && brew) {
     if (brew.fault) return { type: 'discard-cold-brew' }
     else if (brew.stage === 'finished')
@@ -127,6 +133,7 @@ export function confirmationAt(state: GameState, station: StationId): Action {
       }
     } else return { type: 'cold-confirm' }
   }
+
   if (state.cup?.craft.fault) return { type: 'discard-cup' }
   else if (state.cup && !nextStep(state) && station === 'pickup') return { type: 'serve' }
   else return { type: 'confirm-craft', station }

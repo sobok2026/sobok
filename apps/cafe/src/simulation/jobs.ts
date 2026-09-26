@@ -5,6 +5,7 @@ export function completeJobs(work: WorkContext) {
   const s = work.state
   const finished = s.jobs.filter((job) => job.endsAt <= s.time)
   s.jobs = s.jobs.filter((job) => job.endsAt > s.time)
+
   for (const job of finished) {
     if (job.kind === 'cold-brew') {
       const brew = s.coldBrew

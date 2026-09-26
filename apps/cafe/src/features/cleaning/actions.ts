@@ -2,9 +2,10 @@ import { isCupSurface, STATIONS } from '../../content/stations'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
+import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
 import { cupCount, emptyCupCounts, reusableCupKinds } from '../inventory/cups'
-import { CLEANING_SECONDS, cleaningHandsBusy, cupSurface } from './rules'
+import { CLEANING_SECONDS, type CleaningStation, cleaningHandsBusy, cupSurface } from './rules'
 
 export function handleCleaningActions(
   work: WorkContext,
@@ -24,36 +25,30 @@ export function handleCleaningActions(
 ) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
+
   switch (action.type) {
     case 'start-cleaning': {
       if (s.cleaning) {
         fail(`${STATIONS[s.cleaning.station].name}의 청소를 먼저 마치거나 작업 안내에서 취소해주세요.`)
         break
       }
+
       const station = action.station
+
       if (station === 'mix' && s.cup?.craft.location === 'mix') {
         fail('컵을 다른 작업대에 놓은 뒤 닦아주세요.')
         break
       }
-      if (
-        isCupSurface(station)
-          ? !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
-          : station === 'mix'
-            ? !s.dirtyBar
-            : !s.trash
-      ) {
+
+      if (alreadyClean(s, station)) {
         fail('이미 깨끗하게 정리됐어요.')
         break
       }
+
       s.cleaning = {
         id: uid(),
         station,
-        stage:
-          station === 'trash'
-            ? 'bag'
-            : isCupSurface(station) && cupCount(cupSurface(s, station).cups)
-              ? 'collect'
-              : 'wipe',
+        stage: initialStage(s, station),
         progress: 0,
         clothHeld: false,
         heldCups: emptyCupCounts(),
@@ -79,12 +74,14 @@ export function handleCleaningActions(
       for (const kind of reusableCupKinds) s.reusableCups[kind].dirty += cleaning.heldCups[kind]
       cleaning.heldCups = emptyCupCounts()
       const surface = cupSurface(s, cleaning.station)
+
       if (!cupCount(surface.cups) && !surface.dirty) {
         s.cleaning = null
         s.totals.cleaned++
         say(s, `${STATIONS[cleaning.station].name}의 컵을 모두 정리했어요.`, 'success')
         break
       }
+
       if (!cupCount(surface.cups)) cleaning.stage = 'wipe'
       say(
         s,
@@ -101,27 +98,33 @@ export function handleCleaningActions(
     case 'clean-use': {
       const cleaning = s.cleaning
       if (!cleaning || cleaning.stage === 'collect') break
+
       if (cleaning.stage === 'wipe' && !cleaning.clothHeld) {
         fail('G로 청소용 천을 먼저 집어주세요.')
         break
       }
+
       work.input = { kind: 'clean', cleaningId: cleaning.id, station: cleaning.station }
       break
     }
     case 'clean-confirm': {
       const cleaning = s.cleaning
       if (!cleaning || cleaning.stage === 'collect') break
+
       if (cleaning.clothHeld) {
         fail('G로 청소용 천을 내려놓은 뒤 확인해주세요.')
         break
       }
+
       if (cleaning.progress < CLEANING_SECONDS[cleaning.stage]) {
         fail('아직 정리가 끝나지 않았어요. 누르고 작업을 이어가세요.')
         break
       }
+
       if (isCupSurface(cleaning.station)) {
         const surface = cupSurface(s, cleaning.station)
         surface.dirty = false
+
         if (cupCount(surface.cups) > 0) {
           cleaning.stage = 'collect'
           cleaning.progress = 0
@@ -130,6 +133,7 @@ export function handleCleaningActions(
         }
       } else if (cleaning.station === 'mix') s.dirtyBar = 0
       else s.trash = Math.max(0, s.trash - cleaning.trashCount)
+
       s.totals.cleaned++
       s.cleaning = null
       say(s, cleaning.station === 'trash' ? '봉투를 비우고 분리수거함을 정리했어요.' : '깨끗하게 닦았어요.', 'success')
@@ -140,8 +144,21 @@ export function handleCleaningActions(
         fail('회수한 컵을 비우고 청소용 천을 내려놓은 뒤 취소해주세요.')
         break
       }
+
       s.cleaning = null
       say(s, '청소를 취소했어요. 다시 시작하면 처음부터 닦아요.')
       break
   }
+}
+
+function alreadyClean(s: GameState, station: CleaningStation) {
+  if (isCupSurface(station)) return !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
+  if (station === 'mix') return !s.dirtyBar
+  return !s.trash
+}
+
+function initialStage(s: GameState, station: CleaningStation) {
+  if (station === 'trash') return 'bag'
+  if (isCupSurface(station) && cupCount(cupSurface(s, station).cups)) return 'collect'
+  return 'wipe'
 }

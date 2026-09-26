@@ -5,6 +5,7 @@ import { cupCount } from '../inventory/cups'
 import { CUSTOMER_STATUS } from '../service/customer'
 import { currentTicket } from '../service/orders'
 import { washItems, washStock } from '../washing/rules'
+
 export function closingTasks(state: GameState) {
   return [
     currentTicket(state) || state.cup ? '남은 주문 마무리' : '',

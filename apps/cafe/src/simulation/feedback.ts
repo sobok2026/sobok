@@ -5,6 +5,7 @@ import type { GameState, Job } from './state'
 export function say(state: GameState, text: string, tone: 'info' | 'success' | 'error' = 'info') {
   state.messages = [...state.messages.slice(-5), { id: uid(), text, tone }]
 }
+
 export function startJob(
   state: GameState,
   kind: Job['kind'],

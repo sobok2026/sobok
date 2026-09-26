@@ -41,7 +41,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   const [confirmNew, setConfirmNew] = useState(false)
   const [started, setStarted] = useState(false)
   const [dismissedMessageId, setDismissedMessageId] = useState(state.messages.at(-1)?.id)
+
   const lastMessage = state.messages.at(-1)
+
   useEffect(() => {
     const timeout = window.setTimeout(
       () => setDismissedMessageId(lastMessage?.id),
@@ -49,15 +51,17 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     )
     return () => window.clearTimeout(timeout)
   }, [lastMessage?.id, lastMessage?.tone])
+
   const host = useRef<HTMLDivElement>(null)
   const input = useRef<HTMLInputElement>(null)
   const flags = useRef({ mode, panel, started, hasLock, confirmNew, mouseMode })
+
   flags.current = { mode, panel, started, hasLock, confirmNew, mouseMode }
 
   function openGuide() {
     const previous = flags.current
     guideReturn.current = {
-      mode: previous.mode === 'welcome' ? 'welcome' : previous.mode === 'pause' ? 'pause' : 'play',
+      mode: previous.mode === 'welcome' || previous.mode === 'pause' ? previous.mode : 'play',
       panel: previous.panel,
       station: previous.panel ?? targetRef.current,
       mouseMode: previous.mouseMode,
@@ -68,6 +72,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     setMode('guide')
     scene.current?.unlock()
   }
+
   function closeGuide() {
     const previous = guideReturn.current
     flags.current.mode = previous.mode
@@ -79,6 +84,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       else scene.current?.lock()
     }
   }
+
   function updateSoundLoop() {
     const playing =
       flags.current.mode === 'play' &&
@@ -100,6 +106,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   function capture(): GameState {
     return { ...store.getSnapshot(), position: scene.current?.capture() ?? store.getSnapshot().position }
   }
+
   async function persist() {
     if (!flags.current.started || !flags.current.hasLock) return
     try {
@@ -111,35 +118,43 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       setSaveError(true)
     }
   }
+
   function openPanel(id: StationId) {
     stopUse()
     const interaction = interactionAt(store.getSnapshot(), id)
+
     if (interaction === 'work') {
       scene.current?.unlockForCraft()
       return
     }
+
     if (interaction !== 'panel') {
       act(interaction)
       return
     }
+
     flags.current.panel = id
     setPanel(id)
     setTarget(null)
 
     scene.current?.unlock()
   }
+
   function dismissPanel() {
     flags.current.panel = null
     setPanel(null)
   }
+
   function closePanel(lock = true) {
     dismissPanel()
     if (lock) scene.current?.lock()
   }
+
   function beginWork() {
     dismissPanel()
     scene.current?.unlockForCraft()
   }
+
   function pause(nextMode: 'pause' | 'overview' = 'pause') {
     stopUse()
     sounds.current?.stop()
@@ -150,6 +165,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     scene.current?.unlock()
     void persist()
   }
+
   function resume() {
     focused.current = true
     void sounds.current?.unlock()
@@ -159,14 +175,17 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     setMode('play')
     scene.current?.lock()
   }
+
   function start(fresh = false) {
     focused.current = true
     void sounds.current?.unlock()
+
     if (fresh) {
       const value = initialState()
       store.replace(value)
       scene.current?.reset(value.position)
     }
+
     flags.current.started = true
     flags.current.mode = 'play'
     setStarted(true)
@@ -175,6 +194,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     scene.current?.lock()
     void persist()
   }
+
   function act(action: Action) {
     if (!flags.current.hasLock) return
     const previous = store.getSnapshot()
@@ -197,10 +217,12 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       closePanel()
     if (action.type === 'place-cup' && current.cup?.craft.location === action.station) scene.current?.unlockForCraft()
     if (action.type === 'pick-cup' && current.cup?.craft.location === 'hand') scene.current?.lock()
+
     if (flags.current.mode === 'play' && focused.current && !document.hidden) {
       const feedback = actionSound(action, previous, current)
       if (feedback) sounds.current?.play(feedback)
     }
+
     updateSoundLoop()
     if (
       !flags.current.panel &&
@@ -212,38 +234,47 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         (previous.supplyDelivery && !current.supplyDelivery))
     )
       scene.current?.lock()
+
     if (action.type === 'next-day') {
       scene.current?.reset(current.position)
       closePanel()
     }
+
     if (current.phase === 'summary') {
       flags.current.panel = null
       setPanel(null)
       scene.current?.unlock()
     }
+
     void persist()
   }
+
   function moveCup(station: StationId) {
     const cup = store.getSnapshot().cup
     if (!cup) return
     act(cup.craft.location === 'hand' ? { type: 'place-cup', station } : { type: 'pick-cup', station })
   }
+
   function use(station: StationId) {
     if (flags.current.mode !== 'play' || flags.current.panel) return
     act(workActionAt(store.getSnapshot(), station))
   }
+
   function stopUse() {
     if (!store.getActiveInput()) return
     store.stopActiveInput()
     updateSoundLoop()
     void persist()
   }
+
   function tool(station: StationId) {
     act(toolAt(store.getSnapshot(), station))
   }
+
   function confirm(station: StationId) {
     act(confirmationAt(store.getSnapshot(), station))
   }
+
   const { scene, sceneReady, graphicsError } = useCafeScene(store, host, {
     getState: store.getSnapshot,
     mouseSensitivity: () => preferencesRef.current.mouseSensitivity,
@@ -279,6 +310,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     },
     onError: () => pause(),
   })
+
   useEffect(() => {
     let last = performance.now()
     const tick = window.setInterval(() => {
@@ -287,14 +319,17 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       updateSoundLoop()
       if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) return
       last = now
+
       if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
         const wasUsing = !!store.getActiveInput()
         const previous = store.getSnapshot()
         store.tick(seconds)
+
         if (focused.current) {
           const feedback = tickSound(previous, store.getSnapshot())
           if (feedback) sounds.current?.play(feedback)
         }
+
         updateSoundLoop()
         if (wasUsing && !store.getActiveInput()) void persist()
       }
@@ -302,10 +337,12 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     const save = window.setInterval(() => {
       void persist()
     }, 8000)
+
     const hidden = () => {
       if (document.hidden && flags.current.started) pause()
       last = performance.now()
     }
+
     const keyboard = (event: KeyboardEvent) => {
       if (
         event.defaultPrevented ||
@@ -315,6 +352,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         event.target instanceof HTMLSelectElement
       )
         return
+
       if (
         event.code === 'KeyH' &&
         ['welcome', 'play', 'pause', 'guide'].includes(flags.current.mode) &&
@@ -325,6 +363,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         else openGuide()
         return
       }
+
       if (event.code === 'KeyM' && flags.current.started && store.getSnapshot().phase !== 'summary') {
         if (flags.current.mode === 'play' || flags.current.mode === 'pause') {
           event.preventDefault()
@@ -335,11 +374,13 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         }
         return
       }
+
       if (event.code === 'Escape' && flags.current.mode === 'overview') {
         event.preventDefault()
         resume()
         return
       }
+
       if (event.code === 'Escape' && flags.current.mode === 'play') {
         event.preventDefault()
         if (flags.current.panel) {
@@ -349,18 +390,23 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         } else pause()
       }
     }
+
     document.addEventListener('visibilitychange', hidden)
+
     const blur = () => {
       focused.current = false
       stopUse()
       sounds.current?.stop()
     }
+
     const focus = () => {
       focused.current = true
     }
+
     window.addEventListener('keydown', keyboard)
     window.addEventListener('blur', blur)
     window.addEventListener('focus', focus)
+
     return () => {
       clearInterval(tick)
       clearInterval(save)
@@ -370,6 +416,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       window.removeEventListener('focus', focus)
     }
   }, [store])
+
   async function importBackup(file: File) {
     if (!flags.current.hasLock) return
     try {
@@ -390,6 +437,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       setSaveError(true)
     }
   }
+
   return {
     state,
     preferences,

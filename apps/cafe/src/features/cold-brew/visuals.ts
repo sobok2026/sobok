@@ -27,6 +27,7 @@ export function createColdBrewVisuals(scene: THREE.Scene, camera: THREE.Perspect
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.027, 0.28, 10), streamMaterial)
   stream.position.set(0.84, 1.7, -5.22)
   scene.add(stream)
+
   return {
     update(state: GameState, active: boolean) {
       const brew = state.coldBrew

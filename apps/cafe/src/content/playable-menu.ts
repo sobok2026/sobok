@@ -9,11 +9,13 @@ import { planStockCosts } from './stock-amounts'
 
 export type RecipeId = string
 export type Step = WorkStep
+
 export type SizedRecipe = {
   price: number
   plans: Partial<Record<ServiceMode, WorkStep[]>>
   vessels: Partial<Record<ServiceMode, string>>
 }
+
 export type Recipe = {
   id: RecipeId
   recipeId: string
@@ -25,7 +27,9 @@ export type Recipe = {
   sizes: Partial<Record<DrinkSize, SizedRecipe>>
   color: string
 }
+
 export type UnavailableMenu = { recipeId: string; variantId: string; name: string; reasons: string[] }
+
 export const menuSchema = z.array(
   z.strictObject({
     recipeId: z.string().min(1),
@@ -34,6 +38,7 @@ export const menuSchema = z.array(
     color: z.string().regex(/^#[0-9a-f]{6}$/i),
   }),
 )
+
 const servingVessels = z
   .array(
     z.strictObject({
@@ -42,13 +47,21 @@ const servingVessels = z
     }),
   )
   .parse(servingVesselData)
+
+const CUP_STYLES = {
+  hot: { 'dine-in': 'hot-mug', takeout: 'hot-paper' },
+  iced: { 'dine-in': 'iced-glass', takeout: 'iced-plastic' },
+} as const
+
 export function buildMenu(catalog: RecipeCatalog, input: unknown) {
   for (const entry of servingVessels)
     if (!catalog.vessels.has(entry.vesselId)) throw new Error(`제공 용기가 없습니다: ${entry.vesselId}`)
+
   const entries = menuSchema.parse(input)
   const available: Record<string, Recipe> = {}
   const unavailable: UnavailableMenu[] = []
   const seen = new Set<string>()
+
   for (const entry of entries) {
     const id = `${entry.recipeId}:${entry.variantId}`
     if (seen.has(id)) throw new Error(`판매 메뉴가 중복됩니다: ${id}`)
@@ -58,15 +71,19 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
     const sizes: Recipe['sizes'] = {}
     if (recipe.kind !== 'drink') throw new Error(`${recipe.name}: 음료만 판매할 수 있습니다.`)
     if (!variant.temperature) reasons.add('음료 제공 형태 확인이 필요합니다.')
+
     for (const [sizeKey, price] of Object.entries(entry.prices)) {
       const size = sizeKey as DrinkSize
-      const sourceSize = size === 'single' ? (variant.sizes.length === 1 ? variant.sizes[0] : undefined) : size
+
       if (size === 'single' && variant.sizes.length > 1) {
         reasons.add('단일 가격과 제공 사이즈 연결이 필요합니다.')
         continue
       }
+
+      const sourceSize = size === 'single' ? variant.sizes.at(0) : size
       const plans: SizedRecipe['plans'] = {}
       const vessels: SizedRecipe['vessels'] = {}
+
       for (const service of ['dine-in', 'takeout'] as const) {
         if (size === 'trenta' && service === 'dine-in') continue
         try {
@@ -97,14 +114,7 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
           const vesselId = destinations.includes('serving-cup') ? 'serving-cup' : (destinations.at(-1) ?? 'serving-cup')
           if (!servingVessels.find((entry) => entry.vesselId === vesselId)?.services.includes(service))
             throw new Error('원문의 제공 용기를 이 이용 방식으로 사용할 수 없습니다.')
-          const cupStyle =
-            variant.temperature === 'hot'
-              ? service === 'dine-in'
-                ? 'hot-mug'
-                : 'hot-paper'
-              : service === 'dine-in'
-                ? 'iced-glass'
-                : 'iced-plastic'
+          const cupStyle = CUP_STYLES[variant.temperature === 'hot' ? 'hot' : 'iced'][service]
           const stockContext = {
             size: sourceSize,
             cupStyle,
@@ -118,8 +128,10 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
           reasons.add(error instanceof Error ? error.message : String(error))
         }
       }
+
       if (Object.keys(plans).length) sizes[size] = { price, plans, vessels }
     }
+
     if (!Object.keys(entry.prices).length) reasons.add('공개 판매 가격 확인이 필요합니다.')
     if (variant.temperature && Object.keys(sizes).length) {
       available[id] = {
@@ -144,5 +156,6 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
         reasons: [...reasons],
       })
   }
+
   return { available, unavailable }
 }

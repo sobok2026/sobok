@@ -15,6 +15,7 @@ export type PosAction =
   | { type: 'pos-clear' }
   | { type: 'pos-pay'; id: string; method: 'cash' | 'card'; tendered: number }
   | { type: 'pos-void'; id: string }
+
 export type Action =
   | PosAction
   | { type: 'start-preparation'; recipe: PreparationId }
