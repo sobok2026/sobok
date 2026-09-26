@@ -125,10 +125,10 @@ export default function PlayHud({
     <>
       {!panel && ticket ? (
         <aside
-          className={`
-            pointer-events-none absolute top-21 left-6 z-6 w-64 rounded-xl border border-white/60
-            bg-surface/95 p-4 shadow-hud max-tablet:left-4 max-tablet:w-56
-          `}
+          className={[
+            'pointer-events-none absolute top-21 left-6 z-6 w-64 rounded-xl border border-white/60',
+            'bg-surface/95 p-4 shadow-hud max-tablet:left-4 max-tablet:w-56',
+          ].join(' ')}
           aria-label="현재 주문"
         >
           <div className="mb-1.5 flex items-center justify-between gap-3 text-xs text-muted">
@@ -150,10 +150,11 @@ export default function PlayHud({
       ) : null}
       {!panel && !focusedWork && (target || carried || needsStaffAccess) ? (
         <section
-          className={`
-            absolute bottom-6 left-1/2 z-6 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-2xl border
-            border-white/60 bg-surface/97 px-5 py-3.5 shadow-hud compact:bottom-4
-          `}
+          className={[
+            'absolute bottom-6 left-1/2 z-6 w-max max-w-[calc(100%-2rem)] -translate-x-1/2',
+            'rounded-2xl border border-white/60 bg-surface/97 px-5 py-3.5 shadow-hud',
+            'compact:bottom-4',
+          ].join(' ')}
           aria-label="현재 행동"
         >
           {needsStaffAccess ? (
@@ -185,12 +186,12 @@ export default function PlayHud({
       ) : null}
       {!panel ? (
         <div
-          className={`
-            data-[focused=true]:border-1.5 pointer-events-none absolute top-1/2 left-1/2 size-1.25
-            -translate-1/2 rounded-full border border-[#36472c55] bg-white/60 data-[focused=true]:size-2.5
-            data-[focused=true]:border-[#fff7d9] data-[focused=true]:bg-transparent
-            data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]
-          `}
+          className={[
+            'data-[focused=true]:border-1.5 pointer-events-none absolute top-1/2 left-1/2 size-1.25',
+            '-translate-1/2 rounded-full border border-[#36472c55] bg-white/60',
+            'data-[focused=true]:size-2.5 data-[focused=true]:border-[#fff7d9]',
+            'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
+          ].join(' ')}
           data-focused={!!target}
         />
       ) : null}
@@ -218,13 +219,14 @@ export default function PlayHud({
       ) : null}
       {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId ? (
         <div
-          className={`
-            absolute top-21 left-1/2 z-15 flex w-max max-w-[min(28.75rem,calc(100%-3rem))] -translate-x-1/2
-            animate-appear items-center gap-2.5 rounded-lg border border-[#d1d8c8] bg-surface py-2.5 pr-3
-            pl-4 text-sm leading-[1.6] text-ink shadow-toast data-[tone=error]:border-[#d9b398]
-            data-[tone=error]:bg-[#fff0e6] data-[tone=error]:text-[#88472e] motion-reduce:animate-none
-            max-wide:max-w-[min(28.75rem,54vw)] max-tablet:max-w-[85vw]
-          `}
+          className={[
+            'absolute top-21 left-1/2 z-15 flex w-max max-w-[min(28.75rem,calc(100%-3rem))]',
+            '-translate-x-1/2 animate-appear items-center gap-2.5 rounded-lg border',
+            'border-[#d1d8c8] bg-surface py-2.5 pr-3 pl-4 text-sm leading-[1.6] text-ink',
+            'shadow-toast data-[tone=error]:border-[#d9b398] data-[tone=error]:bg-[#fff0e6]',
+            'data-[tone=error]:text-[#88472e] motion-reduce:animate-none',
+            'max-wide:max-w-[min(28.75rem,54vw)] max-tablet:max-w-[85vw]',
+          ].join(' ')}
           data-tone={lastMessage.tone}
           role="status"
           aria-live="polite"
@@ -249,10 +251,10 @@ export default function PlayHud({
           <button
             type="button"
             onClick={() => pause()}
-            className={`
-              absolute right-6 bottom-6 z-10 max-w-64 rounded-xl border border-danger/30 bg-surface px-4
-              py-3 text-xs text-danger
-            `}
+            className={[
+              'absolute right-6 bottom-6 z-10 max-w-64 rounded-xl border border-danger/30 bg-surface',
+              'px-4 py-3 text-xs text-danger',
+            ].join(' ')}
           >
             저장 실패 · 메뉴에서 백업
           </button>

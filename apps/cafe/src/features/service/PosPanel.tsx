@@ -88,11 +88,11 @@ export default function PosPanel({
         aria-modal="true"
         aria-label="POS 주문"
         tabIndex={-1}
-        className={`
-          relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden
-          rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none
-          max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]
-        `}
+        className={[
+          'relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2',
+          'overflow-hidden rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none',
+          'max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]',
+        ].join(' ')}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault()
@@ -155,12 +155,10 @@ export default function PosPanel({
             {sale?.lines.map((line, index) => (
               <div
                 key={line.id}
-                className={`
-                  rounded border
-                  ${
-                    selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white'
-                  }
-                `}
+                className={[
+                  'rounded border',
+                  selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white',
+                ].join(' ')}
               >
                 <button
                   type="button"
@@ -172,10 +170,10 @@ export default function PosPanel({
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 text-xs opacity-75">{String(index + 1).padStart(2, '0')}</span>
                     <span
-                      className={`
-                        shrink-0 rounded px-1.5 py-1 text-xs text-white
-                        ${RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]'}
-                      `}
+                      className={[
+                        'shrink-0 rounded px-1.5 py-1 text-xs text-white',
+                        RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]',
+                      ].join(' ')}
                     >
                       {DRINK_SIZES[line.size].name.slice(0, 1)}
                     </span>

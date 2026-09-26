@@ -78,20 +78,20 @@ export default function BatchLabel({
       {!expired && pending && batch.labelled && !definition.prepared && atOrigin ? (
         <fieldset className="mt-2.5 grid min-w-0 grid-cols-2 gap-2 border-0 p-0" aria-label="보관 위치 선택">
           <button
-            className={`
-              rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs text-[#416039]
-              enabled:hover:bg-[#d6e5c9]
-            `}
+            className={[
+              'rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs',
+              'text-[#416039] enabled:hover:bg-[#d6e5c9]',
+            ].join(' ')}
             type="button"
             onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'fridge', station })}
           >
             냉장고에 보관
           </button>
           <button
-            className={`
-              rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs text-[#416039]
-              enabled:hover:bg-[#d6e5c9]
-            `}
+            className={[
+              'rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs',
+              'text-[#416039] enabled:hover:bg-[#d6e5c9]',
+            ].join(' ')}
             type="button"
             onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'room', station })}
           >

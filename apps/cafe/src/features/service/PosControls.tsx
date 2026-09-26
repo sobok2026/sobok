@@ -17,10 +17,12 @@ export function PosButton({
     <button
       type="button"
       {...props}
-      className={`
-        min-h-10 rounded-[0.25rem] px-3 py-2 text-sm font-semibold leading-snug disabled:opacity-40
-        aria-pressed:bg-pos-active aria-pressed:text-white ${colors[tone]} ${className}
-      `}
+      className={[
+        'min-h-10 rounded-[0.25rem] px-3 py-2 text-sm font-semibold leading-snug disabled:opacity-40',
+        'aria-pressed:bg-pos-active aria-pressed:text-white',
+        colors[tone],
+        className,
+      ].join(' ')}
     />
   )
 }
@@ -57,10 +59,10 @@ export function PosDialog({
         aria-modal="true"
         aria-labelledby={id}
         tabIndex={-1}
-        className={`
-          max-h-full w-full overflow-auto rounded-lg bg-white p-5 text-pos-ink shadow-xl outline-none
-          ${wide ? 'max-w-3xl' : 'max-w-md'}
-        `}
+        className={[
+          'max-h-full w-full overflow-auto rounded-lg bg-white p-5 text-pos-ink shadow-xl outline-none',
+          wide ? 'max-w-3xl' : 'max-w-md',
+        ].join(' ')}
         onKeyDown={(event) => {
           event.stopPropagation()
           if (event.key === 'Escape') {

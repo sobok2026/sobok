@@ -115,10 +115,10 @@ function CafeGame(props: CafeSessionProps) {
     <main className="relative h-dvh overflow-hidden" data-mouse-mode={mouseMode}>
       <div ref={host} className="absolute inset-0 [&_canvas]:block [&_canvas]:size-full [&_canvas]:outline-none" />
       <div
-        className={`
-        pointer-events-none absolute inset-0
-        bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]
-      `}
+        className={[
+          'pointer-events-none absolute inset-0',
+          'bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]',
+        ].join(' ')}
       />
       <input
         ref={input}
@@ -134,16 +134,16 @@ function CafeGame(props: CafeSessionProps) {
       />
       {running ? (
         <header
-          className={`
-          pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between gap-4
-          max-tablet:inset-x-4 max-tablet:top-4
-        `}
+          className={[
+            'pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between',
+            'gap-4 max-tablet:inset-x-4 max-tablet:top-4',
+          ].join(' ')}
         >
           <div
-            className={`
-            flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 px-4 py-2.5 text-xs
-            shadow-hud
-          `}
+            className={[
+              'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 px-4 py-2.5',
+              'text-xs shadow-hud',
+            ].join(' ')}
           >
             <span className="text-muted">{state.day}일차</span>
             <span className="font-medium tabular-nums">{clock(state.time)}</span>
@@ -152,10 +152,10 @@ function CafeGame(props: CafeSessionProps) {
             </span>
           </div>
           <nav
-            className={`
-              pointer-events-auto flex items-center gap-1 rounded-full border border-white/60 bg-surface/95
-              p-1 shadow-hud
-            `}
+            className={[
+              'pointer-events-auto flex items-center gap-1 rounded-full border border-white/60',
+              'bg-surface/95 p-1 shadow-hud',
+            ].join(' ')}
             aria-label="게임 메뉴"
           >
             <button
@@ -185,10 +185,10 @@ function CafeGame(props: CafeSessionProps) {
 
       {mode === 'welcome' ? (
         <div
-          className={`
-          absolute inset-0 flex items-center bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)]
-          max-tablet:bg-surface/60
-        `}
+          className={[
+            'absolute inset-0 flex items-center',
+            'bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)] max-tablet:bg-surface/60',
+          ].join(' ')}
         >
           <section className="ml-[8vw] w-72 max-w-[80vw]">
             <div className="mb-5 text-brand">
@@ -205,10 +205,10 @@ function CafeGame(props: CafeSessionProps) {
               <details className="relative text-xs text-muted">
                 <summary className="cursor-pointer py-3">저장 관리</summary>
                 <div
-                  className={`
-                  absolute right-0 top-full z-10 grid w-40 rounded-xl border border-line bg-surface p-3
-                  shadow-hud
-                `}
+                  className={[
+                    'absolute right-0 top-full z-10 grid w-40 rounded-xl border border-line bg-surface p-3',
+                    'shadow-hud',
+                  ].join(' ')}
                 >
                   <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
                     백업 불러오기
@@ -325,11 +325,11 @@ function CafeGame(props: CafeSessionProps) {
       ) : null}
       {graphicsError || hasLock === false ? (
         <div
-          className={`
-            absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2 rounded-[0.3125rem] border
-            border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 text-xs leading-[1.8] text-[#995e3d]
-            shadow-[0_4px_30px_#0002]
-          `}
+          className={[
+            'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2 rounded-[0.3125rem]',
+            'border border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 text-xs leading-[1.8]',
+            'text-[#995e3d] shadow-[0_4px_30px_#0002]',
+          ].join(' ')}
           role="alert"
         >
           {graphicsError || '다른 창에서 이 매장을 열고 있어요. 그 창을 닫은 뒤 새로고침해주세요.'}

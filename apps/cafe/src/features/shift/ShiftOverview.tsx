@@ -68,10 +68,10 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
         <button
           type="button"
           aria-pressed={tab === 'work'}
-          className={`
-            rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink
-            aria-pressed:shadow-sm
-          `}
+          className={[
+            'rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink',
+            'aria-pressed:shadow-sm',
+          ].join(' ')}
           onClick={() => setTab('work')}
         >
           할 일
@@ -79,10 +79,10 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
         <button
           type="button"
           aria-pressed={tab === 'ledger'}
-          className={`
-            rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink
-            aria-pressed:shadow-sm
-          `}
+          className={[
+            'rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink',
+            'aria-pressed:shadow-sm',
+          ].join(' ')}
           onClick={() => setTab('ledger')}
         >
           운영 기록

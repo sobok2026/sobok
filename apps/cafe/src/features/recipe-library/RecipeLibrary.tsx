@@ -189,10 +189,10 @@ export default function RecipeLibrary() {
               type="button"
               aria-pressed={selectedId === recipe.id}
               onClick={() => setSelectedId(recipe.id)}
-              className={`
-                block w-full border-b border-line px-3 py-2 text-left text-xs last:border-0 hover:bg-control
-                aria-pressed:bg-control
-              `}
+              className={[
+                'block w-full border-b border-line px-3 py-2 text-left text-xs last:border-0',
+                'hover:bg-control aria-pressed:bg-control',
+              ].join(' ')}
             >
               {recipe.name} <span className="ml-2 text-muted">{kindNames[recipe.kind]}</span>
             </button>
