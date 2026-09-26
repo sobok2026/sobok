@@ -38,27 +38,27 @@ export default function BatchLabel({
 
   return (
     <details className="group/label my-1 text-xs" data-expired={expired} open={pending || expired}>
-      <summary className="cursor-pointer py-1.5 text-[#56734f] group-data-[expired=true]/label:text-[#aa593c]">
+      <summary className="cursor-pointer py-1.5 text-brand group-data-[expired=true]/label:text-danger">
         <span>
           {formatAmount(batch.amount)}
           {definition.unit}
         </span>
         <b className="ml-2.5 text-xs font-medium">{batchStatus(batch, expired, pending)}</b>
       </summary>
-      <div className="border border-l-3 border-[#cdd4c0] border-l-[#648361] bg-[#fffdf6] p-2.5">
-        <strong className="block text-label font-semibold text-[#35533e]">{definition.name}</strong>
+      <div className="border border-l-3 border-control-line border-l-[#648361] bg-surface p-2.5">
+        <strong className="block text-label font-semibold text-brand">{definition.name}</strong>
         <dl className="mt-2 mb-0 grid gap-1 tabular-nums">
           <div className="flex justify-between gap-3">
             <dt className="text-muted">{definition.prepared ? '제조' : '개봉'}</dt>
-            <dd className="text-[#45613f]">{batchDate(batch.openedAt)}</dd>
+            <dd className="text-brand">{batchDate(batch.openedAt)}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted">만료 시각</dt>
-            <dd className="text-[#45613f]">{batchDate(batch.expiresAt, true)}</dd>
+            <dd className="text-brand">{batchDate(batch.expiresAt, true)}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted">보관</dt>
-            <dd className="text-[#45613f]">{definition.storage === 'fridge' ? '냉장' : '실온'}</dd>
+            <dd className="text-brand">{definition.storage === 'fridge' ? '냉장' : '실온'}</dd>
           </div>
         </dl>
         {limitedByIngredient && <p className="mt-2 text-xs text-muted">원재료 기한 적용</p>}
@@ -86,8 +86,8 @@ export default function BatchLabel({
             <button
               key={storage}
               className={clsx(
-                'rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs text-[#416039]',
-                'enabled:hover:bg-[#d6e5c9]',
+                'rounded border border-control-line bg-control px-1.25 py-2.5 text-xs text-brand',
+                'enabled:hover:bg-control-line',
               )}
               type="button"
               onClick={() => act({ type: 'store-batch', id: batch.id, storage, station })}

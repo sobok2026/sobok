@@ -10,9 +10,9 @@ export function PosButton({
     soft: 'bg-pos-soft text-pos-ink',
     dark: 'bg-pos-panel text-white',
     active: 'bg-pos-active text-white',
-    key: 'bg-[#303332] text-white',
-    hot: 'bg-[#de835f] text-white',
-    iced: 'bg-[#45a6c4] text-white',
+    key: 'bg-ink text-white',
+    hot: 'bg-pos-hot text-white',
+    iced: 'bg-pos-iced text-white',
   }
 
   return (
@@ -20,7 +20,7 @@ export function PosButton({
       type="button"
       {...props}
       className={clsx(
-        'min-h-10 rounded-[0.25rem] px-3 py-2 text-sm font-semibold leading-snug',
+        'min-h-10 rounded px-3 py-2 text-sm font-semibold leading-snug',
         'disabled:opacity-40 aria-pressed:bg-pos-active aria-pressed:text-white',
         colors[tone],
         className,

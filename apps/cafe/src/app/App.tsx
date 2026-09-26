@@ -205,7 +205,7 @@ function CafeGame(props: CafeSessionProps) {
             <div className="mb-5 text-brand">
               <CupIcon />
             </div>
-            <h1 className="mb-10 text-5xl font-medium tracking-[-0.06em] text-brand">
+            <h1 className="mb-10 text-5xl font-medium tracking-tighter text-brand">
               소복다방<span className="mt-3 block text-sm font-normal tracking-normal text-muted">카페 근무</span>
             </h1>
             <Button size="start" disabled={!canStart} onClick={() => start(false)}>
@@ -338,8 +338,8 @@ function CafeGame(props: CafeSessionProps) {
         <div
           className={clsx(
             'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2',
-            'rounded-[0.3125rem] border border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 shadow-[0_4px_30px_#0002]',
-            'text-xs leading-[1.8] text-[#995e3d]',
+            'rounded border border-danger/30 bg-orange-100 px-5.5 py-4.25 shadow-toast',
+            'text-xs leading-relaxed text-danger',
           )}
           role="alert"
         >

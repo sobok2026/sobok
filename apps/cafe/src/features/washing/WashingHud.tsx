@@ -81,7 +81,7 @@ function WashingWork({
     return (
       <>
         <WorkTitle>세척 완료</WorkTitle>
-        {occupied && <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
+        {occupied && <p className="my-2.5 text-sm leading-relaxed text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
         <WorkButton
           shortcut="E"
           primary
@@ -104,7 +104,7 @@ function WashingWork({
     <>
       <WorkTitle>{step.label}</WorkTitle>
       <WorkMeter label={step.label} ratio={ratio} value={`${Math.floor(ratio * 100)}%`} />
-      {occupied && <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
+      {occupied && <p className="my-2.5 text-sm leading-relaxed text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
       <div className="flex flex-wrap gap-2">
         {washing.stage === 'scrub' && (
           <WorkButton

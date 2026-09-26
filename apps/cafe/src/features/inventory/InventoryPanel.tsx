@@ -184,8 +184,8 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                 {needed > 0 && (
                   <p
                     className={clsx(
-                      'mb-4 rounded-md bg-[#e9eee1] px-3 py-2.5 text-label leading-[1.6] text-brand',
-                      'data-[shortage=true]:bg-[#f4e6d4] data-[shortage=true]:text-[#805430]',
+                      'mb-4 rounded-md bg-control px-3 py-2.5 text-label leading-relaxed text-brand',
+                      'data-[shortage=true]:bg-orange-100 data-[shortage=true]:text-danger',
                     )}
                     data-shortage={shortage > 0.0001}
                   >

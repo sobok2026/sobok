@@ -186,7 +186,7 @@ export default function PosPanel({
                     <span
                       className={clsx(
                         'shrink-0 rounded px-1.5 py-1 text-xs text-white',
-                        RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]',
+                        RECIPES[line.recipe].temperature === 'hot' ? 'bg-pos-hot' : 'bg-pos-iced',
                       )}
                     >
                       {DRINK_SIZES[line.size].name.slice(0, 1)}
@@ -302,7 +302,7 @@ export default function PosPanel({
               총계 <strong className="ml-2 tabular-nums">{total.toLocaleString('ko-KR')}</strong>
             </span>
             <span>
-              할인 <span className="ml-1 text-[#d87150]">0</span>
+              할인 <span className="ml-1 text-pos-hot">0</span>
             </span>
           </div>
           <PosButton
@@ -530,7 +530,7 @@ export default function PosPanel({
                   setQuantity(event.target.value)
                 }
               }}
-              className="mb-3 min-h-13 w-full rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-xl"
+              className="mb-3 min-h-13 w-full rounded border-2 border-pos-active bg-amber-100 px-3 text-xl"
             />
             <NumericPad
               value={quantity}

@@ -155,9 +155,9 @@ export function PosCheckout({
                 </div>
               </div>
             )}
-            <div className="flex items-center justify-between gap-4 bg-[#f0f1f0] p-3 pos-compact:p-2">
+            <div className="flex items-center justify-between gap-4 bg-control p-3 pos-compact:p-2">
               <span className="text-sm">받을금액</span>
-              <strong className="text-xl text-[#d87150] tabular-nums">{remaining.toLocaleString('ko-KR')}</strong>
+              <strong className="text-xl text-pos-hot tabular-nums">{remaining.toLocaleString('ko-KR')}</strong>
             </div>
             <label className="flex items-center gap-3 text-sm">
               <span className="shrink-0">{method === 'cash' ? '받은 현금' : '결제금액'}</span>
@@ -172,7 +172,7 @@ export function PosCheckout({
                 }}
                 className={clsx(
                   'min-h-12 min-w-0 flex-1',
-                  'rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-right text-xl tabular-nums',
+                  'rounded border-2 border-pos-active bg-amber-100 px-3 text-right text-xl tabular-nums',
                   'pos-compact:min-h-10',
                 )}
               />
@@ -221,7 +221,7 @@ export function PosCheckout({
           <>
             <h2 className="mb-5 text-lg font-semibold">결제</h2>
             {!matches && (
-              <div className="mb-5 rounded bg-[#fff2cb] p-3 text-sm" role="status">
+              <div className="mb-5 rounded bg-amber-100 p-3 text-sm" role="status">
                 손님 요청과 주문 내역을 확인해주세요.
                 <PosButton onClick={onBack} className="mt-3 w-full">
                   주문 확인

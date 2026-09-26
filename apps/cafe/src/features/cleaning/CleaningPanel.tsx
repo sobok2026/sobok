@@ -21,11 +21,11 @@ export default function CleaningPanel({
     <>
       {isCupSurface(panel) && (
         <>
-          <div className="my-5 text-[1.75rem] leading-[1.2] font-normal text-[#536f4b]">
+          <div className="my-5 text-3xl leading-tight font-normal text-brand">
             {cupCount(cupSurface(state, panel).cups)}
             <small className="mt-2 block text-xs text-muted">개 회수 대기</small>
           </div>
-          <p className="mb-4 text-sm leading-[1.9] text-muted">{surfaceStatus(cupSurface(state, panel))}</p>
+          <p className="mb-4 text-sm leading-loose text-muted">{surfaceStatus(cupSurface(state, panel))}</p>
           <Button
             disabled={!cupSurface(state, panel).dirty && !cupCount(cupSurface(state, panel).cups)}
             onClick={() => act({ type: 'start-cleaning', station: panel })}
@@ -45,7 +45,7 @@ export default function CleaningPanel({
       )}
       {panel === 'trash' && (
         <>
-          <div className="my-5 text-[1.75rem] leading-[1.2] font-normal text-[#536f4b]">
+          <div className="my-5 text-3xl leading-tight font-normal text-brand">
             {state.trash}
             <small className="mt-2 block text-xs text-muted">개</small>
           </div>

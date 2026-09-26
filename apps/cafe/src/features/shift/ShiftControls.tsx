@@ -12,7 +12,7 @@ export default function ShiftControls({ state, act }: { state: GameState; act: (
       <summary className="mb-3 cursor-pointer text-muted">영업 관리</summary>
       <div className="mb-4.25 flex justify-between text-xs text-muted">
         <span>오늘 판매</span>
-        <strong className="text-sm text-[#50694a]">{money(state.totals.revenue)}</strong>
+        <strong className="text-sm text-brand">{money(state.totals.revenue)}</strong>
       </div>
       {state.phase === 'open' ? (
         <Button variant="secondary" onClick={() => act({ type: 'close' })}>
@@ -22,13 +22,13 @@ export default function ShiftControls({ state, act }: { state: GameState; act: (
         <>
           <p className="mb-2.25 block text-xs text-muted">마감 체크</p>
           {closing.length ? (
-            <ul className="my-4 list-disc pl-4.25 text-xs leading-[2.1] text-muted">
+            <ul className="my-4 list-disc pl-4.25 text-xs leading-loose text-muted">
               {closing.map((task) => (
                 <li key={task}>{task}</li>
               ))}
             </ul>
           ) : (
-            <p className="mb-4 text-xs text-[#638259]">마감 준비 완료</p>
+            <p className="mb-4 text-xs text-brand">마감 준비 완료</p>
           )}
           <Button disabled={closing.length > 0} onClick={() => act({ type: 'finish' })}>
             결산하기

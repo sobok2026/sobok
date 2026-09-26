@@ -79,7 +79,7 @@ export function ProductionControls({
       )}
       {details.length > 0 && <p className="mb-3 text-xs leading-relaxed text-muted">{details.join(' · ')}</p>}
       {supplyNotice && (
-        <p className="mb-3 border-l-3 border-[#bb8a57] pl-3 text-sm leading-relaxed text-danger">{supplyNotice}</p>
+        <p className="mb-3 border-l-3 border-focus pl-3 text-sm leading-relaxed text-danger">{supplyNotice}</p>
       )}
       <WorkMeter
         label={job?.label ?? step.label}

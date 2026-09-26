@@ -42,7 +42,7 @@ export default function CleaningHud({
         stop={stop}
       />
       {occupied && (
-        <p className="my-2.5 text-sm leading-[1.65] text-danger">들고 있는 컵·도구·보충품을 먼저 내려놓으세요.</p>
+        <p className="my-2.5 text-sm leading-relaxed text-danger">들고 있는 컵·도구·보충품을 먼저 내려놓으세요.</p>
       )}
       <details
         className={clsx(
@@ -91,7 +91,7 @@ function CleaningWork({
           </WorkButton>
         ) : (
           <>
-            <p className="my-2.5 text-sm leading-[1.65] text-muted">세척대로 이동</p>
+            <p className="my-2.5 text-sm leading-relaxed text-muted">세척대로 이동</p>
             {tableCups > 0 && (
               <WorkButton shortcut="E" primary onUse={() => act({ type: 'collect-cup' })}>
                 남은 컵 집기 · {tableCups}개

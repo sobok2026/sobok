@@ -287,7 +287,7 @@ export function PosCustomize({
                   setValue(event.target.value)
                 }
               }}
-              className="mb-3 min-h-14 w-full rounded border-2 border-pos-active bg-[#fff2cb] px-4 text-xl tabular-nums"
+              className="mb-3 min-h-14 w-full rounded border-2 border-pos-active bg-amber-100 px-4 text-xl tabular-nums"
             />
             <NumericPad value={value} onChange={setValue} onConfirm={confirm} decimal={input.unit === 'shot'} />
             {error && (

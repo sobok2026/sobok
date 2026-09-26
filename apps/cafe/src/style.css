@@ -18,6 +18,8 @@
   --color-pos-soft: #d7e9e3;
   --color-pos-active: #009b7a;
   --color-pos-ink: #203c34;
+  --color-pos-hot: #de835f;
+  --color-pos-iced: #45a6c4;
 
   --text-label: 0.8125rem;
   --text-label--line-height: 1.5;

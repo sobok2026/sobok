@@ -54,13 +54,13 @@ export default function StationPanel({
       >
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="m-0 text-[1.4375rem] font-medium tracking-[-0.04em]">{STATIONS[panel].name}</h2>
+            <h2 className="m-0 text-2xl font-medium tracking-tighter">{STATIONS[panel].name}</h2>
           </div>
           <button
             type="button"
             className={clsx(
               'pointer-events-auto grid size-10 shrink-0 place-items-center',
-              'rounded-full border-0 border-line bg-transparent text-[1.625rem] text-[#8e9881]',
+              'rounded-full border-0 border-line bg-transparent text-2xl text-muted',
             )}
             onClick={() => closePanel()}
             aria-label="작업대 닫기"
@@ -70,7 +70,7 @@ export default function StationPanel({
         </div>
         <div className="h-5" />
         {actionJob && (
-          <div className="mb-5 flex flex-col gap-1.75 rounded-sm bg-[#e1e8d5] p-4.25 text-xs">
+          <div className="mb-5 flex flex-col gap-1.75 rounded-sm bg-control p-4.25 text-xs">
             <span>{actionJob.label}</span>
             <strong className="text-stat font-medium">{Math.ceil(actionJob.endsAt - state.time)}초 남음</strong>
           </div>

@@ -123,7 +123,7 @@ export default function PlayHud({
           className={clsx(
             'pointer-events-none absolute top-1/2 left-1/2 size-1.25 -translate-1/2',
             'rounded-full border border-[#36472c55] bg-white/60',
-            'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-[#fff7d9]',
+            'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-amber-100',
             'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
           )}
           data-focused={!!target}
@@ -154,9 +154,9 @@ export default function PlayHud({
           className={clsx(
             'absolute top-21 left-1/2 z-15 -translate-x-1/2',
             'flex w-max max-w-[min(28.75rem,calc(100%-3rem))] items-center gap-2.5',
-            'rounded-lg border border-[#d1d8c8] bg-surface py-2.5 pr-3 pl-4 shadow-toast',
-            'animate-appear text-sm leading-[1.6] text-ink',
-            'data-[tone=error]:border-[#d9b398] data-[tone=error]:bg-[#fff0e6] data-[tone=error]:text-[#88472e]',
+            'rounded-lg border border-line bg-surface py-2.5 pr-3 pl-4 shadow-toast',
+            'animate-appear text-sm leading-relaxed text-ink',
+            'data-[tone=error]:border-danger/30 data-[tone=error]:bg-orange-100 data-[tone=error]:text-danger',
             'motion-reduce:animate-none max-wide:max-w-[min(28.75rem,54vw)] max-tablet:max-w-[85vw]',
           )}
           data-tone={lastMessage.tone}

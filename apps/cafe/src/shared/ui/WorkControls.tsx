@@ -121,7 +121,7 @@ export function WorkMeter({
         {tolerance !== undefined && <span className="text-xs">{reached ? '목표 도달' : '목표 구간'}</span>}
       </div>
       <div
-        className="relative h-2.5 overflow-hidden rounded-[0.1875rem] bg-[#e1e5d9]"
+        className="relative h-2.5 overflow-hidden rounded bg-control"
         role="progressbar"
         aria-label={label}
         aria-valuemin={0}

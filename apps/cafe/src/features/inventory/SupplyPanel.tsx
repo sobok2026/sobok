@@ -35,7 +35,7 @@ export default function SupplyPanel({
                 {definition.unit}
               </span>
             </div>
-            <p className="mb-4 text-label leading-[1.7] text-muted">
+            <p className="mb-4 text-label leading-relaxed text-muted">
               창고 {supply.stock}
               {definition.unit}
               {shelfNote(supply.bar)}
