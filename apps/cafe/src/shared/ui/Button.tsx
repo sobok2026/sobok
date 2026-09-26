@@ -38,7 +38,7 @@ export function TextButton({ danger = false, className, ...props }: ComponentPro
       type="button"
       {...props}
       className={clsx(
-        'min-h-9 border-0 bg-transparent px-0 py-2 text-xs hover:underline underline-offset-4',
+        'min-h-9 border-0 bg-transparent px-0 py-2 text-sm hover:underline underline-offset-4',
         danger ? 'text-danger' : 'text-muted',
         className,
       )}

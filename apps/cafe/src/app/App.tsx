@@ -192,7 +192,7 @@ function CafeGame(props: CafeSessionProps) {
             </Button>
             <div className="mt-3 flex items-center justify-between">
               <TextButton onClick={openGuide}>도움말</TextButton>
-              <details className="relative text-xs text-muted">
+              <details className="relative text-sm text-muted">
                 <summary className="cursor-pointer py-3">저장 관리</summary>
                 <div
                   className={clsx(
@@ -212,7 +212,7 @@ function CafeGame(props: CafeSessionProps) {
               </details>
             </div>
             {(notice || saveError) && (
-              <p className="mt-4 text-xs text-danger" role="status">
+              <p className="mt-4 text-sm text-danger" role="status">
                 {saveError ? saveStatus : notice}
               </p>
             )}
@@ -234,14 +234,14 @@ function CafeGame(props: CafeSessionProps) {
       {mode === 'pause' && (
         <GameDialog title="일시정지" onClose={resume}>
           <Button disabled={!canStart} onClick={resume}>
-            계속하기 <kbd className="text-xs">Esc</kbd>
+            계속하기 <kbd className="text-sm">Esc</kbd>
           </Button>
           <div className="my-4 grid grid-cols-2 gap-2">
             <Button variant="secondary" onClick={() => pause('overview')}>
-              매장 현황 <kbd className="text-xs">M</kbd>
+              매장 현황 <kbd className="text-sm">M</kbd>
             </Button>
             <Button variant="secondary" onClick={openGuide}>
-              도움말 <kbd className="text-xs">H</kbd>
+              도움말 <kbd className="text-sm">H</kbd>
             </Button>
           </div>
           <details className="border-t border-line py-4">
@@ -256,22 +256,22 @@ function CafeGame(props: CafeSessionProps) {
           </details>
           <details className="border-t border-line pt-4">
             <summary className="text-sm font-medium">저장 관리</summary>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <TextButton onClick={() => void persist()}>지금 저장</TextButton>
               <TextButton onClick={() => exportGame(capture())}>백업 내보내기</TextButton>
               <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
                 백업 불러오기
               </TextButton>
-              <TextButton onClick={() => void persist()}>지금 저장</TextButton>
-              <TextButton danger onClick={() => setConfirmNew(true)}>
-                처음부터 시작
-              </TextButton>
             </div>
-            <p className="mt-3 text-xs text-muted data-[error=true]:text-danger" data-error={saveError} role="status">
+            <p className="mt-2 text-sm text-muted data-[error=true]:text-danger" data-error={saveError} role="status">
               {saveStatus}
             </p>
+            <TextButton danger className="mt-3 border-t border-line pt-3" onClick={() => setConfirmNew(true)}>
+              처음부터 시작
+            </TextButton>
           </details>
           {saveError && (
-            <p className="mt-4 text-xs text-danger" role="alert">
+            <p className="mt-4 text-sm text-danger" role="alert">
               {saveStatus}
             </p>
           )}
@@ -282,11 +282,11 @@ function CafeGame(props: CafeSessionProps) {
         <GameDialog title={`${state.day}일차 결산`} wide>
           <div className="mb-6 grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-muted">판매액</p>
+              <p className="text-sm text-muted">판매액</p>
               <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{money(state.totals.revenue)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted">전달 음료</p>
+              <p className="text-sm text-muted">전달 음료</p>
               <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
                 {state.totals.served}
                 <span className="ml-1 text-sm font-normal text-muted">잔</span>
@@ -318,7 +318,7 @@ function CafeGame(props: CafeSessionProps) {
           className={clsx(
             'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2',
             'rounded border border-danger/30 bg-orange-100 px-5.5 py-4.25 shadow-toast',
-            'text-xs leading-relaxed text-danger',
+            'text-sm leading-relaxed text-danger',
           )}
           role="alert"
         >

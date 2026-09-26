@@ -77,14 +77,14 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
     <div className="mt-4">
       {variant.sizes.length > 0 && (
         <div className="mb-4 flex items-center gap-3">
-          <label htmlFor={selectId} className="text-xs text-muted">
+          <label htmlFor={selectId} className="text-sm text-muted">
             사이즈
           </label>
           <select
             id={selectId}
             value={size}
             onChange={(event) => setSize(event.target.value as CatalogSize)}
-            className="rounded-lg border border-line bg-surface px-3 py-2 text-xs"
+            className="rounded-lg border border-line bg-surface px-3 py-2 text-sm"
           >
             {variant.sizes.map((value) => (
               <option key={value} value={value}>
@@ -95,7 +95,7 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
         </div>
       )}
       {variant.review.length > 0 && (
-        <div className="mb-4 rounded-lg border border-line p-3 text-xs text-danger">
+        <div className="mb-4 rounded-lg border border-line p-3 text-sm text-danger">
           <p className="font-medium">제조표 확인 필요</p>
           <ul className="mt-2 list-disc space-y-1 pl-4">
             {variant.review.map((text) => (
@@ -110,9 +110,9 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
             <p className="font-medium">
               {index + 1}. {step.label}
             </p>
-            {step.when && <p className="mt-1 text-xs text-brand">{conditionLabel(step.when)}</p>}
+            {step.when && <p className="mt-1 text-sm text-brand">{conditionLabel(step.when)}</p>}
             {step.instructions.map((text) => (
-              <p key={text} className="mt-1 text-xs leading-relaxed">
+              <p key={text} className="mt-1 text-sm leading-relaxed">
                 {text}
               </p>
             ))}
@@ -121,19 +121,19 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
 
               return (
                 label && (
-                  <p key={operationIndex} className="mt-1 text-xs text-brand">
+                  <p key={operationIndex} className="mt-1 text-sm text-brand">
                     {label}
                   </p>
                 )
               )
             })}
             {step.notes.map((text) => (
-              <p key={text} className="mt-1 text-xs text-muted">
+              <p key={text} className="mt-1 text-sm text-muted">
                 {text}
               </p>
             ))}
             {step.alternatives?.map((alternative) => (
-              <details key={alternative.label} className="mt-2 text-xs">
+              <details key={alternative.label} className="mt-2 text-sm">
                 <summary>{alternative.label}</summary>
                 {alternative.operations.map((operation, operationIndex) => (
                   <p key={operationIndex} className="mt-1 text-muted">
@@ -146,13 +146,13 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
         ))}
       </ol>
       {variant.output && (
-        <p className="mt-5 text-xs text-brand">
+        <p className="mt-5 text-sm text-brand">
           완성: {recipeCatalog.materials.get(variant.output.materialId)!.name} ·{' '}
           {variant.output.amount ? amountLabel(variant.output.amount) : variant.output.description}
         </p>
       )}
       {variant.notes.map((text) => (
-        <p key={text} className="mt-3 text-xs text-muted">
+        <p key={text} className="mt-3 text-sm text-muted">
           {text}
         </p>
       ))}
@@ -173,13 +173,10 @@ export default function RecipeLibrary() {
   const selected = selectedId && matches.find((recipe) => recipe.id === selectedId)
 
   return (
-    <details className="border-t border-line py-4">
-      <summary className="font-medium">전체 제조법 · {documents.length}개</summary>
-      <p className="mt-3 text-xs text-muted">
-        음료와 부재료 제조법을 찾아보세요. 현재 매장에서 제공하지 않는 메뉴도 포함되어 있어요.
-      </p>
+    <section aria-label="전체 제조법">
+      <p className="text-body text-muted">음료·부재료 제조법 {documents.length}개. 매장에서 팔지 않는 메뉴도 있어요.</p>
       <div className="mt-4 grid gap-3">
-        <label htmlFor={searchId} className="text-xs text-muted">
+        <label htmlFor={searchId} className="text-sm text-muted">
           제조법 이름 검색
         </label>
         <input
@@ -191,14 +188,14 @@ export default function RecipeLibrary() {
           className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm"
         />
         <div className="flex items-center gap-3">
-          <label htmlFor={categoryId} className="text-xs text-muted">
+          <label htmlFor={categoryId} className="text-sm text-muted">
             분류
           </label>
           <select
             id={categoryId}
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="rounded-lg border border-line bg-surface px-3 py-2 text-xs"
+            className="rounded-lg border border-line bg-surface px-3 py-2 text-sm"
           >
             <option value="all">전체</option>
             {Object.entries(kindNames).map(([value, label]) => (
@@ -207,7 +204,7 @@ export default function RecipeLibrary() {
               </option>
             ))}
           </select>
-          <p className="text-xs text-muted" role="status">
+          <p className="text-sm text-muted" role="status">
             {matches.length}개
           </p>
         </div>
@@ -221,7 +218,7 @@ export default function RecipeLibrary() {
               aria-pressed={selectedId === recipe.id}
               onClick={() => setSelectedId(recipe.id)}
               className={clsx(
-                'block w-full border-b border-line px-3 py-2 text-left text-xs',
+                'block w-full border-b border-line px-3 py-2 text-left text-sm',
                 'last:border-0 hover:bg-control aria-pressed:bg-control',
               )}
             >
@@ -230,7 +227,7 @@ export default function RecipeLibrary() {
           ))}
         </div>
       ) : (
-        <p className="mt-4 text-xs text-muted">검색 결과가 없어요.</p>
+        <p className="mt-4 text-sm text-muted">검색 결과가 없어요.</p>
       )}
       {selected && (
         <section key={selected.id} className="mt-5" aria-label={selected.name}>
@@ -243,6 +240,6 @@ export default function RecipeLibrary() {
           ))}
         </section>
       )}
-    </details>
+    </section>
   )
 }
