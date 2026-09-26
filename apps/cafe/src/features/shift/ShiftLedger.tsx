@@ -46,7 +46,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
       {purchases.length > 0 && (
         <details className="border-b border-line py-4">
           <summary className="text-muted">입고 내역 · {purchases.length}</summary>
-          <dl className="mt-3 space-y-3 text-xs">
+          <dl className="mt-3 space-y-3 text-sm">
             {purchases.map((item) => (
               <div key={item.name} className="flex justify-between gap-4">
                 <dt>{item.name}</dt>
@@ -59,7 +59,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
       {usedSupplies.length > 0 && (
         <details className="border-b border-line py-4" aria-label="손님 소모품 사용량">
           <summary className="text-muted">소모품 사용량</summary>
-          <dl className="mt-3 space-y-3 text-xs">
+          <dl className="mt-3 space-y-3 text-sm">
             {usedSupplies.map((id) => (
               <div key={id} className="flex justify-between gap-4">
                 <dt>{SUPPLIES[id].name}</dt>
@@ -75,7 +75,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
       {hasWaste && (
         <details className="border-b border-line py-4">
           <summary className="text-muted">폐기 내역</summary>
-          <dl className="mt-3 space-y-3 text-xs">
+          <dl className="mt-3 space-y-3 text-sm">
             {totals.coldBrewDiscardedBeans > 0 && (
               <div className="flex justify-between gap-4">
                 <dt>콜드 브루 원두</dt>
