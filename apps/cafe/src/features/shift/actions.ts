@@ -58,7 +58,7 @@ export function handleShiftActions(
       s.position = staffStartPosition()
       s.batches = s.batches.filter((b) => b.amount > 0)
       completeJobs(work)
-      say(s, '새 근무일이에요. 냉장고의 라벨과 준비된 재료를 확인해주세요.', 'success')
+      say(s, '새 근무일이에요. 냉장고의 라벨 기한과 준비된 재료를 확인해주세요.', 'success')
       break
     }
   }

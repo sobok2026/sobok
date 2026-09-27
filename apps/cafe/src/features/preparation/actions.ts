@@ -251,7 +251,7 @@ export function finishPreparation(work: WorkContext, completedAt: number) {
     s,
     expired
       ? `${definition.name} 제조는 끝났지만 기한이 지났어요. 이 배합을 폐기해주세요.`
-      : `${definition.name} 제조 완료. 라벨을 붙이고 보관해야 사용할 수 있어요.`,
+      : `${definition.name} 제조 완료. 라벨을 쓰고 보관해야 사용할 수 있어요.`,
     expired ? 'error' : 'success',
   )
 }

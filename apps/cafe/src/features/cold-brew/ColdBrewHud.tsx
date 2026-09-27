@@ -83,7 +83,7 @@ function ColdBrewWork({
     return (
       <>
         <WorkHeader title="추출액 기한 만료" />
-        <WorkBlocker reason="사용할 수 없어요" fix="회수하거나 라벨을 붙여도 기한은 늘어나지 않아요." />
+        <WorkBlocker reason="사용할 수 없어요" fix="회수하거나 라벨을 써도 기한은 늘어나지 않아요." />
         {discard('추출액 폐기')}
       </>
     )

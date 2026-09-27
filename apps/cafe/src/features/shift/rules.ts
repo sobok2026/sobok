@@ -65,7 +65,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
     if (batch.expiresAt !== null && batch.expiresAt <= state.time) {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 폐기` })
     } else if (batch.location !== 'bar') {
-      tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 라벨 붙이기` })
+      tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 라벨 쓰기` })
     }
   }
 
@@ -113,7 +113,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
   return tasks
 }
 
-const coldBrewTasks = { measuring: '계량 마무리', finished: '추출액 회수', ready: '라벨 붙이고 보관' } as const
+const coldBrewTasks = { measuring: '계량 마무리', finished: '추출액 회수', ready: '라벨 쓰고 보관' } as const
 
 function coldBrewTask(stage: keyof typeof coldBrewTasks | 'extracting') {
   return stage === 'extracting' ? '추출 중' : coldBrewTasks[stage]

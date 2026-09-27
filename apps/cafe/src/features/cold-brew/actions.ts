@@ -126,7 +126,7 @@ export function handleColdBrewActions(
       s.batches.push(batch)
       brew.batchId = batch.id
       brew.stage = 'ready'
-      say(s, '추출액을 용기에 회수했어요. 추출 완료 시각을 확인해 라벨을 붙여주세요.', 'success')
+      say(s, '추출액을 용기에 회수했어요. 기한을 계산해 라벨을 써주세요.', 'success')
       break
     }
     case 'discard-cold-brew': {

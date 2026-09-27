@@ -6,60 +6,31 @@ export function PanelStatus({ children }: { children: ReactNode }) {
 }
 
 /**
- * The one thing to do at this station, shown only when the order rail points here. A blocked objective uses the
- * warning tone; the button inside is the panel's only primary action.
+ * The one thing to do at this station, shown only when the order rail points here. The title says what is wrong and
+ * the button inside, the panel's only primary action, says what to do about it.
  */
 export function PanelNow({
   blocked = false,
   title,
   detail,
-  steps,
   children,
 }: {
   blocked?: boolean
   title: string
   detail?: ReactNode
-  steps?: { label: string; done: boolean }[]
   children?: ReactNode
 }) {
-  const current = steps?.findIndex((step) => !step.done) ?? -1
-
   return (
     <section
       className="group/now mb-5 rounded-2xl bg-brand/8 p-4 data-[blocked=true]:bg-danger/8"
       data-blocked={blocked}
       aria-label="지금 할 일"
     >
-      <p className="text-sm font-semibold text-brand group-data-[blocked=true]/now:text-danger">지금</p>
-      <h3 className="mt-1 text-lg leading-snug font-semibold">{title}</h3>
+      <h3 className="text-lg leading-snug font-semibold group-data-[blocked=true]/now:text-danger">{title}</h3>
       {detail && <p className="mt-1 text-body text-ink/75">{detail}</p>}
-      {steps && (
-        <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
-          {steps.map((step, index) => (
-            <li
-              key={step.label}
-              className={clsx(
-                'flex items-center gap-1.5 before:size-2 before:rounded-full before:bg-control-line',
-                'data-[state=done]:text-brand data-[state=done]:before:bg-brand',
-                'data-[state=now]:font-semibold data-[state=now]:text-ink data-[state=now]:before:bg-focus',
-              )}
-              data-state={stepState(index, current, step.done)}
-            >
-              {step.label}
-            </li>
-          ))}
-        </ol>
-      )}
-      {children && <div className="mt-4">{children}</div>}
+      {children && <div className="mt-3">{children}</div>}
     </section>
   )
-}
-
-function stepState(index: number, current: number, done: boolean) {
-  if (done) {
-    return 'done'
-  }
-  return index === current ? 'now' : 'todo'
 }
 
 export function PanelSection({ title, children }: { title?: string; children: ReactNode }) {
@@ -75,13 +46,13 @@ export function PanelRow({
   title,
   note,
   alert = false,
-  value,
+  status,
   children,
 }: {
   title: ReactNode
   note?: ReactNode
   alert?: boolean
-  value?: ReactNode
+  status?: ReactNode
   children?: ReactNode
 }) {
   return (
@@ -90,9 +61,32 @@ export function PanelRow({
         <p className="text-base font-medium">{title}</p>
         {note && <p className="mt-0.5 text-sm text-muted group-data-[alert=true]/row:text-danger">{note}</p>}
       </div>
-      {value !== undefined && <p className="shrink-0 text-base font-semibold tabular-nums">{value}</p>}
+      {status}
       {children && <div className="flex shrink-0 gap-1.5">{children}</div>}
     </div>
+  )
+}
+
+/** A row's state in one word, or the label itself when the item is in use. */
+export function StatusChip({
+  tone = 'neutral',
+  children,
+}: {
+  tone?: 'neutral' | 'alert' | 'label'
+  children: ReactNode
+}) {
+  return (
+    <span
+      className={clsx(
+        'shrink-0 rounded-full bg-control px-2.5 text-sm leading-6 font-medium whitespace-nowrap text-muted tabular-nums',
+        'data-[tone=alert]:bg-danger/10 data-[tone=alert]:text-danger',
+        'data-[tone=label]:rounded-md data-[tone=label]:border data-[tone=label]:border-label-line',
+        'data-[tone=label]:bg-label data-[tone=label]:text-ink',
+      )}
+      data-tone={tone}
+    >
+      {children}
+    </span>
   )
 }
 
@@ -162,7 +156,7 @@ export function PanelSearch({
       placeholder={label}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="mt-2 min-h-11 w-full rounded-xl border border-control-line bg-control px-3.5 text-body text-ink"
+      className="mb-4 min-h-11 w-full rounded-xl border border-control-line bg-control px-3.5 text-body text-ink"
     />
   )
 }

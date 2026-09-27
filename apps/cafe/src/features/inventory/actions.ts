@@ -9,6 +9,7 @@ import { washingHandsBusy } from '../washing/rules'
 import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed, packStorage } from './batches'
 import { CUP_NAMES, CUP_SUPPLY } from './cups'
 import { addAmounts, newBatch } from './inventory'
+import { checkLabel } from './labels'
 import { SUPPLIES, SUPPLY_CAPACITY, SUPPLY_PACK, SUPPLY_PRICE } from './supplies'
 
 export function handleStockActions(
@@ -134,7 +135,7 @@ export function handleStockActions(
       batch.openedAt = s.time
       batch.expiresAt = expiryAt(s.time, INGREDIENTS[batch.ingredient].lifetime)
       batch.labelled = false
-      say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 날짜 라벨을 붙여주세요.`)
+      say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 라벨을 써서 붙여주세요.`)
       break
     }
     case 'label-batch': {
@@ -153,6 +154,12 @@ export function handleStockActions(
         break
       }
 
+      const wrong = checkLabel(batch, action.until)
+      if (wrong) {
+        fail(`${wrong.title}. 기한표를 확인해주세요.`)
+        break
+      }
+
       batch.labelled = true
       if (!INGREDIENTS[batch.ingredient].prepared) {
         // A raw pack was put away when it arrived, so the label is the last step before use.
@@ -161,8 +168,8 @@ export function handleStockActions(
       say(
         s,
         INGREDIENTS[batch.ingredient].prepared
-          ? '기한 라벨을 붙였어요. E로 용기를 집어 보관 장소로 운반해주세요.'
-          : '개봉 시각과 기한 라벨을 붙였어요. 이제 음료에 사용할 수 있어요.',
+          ? '라벨을 붙였어요. E로 용기를 집어 보관 장소로 운반해주세요.'
+          : '라벨을 붙였어요. 이제 음료에 사용할 수 있어요.',
         'success',
       )
       break
@@ -187,7 +194,7 @@ export function handleStockActions(
         fail(
           batch.expiresAt !== null && batch.expiresAt <= s.time
             ? '기한이 지난 배합은 여기서 폐기해주세요.'
-            : '날짜 라벨을 먼저 붙여주세요.',
+            : '라벨을 먼저 써서 붙여주세요.',
         )
         break
       }

@@ -13,7 +13,7 @@ export function completeJobs(work: WorkContext) {
         brew.stage = 'finished'
         brew.completedAt = job.endsAt
         s.totals.prepared++
-        say(s, '콜드 브루 추출이 끝났어요. 회수·라벨·냉장 보관을 진행해주세요.', 'success')
+        say(s, '콜드 브루 추출이 끝났어요. 회수·라벨 쓰기·냉장 보관을 진행해주세요.', 'success')
       }
     } else if (job.preparationId && s.preparation?.id === job.preparationId && s.preparation.cursor === job.stepIndex) {
       s.preparation.stage = 'measuring'

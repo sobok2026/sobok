@@ -24,7 +24,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
       return {
         title: '기한이 지난 배합이에요',
         action: '준비대에서 Q를 길게 눌러 폐기한 뒤 다시 준비하세요.',
-        reason: '라벨을 붙이거나 보관해도 만료 시각은 늘어나지 않아요.',
+        reason: '라벨을 쓰거나 보관해도 만료 시각은 늘어나지 않아요.',
         fault: true,
       }
     }

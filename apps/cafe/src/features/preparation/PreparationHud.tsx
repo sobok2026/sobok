@@ -56,7 +56,7 @@ function PreparationWork({
   }
 
   if (prep.stage === 'ready' && batch) {
-    return <BatchWork batch={batch} time={state.time} act={act} station="prep" />
+    return <BatchWork batch={batch} time={state.time} inputsUntil={prep.ingredientExpiresAt} act={act} station="prep" />
   }
 
   if (!step) {

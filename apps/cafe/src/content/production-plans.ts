@@ -80,7 +80,7 @@ export function preparationPlan(catalog: RecipeCatalog, recipeId: string, varian
   const instructions = [...new Set(handoff.map((step) => [step.instruction, step.note].filter(Boolean).join(' ')))]
   const storageNote =
     instructions.join(' ') ||
-    `제조 후 날짜 라벨을 붙이고 ${material.storage === 'fridge' ? '냉장' : '실온'} 보관하세요.`
+    `제조 후 기한을 계산해 라벨을 쓰고 ${material.storage === 'fridge' ? '냉장' : '실온'} 보관하세요.`
   return { recipe, variant, plan: manufacturing, handoff, output, costs, stockContext, storageNote }
 }
 

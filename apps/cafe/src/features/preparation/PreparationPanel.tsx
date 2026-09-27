@@ -76,15 +76,12 @@ export default function PreparationPanel({
   return (
     <>
       {focus && (
-        <PanelNow
-          blocked
-          title={`${INGREDIENTS[focus.output.materialId].name} 만들기`}
-          detail={reason ?? `${goal.blocker!.reason} · ${focus.steps.length}단계`}
-        >
-          {!reason && <Button onClick={() => start(focus)}>{focus.name} 시작</Button>}
+        <PanelNow blocked title={goal.blocker!.reason} detail={reason}>
+          {!reason && <Button onClick={() => start(focus)}>{focus.name} 만들기</Button>}
         </PanelNow>
       )}
       {!focus && reason && <PanelStatus>{reason}</PanelStatus>}
+      <PanelSearch label={`다른 배합 찾기 · ${choices.length}종`} value={query} onChange={setQuery} />
       {(needle || listed.length > 0) && (
         <PanelSection title={needle ? `검색 결과 ${listed.length}개` : '이 주문에 필요한 배합'}>
           {listed.length ? (
@@ -92,7 +89,7 @@ export default function PreparationPanel({
               <PanelRow
                 key={item.id}
                 title={item.name}
-                note={`보유 ${formatDecimal(available(state, item.output.materialId))}${INGREDIENTS[item.output.materialId].unit} · ${item.steps.length}단계`}
+                note={`보유 ${formatDecimal(available(state, item.output.materialId))}${INGREDIENTS[item.output.materialId].unit}`}
               >
                 {!reason && <RowButton onClick={() => start(item)}>만들기</RowButton>}
               </PanelRow>
@@ -102,7 +99,6 @@ export default function PreparationPanel({
           )}
         </PanelSection>
       )}
-      <PanelSearch label={`다른 배합 찾기 · ${choices.length}종`} value={query} onChange={setQuery} />
     </>
   )
 }

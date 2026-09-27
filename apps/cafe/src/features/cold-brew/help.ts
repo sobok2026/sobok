@@ -11,7 +11,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
     return {
       title: '추출액의 기한이 지났어요',
       action: '추출대에서 Q를 길게 눌러 폐기한 뒤 다시 준비하세요.',
-      reason: '회수하거나 라벨을 붙여도 기한은 늘어나지 않아요.',
+      reason: '회수하거나 라벨을 써도 기한은 늘어나지 않아요.',
       fault: true,
     }
   }
@@ -26,7 +26,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.stage === 'finished') {
     return {
       title: '추출액을 회수하세요',
-      action: '추출대에서 E로 용기에 회수하고 F로 라벨을 붙이세요.',
+      action: '추출대에서 E로 용기에 회수하고 라벨을 써서 F로 붙이세요.',
       reason: '추출 완료 시각부터 기한이 계산돼요. 회수한 뒤 냉장고로 운반해야 사용할 수 있어요.',
     }
   }
@@ -46,7 +46,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   return {
     title: step.label,
     action: measuringAction(brew, step, ready),
-    reason: '추출이 끝나면 회수·라벨·냉장고 운반까지 마쳐야 사용할 수 있어요.',
+    reason: '추출이 끝나면 회수·라벨 쓰기·냉장고 운반까지 마쳐야 사용할 수 있어요.',
   }
 }
 

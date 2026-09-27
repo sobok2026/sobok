@@ -1,6 +1,6 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import { useState } from 'react'
-import { money } from '../../shared/format'
+import { josa, money } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import {
   PanelEmpty,
@@ -10,6 +10,7 @@ import {
   PanelSection,
   PanelTabs,
   RowButton,
+  StatusChip,
 } from '../../shared/ui/PanelControls'
 import { HoldAction } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
@@ -17,9 +18,11 @@ import type { Objective, Subject } from '../../simulation/guidance'
 import type { Batch, GameState } from '../../simulation/state'
 import { currentTicket } from '../service/orders'
 import { batchHome, isSealed, materialHome } from './batches'
-import { CUP_NAMES, CUP_SUPPLY, cupKindFor, type DisposableCupKind, disposableCupKinds } from './cups'
+import { CUP_NAMES, CUP_SUPPLY, cupKindFor, disposableCupKinds } from './cups'
+import LabelWriter from './LabelWriter'
+import { labelText } from './labels'
 import { inventorySummary } from './summary'
-import { SUPPLIES, SUPPLY_CAPACITY, SUPPLY_PACK, SUPPLY_PRICE, type SupplyId, supplyIds } from './supplies'
+import { SUPPLIES, SUPPLY_CAPACITY, SUPPLY_PRICE, type SupplyId, supplyIds } from './supplies'
 
 type Place = 'fridge' | 'stock'
 type Tab = 'materials' | 'cups' | 'supplies'
@@ -28,18 +31,11 @@ type Act = (action: Action) => void
 type MaterialTask =
   | { kind: 'discard'; batch: Batch }
   | { kind: 'label'; batch: Batch }
-  | { kind: 'open'; batch: Batch; sealed: number }
+  | { kind: 'open'; batch: Batch }
   | { kind: 'buy' }
 
 const EPSILON = 0.0001
 const searchName = (value: string) => value.toLocaleLowerCase('ko-KR').replace(/\s+/g, '')
-
-function initialTab(subject: Subject | undefined): Tab {
-  if (subject && 'cup' in subject) {
-    return 'cups'
-  }
-  return subject && 'supply' in subject ? 'supplies' : 'materials'
-}
 
 /** The fridge holds only chilled goods; the storeroom also keeps cup and condiment backstock and takes deliveries. */
 export default function StoragePanel({
@@ -54,15 +50,21 @@ export default function StoragePanel({
   place: Place
 }) {
   const subject = goal.station === place ? (goal.blocker?.subject ?? goal.subject) : undefined
-  const [tab, setTab] = useState<Tab>(initialTab(subject))
+  const [tab, setTab] = useState<Tab>(subject && 'supply' in subject ? 'supplies' : 'materials')
+  const [labelling, setLabelling] = useState<string | null>(null)
   const all = inventorySummary(state)
-  const focus = promoted(state, all, place, subject)
+  const writing = state.batches.find((batch) => batch.id === labelling && !batch.labelled && batch.amount > 0)
+  const focus = writing?.ingredient ?? promoted(state, all, place, subject)
   const items = all.filter((item) => materialHome(item.id) === place)
   const attention = items.filter((item) => item.shortage > EPSILON || waiting(state, item, place)).length
 
   return (
     <>
-      <StorageNow state={state} act={act} all={all} place={place} subject={subject} />
+      {writing ? (
+        <LabelNow batch={writing} act={act} place={place} />
+      ) : (
+        <StorageNow state={state} act={act} all={all} place={place} subject={subject} />
+      )}
       {place === 'stock' && (
         <PanelTabs
           value={tab}
@@ -78,23 +80,21 @@ export default function StoragePanel({
           ]}
         />
       )}
-      {tab === 'materials' && <Materials state={state} act={act} all={all} items={items} place={place} focus={focus} />}
-      {tab === 'cups' && <CupStock state={state} act={act} focus={focus} />}
-      {tab === 'supplies' && <SupplyStock state={state} act={act} focus={focus} />}
+      {tab === 'materials' && (
+        <Materials state={state} act={act} all={all} items={items} place={place} focus={focus} onLabel={setLabelling} />
+      )}
+      {tab === 'cups' && <CupStock state={state} act={act} />}
+      {tab === 'supplies' && (
+        <SupplyStock state={state} act={act} focus={subject && 'supply' in subject ? subject.supply : undefined} />
+      )}
     </>
   )
 }
 
 /** The item the "지금" card is showing; the lists below leave it out so it appears once. */
 function promoted(state: GameState, all: Item[], place: Place, subject: Subject | undefined) {
-  if (!subject) {
+  if (!subject || !('ingredient' in subject)) {
     return undefined
-  }
-  if ('cup' in subject) {
-    return subject.cup
-  }
-  if ('supply' in subject) {
-    return subject.supply
   }
   const item = all.find((entry) => entry.id === subject.ingredient)
 
@@ -106,13 +106,13 @@ function materialTask(state: GameState, item: Item, place: Place): MaterialTask 
   if (expired) {
     return { kind: 'discard', batch: expired }
   }
-  const unlabelled = item.batches.find((batch) => !isSealed(batch) && !batch.labelled && batch.location === place)
+  const unlabelled = unlabelledHere(item, place)
   if (unlabelled) {
     return { kind: 'label', batch: unlabelled }
   }
-  const sealed = item.sealed.filter((batch) => batch.location === place)
-  if (sealed.length) {
-    return { kind: 'open', batch: sealed[0], sealed: sealed.length }
+  const sealed = item.sealed.find((batch) => batch.location === place)
+  if (sealed) {
+    return { kind: 'open', batch: sealed }
   }
   return place === 'stock' && !item.definition.prepared ? { kind: 'buy' } : null
 }
@@ -136,9 +136,6 @@ function StorageNow({
   if ('supply' in subject) {
     return <SupplyNow state={state} act={act} supply={subject.supply} />
   }
-  if ('cup' in subject) {
-    return <CupNow state={state} act={act} kind={subject.cup as DisposableCupKind} />
-  }
   const item = all.find((entry) => entry.id === subject.ingredient)
 
   return item ? <MaterialNow state={state} act={act} item={item} place={place} /> : null
@@ -146,10 +143,7 @@ function StorageNow({
 
 function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; item: Item; place: Place }) {
   const name = item.definition.name
-  const shortage = item.shortage > EPSILON ? `${formatDecimal(item.shortage)}${item.definition.unit} 부족` : undefined
   const task = materialTask(state, item, place)
-  const steps = (done: number) =>
-    ['입고', '보관', '개봉', '라벨'].map((label, index) => ({ label, done: index < done }))
 
   if (!task) {
     return null
@@ -157,7 +151,7 @@ function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; 
 
   if (task.kind === 'discard') {
     return (
-      <PanelNow blocked title={`${name} 기한 만료`} detail="폐기하고 새로 준비하세요.">
+      <PanelNow blocked title={`${name} 기한이 지났어요`}>
         <HoldAction
           shortcut={false}
           onConfirm={() => act({ type: 'discard-batch', id: task.batch.id, station: place })}
@@ -169,20 +163,14 @@ function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; 
   }
 
   if (task.kind === 'label') {
-    return (
-      <PanelNow title={`${name} 라벨 붙이기`} detail={shortage} steps={steps(3)}>
-        <Button onClick={() => act({ type: 'label-batch', id: task.batch.id, station: place })}>라벨 붙이기</Button>
-      </PanelNow>
-    )
+    return <LabelNow batch={task.batch} act={act} place={place} />
   }
 
   if (task.kind === 'open') {
     return (
       <PanelNow
         blocked
-        title={`${name} 원팩 개봉`}
-        detail={`${shortage ?? '필요'} · 미개봉 ${task.sealed}팩`}
-        steps={steps(2)}
+        title={item.shortage > EPSILON ? `${josa(name, '이', '가')} 부족해요` : `${name} 원팩을 열어야 해요`}
       >
         <Button onClick={() => act({ type: 'open-batch', id: task.batch.id })}>원팩 개봉</Button>
       </PanelNow>
@@ -191,12 +179,7 @@ function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; 
   const affordable = state.cash >= item.definition.price
 
   return (
-    <PanelNow
-      blocked
-      title={`${name} 원팩 입고`}
-      detail={affordable ? `${shortage ?? '필요'} · 입고한 원팩은 알맞은 곳에 넣어요` : '운영비가 부족해요'}
-      steps={steps(0)}
-    >
+    <PanelNow blocked title={`${name} 원팩이 없어요`} detail={affordable ? undefined : '운영비가 부족해요.'}>
       {affordable && (
         <Button onClick={() => act({ type: 'buy', ingredient: item.id })}>
           원팩 입고 <span>{money(item.definition.price)}</span>
@@ -206,20 +189,14 @@ function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; 
   )
 }
 
-function CupNow({ state, act, kind }: { state: GameState; act: Act; kind: DisposableCupKind }) {
-  const affordable = state.cash >= CUP_SUPPLY.price
-
+function LabelNow({ batch, act, place }: { batch: Batch; act: Act; place: Place }) {
   return (
-    <PanelNow
-      blocked
-      title={`${CUP_NAMES[kind]} 입고`}
-      detail={affordable ? '후방 재고가 없어요' : '운영비가 부족해요'}
-    >
-      {affordable && (
-        <Button onClick={() => act({ type: 'buy-cups', kind })}>
-          {CUP_SUPPLY.pack}개 입고 <span>{money(CUP_SUPPLY.price)}</span>
-        </Button>
-      )}
+    <PanelNow title="라벨을 써야 쓸 수 있어요">
+      <LabelWriter
+        key={batch.id}
+        batch={batch}
+        onAttach={(until) => act({ type: 'label-batch', id: batch.id, station: place, until })}
+      />
     </PanelNow>
   )
 }
@@ -229,16 +206,26 @@ function SupplyNow({ state, act, supply }: { state: GameState; act: Act; supply:
   const stock = state.supplies[supply]
   const amount = Math.min(SUPPLY_CAPACITY - stock.bar, stock.stock)
 
+  if (amount > 0) {
+    return (
+      <PanelNow blocked title={`컨디먼트 바에 ${josa(definition.name, '이', '가')} 없어요`}>
+        <Button onClick={() => act({ type: 'take-supply', supply })}>
+          {definition.name} {amount}
+          {definition.unit} 집기
+        </Button>
+      </PanelNow>
+    )
+  }
+
   return (
     <PanelNow
       blocked
-      title={`${definition.name} 보충`}
-      detail={amount ? '컨디먼트 바에 가져가 채워요' : '후방 재고가 없어 입고해야 해요'}
+      title={`${definition.name} 후방 재고가 없어요`}
+      detail={state.cash < SUPPLY_PRICE ? '운영비가 부족해요.' : undefined}
     >
-      {amount > 0 && (
-        <Button onClick={() => act({ type: 'take-supply', supply })}>
-          {definition.name} {amount}
-          {definition.unit} 꺼내기
+      {state.cash >= SUPPLY_PRICE && (
+        <Button onClick={() => act({ type: 'buy-supply', supply })}>
+          입고 <span>{money(SUPPLY_PRICE)}</span>
         </Button>
       )}
     </PanelNow>
@@ -252,6 +239,7 @@ function Materials({
   items,
   place,
   focus,
+  onLabel,
 }: {
   state: GameState
   act: Act
@@ -259,12 +247,15 @@ function Materials({
   items: Item[]
   place: Place
   focus: string | undefined
+  onLabel: (batchId: string) => void
 }) {
   const [query, setQuery] = useState('')
   const needle = searchName(query)
   const buying = place === 'stock'
   const searchable = buying ? all.filter((item) => !item.definition.prepared) : items
-  const matches = searchable.filter((item) => searchName(item.definition.name).includes(needle)).slice(0, 30)
+  const matches = searchable
+    .filter((item) => item.id !== focus && searchName(item.definition.name).includes(needle))
+    .slice(0, 30)
   const ticket = !!currentTicket(state)
   const needed = items.filter((item) => item.needed > EPSILON).sort((a, b) => b.shortage - a.shortage)
   const neededRest = needed.filter((item) => item.id !== focus)
@@ -272,11 +263,20 @@ function Materials({
     (item) => item.id !== focus && item.needed <= EPSILON && waiting(state, item, place),
   )
   const row = (item: Item, purchase = false) => (
-    <MaterialRow key={item.id} state={state} act={act} item={item} place={place} purchase={purchase} />
+    <MaterialRow
+      key={item.id}
+      state={state}
+      act={act}
+      item={item}
+      place={place}
+      purchase={purchase}
+      onLabel={onLabel}
+    />
   )
 
   return (
     <>
+      <PanelSearch label={buying ? '재료 찾아 입고' : '냉장 재료 찾기'} value={query} onChange={setQuery} />
       {needle ? (
         <PanelSection title={`검색 결과 ${matches.length}개`}>
           {matches.length ? matches.map((item) => row(item, buying)) : <PanelEmpty>찾는 재료가 없어요.</PanelEmpty>}
@@ -295,99 +295,97 @@ function Materials({
           {!ticket && !focus && !waitingItems.length && <PanelEmpty>지금 확인할 재료가 없어요.</PanelEmpty>}
         </>
       )}
-      <PanelSearch label={buying ? '재료 찾아 입고' : '냉장 재료 찾기'} value={query} onChange={setQuery} />
     </>
   )
 }
 
+/** Each row carries one state and at most one action, so the list reads as a to-do list rather than a ledger. */
 function MaterialRow({
   state,
   act,
   item,
   place,
   purchase,
+  onLabel,
 }: {
   state: GameState
   act: Act
   item: Item
   place: Place
   purchase: boolean
+  onLabel: (batchId: string) => void
 }) {
-  const unit = item.definition.unit
   const expired = expiredHere(state, item, place)
-  const unlabelled = item.batches.find((batch) => !isSealed(batch) && !batch.labelled && batch.location === place)
+  const unlabelled = unlabelledHere(item, place)
   const sealedHere = item.sealed.filter((batch) => batch.location === place)
+  const short = item.shortage > EPSILON
   const canBuy = !item.definition.prepared && item.sealed.length < 3 && state.cash >= item.definition.price
 
   return (
     <PanelRow
       title={item.definition.name}
-      note={materialNote(item, {
-        expired: !!expired,
-        unlabelled: !!unlabelled,
-        sealedHere: sealedHere.length,
-        purchase,
-      })}
-      alert={!!expired || item.shortage > EPSILON}
-      value={`${formatDecimal(item.amount)}${unit}`}
+      note={`${formatDecimal(item.amount)}${item.definition.unit}`}
+      status={<MaterialStatus state={state} item={item} place={place} purchase={purchase} />}
     >
       {expired && (
         <HoldAction shortcut={false} onConfirm={() => act({ type: 'discard-batch', id: expired.id, station: place })}>
           폐기
         </HoldAction>
       )}
-      {!expired && unlabelled && (
-        <RowButton onClick={() => act({ type: 'label-batch', id: unlabelled.id, station: place })}>라벨</RowButton>
-      )}
-      {!expired && !unlabelled && sealedHere.length > 0 && item.shortage > EPSILON && (
+      {!expired && unlabelled && <RowButton onClick={() => onLabel(unlabelled.id)}>라벨 쓰기</RowButton>}
+      {!expired && !unlabelled && sealedHere.length > 0 && short && !purchase && (
         <RowButton onClick={() => act({ type: 'open-batch', id: sealedHere[0].id })}>개봉</RowButton>
       )}
-      {purchase && canBuy && <RowButton onClick={() => act({ type: 'buy', ingredient: item.id })}>입고</RowButton>}
+      {purchase && canBuy && (
+        <RowButton onClick={() => act({ type: 'buy', ingredient: item.id })}>
+          입고 {money(item.definition.price)}
+        </RowButton>
+      )}
     </PanelRow>
   )
 }
 
-function materialNote(
-  item: Item,
-  {
-    expired,
-    unlabelled,
-    sealedHere,
-    purchase,
-  }: { expired: boolean; unlabelled: boolean; sealedHere: number; purchase: boolean },
-) {
-  if (purchase) {
-    return `${money(item.definition.price)} · 미개봉 ${item.sealed.length}팩`
+function MaterialStatus({
+  state,
+  item,
+  place,
+  purchase,
+}: {
+  state: GameState
+  item: Item
+  place: Place
+  purchase: boolean
+}) {
+  if (expiredHere(state, item, place)) {
+    return <StatusChip tone="alert">기한 지남</StatusChip>
   }
-  if (expired) {
-    return '기한 만료'
+  if (unlabelledHere(item, place)) {
+    return <StatusChip tone="alert">라벨 전</StatusChip>
   }
-  if (unlabelled) {
-    return '라벨 필요'
+  if (!purchase && item.shortage > EPSILON) {
+    return <StatusChip tone="alert">부족</StatusChip>
   }
-  if (item.shortage <= EPSILON) {
-    return sealedHere ? `충분 · 미개봉 ${sealedHere}팩` : '충분'
+  const inUse = item.batches
+    .filter((batch) => batch.location === 'bar' && batch.labelled && (batch.expiresAt ?? Infinity) > state.time)
+    .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))[0]
+  if (!purchase && inUse?.expiresAt) {
+    return <StatusChip tone="label">{labelText(inUse)}</StatusChip>
   }
-  const shortage = `${formatDecimal(item.shortage)}${item.definition.unit} 부족`
-  if (item.definition.prepared) {
-    return `${shortage} · 준비대에서 만들기`
-  }
-  return sealedHere ? `${shortage} · 미개봉 ${sealedHere}팩` : `${shortage} · 입고 필요`
+  const sealed = purchase ? item.sealed.length : item.sealed.filter((batch) => batch.location === place).length
+
+  return sealed ? <StatusChip>미개봉 {sealed}</StatusChip> : null
 }
 
-function CupStock({ state, act, focus }: { state: GameState; act: Act; focus: string | undefined }) {
+function CupStock({ state, act }: { state: GameState; act: Act }) {
   const ticket = currentTicket(state)
   const needed = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
-  const kinds = disposableCupKinds
-    .filter((kind) => kind !== focus)
-    .sort(
-      (a, b) =>
-        Number(b === needed) - Number(a === needed) ||
-        state.disposableCups[a].reserve - state.disposableCups[b].reserve,
-    )
+  const kinds = [...disposableCupKinds].sort(
+    (a, b) =>
+      Number(b === needed) - Number(a === needed) || state.disposableCups[a].reserve - state.disposableCups[b].reserve,
+  )
 
   return (
-    <PanelSection title={`일회용 컵 후방 재고 · 입고 ${CUP_SUPPLY.pack}개 ${money(CUP_SUPPLY.price)}`}>
+    <PanelSection title="일회용 컵 후방 재고">
       {kinds.map((kind) => {
         const stock = state.disposableCups[kind]
 
@@ -395,11 +393,13 @@ function CupStock({ state, act, focus }: { state: GameState; act: Act; focus: st
           <PanelRow
             key={kind}
             title={CUP_NAMES[kind]}
-            note={`후방 ${stock.reserve}개 · 보관대 ${stock.bar}개`}
+            note={`진열 ${stock.bar}개 · 후방 ${stock.reserve}개`}
             alert={!stock.reserve}
           >
             {stock.reserve < CUP_SUPPLY.reserveLimit && state.cash >= CUP_SUPPLY.price && (
-              <RowButton onClick={() => act({ type: 'buy-cups', kind })}>입고</RowButton>
+              <RowButton onClick={() => act({ type: 'buy-cups', kind })}>
+                {CUP_SUPPLY.pack}개 입고 {money(CUP_SUPPLY.price)}
+              </RowButton>
             )}
           </PanelRow>
         )
@@ -410,7 +410,7 @@ function CupStock({ state, act, focus }: { state: GameState; act: Act; focus: st
 
 function SupplyStock({ state, act, focus }: { state: GameState; act: Act; focus: string | undefined }) {
   return (
-    <PanelSection title={`컨디먼트 바 소모품 · 입고 ${SUPPLY_PACK}개 ${money(SUPPLY_PRICE)}`}>
+    <PanelSection title="컨디먼트 바 소모품">
       {supplyIds
         .filter((id) => id !== focus)
         .map((id) => {
@@ -427,11 +427,13 @@ function SupplyStock({ state, act, focus }: { state: GameState; act: Act; focus:
             >
               {amount > 0 && !state.supplyDelivery && (
                 <RowButton primary={supply.bar <= 5} onClick={() => act({ type: 'take-supply', supply: id })}>
-                  꺼내기
+                  집기
                 </RowButton>
               )}
               {state.cash >= SUPPLY_PRICE && !state.supplyDelivery && (
-                <RowButton onClick={() => act({ type: 'buy-supply', supply: id })}>입고</RowButton>
+                <RowButton onClick={() => act({ type: 'buy-supply', supply: id })}>
+                  입고 {money(SUPPLY_PRICE)}
+                </RowButton>
               )}
             </PanelRow>
           )
@@ -446,9 +448,10 @@ function expiredHere(state: GameState, item: Item, place: Place) {
   )
 }
 
+function unlabelledHere(item: Item, place: Place) {
+  return item.batches.find((batch) => !isSealed(batch) && !batch.labelled && batch.location === place)
+}
+
 function waiting(state: GameState, item: Item, place: Place) {
-  return (
-    !!expiredHere(state, item, place) ||
-    item.batches.some((batch) => !isSealed(batch) && !batch.labelled && batch.location === place)
-  )
+  return !!expiredHere(state, item, place) || !!unlabelledHere(item, place)
 }
