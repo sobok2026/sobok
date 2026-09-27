@@ -20,6 +20,7 @@ export default defineConfig({
               test: /data[\\/]recipes[\\/]preparations[\\/]/,
             },
             { name: 'react', test: /node_modules[\\/](?:react|react-dom|scheduler)[\\/]/ },
+            { name: 'zod', test: /node_modules[\\/]zod[\\/]/ },
             // Capture the core first so the renderer's dependencies do not merge both Three.js modules.
             { name: 'three-core', test: /node_modules[\\/]three[\\/]build[\\/]three\.core\.js$/ },
             { name: 'three-renderer', test: /node_modules[\\/]three[\\/]build[\\/]three\.module\.js$/ },
