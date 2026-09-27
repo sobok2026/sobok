@@ -1,12 +1,10 @@
-import { RECIPES } from '../../content/recipes'
 import { STATIONS, type StationId, toward } from '../../content/stations'
 import { cleaningTip } from '../../features/cleaning/help'
 import { coldBrewTip } from '../../features/cold-brew/help'
 import { craftTip } from '../../features/crafting/help'
 import { nextStep } from '../../features/crafting/rules'
 import { batchDestination, batchOrigin, carriedBatch } from '../../features/inventory/batches'
-import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, SERVICE_NAMES } from '../../features/inventory/cups'
-import { cupRestockAction } from '../../features/inventory/help'
+import { cupCount } from '../../features/inventory/cups'
 import { preparationTip } from '../../features/preparation/help'
 import { currentTicket } from '../../features/service/orders'
 import { closingTasks } from '../../features/shift/rules'
@@ -22,7 +20,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (carrying?.openedAt === null) {
     return {
       title: '입고한 원팩을 보관하세요',
-      action: '보관 방식에 맞는 곳을 보고 E를 눌러 넣으세요.',
+      action: '보관 방식에 맞는 곳을 보고 E를 눌러 보관하세요.',
       reason: '냉장 보관 재료는 냉장고, 실온 보관 재료는 창고에 둬요. 잘못 넣으면 다시 넣어야 해요.',
     }
   }
@@ -41,13 +39,13 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
     return {
       title: '콜드 브루 한 배치를 준비하세요',
       action: '원두 한 배치 준비 버튼을 누르면 직접 계량을 시작해요.',
-      reason: '원두와 물을 계량하고 추출이 끝나면 회수·라벨·냉장 보관을 마쳐주세요.',
+      reason: '원두와 물을 계량하고 추출이 끝나면 회수·라벨 쓰기·냉장 보관을 마쳐주세요.',
     }
   }
   if (state.supplyDelivery) {
     return {
       title: '보충품을 먼저 놓으세요',
-      action: '컨디먼트 바에서 E로 소모품을 채우세요.',
+      action: '컨디먼트 바에서 E로 소모품을 보충하세요.',
       reason: '창고에서 E로 다시 내려놓을 수도 있어요. 손을 비워야 다른 도구를 집을 수 있어요.',
     }
   }
@@ -105,19 +103,11 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       reason: '손님 요청과 주문표는 별개예요. 카운터 안쪽에서 주문을 받아요.',
     }
   }
-  const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
-  if (!cleanCupCount(state, kind)) {
-    return {
-      title: `${CUP_NAMES[kind]}를 준비하세요`,
-      action: cupRestockAction(state, kind),
-      reason: '매장은 다회용, 포장은 일회용 컵을 사용해요. HOT·ICED와 사이즈별 컵도 구분해요.',
-    }
-  }
-
   return {
-    title: `${CUP_NAMES[kind]}를 집으세요`,
-    action: '컵 보관대를 보고 E를 누르세요.',
-    reason: `${SERVICE_NAMES[ticket.service]} · ${RECIPES[ticket.recipe].shortName} 제조를 시작해요.`,
+    title: '주문에 맞는 컵을 고르세요',
+    action: '컵 보관대에서 E를 누르고 주문의 매장·포장, 온도, 사이즈를 보고 컵을 고르세요.',
+    reason:
+      '매장은 HOT 머그·ICED 유리잔, 포장은 HOT 종이컵·ICED 일회용 컵이에요. 비어 있으면 그 자리에서 보충 방법을 알려줘요.',
   }
 }
 

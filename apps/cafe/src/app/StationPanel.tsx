@@ -48,12 +48,14 @@ export default function StationPanel({
       <section
         className={clsx(
           'pointer-events-auto absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] w-100 flex-col',
+          'data-[wide=true]:w-128',
           'overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent]',
           'rounded-2xl border border-white/60 bg-surface p-6 shadow-panel',
           'compact:top-4 compact:max-h-[calc(100dvh-2rem)] compact:p-5',
           'max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]',
         )}
         aria-label={STATIONS[panel].name}
+        data-wide={panel === 'cups'}
       >
         <header className="mb-5 flex items-center justify-between gap-4">
           <h2 className="text-2xl font-semibold tracking-tight">{STATIONS[panel].name}</h2>

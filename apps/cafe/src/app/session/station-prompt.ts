@@ -3,7 +3,7 @@ import { isCupSurface, STATIONS, type StationId } from '../../content/stations'
 import { cupSurface } from '../../features/cleaning/rules'
 import { craftStations } from '../../features/crafting/rules'
 import { batchDestination, carriedBatch, isSealed } from '../../features/inventory/batches'
-import { CUP_NAMES, cupCount, cupKindFor } from '../../features/inventory/cups'
+import { cupCount } from '../../features/inventory/cups'
 import { SUPPLIES, supplyIds } from '../../features/inventory/supplies'
 import { currentTicket } from '../../features/service/orders'
 import { WASH_NAMES } from '../../features/washing/rules'
@@ -20,7 +20,7 @@ export function stationPrompt(state: GameState, target: StationId): StationPromp
     return { status: stationStatus(state, target) }
   }
   if (interaction === 'panel') {
-    return { verb: target === 'pos' ? posAction(state) : '열기', object: STATIONS[target].name }
+    return { verb: panelVerb(state, target), object: STATIONS[target].name }
   }
   if (interaction === 'work') {
     return { verb: '이어서 하기', object: STATIONS[target].name }
@@ -34,10 +34,6 @@ function actionPrompt(state: GameState, action: Action, target: StationId) {
   const heldName = held ? INGREDIENTS[held.ingredient].name : ''
 
   switch (action.type) {
-    case 'take-cup': {
-      const ticket = currentTicket(state)!
-      return { verb: '컵 집기', object: CUP_NAMES[cupKindFor(ticket.recipe, ticket.service, ticket.size)] }
-    }
     case 'place-cup':
       return { verb: '컵 놓기', object: station }
     case 'pick-cup':
@@ -61,9 +57,9 @@ function actionPrompt(state: GameState, action: Action, target: StationId) {
     case 'return-batch':
       return { verb: '용기 내려놓기', object: heldName }
     case 'shelve-pack':
-      return { verb: '넣기', object: `${heldName} 원팩` }
+      return { verb: '보관', object: `${heldName} 원팩` }
     case 'place-supply':
-      return { verb: '채우기', object: SUPPLIES[state.supplyDelivery!.supply].name }
+      return { verb: '보충', object: SUPPLIES[state.supplyDelivery!.supply].name }
     case 'return-supply':
       return { verb: '보충품 내려놓기', object: SUPPLIES[state.supplyDelivery!.supply].name }
     case 'take-batch':
@@ -94,7 +90,7 @@ function stationStatus(state: GameState, target: StationId) {
   const held = carriedBatch(state)
   if (held) {
     return isSealed(held)
-      ? '원팩은 냉장고나 창고에 넣어요'
+      ? '원팩은 냉장고나 창고에 보관해요'
       : `용기는 ${STATIONS[batchDestination(held)].name}에 보관해요`
   }
   if (craftStations.includes(target)) {
@@ -122,6 +118,13 @@ function craftStatus(state: GameState, target: StationId) {
     return `컵은 ${STATIONS[location].name}에 있어요`
   }
   return target === 'pickup' ? '전달할 음료가 없어요' : '놓을 컵이 없어요'
+}
+
+function panelVerb(state: GameState, target: StationId) {
+  if (target === 'pos') {
+    return posAction(state)
+  }
+  return target === 'cups' && currentTicket(state) && !state.cup ? '컵 고르기' : '열기'
 }
 
 function posAction(state: GameState) {

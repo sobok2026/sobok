@@ -22,8 +22,8 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       title: `${definition.name} 사용 준비`,
       action: pendingAction(definition, pending),
       reason: definition.prepared
-        ? '만든 배합은 라벨을 붙이고 보관해야 사용할 수 있어요.'
-        : '개봉한 원팩은 날짜 라벨을 붙여야 사용할 수 있어요.',
+        ? '만든 배합은 라벨을 쓰고 보관해야 사용할 수 있어요.'
+        : '개봉한 원팩은 라벨을 써서 붙여야 사용할 수 있어요.',
     }
   }
   if (preparationForMaterial(ingredient)) {
@@ -32,7 +32,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       action: state.tools.clean
         ? `준비대에서 ${definition.name} 제조를 선택하세요.`
         : '세척대에서 피처를 씻고 옆 도구 선반에 먼저 정리하세요.',
-      reason: '준비 배합은 완성한 뒤 라벨을 붙이고 보관해야 음료에 넣을 수 있어요.',
+      reason: '준비 배합은 완성한 뒤 라벨을 쓰고 보관해야 음료에 넣을 수 있어요.',
     }
   }
   if (ingredient === 'coldBrew') {
@@ -53,7 +53,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
     return {
       title: `${definition.name} 보충이 필요해요`,
       action: `${STATIONS[home].name}에서 미개봉 원팩을 여세요.`,
-      reason: '개봉한 뒤 날짜 라벨을 붙이면 사용할 수 있어요.',
+      reason: '개봉한 뒤 라벨을 써서 붙이면 사용할 수 있어요.',
     }
   }
 
@@ -69,10 +69,10 @@ function pendingAction(definition: Ingredient, batch: Batch) {
     if (batch.labelled) {
       return `E로 용기를 집어 ${toward(STATIONS[batchDestination(batch)].name)} 운반하세요.`
     }
-    return `${STATIONS[batchOrigin(batch)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
+    return `${STATIONS[batchOrigin(batch)].name}에서 기한을 계산해 라벨을 쓰세요.`
   }
 
-  return `${STATIONS[batchHome(batch) ?? 'stock'].name}에서 날짜 라벨을 붙이세요.`
+  return `${STATIONS[batchHome(batch) ?? 'stock'].name}에서 기한을 계산해 라벨을 쓰세요.`
 }
 
 export function cupRestockAction(state: GameState, kind: CupKind) {
@@ -88,7 +88,7 @@ export function cupRestockAction(state: GameState, kind: CupKind) {
   }
 
   if (state.disposableCups[kind].reserve) {
-    return '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
+    return '컵 보관대에서 빈 칸을 눌러 보충하세요.'
   }
   return '창고에서 해당 컵을 입고하고 보관대를 보충하세요.'
 }

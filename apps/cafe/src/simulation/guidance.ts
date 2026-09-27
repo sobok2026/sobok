@@ -5,8 +5,8 @@ import { cleaningHandsBusy } from '../features/cleaning/rules'
 import { coldBrewStep } from '../features/cold-brew/rules'
 import { nextStep } from '../features/crafting/rules'
 import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../features/inventory/batches'
-import { CUP_NAMES, type CupKind, cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/inventory/cups'
-import { cupRestockAction, materialTip } from '../features/inventory/help'
+import { cupCount } from '../features/inventory/cups'
+import { materialTip } from '../features/inventory/help'
 import { SUPPLIES, type SupplyId, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationForMaterial, preparationStep } from '../features/preparation/rules'
 import { missingInput, readyWork } from '../features/production/runtime'
@@ -17,7 +17,7 @@ import { cupHandsBusy } from './hands'
 import type { Cleaning, CraftState, GameState, Preparation } from './state'
 
 /** What an objective is about, so the panel at that station can offer the exact action. */
-export type Subject = { ingredient: IngredientId } | { cup: CupKind } | { supply: SupplyId }
+export type Subject = { ingredient: IngredientId } | { supply: SupplyId }
 
 export type Blocker = { station: StationId; reason: string; fix: string; subject?: Subject }
 
@@ -168,7 +168,7 @@ function preparationObjective(state: GameState, prep: Preparation): Objective {
     if (batch?.expiresAt != null && batch.expiresAt <= state.time) {
       return blocked({ station: 'prep', reason: '배합 기한 만료', fix: '폐기하고 다시 준비하세요.' })
     }
-    return at('prep', batch?.labelled ? `${definition.name} 용기 집기` : `${definition.name} 라벨 붙이기`)
+    return at('prep', batch?.labelled ? `${definition.name} 용기 집기` : `${definition.name} 라벨 쓰기`)
   }
 
   const step = preparationStep(prep)
@@ -199,7 +199,7 @@ function coldBrewObjective(state: GameState): Objective {
       : at('cold-prep', '추출액 회수')
   }
   if (brew.stage === 'ready') {
-    return at('cold-prep', batch?.labelled ? '콜드 브루 용기 집기' : '콜드 브루 라벨 붙이기')
+    return at('cold-prep', batch?.labelled ? '콜드 브루 용기 집기' : '콜드 브루 라벨 쓰기')
   }
   return at('cold-prep', coldBrewStep(brew).label)
 }
@@ -235,25 +235,9 @@ function handoffObjective(state: GameState): Objective {
   return at('pickup', state.customer?.stage === 'pickup' ? '음료 전달' : '손님 기다리기')
 }
 
-function cupObjective(state: GameState, ticket: NonNullable<ReturnType<typeof currentTicket>>): Objective {
-  const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
-  if (cleanCupCount(state, kind)) {
-    return at('cups', `${CUP_NAMES[kind]} 집기`)
-  }
-  const reason = `${CUP_NAMES[kind]} 없음`
-  const fix = cupRestockAction(state, kind)
-  const subject = { cup: kind }
-  if (!isReusableCup(kind)) {
-    return blocked({ station: state.disposableCups[kind].reserve ? 'cups' : 'stock', reason, fix, subject })
-  }
-  if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) {
-    return blocked({ station: 'wash', reason, fix, subject })
-  }
-  if (state.condiment.cups[kind]) {
-    return blocked({ station: 'condiment', reason, fix, subject })
-  }
-
-  return blocked({ station: tableIds.find((id) => state.tables[id].cups[kind]) ?? 'wash', reason, fix, subject })
+/** The rail names the rack, never the cup: reading the ticket and choosing the cup is what the player practises. */
+function cupObjective(): Objective {
+  return at('cups', '컵 고르기')
 }
 
 function closingObjective(state: GameState): Objective | null {
@@ -269,7 +253,7 @@ function closingObjective(state: GameState): Objective | null {
   const unlabelled = state.batches.find((b) => b.amount > 0 && !isSealed(b) && b.location !== 'bar')
   const unlabelledHome = unlabelled && batchHome(unlabelled)
   if (unlabelledHome) {
-    return at(unlabelledHome, `${INGREDIENTS[unlabelled.ingredient].name} 라벨 붙이기`)
+    return at(unlabelledHome, `${INGREDIENTS[unlabelled.ingredient].name} 라벨 쓰기`)
   }
   return state.customer ? at('pos', '남은 손님 확인') : null
 }
@@ -278,7 +262,7 @@ function plannedObjective(state: GameState): Objective {
   const carrying = carriedBatch(state)
   if (carrying && isSealed(carrying)) {
     // Choosing the right storage is the player's call, so the guide does not point at it.
-    return { station: null, particle: '에', task: `${INGREDIENTS[carrying.ingredient].name} 원팩을 알맞은 곳에 넣기` }
+    return { station: null, particle: '에', task: `${INGREDIENTS[carrying.ingredient].name} 원팩을 알맞은 곳에 보관` }
   }
   if (carrying) {
     return carrying.expiresAt !== null && carrying.expiresAt <= state.time
@@ -286,7 +270,7 @@ function plannedObjective(state: GameState): Objective {
       : to(batchDestination(carrying), `${INGREDIENTS[carrying.ingredient].name} 보관`)
   }
   if (state.supplyDelivery) {
-    return to('condiment', `${SUPPLIES[state.supplyDelivery.supply].name} 채우기`)
+    return to('condiment', `${SUPPLIES[state.supplyDelivery.supply].name} 보충`)
   }
   if (cleaningHandsBusy(state.cleaning)) {
     return cleaningObjective(state.cleaning!)
@@ -319,9 +303,8 @@ function plannedObjective(state: GameState): Objective {
   if (state.cup) {
     return handoffObjective(state)
   }
-  const ticket = currentTicket(state)
-  if (ticket) {
-    return cupObjective(state, ticket)
+  if (currentTicket(state)) {
+    return cupObjective()
   }
 
   if (state.phase === 'closing') {
@@ -329,7 +312,7 @@ function plannedObjective(state: GameState): Objective {
   }
   const emptySupply = supplyIds.find((id) => !state.supplies[id].bar)
   if (state.phase === 'open' && emptySupply) {
-    return { ...at('stock', `${SUPPLIES[emptySupply].name} 보충품 가져오기`), subject: { supply: emptySupply } }
+    return { ...at('stock', `${SUPPLIES[emptySupply].name} 보충품 집기`), subject: { supply: emptySupply } }
   }
   if (state.customer?.visit || state.customer?.stage === 'leaving') {
     return chore(state) ?? at('pos', '다음 손님 기다리기')

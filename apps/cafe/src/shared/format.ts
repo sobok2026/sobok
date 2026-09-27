@@ -15,3 +15,11 @@ export function batchDate(time: number | null, withSeconds = false) {
 export function money(value: number) {
   return `${Math.round(value).toLocaleString('ko-KR')}원`
 }
+
+/** Picks the particle form by the last syllable's final consonant; Latin endings read as open syllables. */
+export function josa(word: string, afterConsonant: string, afterVowel: string) {
+  const syllable = word.charCodeAt(word.length - 1) - 0xac00
+  const final = syllable >= 0 && syllable < 11172 ? syllable % 28 : 0
+
+  return `${word}${final ? afterConsonant : afterVowel}`
+}

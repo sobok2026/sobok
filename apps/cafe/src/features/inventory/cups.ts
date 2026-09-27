@@ -40,6 +40,20 @@ export const CUP_NAMES = Object.fromEntries(
 ) as Record<CupKind, string>
 
 export const cupService = (kind: CupKind): ServiceMode => (isReusableCup(kind) ? 'dine-in' : 'takeout')
+export const cupTemperature = (kind: CupKind) =>
+  cupStyle(kind).startsWith('hot') ? ('hot' as const) : ('iced' as const)
+
+export type CupAttribute = 'service' | 'temperature' | 'size'
+
+/** Which parts of an order a chosen cup gets wrong, in the order a barista reads them off the ticket. */
+export function cupMismatch(chosen: CupKind, needed: CupKind): CupAttribute[] {
+  const checks: [CupAttribute, boolean][] = [
+    ['service', cupService(chosen) !== cupService(needed)],
+    ['temperature', cupTemperature(chosen) !== cupTemperature(needed)],
+    ['size', cupSize(chosen) !== cupSize(needed)],
+  ]
+  return checks.filter(([, wrong]) => wrong).map(([attribute]) => attribute)
+}
 
 export const emptyCupCounts = (): ReusableCupCounts =>
   Object.fromEntries(reusableCupKinds.map((kind) => [kind, 0])) as ReusableCupCounts

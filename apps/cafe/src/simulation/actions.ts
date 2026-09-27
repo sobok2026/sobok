@@ -1,7 +1,7 @@
 import type { IngredientId } from '../content/ingredients'
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
-import type { DisposableCupKind } from '../features/inventory/cups'
+import type { CupKind, DisposableCupKind } from '../features/inventory/cups'
 import type { SupplyId } from '../features/inventory/supplies'
 import type { PreparationId } from '../features/preparation/rules'
 import type { WashItem } from '../features/washing/rules'
@@ -43,7 +43,7 @@ export type Action =
   | { type: 'clean-use' }
   | { type: 'clean-confirm' }
   | { type: 'leave-cleaning' }
-  | { type: 'label-batch'; id: string; station: StationId }
+  | { type: 'label-batch'; id: string; station: StationId; until: number }
   | { type: 'take-batch'; id: string; station: StationId }
   | { type: 'discard-batch'; id: string; station: StationId }
   | { type: 'return-batch'; station: StationId }
@@ -62,9 +62,7 @@ export type Action =
   | { type: 'confirm-craft'; station: StationId; observation?: { id: string; value: boolean } }
   | { type: 'open-batch'; id: string }
   | { type: 'buy'; ingredient: IngredientId }
-  | {
-      type: 'take-cup'
-    }
+  | { type: 'take-cup'; kind: CupKind }
   | {
       type: 'discard-cup'
     }

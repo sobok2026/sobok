@@ -16,6 +16,8 @@
   --color-focus: #c8a55c;
   --color-hot: #b4512b;
   --color-iced: #1f6f8c;
+  --color-label: #faf3df;
+  --color-label-line: #e4d7ae;
   --color-pos-shell: #123f35;
   --color-pos-panel: #315b50;
   --color-pos-soft: #d7e9e3;
@@ -39,6 +41,16 @@
 
   --breakpoint-tablet: 47.5rem;
   --breakpoint-wide: 65.625rem;
+
+  --animate-nudge: nudge 260ms ease;
+  @keyframes nudge {
+    25% {
+      translate: -3px 0;
+    }
+    75% {
+      translate: 3px 0;
+    }
+  }
 
   --animate-appear: appear 180ms ease;
   @keyframes appear {

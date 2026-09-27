@@ -35,10 +35,15 @@ export function handleCraftActions(
       return
     }
 
-    const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
+    const kind = action.kind
+
+    if (kind !== cupKindFor(ticket.recipe, ticket.service, ticket.size)) {
+      fail('주문과 맞지 않는 컵이에요. 매장·포장, 온도, 사이즈를 확인해주세요.')
+      return
+    }
 
     if (!cleanCupCount(s, kind)) {
-      fail(`${CUP_NAMES[kind]}를 먼저 준비해주세요.`)
+      fail('고른 컵이 비어 있어요. 컵 보관대에서 보충하거나 씻어 와주세요.')
       return
     }
 

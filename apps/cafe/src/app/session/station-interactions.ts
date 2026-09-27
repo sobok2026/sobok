@@ -4,7 +4,7 @@ import { isCupSurface, type StationId } from '../../content/stations'
 import { needsCleaning } from '../../features/cleaning/rules'
 import { craftStations, nextStep } from '../../features/crafting/rules'
 import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../../features/inventory/batches'
-import { cleanCupCount, cupCount, cupKindFor } from '../../features/inventory/cups'
+import { cupCount, cupKindFor } from '../../features/inventory/cups'
 import { currentTicket } from '../../features/service/orders'
 import { washDestination, washQueue } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
@@ -14,7 +14,6 @@ export type Interaction = Action | 'work' | 'panel' | null
 
 /** What E does at a station. Null means there is nothing to do there, so no panel opens. */
 export function interactionAt(current: GameState, id: StationId): Interaction {
-  const ticket = currentTicket(current)
   const carrying = carriedBatch(current)
   if (carrying && id !== 'pos') {
     if (isSealed(carrying)) {
@@ -61,14 +60,6 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
       : 'work'
   }
 
-  if (
-    id === 'cups' &&
-    ticket &&
-    !current.cup &&
-    cleanCupCount(current, cupKindFor(ticket.recipe, ticket.service, ticket.size)) > 0
-  ) {
-    return { type: 'take-cup' }
-  }
   if (
     current.cup &&
     craftStations.includes(id) &&
@@ -162,8 +153,9 @@ export function confirmationAt(state: GameState, station: StationId): Action | n
   if (station === 'prep' && prep) {
     if (prep.fault) {
       return null
-    } else if (prep.stage === 'ready' && prep.batchId) {
-      return labelAt(state, prep.batchId, station)
+    } else if (prep.stage === 'ready') {
+      // The label writer in the work card owns F while a finished batch waits for its label.
+      return null
     } else {
       return { type: 'prep-confirm' }
     }
@@ -178,8 +170,8 @@ export function confirmationAt(state: GameState, station: StationId): Action | n
       return brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
         ? null
         : { type: 'collect-cold-brew' }
-    } else if (brew.stage === 'ready' && brew.batchId) {
-      return labelAt(state, brew.batchId, station)
+    } else if (brew.stage === 'ready') {
+      return null
     } else {
       return { type: 'cold-confirm' }
     }
@@ -192,10 +184,4 @@ export function confirmationAt(state: GameState, station: StationId): Action | n
   } else {
     return { type: 'confirm-craft', station }
   }
-}
-
-function labelAt(state: GameState, id: string, station: StationId): Action | null {
-  const batch = state.batches.find((item) => item.id === id)
-
-  return batch?.expiresAt != null && batch.expiresAt <= state.time ? null : { type: 'label-batch', id, station }
 }
