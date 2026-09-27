@@ -135,10 +135,13 @@ function RowTitle({ row }: { row: CupRow }) {
   )
 }
 
-/** The ticket reads like the order rail it replaces while the sheet is open: the drink, then its chip and calls. */
+/** One chip per call the cup is judged on, in the order rail's order, so a wrong pick outlines just what it missed. */
 function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] }) {
   const temperature = RECIPES[line.recipe].temperature
-  const mark = 'data-[wrong=true]:outline-2 data-[wrong=true]:outline-offset-2 data-[wrong=true]:outline-danger'
+  const chip = clsx(
+    'rounded-full px-2.5 text-sm leading-6.5',
+    'data-[wrong=true]:outline-2 data-[wrong=true]:outline-offset-1 data-[wrong=true]:outline-danger',
+  )
 
   return (
     <div
@@ -151,25 +154,25 @@ function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] })
         <span className="shrink-0 text-sm text-muted">주문</span>
         <b className="text-lg leading-snug font-semibold tracking-tight">{RECIPES[line.recipe].shortName}</b>
       </p>
-      <p className="flex shrink-0 items-center gap-2 text-body">
-        <span className={clsx(mark, 'rounded-full')} data-wrong={wrong.includes('temperature')}>
-          <span
-            className={clsx(
-              'block rounded-full px-2 text-sm leading-5.5 font-bold tracking-wide text-white',
-              'data-[temperature=hot]:bg-hot data-[temperature=iced]:bg-iced',
-            )}
-            data-temperature={temperature}
-          >
-            {temperature.toUpperCase()}
-          </span>
+      <p className="flex shrink-0 items-center gap-2">
+        <span
+          className={clsx(
+            chip,
+            'font-bold tracking-wide text-white',
+            'data-[temperature=hot]:bg-hot data-[temperature=iced]:bg-iced',
+          )}
+          data-temperature={temperature}
+          data-wrong={wrong.includes('temperature')}
+        >
+          {temperature.toUpperCase()}
         </span>
-        <span className={clsx(mark, 'rounded-sm')} data-wrong={wrong.includes('size') || wrong.includes('vessel')}>
+        <span
+          className={clsx(chip, 'bg-control font-semibold')}
+          data-wrong={wrong.includes('size') || wrong.includes('vessel')}
+        >
           {DRINK_SIZES[line.size].name}
         </span>
-        <span className="text-muted" aria-hidden="true">
-          ·
-        </span>
-        <span className={clsx(mark, 'rounded-sm')} data-wrong={wrong.includes('service')}>
+        <span className={clsx(chip, 'bg-control font-semibold')} data-wrong={wrong.includes('service')}>
           {SERVICE_NAMES[line.service]}
         </span>
       </p>
@@ -201,7 +204,7 @@ function CupTile({
   const count = cleanCupCount(state, kind)
   const restockable = !picking && !isReusableCup(kind) && !count && state.disposableCups[kind].reserve > 0
   const tile = clsx(
-    'grid size-full content-start justify-items-center rounded-lg px-0.5 pt-2 pb-2',
+    'grid size-full content-start justify-items-center rounded-lg px-0.5 py-2',
     'group-data-[empty=true]/tile:[&_svg]:opacity-30',
   )
   const content = (
