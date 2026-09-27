@@ -105,13 +105,13 @@
     "color": "#568438"
   },
   {
-    "recipeId": "광화문-믹사토",
+    "recipeId": "gwanghwamun-mixato",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "더-멜론-오브-멜론-프라푸치노",
+    "recipeId": "the-melon-of-melon-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -121,7 +121,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "더블-머스캣-블렌디드",
+    "recipeId": "double-muscat-blended",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -131,7 +131,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "더블-에스프레소-칩-프라푸치노",
+    "recipeId": "double-espresso-chip-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -141,7 +141,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "더블-에스프레소-크림-라떼",
+    "recipeId": "double-espresso-cream-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -151,7 +151,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "더블-에스프레소-크림-라떼",
+    "recipeId": "double-espresso-cream-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -161,7 +161,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "돌체-콜드브루",
+    "recipeId": "dolce-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6000
@@ -169,7 +169,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "딸기-딜라이트-요거트-블렌디드",
+    "recipeId": "strawberry-delight-yogurt-blended",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -179,7 +179,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "딸기-레몬-보드카-블렌디드",
+    "recipeId": "strawberry-lemon-vodka-blended",
     "variantId": "iced",
     "prices": {
       "single": 23900
@@ -187,7 +187,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "딸기-아사이-레모네이드-스타벅스-리프레셔",
+    "recipeId": "strawberry-acai-lemonade-starbucks-refresher",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -197,7 +197,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "라떼-위스키-마티니",
+    "recipeId": "latte-whiskey-martini",
     "variantId": "iced",
     "prices": {
       "single": 21900
@@ -205,7 +205,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "라이트-유자-레몬-블렌디드",
+    "recipeId": "light-yuja-lemon-blended",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -215,7 +215,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "라이트-핑크-자몽-피지오",
+    "recipeId": "light-pink-grapefruit-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -225,7 +225,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "레드-와인-뱅쇼",
+    "recipeId": "red-wine-vin-chaud",
     "variantId": "hot",
     "prices": {
       "single": 16500
@@ -233,7 +233,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "레드빈-말차-코코-프라푸치노",
+    "recipeId": "red-bean-matcha-coco-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 7100,
@@ -243,7 +243,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "레드빈-빙수-블렌디드",
+    "recipeId": "red-bean-bingsoo-blended",
     "variantId": "iced",
     "prices": {
       "grande": 8300
@@ -251,7 +251,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "레몬-캐모마일-블렌디-티",
+    "recipeId": "lemon-chamomile-blendy-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6900,
@@ -260,13 +260,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "레몬-캐모마일-블렌디-티",
+    "recipeId": "lemon-chamomile-blendy-tea",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "로스티드-마카다미아-라떼",
+    "recipeId": "roasted-macadamia-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6500
@@ -274,13 +274,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "로스티드-마카다미아-라떼",
+    "recipeId": "roasted-macadamia-latte",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-다크-초콜릿-모카",
+    "recipeId": "reserve-dark-chocolate-mocha",
     "variantId": "hot",
     "prices": {
       "tall": 7000,
@@ -289,7 +289,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-민트-콜드-브루",
+    "recipeId": "reserve-mint-cold-brew",
     "variantId": "iced",
     "prices": {
       "grande": 8000
@@ -297,7 +297,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-사케라또-비안코-오버-아이스",
+    "recipeId": "reserve-shakerato-bianco-over-ice",
     "variantId": "iced",
     "prices": {
       "tall": 7500,
@@ -306,7 +306,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-사케라또-아포가토",
+    "recipeId": "reserve-shakerato-affogato",
     "variantId": "iced",
     "prices": {
       "single": 7500
@@ -314,7 +314,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-스파클링-시트러스-에스프레소",
+    "recipeId": "reserve-sparkling-citrus-espresso",
     "variantId": "iced",
     "prices": {
       "tall": 7500
@@ -322,7 +322,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-아이스-다크-초콜릿-모카",
+    "recipeId": "reserve-iced-dark-chocolate-mocha",
     "variantId": "iced",
     "prices": {
       "tall": 7000,
@@ -331,7 +331,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-코르타도",
+    "recipeId": "reserve-cortado",
     "variantId": "hot",
     "prices": {
       "single": 6500
@@ -339,7 +339,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "리저브-클래식-민트-모카",
+    "recipeId": "reserve-classic-mint-mocha",
     "variantId": "hot",
     "prices": {
       "grande": 8000
@@ -347,7 +347,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "마롱-에스프레소-크림-라떼",
+    "recipeId": "marron-espresso-cream-latte",
     "variantId": "hot",
     "prices": {
       "grande": 7500
@@ -355,7 +355,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "마롱-에스프레소-크림-라떼",
+    "recipeId": "marron-espresso-cream-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -365,7 +365,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "마티니",
+    "recipeId": "martini",
     "variantId": "iced",
     "prices": {
       "single": 19900
@@ -373,7 +373,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "망고-바나나-블렌디드",
+    "recipeId": "mango-banana-blended",
     "variantId": "iced",
     "prices": {
       "grande": 6600
@@ -381,7 +381,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "망고-패션-프루트-블렌디드",
+    "recipeId": "mango-passion-fruit-blended",
     "variantId": "iced",
     "prices": {
       "tall": 5600,
@@ -391,7 +391,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "밀크카라멜-라떼",
+    "recipeId": "milk-caramel-latte",
     "variantId": "hot",
     "prices": {
       "tall": 5800
@@ -399,7 +399,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "밀크카라멜-라떼",
+    "recipeId": "milk-caramel-latte",
     "variantId": "iced",
     "prices": {
       "tall": 5800
@@ -407,7 +407,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바닐라-라떼",
+    "recipeId": "vanilla-latte",
     "variantId": "hot",
     "prices": {
       "tall": 5200
@@ -415,7 +415,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바닐라-라떼",
+    "recipeId": "vanilla-latte",
     "variantId": "iced",
     "prices": {
       "tall": 5200
@@ -423,7 +423,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바닐라-아인슈페너-콜드-브루",
+    "recipeId": "vanilla-einspanner-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6100
@@ -431,7 +431,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바닐라-크림-콜드-브루",
+    "recipeId": "vanilla-cream-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6000,
@@ -441,7 +441,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바삭-피스타치오-바닐라-크림-콜드브루",
+    "recipeId": "crunchy-pistachio-vanilla-cream-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 7500
@@ -449,7 +449,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "바삭-피스타치오-초콜릿-프라푸치노",
+    "recipeId": "crunchy-pistachio-chocolate-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 7700
@@ -457,7 +457,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "버즈-키위-팝-에너지-피지오",
+    "recipeId": "buzz-kiwi-pop-energy-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -467,7 +467,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "베르가못-콜드-브루",
+    "recipeId": "bergamot-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6000,
@@ -477,7 +477,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "베이스볼-매실-그린-티",
+    "recipeId": "baseball-maesil-green-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -486,7 +486,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "별다방-바닐라-라떼",
+    "recipeId": "byeoldabang-vanilla-latte",
     "variantId": "hot",
     "prices": {
       "grande": 6100
@@ -494,13 +494,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "별다방-바닐라-라떼",
+    "recipeId": "byeoldabang-vanilla-latte",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "복숭아-아이스-티",
+    "recipeId": "peach-iced-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6100
@@ -508,7 +508,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "복숭아-아이스-티",
+    "recipeId": "peach-iced-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -518,7 +518,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "복숭아-아이스-티",
+    "recipeId": "peach-iced-tea",
     "variantId": "iced-trenta",
     "prices": {
       "trenta": 7900
@@ -526,7 +526,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "붉은-로즈-초콜릿",
+    "recipeId": "red-rose-chocolate",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -535,7 +535,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "붉은-로즈-초콜릿",
+    "recipeId": "red-rose-chocolate",
     "variantId": "iced",
     "prices": {
       "grande": 7300
@@ -543,7 +543,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "블론드-바닐라-더블-샷-마키아또",
+    "recipeId": "blonde-vanilla-double-shot-macchiato",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -553,7 +553,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "블론드-바닐라-더블-샷-마키아또",
+    "recipeId": "blonde-vanilla-double-shot-macchiato",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -563,7 +563,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "블론드-에스프레소-라떼",
+    "recipeId": "blonde-espresso-latte",
     "variantId": "hot",
     "prices": {
       "tall": 5200,
@@ -573,7 +573,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "블론드-에스프레소-라떼",
+    "recipeId": "blonde-espresso-latte",
     "variantId": "iced",
     "prices": {
       "tall": 5200,
@@ -583,13 +583,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "블루베리-딜라이트-요거트-블렌디드",
+    "recipeId": "blueberry-delight-yogurt-blended",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "살구-조이풀-메들리-쉐이큰-티",
+    "recipeId": "apricot-joyful-medley-shaken-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6100
@@ -597,7 +597,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "수박-주스-블렌디드",
+    "recipeId": "watermelon-juice-blended",
     "variantId": "iced",
     "prices": {
       "tall": 7100
@@ -605,7 +605,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈-폼-딸기-라떼",
+    "recipeId": "choux-foam-strawberry-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -615,7 +615,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈-폼-라떼",
+    "recipeId": "choux-foam-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6700,
@@ -625,7 +625,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈-폼-말차-라떼",
+    "recipeId": "choux-foam-matcha-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6700,
@@ -635,7 +635,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈-폼-말차-라떼",
+    "recipeId": "choux-foam-matcha-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -645,7 +645,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈크림-딸기-라떼",
+    "recipeId": "custard-cream-strawberry-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -655,7 +655,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈크림-라떼",
+    "recipeId": "custard-cream-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6700,
@@ -665,7 +665,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈크림-라떼",
+    "recipeId": "custard-cream-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -675,7 +675,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈크림-말차-라떼",
+    "recipeId": "custard-cream-matcha-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6700,
@@ -685,7 +685,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "슈크림-말차-라떼",
+    "recipeId": "custard-cream-matcha-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -695,7 +695,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스노우-말차-라떼",
+    "recipeId": "snow-matcha-latte",
     "variantId": "hot",
     "prices": {
       "tall": 7900
@@ -703,13 +703,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스노우-말차-라떼",
+    "recipeId": "snow-matcha-latte",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "스위트-밀크-커피",
+    "recipeId": "sweet-milk-coffee",
     "variantId": "iced",
     "prices": {
       "tall": 5700,
@@ -719,7 +719,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-더블-샷",
+    "recipeId": "starbucks-double-shot",
     "variantId": "vanilla",
     "prices": {
       "single": 5300
@@ -727,7 +727,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-더블-샷",
+    "recipeId": "starbucks-double-shot",
     "variantId": "hazelnut",
     "prices": {
       "single": 5300
@@ -735,7 +735,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-더블-샷",
+    "recipeId": "starbucks-double-shot",
     "variantId": "classic",
     "prices": {
       "single": 5300
@@ -743,7 +743,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-돌체-라떼",
+    "recipeId": "starbucks-dolce-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -753,7 +753,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-딸기-라떼",
+    "recipeId": "starbucks-strawberry-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -763,7 +763,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-망고-라떼",
+    "recipeId": "starbucks-mango-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -773,7 +773,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-멜론-라떼",
+    "recipeId": "starbucks-melon-latte",
     "variantId": "iced",
     "prices": {
       "tall": 5900
@@ -781,7 +781,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-에어로카노",
+    "recipeId": "starbucks-aerocano",
     "variantId": "iced",
     "prices": {
       "tall": 4900,
@@ -791,7 +791,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-자몽-허니-에어로카노",
+    "recipeId": "starbucks-grapefruit-honey-aerocano",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -801,7 +801,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-클래식-밀크-티",
+    "recipeId": "starbucks-classic-milk-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -811,7 +811,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스타벅스-클래식-밀크-티",
+    "recipeId": "starbucks-classic-milk-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -821,7 +821,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스팀-우유",
+    "recipeId": "steamed-milk",
     "variantId": "hot",
     "prices": {
       "short": 3600,
@@ -830,13 +830,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "스팀-우유",
+    "recipeId": "steamed-milk",
     "variantId": "kids",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "시그니처-핫-초콜릿",
+    "recipeId": "signature-hot-chocolate",
     "variantId": "hot",
     "prices": {
       "tall": 5900,
@@ -846,13 +846,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "시그니처-핫-초콜릿",
+    "recipeId": "signature-hot-chocolate",
     "variantId": "kids",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "시트러스-콜드브루-마티니",
+    "recipeId": "citrus-cold-brew-martini",
     "variantId": "iced",
     "prices": {
       "single": 23900
@@ -860,7 +860,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "씨솔트-카라멜-콜드브루",
+    "recipeId": "sea-salt-caramel-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -870,7 +870,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "씨솔트-폼-블랙티",
+    "recipeId": "sea-salt-foam-black-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -880,7 +880,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-두바이-초콜릿-말차",
+    "recipeId": "iced-dubai-chocolate-matcha",
     "variantId": "iced",
     "prices": {
       "tall": 7300,
@@ -890,7 +890,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-두바이-초콜릿-모카",
+    "recipeId": "iced-dubai-chocolate-mocha",
     "variantId": "iced",
     "prices": {
       "tall": 7300,
@@ -900,7 +900,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-스타벅스-돌체-라떼",
+    "recipeId": "iced-starbucks-dolce-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -910,7 +910,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-시그니처-초콜릿",
+    "recipeId": "iced-signature-chocolate",
     "variantId": "iced",
     "prices": {
       "tall": 5900,
@@ -920,7 +920,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-아메리카노",
+    "recipeId": "iced-americano",
     "variantId": "iced",
     "prices": {
       "tall": 4700,
@@ -930,7 +930,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-자몽-허니-블랙-티",
+    "recipeId": "iced-grapefruit-honey-black-tea",
     "variantId": "iced",
     "prices": {
       "tall": 5900,
@@ -940,7 +940,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-카라멜-마키아또",
+    "recipeId": "iced-caramel-macchiato",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -950,7 +950,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-카페-라떼",
+    "recipeId": "iced-caffe-latte",
     "variantId": "iced",
     "prices": {
       "tall": 5200,
@@ -960,7 +960,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-카페-모카",
+    "recipeId": "iced-caffe-mocha",
     "variantId": "iced",
     "prices": {
       "tall": 5700,
@@ -970,7 +970,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-카푸치노",
+    "recipeId": "iced-cappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 5200,
@@ -980,7 +980,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-커피",
+    "recipeId": "iced-coffee",
     "variantId": "iced",
     "prices": {
       "tall": 4500,
@@ -990,31 +990,31 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-풀-리프-티",
-    "variantId": "홍차",
+    "recipeId": "iced-full-leaf-tea",
+    "variantId": "black-tea",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-풀-리프-티",
-    "variantId": "허브-티",
+    "recipeId": "iced-full-leaf-tea",
+    "variantId": "herbal-tea",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-풀-리프-티",
-    "variantId": "화이트-티",
+    "recipeId": "iced-full-leaf-tea",
+    "variantId": "white-tea",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-풀-리프-티",
-    "variantId": "녹차",
+    "recipeId": "iced-full-leaf-tea",
+    "variantId": "green-tea",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "아이스-화이트-초콜릿-모카",
+    "recipeId": "iced-white-chocolate-mocha",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1024,7 +1024,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "아페롤-스프릿츠",
+    "recipeId": "aperol-spritz",
     "variantId": "iced",
     "prices": {
       "single": 19900
@@ -1032,7 +1032,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "애플망고-빙수-블렌디드",
+    "recipeId": "apple-mango-bingsoo-blended",
     "variantId": "iced",
     "prices": {
       "grande": 8300
@@ -1040,7 +1040,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "얼-그레이-바닐라-티-라떼",
+    "recipeId": "earl-grey-vanilla-tea-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -1050,7 +1050,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "얼-그레이-바닐라-티-라떼",
+    "recipeId": "earl-grey-vanilla-tea-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1060,7 +1060,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소",
+    "recipeId": "espresso",
     "variantId": "solo",
     "prices": {
       "single": 4000
@@ -1068,7 +1068,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소",
+    "recipeId": "espresso",
     "variantId": "doppio",
     "prices": {
       "single": 4500
@@ -1076,7 +1076,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-마키아또",
+    "recipeId": "espresso-macchiato",
     "variantId": "solo",
     "prices": {
       "single": 4000
@@ -1084,13 +1084,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-마키아또",
+    "recipeId": "espresso-macchiato",
     "variantId": "doppio",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-마티니",
+    "recipeId": "espresso-martini",
     "variantId": "iced",
     "prices": {
       "single": 21900
@@ -1098,7 +1098,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-콘-파나",
+    "recipeId": "espresso-con-panna",
     "variantId": "solo",
     "prices": {
       "single": 4200
@@ -1106,7 +1106,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-콘-파나",
+    "recipeId": "espresso-con-panna",
     "variantId": "doppio",
     "prices": {
       "single": 4700
@@ -1114,7 +1114,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-크림-프렌치-바닐라-라떼",
+    "recipeId": "espresso-cream-french-vanilla-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6700,
@@ -1123,13 +1123,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-크림-프렌치-바닐라-라떼",
+    "recipeId": "espresso-cream-french-vanilla-latte",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "에스프레소-프라푸치노",
+    "recipeId": "espresso-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 5700,
@@ -1139,7 +1139,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "오늘의-커피",
+    "recipeId": "todays-coffee",
     "variantId": "hot",
     "prices": {
       "tall": 4500,
@@ -1149,7 +1149,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "오미자-유스베리-모히토",
+    "recipeId": "omija-youthberry-mojito",
     "variantId": "iced",
     "prices": {
       "single": 19900
@@ -1157,7 +1157,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "오트-콜드-브루",
+    "recipeId": "oat-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 5800,
@@ -1167,7 +1167,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "우디-카우보이-쿠키-콜드브루",
+    "recipeId": "woody-cowboy-cookie-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6900,
@@ -1177,7 +1177,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "월리-체리-푸딩-크림-프라푸치노",
+    "recipeId": "wally-cherry-pudding-cream-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6900
@@ -1185,7 +1185,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "위스키-레몬-하이볼",
+    "recipeId": "whiskey-lemon-highball",
     "variantId": "iced",
     "prices": {
       "single": 19900
@@ -1193,13 +1193,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "위스키-인퓨즈드-콜드브루",
+    "recipeId": "whiskey-infused-cold-brew",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "윈터-스카치-바닐라-라떼",
+    "recipeId": "winter-scotch-vanilla-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -1209,7 +1209,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "윈터-스카치-바닐라-라떼",
+    "recipeId": "winter-scotch-vanilla-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1219,7 +1219,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-v-피지오",
+    "recipeId": "yuja-v-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1229,7 +1229,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-말차-v-피지오",
+    "recipeId": "yuja-matcha-v-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -1239,7 +1239,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-민트-티",
+    "recipeId": "yuja-mint-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -1249,7 +1249,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-민트-티",
+    "recipeId": "yuja-mint-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1259,7 +1259,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-배-캐모마일-티",
+    "recipeId": "yuja-pear-chamomile-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6300,
@@ -1269,7 +1269,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "유자-배-캐모마일-티",
+    "recipeId": "yuja-pear-chamomile-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -1279,7 +1279,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "자몽-망고-코코-프라푸치노",
+    "recipeId": "grapefruit-mango-coco-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 7100,
@@ -1289,7 +1289,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "자몽-허니-레몬-블렌디드",
+    "recipeId": "grapefruit-honey-lemon-blended",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -1299,7 +1299,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "자몽-허니-블랙-티",
+    "recipeId": "grapefruit-honey-black-tea",
     "variantId": "hot",
     "prices": {
       "tall": 5900,
@@ -1309,7 +1309,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "자바-칩-프라푸치노",
+    "recipeId": "java-chip-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1319,7 +1319,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "제시-슈트로베리-프라푸치노",
+    "recipeId": "jessie-choux-strawberry-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -1329,7 +1329,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "제주-말차-라떼",
+    "recipeId": "jeju-matcha-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -1339,7 +1339,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "제주-말차-라떼",
+    "recipeId": "jeju-matcha-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1349,7 +1349,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "제주-말차-크림-프라푸치노",
+    "recipeId": "jeju-matcha-cream-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1359,7 +1359,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "체리-자두-에너지-피지오",
+    "recipeId": "cherry-plum-energy-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -1369,7 +1369,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "체리블라썸-백도-크림-프라푸치노",
+    "recipeId": "cherry-blossom-white-peach-cream-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 7700
@@ -1377,7 +1377,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "초콜릿-크림-칩-프라푸치노",
+    "recipeId": "chocolate-cream-chip-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6200,
@@ -1387,7 +1387,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카라멜-마키아또",
+    "recipeId": "caramel-macchiato",
     "variantId": "hot",
     "prices": {
       "tall": 6100,
@@ -1397,7 +1397,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카라멜-프라푸치노",
+    "recipeId": "caramel-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1407,13 +1407,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카스텔라-고구마-라떼",
+    "recipeId": "castella-sweet-potato-latte",
     "variantId": "hot",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "카스텔라-고구마-라떼",
+    "recipeId": "castella-sweet-potato-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6900,
@@ -1423,7 +1423,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카페-라떼",
+    "recipeId": "caffe-latte",
     "variantId": "hot",
     "prices": {
       "tall": 5200,
@@ -1433,7 +1433,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카페-모카",
+    "recipeId": "caffe-mocha",
     "variantId": "hot",
     "prices": {
       "tall": 5700,
@@ -1443,7 +1443,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카페-브륄레-프라푸치노",
+    "recipeId": "caffe-brulee-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -1453,7 +1453,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카페-아메리카노",
+    "recipeId": "caffe-americano",
     "variantId": "hot",
     "prices": {
       "tall": 4700,
@@ -1463,7 +1463,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카푸치노",
+    "recipeId": "cappuccino",
     "variantId": "hot",
     "prices": {
       "tall": 5200,
@@ -1473,19 +1473,19 @@
     "color": "#927653"
   },
   {
-    "recipeId": "카푸치노",
+    "recipeId": "cappuccino",
     "variantId": "dry",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "카푸치노",
+    "recipeId": "cappuccino",
     "variantId": "wet",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "캐모마일-허니-티-라떼",
+    "recipeId": "chamomile-honey-tea-latte",
     "variantId": "hot",
     "prices": {
       "grande": 7300
@@ -1493,7 +1493,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "캐모마일-허니-티-라떼",
+    "recipeId": "chamomile-honey-tea-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1502,7 +1502,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "코르타도",
+    "recipeId": "cortado",
     "variantId": "hot",
     "prices": {
       "short": 5800
@@ -1510,7 +1510,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "코코-말차",
+    "recipeId": "coco-matcha",
     "variantId": "iced",
     "prices": {
       "tall": 5900,
@@ -1520,7 +1520,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "코코-콜드-브루",
+    "recipeId": "coco-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 5900,
@@ -1530,7 +1530,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "쿨-라임-피지오",
+    "recipeId": "cool-lime-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1540,7 +1540,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "클래식-뱅쇼-히비스커스-티",
+    "recipeId": "classic-vin-chaud-hibiscus-tea",
     "variantId": "hot",
     "prices": {
       "tall": 6700
@@ -1548,7 +1548,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "클래식-뱅쇼-히비스커스-티",
+    "recipeId": "classic-vin-chaud-hibiscus-tea",
     "variantId": "iced",
     "prices": {
       "tall": 6700
@@ -1556,7 +1556,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "파인애플-블루-코코-프라푸치노",
+    "recipeId": "pineapple-blue-coco-frappuccino",
     "variantId": "iced",
     "prices": {
       "tall": 7100,
@@ -1566,7 +1566,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "패션-탱고티-코스모폴리탄",
+    "recipeId": "passion-tango-tea-cosmopolitan",
     "variantId": "iced",
     "prices": {
       "single": 9900
@@ -1574,7 +1574,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "퍼플-망고-용과-피나콜라다",
+    "recipeId": "purple-mango-dragon-fruit-pina-colada",
     "variantId": "iced",
     "prices": {
       "single": 14900
@@ -1582,7 +1582,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "english-breakfast",
     "prices": {
       "tall": 4500,
@@ -1591,7 +1591,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "earl-grey",
     "prices": {
       "tall": 4500,
@@ -1600,7 +1600,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "chai",
     "prices": {
       "tall": 4100
@@ -1608,7 +1608,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "hibiscus",
     "prices": {
       "tall": 4500,
@@ -1617,7 +1617,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "chamomile",
     "prices": {
       "tall": 4500,
@@ -1626,7 +1626,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "mint",
     "prices": {
       "tall": 4500,
@@ -1635,7 +1635,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "youthberry",
     "prices": {
       "tall": 4500,
@@ -1644,7 +1644,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "풀-리프-핫-티",
+    "recipeId": "full-leaf-hot-tea",
     "variantId": "green-tea",
     "prices": {
       "tall": 5300,
@@ -1653,13 +1653,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "퓨어-말차-모히토",
+    "recipeId": "pure-matcha-mojito",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "프렌즈-시나몬-돌체-폼-카푸치노",
+    "recipeId": "friends-cinnamon-dolce-foam-cappuccino",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -1669,13 +1669,13 @@
     "color": "#927653"
   },
   {
-    "recipeId": "프렌즈-시나몬-돌체-폼-카푸치노",
+    "recipeId": "friends-cinnamon-dolce-foam-cappuccino",
     "variantId": "iced",
     "prices": {},
     "color": "#927653"
   },
   {
-    "recipeId": "프렌즈-얼-그레이-베리-티-라떼",
+    "recipeId": "friends-earl-grey-berry-tea-latte",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -1684,7 +1684,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "프렌즈-얼-그레이-베리-티-라떼",
+    "recipeId": "friends-earl-grey-berry-tea-latte",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1694,7 +1694,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "프렌치-바닐라-콜드-브루",
+    "recipeId": "french-vanilla-cold-brew",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -1704,7 +1704,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "플랫-화이트",
+    "recipeId": "flat-white",
     "variantId": "hot",
     "prices": {
       "tall": 5800,
@@ -1714,7 +1714,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "플랫-화이트",
+    "recipeId": "flat-white",
     "variantId": "iced",
     "prices": {
       "tall": 5800,
@@ -1724,7 +1724,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "피치-딸기-피지오",
+    "recipeId": "peach-strawberry-fizzio",
     "variantId": "iced",
     "prices": {
       "tall": 6100,
@@ -1734,7 +1734,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "피치-망고-선셋-블렌디드",
+    "recipeId": "peach-mango-sunset-blended",
     "variantId": "iced",
     "prices": {
       "tall": 6700,
@@ -1744,7 +1744,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "핑크-자몽-럼-토닉",
+    "recipeId": "pink-grapefruit-rum-tonic",
     "variantId": "iced",
     "prices": {
       "single": 9900
@@ -1752,7 +1752,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "핑크-팝-캐모마일-릴렉서",
+    "recipeId": "pink-pop-chamomile-relaxer",
     "variantId": "hot",
     "prices": {
       "tall": 6500,
@@ -1762,7 +1762,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "핑크-팝-캐모마일-릴렉서",
+    "recipeId": "pink-pop-chamomile-relaxer",
     "variantId": "iced",
     "prices": {
       "tall": 6500,
@@ -1772,7 +1772,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "핑크-피치-리프레셔",
+    "recipeId": "pink-peach-refresher",
     "variantId": "iced",
     "prices": {
       "tall": 4900
@@ -1780,7 +1780,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "핑크-피치-코코넛-리프레셔",
+    "recipeId": "pink-peach-coconut-refresher",
     "variantId": "iced",
     "prices": {
       "tall": 5100,
@@ -1789,7 +1789,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "헤이즐넛-오트-아이스-쉐이큰-에스프레소",
+    "recipeId": "hazelnut-oat-iced-shaken-espresso",
     "variantId": "iced",
     "prices": {
       "tall": 6300,
@@ -1799,7 +1799,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "화이트-모스카토-상그리아",
+    "recipeId": "white-moscato-sangria",
     "variantId": "iced",
     "prices": {
       "single": 21900
@@ -1807,7 +1807,7 @@
     "color": "#927653"
   },
   {
-    "recipeId": "화이트-초콜릿-모카",
+    "recipeId": "white-chocolate-mocha",
     "variantId": "hot",
     "prices": {
       "tall": 6100,

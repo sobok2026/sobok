@@ -10,6 +10,7 @@ import {
   COLD_BREW_OUTPUT,
   coldBrewStep,
   createColdBrew,
+  judgeColdBrew,
 } from './rules'
 
 export function handleColdBrewActions(
@@ -94,15 +95,20 @@ export function handleColdBrewActions(
       if (brew?.stage !== 'measuring' || brew.fault || brew.step === 2) {
         break
       }
-      const step = coldBrewStep(brew)
 
       if (brew.tool) {
         fail('G로 계량 도구를 내려놓은 뒤 확인해주세요.')
         break
       }
 
-      if (brew.progress + 1e-9 < step.target * (1 - step.tolerance)) {
-        fail('아직 목표량에 못 미쳤어요. 계량을 이어가세요.')
+      const judgement = judgeColdBrew(brew)
+      if (judgement === 'under') {
+        fail(brew.step === 0 ? '봉투에 원두가 남아 있어요.' : '아직 덜 부었어요.')
+        break
+      }
+      if (judgement === 'over') {
+        brew.fault = '물을 너무 많이 부었어요. 배합을 폐기하고 다시 준비해주세요.'
+        fail(brew.fault)
         break
       }
 
@@ -122,7 +128,7 @@ export function handleColdBrewActions(
         break
       }
 
-      const batch = newBatch('coldBrew', COLD_BREW_OUTPUT, brew.completedAt, 'cold-prep')
+      const batch = newBatch('cold-brew', COLD_BREW_OUTPUT, brew.completedAt, 'cold-prep')
       s.batches.push(batch)
       brew.batchId = batch.id
       brew.stage = 'ready'
@@ -138,11 +144,11 @@ export function handleColdBrewActions(
       if (brew.batchId) {
         const batch = s.batches.find((item) => item.id === brew.batchId)
         if (batch) {
-          addAmounts(s.totals.disposed, { coldBrew: batch.amount })
+          addAmounts(s.totals.disposed, { 'cold-brew': batch.amount })
           batch.amount = 0
         }
       } else if (brew.stage === 'finished') {
-        addAmounts(s.totals.disposed, { coldBrew: COLD_BREW_OUTPUT })
+        addAmounts(s.totals.disposed, { 'cold-brew': COLD_BREW_OUTPUT })
       } else {
         s.totals.coldBrewDiscardedBeans += COLD_BREW_BEANS
       }
@@ -166,21 +172,15 @@ export function applyColdBrew(work: WorkContext, seconds: number) {
   }
 
   const step = coldBrewStep(brew)
-  const delta = Math.min(seconds * step.rate, Math.max(0, step.target - brew.progress))
+  const delta = Math.min(seconds * step.rate, Math.max(0, step.cap - brew.progress))
   brew.progress += delta
 
   if (brew.step === 0) {
     brew.beans += delta
-    if (brew.progress >= step.target) {
-      work.input = null
-    }
   } else {
     brew.water += delta
   }
-
-  if (brew.progress > step.target * (1 + step.tolerance) + 1e-9) {
-    brew.fault = '콜드 브루 물 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.'
+  if (brew.progress >= step.cap) {
     work.input = null
-    say(s, brew.fault, 'error')
   }
 }

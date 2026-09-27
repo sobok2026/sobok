@@ -5,6 +5,7 @@ import { compileWorkflow, type WorkStep } from '../features/production/workflow'
 import { type DrinkSize, drinkSizeIds } from './drink-sizes'
 import { productionPlan, requirePreparationRoutes } from './production-plans'
 import { type RecipeCatalog, recipeVariant } from './recipe-catalog'
+import { catalogIdSchema } from './recipe-schema'
 import { planStockCosts } from './stock-amounts'
 
 export type RecipeId = string
@@ -33,8 +34,8 @@ export type UnavailableMenu = { recipeId: string; variantId: string; name: strin
 
 export const menuSchema = z.array(
   z.strictObject({
-    recipeId: z.string().min(1),
-    variantId: z.string().min(1),
+    recipeId: catalogIdSchema,
+    variantId: catalogIdSchema,
     prices: z.partialRecord(z.enum(drinkSizeIds), z.number().int().positive()),
     color: z.string().regex(/^#[0-9a-f]{6}$/i),
   }),
@@ -43,7 +44,7 @@ export const menuSchema = z.array(
 const servingVessels = z
   .array(
     z.strictObject({
-      vesselId: z.string().min(1),
+      vesselId: catalogIdSchema,
       services: z.array(z.enum(['dine-in', 'takeout'])).min(1),
     }),
   )

@@ -2,9 +2,11 @@ import menuData from '../../data/menu.json'
 import type { CupKind, ServiceMode } from '../features/inventory/cups'
 import { compileWorkflow } from '../features/production/workflow'
 import { recipeCatalog } from './catalog'
+import { customizeMilkTransfers } from './customization-milk'
 import { type Customizations, customizationPrice, customizePlan } from './customizations'
 import { DRINK_SIZES, type DrinkSize, drinkSizeIds } from './drink-sizes'
 import { buildMenu, type RecipeId } from './playable-menu'
+import { requirePreparationRoutes } from './production-plans'
 import { planStockCosts } from './stock-amounts'
 
 export type { RecipeId, Step } from './playable-menu'
@@ -39,6 +41,12 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
     !custom ||
     (!custom.coffee &&
       !custom.milk &&
+      !custom.milkAmount &&
+      !custom.milkFoam &&
+      !custom.milkTemperature &&
+      custom.roast === null &&
+      custom.javaChips === null &&
+      !Object.keys(custom.toppings).length &&
       !custom.omitted.length &&
       !Object.keys(custom.levels).length &&
       !Object.keys(custom.quantities).length &&
@@ -51,8 +59,9 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
   if (cached) {
     return cached
   }
-  const plan = customizePlan(steps, custom)
   const context = steps[0].stockContext
+  const plan = customizeMilkTransfers(recipeCatalog, steps, customizePlan(steps, custom), context, custom)
+  requirePreparationRoutes(recipeCatalog, plan)
   const result = {
     ...base,
     price: base.price + customizationPrice(steps, custom),

@@ -76,7 +76,7 @@
       ],
       "review": [],
       "output": {
-        "materialId": "coldBrew",
+        "materialId": "cold-brew",
         "amount": null,
         "description": "제공된 5lb 배합표에는 완성 부피가 명시되지 않았다."
       }

@@ -1,0 +1,123 @@
+{
+  "id": "chamomile-youthberry-tea-base",
+  "name": "캐모마일&유스베리티 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "add-tea",
+          "label": "티 추가",
+          "instructions": ["홀리데이 캐모마일 티 파우치 1개, 라벨을 제거한 유스베리 티백 1개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "holiday-chamomile-tea-pouch",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "youthberry-tea-bag",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "steep-tea",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 워터 피처 1L 선까지 넣고 5분 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              },
+              "vessel": "water-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "holiday-chamomile-tea-pouch",
+              "from": "water-pitcher",
+              "dispose": false
+            },
+            {
+              "action": "remove",
+              "itemId": "youthberry-tea-bag",
+              "from": "water-pitcher",
+              "dispose": false
+            }
+          ]
+        },
+        {
+          "id": "add-ice-and-filtered-water",
+          "label": "얼음과 정수 추가",
+          "instructions": ["CBS Venti 스쿱으로 얼음 1스쿱을 넣고 워터 피처 2L 선까지 정수를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-venti"
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 2.0,
+                "unit": "l"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "chamomile-youthberry-tea-base",
+        "amount": null,
+        "description": "워터 피처 2L 선까지 완성."
+      }
+    }
+  ]
+}

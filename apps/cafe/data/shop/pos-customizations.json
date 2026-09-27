@@ -1,0 +1,9 @@
+{
+  "note": "2026-09-27 사용자 승인 게임 규칙. 일반 휘핑은 보통 50ml, 적게 25ml, 많이 75ml. 일반 휘핑과 프라푸치노 로스트는 제조법 확보 전까지 완성 원팩을 입고한다. 드리즐은 블랙 글레이즈드 라떼의 모카 1바퀴, 카페 브륄레 프라푸치노의 카라멜 4~5바퀴 중 최소값을 사용한다.",
+  "whippedCreamMilliliters": 50,
+  "caramelDrizzleTurns": 4,
+  "chocolateDrizzleTurns": 1,
+  "extraPrice": 800,
+  "roastPumps": { "short": 1, "tall": 2, "grande": 3, "venti": 4, "trenta": 5, "single": 2 },
+  "chipScoops": { "short": 1, "tall": 2, "grande": 3, "venti": 4, "trenta": 5, "single": 2 }
+}

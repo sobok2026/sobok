@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import steamData from '../../../data/shop/steam.json'
 import type { Costs } from '../../content/ingredients'
 import { stockEffectSchema, stockVesselSchema } from '../../content/inventory-schema'
 import type { RecipeCatalog } from '../../content/recipe-catalog'
@@ -23,7 +24,15 @@ export const productionStateSchema = z.object({
   consumed: z.record(z.string(), productionQuantity),
   vessels: z.record(z.string(), stockVesselSchema),
   stockHeld: z.record(z.string(), productionQuantity),
-  stepStart: z.object({ stepId: z.string(), target: z.number().positive(), effect: stockEffectSchema }).nullable(),
+  stepStart: z
+    .object({
+      stepId: z.string(),
+      target: z.number().positive(),
+      effect: stockEffectSchema,
+      fills: z.record(z.string(), z.number().min(0).max(1)),
+    })
+    .nullable(),
+  choices: z.record(z.string(), z.string()),
   mixedInputs: z.record(z.string(), z.array(z.string())),
   resumeProgress: productionQuantity.nullable(),
   reservedTool: z.boolean(),
@@ -36,6 +45,19 @@ export type ProductionTool = {
   id: string
   name: string
   appearance: 'bottle' | 'pitcher' | 'scoop' | 'stirrer' | 'shaker' | 'pack' | 'lid'
+}
+
+export type ChoiceKey = 'temperature' | 'bean' | 'extraction' | 'program' | 'lid'
+
+/**
+ * A setting the recipe fixes on equipment or at the counter. The player picks it and the game judges the pick,
+ * so the work card lists every option and never marks the answer.
+ */
+export type StepChoice = {
+  key: ChoiceKey
+  label: string
+  options: { value: string; label: string }[]
+  answer: string
 }
 
 export type WorkStep = PlannedStep & {
@@ -58,6 +80,7 @@ export type WorkStep = PlannedStep & {
   requiresMixedMaterialId: string | null
   inputRequirements: Costs | null
   requiresReusableTool: boolean
+  choices: StepChoice[]
 }
 
 export const PRODUCTION_EPSILON = 1e-9
@@ -77,8 +100,112 @@ export function createProductionState(): ProductionState {
     reservedTool: false,
     ingredientExpiresAt: null,
     fault: null,
+    choices: {},
   }
 }
+
+const steamRule = z
+  .strictObject({
+    note: z.string(),
+    referenceSeconds: z.number().positive(),
+    referenceCelsius: z.number(),
+    xHotCelsius: z.number(),
+    startCelsius: z.number(),
+  })
+  .parse(steamData)
+
+type SteamOperation = Extract<ResolvedOperation, { action: 'steam' }>
+
+function steamCelsius(operation: SteamOperation) {
+  const temperature = operation.temperature
+  if (temperature?.kind === 'celsius') {
+    return temperature.value
+  }
+  if (temperature?.kind === 'range') {
+    return (temperature.min + temperature.max) / 2
+  }
+  return /x-?hot/i.test(operation.setting ?? '') ? steamRule.xHotCelsius : steamRule.referenceCelsius
+}
+
+/** Heating time grows with the temperature rise, anchored at the standard steam of the shop's wand. */
+function steamSeconds(operation: SteamOperation) {
+  const rise =
+    (steamCelsius(operation) - steamRule.startCelsius) / (steamRule.referenceCelsius - steamRule.startCelsius)
+  return Math.max(1, Math.round(steamRule.referenceSeconds * rise))
+}
+
+const steamChoice = (operation: SteamOperation): StepChoice => ({
+  key: 'temperature',
+  label: '스팀 온도',
+  options: [
+    { value: 'standard', label: '기본' },
+    { value: 'x-hot', label: 'X-Hot' },
+  ],
+  answer: steamCelsius(operation) >= steamRule.xHotCelsius ? 'x-hot' : 'standard',
+})
+
+const beans = {
+  regular: 'regular',
+  decaf: 'decaf',
+  'half-decaf': 'half-decaf',
+  blonde: 'blonde',
+  ristretto: 'regular',
+  'blonde-ristretto': 'blonde',
+  'decaf-ristretto': 'decaf',
+} as const
+
+function espressoChoices(operation: Extract<ResolvedOperation, { action: 'espresso' }>): StepChoice[] {
+  return [
+    {
+      key: 'bean',
+      label: '원두',
+      options: [
+        { value: 'regular', label: '일반' },
+        { value: 'blonde', label: '블론드' },
+        { value: 'decaf', label: '디카페인' },
+        { value: 'half-decaf', label: '1/2 디카페인' },
+      ],
+      answer: beans[operation.method],
+    },
+    {
+      key: 'extraction',
+      label: '추출',
+      options: [
+        { value: 'standard', label: '기본' },
+        { value: 'ristretto', label: '리스트레토' },
+      ],
+      answer: operation.method.includes('ristretto') ? 'ristretto' : 'standard',
+    },
+  ]
+}
+
+function programChoice(
+  catalog: RecipeCatalog,
+  operation: Extract<ResolvedOperation, { action: 'run-machine' }>,
+): StepChoice {
+  const equipment = catalog.equipment.get(operation.equipmentId)!
+
+  return {
+    key: 'program',
+    label: `${equipment.name} 버튼`,
+    options: equipment.programs.map((program) => ({ value: program.id, label: program.name })),
+    answer: operation.program,
+  }
+}
+
+const lidChoice = (operation: Extract<ResolvedOperation, { action: 'serve' }>): StepChoice => ({
+  key: 'lid',
+  label: '리드',
+  options: [
+    { value: 'none', label: '리드 없이' },
+    { value: 'standard', label: '일반' },
+    { value: 'dome', label: '돔' },
+    { value: 'flat', label: '플랫' },
+    { value: 'strawless', label: '스트로리스' },
+    { value: 'double-shot', label: '더블 샷' },
+  ],
+  answer: operation.lid === 'always' ? (operation.lidType ?? 'standard') : 'none',
+})
 
 function repetitionBounds(repetitions?: number | { min: number; max: number }) {
   if (typeof repetitions === 'number') {
@@ -192,9 +319,6 @@ function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): Producti
   if (operation.action === 'shake' || operation.action === 'swirl') {
     return { id: `vessel:${operation.vessel}`, name: catalog.vessels.get(operation.vessel)!.name, appearance: 'shaker' }
   }
-  if (operation.action === 'serve' && operation.lid && operation.lid !== 'none') {
-    return { id: 'service:lid', name: '리드', appearance: 'lid' }
-  }
   return null
 }
 
@@ -228,7 +352,7 @@ function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
     if (operation.materialId === 'milk') {
       return 'steam'
     }
-    if (operation.materialId === 'coldBrew') {
+    if (operation.materialId === 'cold-brew') {
       return 'brew'
     }
     if (operation.amount.kind === 'count' && operation.amount.unit === 'pump') {
@@ -277,34 +401,37 @@ export function compileWorkflow(
     let equipmentId: string | null = 'equipmentId' in operation ? (operation.equipmentId ?? null) : null
     let seconds = operationSeconds(catalog, operation)
     let mixesMaterialId: string | null = null
+    let choices: StepChoice[] = []
 
     if (operation.action === 'add' || operation.action === 'transfer') {
       control = quantityControl(operation.amount)
     } else if (operation.action === 'espresso') {
-      control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '추출' }
+      // Each press pulls one shot, so the number of shots is the player's call like pumps.
+      control = { ...quantityControl(operation.amount), kind: 'count' }
       equipmentId ??= 'espresso-machine'
+      choices = espressoChoices(operation)
     } else if (operation.action === 'grind') {
       control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '분쇄' }
     } else if (operation.action === 'run-machine') {
       const [target, maximum] = repetitionBounds(operation.cycles)
-      control = { kind: 'machine', target, maximum, increment: 1, unit: `${operation.program}번 프로그램` }
-    } else if (
-      operation.action === 'steam' ||
-      operation.action === 'steep' ||
-      operation.action === 'wait' ||
-      operation.action === 'charge'
-    ) {
-      const target = operation.action === 'charge' ? (operation.cartridges ?? 1) : 1
-      control = {
-        kind: 'machine',
-        target,
-        maximum: target,
-        increment: 1,
-        unit: operation.action === 'charge' ? '카트리지' : '완료',
-      }
-      if (operation.action === 'steam') {
-        equipmentId = 'steam-wand'
-      }
+      // Timed programs run on their own; untimed ones count each press as one run.
+      control =
+        seconds === null
+          ? { kind: 'count', target, maximum, increment: 1, unit: '회' }
+          : { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '완료' }
+      choices = [programChoice(catalog, operation)]
+    } else if (operation.action === 'charge') {
+      const target = operation.cartridges ?? 1
+      control = { kind: 'count', target, maximum: target, increment: 1, unit: '개' }
+    } else if (operation.action === 'steam') {
+      control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '완료' }
+      equipmentId = 'steam-wand'
+      seconds ??= steamSeconds(operation)
+      choices = [steamChoice(operation)]
+    } else if (operation.action === 'steep' || operation.action === 'wait') {
+      control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '완료' }
+    } else if (operation.action === 'serve') {
+      choices = [lidChoice(operation)]
     } else if (['mix', 'shake', 'swirl', 'muddle', 'aerate'].includes(operation.action)) {
       const duration = 'duration' in operation ? operation.duration : undefined
       const [target, maximum] = duration
@@ -365,6 +492,7 @@ export function compileWorkflow(
       inputRequirements: mixesMaterialId ? (costs[index + 1] ?? null) : null,
       requiresMixedMaterialId,
       requiresReusableTool,
+      choices,
     }
     if ('atLeast' in operation && operation.atLeast) {
       step.maximum = null
@@ -391,6 +519,7 @@ export function compileWorkflow(
         operation: { action: 'wait', duration: operation.drain },
         costs: {},
         tool: null,
+        choices: [],
       }
       const { drain: _drain, ...removal } = operation
       step.operation = removal
@@ -412,6 +541,7 @@ export function compileWorkflow(
         operation: { action: 'aerate', vessel: operation.vessel, duration: operation.airDuration },
         costs: {},
         tool: null,
+        choices: [],
       }
       const { airDuration: _airDuration, ...heating } = operation
       step.operation = heating

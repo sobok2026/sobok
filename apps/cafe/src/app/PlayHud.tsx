@@ -4,6 +4,7 @@ import { STATIONS } from '../content/stations'
 import CleaningHud from '../features/cleaning/CleaningHud'
 import ColdBrewHud from '../features/cold-brew/ColdBrewHud'
 import CraftingHud from '../features/crafting/CraftingHud'
+import { craftingAt } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import PreparationHud from '../features/preparation/PreparationHud'
@@ -31,7 +32,6 @@ export default function PlayHud({
   stopUse,
   tool,
   confirm,
-  moveCup,
   pause,
 }: {
   state: GameState
@@ -48,7 +48,6 @@ export default function PlayHud({
   stopUse: () => void
   tool: (station: StationId) => void
   confirm: (station: StationId) => void
-  moveCup: (station: StationId) => void
   pause: (mode?: 'pause' | 'overview') => void
 }) {
   const goal = objective(state)
@@ -62,8 +61,7 @@ export default function PlayHud({
     !cupCount(state.cleaning?.heldCups) &&
     !!state.washing &&
     (target === 'wash' || (target === washDestination(state.washing.item) && state.washing.stage === 'carrying'))
-  const showCrafting =
-    !heldBatch && !!state.cup && state.cup.craft.location !== 'hand' && target === state.cup.craft.location
+  const showCrafting = !heldBatch && craftingAt(state, target)
   const showCleaning =
     !heldBatch &&
     !!state.cleaning &&
@@ -104,7 +102,8 @@ export default function PlayHud({
           onConfirm={(station, observation) =>
             observation ? act({ type: 'confirm-craft', station, observation }) : confirm(station)
           }
-          onMoveCup={moveCup}
+          onChoose={(station, key, value) => act({ type: 'choose', station, key, value })}
+          onMove={openPanel}
           onDiscard={() => act({ type: 'discard-cup' })}
         />
       )}

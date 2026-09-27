@@ -12,7 +12,7 @@ export const packStorage = (ingredient: IngredientId) =>
   INGREDIENTS[ingredient].storage === 'fridge' ? ('fridge' as const) : ('stock' as const)
 
 export const batchOrigin = (batch: Batch) =>
-  batch.ingredient === 'coldBrew' ? ('cold-prep' as const) : ('prep' as const)
+  batch.ingredient === 'cold-brew' ? ('cold-prep' as const) : ('prep' as const)
 
 export const batchDestination = (batch: Batch) =>
   INGREDIENTS[batch.ingredient].storage === 'fridge' ? ('fridge' as const) : ('shelf' as const)

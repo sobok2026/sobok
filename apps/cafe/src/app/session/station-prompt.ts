@@ -1,11 +1,11 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { isCupSurface, STATIONS, type StationId } from '../../content/stations'
 import { cupSurface } from '../../features/cleaning/rules'
-import { craftStations } from '../../features/crafting/rules'
+import { craftStations, craftWorkStation, heldVessel, vesselName } from '../../features/crafting/rules'
 import { batchDestination, carriedBatch, isSealed } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
 import { SUPPLIES, supplyIds } from '../../features/inventory/supplies'
-import { currentTicket } from '../../features/service/orders'
+import { currentTicket, pendingStickers } from '../../features/service/orders'
 import { WASH_NAMES } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
@@ -23,7 +23,7 @@ export function stationPrompt(state: GameState, target: StationId): StationPromp
     return { verb: panelVerb(state, target), object: STATIONS[target].name }
   }
   if (interaction === 'work') {
-    return { verb: '이어서 하기', object: STATIONS[target].name }
+    return { verb: craftWorkStation(state) === target ? '작업하기' : '이어서 하기', object: STATIONS[target].name }
   }
   return actionPrompt(state, interaction, target)
 }
@@ -38,6 +38,12 @@ function actionPrompt(state: GameState, action: Action, target: StationId) {
       return { verb: '컵 놓기', object: station }
     case 'pick-cup':
       return { verb: '컵 집기', object: station }
+    case 'place-vessel':
+      return { verb: `${vesselName(state.cup!, heldVessel(state.cup)!)} 놓기`, object: station }
+    case 'pick-vessel':
+      return { verb: `${vesselName(state.cup!, action.vessel)} 집기`, object: station }
+    case 'attach-sticker':
+      return { verb: '스티커 붙이기', object: '주문 스티커' }
     case 'start-cleaning':
       return { verb: '정리 시작', object: cleaningNote(state, target) }
     case 'collect-cup':
@@ -93,6 +99,9 @@ function stationStatus(state: GameState, target: StationId) {
       ? '원팩은 냉장고나 창고에 보관해요'
       : `용기는 ${STATIONS[batchDestination(held)].name}에 보관해요`
   }
+  if (target === 'printer') {
+    return printerStatus(state)
+  }
   if (craftStations.includes(target)) {
     return craftStatus(state, target)
   }
@@ -118,6 +127,17 @@ function craftStatus(state: GameState, target: StationId) {
     return `컵은 ${STATIONS[location].name}에 있어요`
   }
   return target === 'pickup' ? '전달할 음료가 없어요' : '놓을 컵이 없어요'
+}
+
+function printerStatus(state: GameState) {
+  const waiting = pendingStickers(state)
+  if (!waiting) {
+    return '출력된 스티커가 없어요'
+  }
+  if (state.cup?.craft.sticker) {
+    return '이 컵에는 스티커를 붙였어요'
+  }
+  return `스티커 ${waiting}장 · 컵을 들고 와서 붙여요`
 }
 
 function panelVerb(state: GameState, target: StationId) {

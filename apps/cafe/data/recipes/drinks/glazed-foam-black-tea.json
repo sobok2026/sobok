@@ -51,7 +51,7 @@
           "operations": [
             {
               "action": "add",
-              "materialId": "더블-블랙-티-베이스",
+              "materialId": "double-black-tea-base",
               "into": "serving-cup",
               "amount": {
                 "kind": "line",
@@ -85,7 +85,7 @@
           "operations": [
             {
               "action": "add",
-              "materialId": "알로에-토핑",
+              "materialId": "aloe-topping",
               "into": "serving-cup",
               "amount": {
                 "kind": "by-size",

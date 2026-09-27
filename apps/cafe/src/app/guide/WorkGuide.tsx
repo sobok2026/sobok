@@ -13,17 +13,18 @@ const RecipeLibrary = lazy(() => import('../../features/recipe-library/RecipeLib
 const controls = [
   ['W A S D', '이동'],
   ['마우스 / 방향키', '시점'],
-  ['E', '집기 · 놓기 · 작업대 열기'],
+  ['E', '집기 · 놓기 · 작업대 열기 · 스티커 붙이기'],
   ['G', '도구 집기 · 놓기'],
-  ['클릭 / Space', '누르고 붓기 · 한 번씩 펌핑'],
-  ['F', '계량 확인 · 라벨 붙이기 · 음료 전달'],
+  ['1–9', '장비 설정 고르기'],
+  ['클릭 / Space', '누르고 붓기 · 한 번씩 펌핑 · 장비 작동'],
+  ['F', '확인 · 라벨 붙이기 · 음료 전달'],
   ['Q (길게)', '폐기 · 작업 취소'],
   ['H', '도움말'],
   ['M', '매장 현황'],
   ['Esc', '닫기 · 일시정지'],
 ]
 
-type Tab = 'now' | 'recipe' | 'manual' | 'library'
+type Tab = 'now' | 'recipe' | 'manual' | 'controls' | 'library'
 
 /** A reference, not a tutorial: the order rail already says what to do, so this explains why and how. */
 export default function WorkGuide({
@@ -47,19 +48,22 @@ export default function WorkGuide({
           { id: 'now', label: '지금' },
           { id: 'recipe', label: '이 음료' },
           { id: 'manual', label: '업무 안내' },
+          { id: 'controls', label: '조작법' },
           { id: 'library', label: '제조법 검색' },
         ]}
       />
       {tab === 'now' && (
+        <section className="rounded-xl bg-control p-4" aria-label="현재 작업 도움말">
+          <h3 className="font-semibold data-[fault=true]:text-danger" data-fault={!!tip.fault}>
+            {tip.title}
+          </h3>
+          <p className="mt-2">{tip.action}</p>
+          <p className="mt-2 text-muted">{tip.reason}</p>
+        </section>
+      )}
+      {tab === 'controls' && (
         <>
-          <section className="rounded-xl bg-control p-4" aria-label="현재 작업 도움말">
-            <h3 className="font-semibold data-[fault=true]:text-danger" data-fault={!!tip.fault}>
-              {tip.title}
-            </h3>
-            <p className="mt-2">{tip.action}</p>
-            <p className="mt-2 text-muted">{tip.reason}</p>
-          </section>
-          <dl className="mt-4 divide-y divide-line">
+          <dl className="divide-y divide-line">
             {controls.map(([key, action]) => (
               <div key={key} className="flex items-center justify-between gap-5 py-2.5">
                 <dt>

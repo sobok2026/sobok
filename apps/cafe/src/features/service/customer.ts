@@ -1,5 +1,16 @@
 import { orderSequence } from '../../content/customers'
+import {
+  baseChipScoops,
+  baseCoffee,
+  baseRoastPumps,
+  blenderStep,
+  customizationRules,
+  existingTopping,
+  hasServingCup,
+} from '../../content/customization-options'
 import { type Customizations, canOmit, countAmount, noCustomizations } from '../../content/customizations'
+import type { DrinkSize } from '../../content/drink-sizes'
+import type { PlannedStep } from '../../content/recipe-plan'
 import { recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
 import { STATIONS, type TableId } from '../../content/stations'
 import type { Customer, GameState } from '../../simulation/state'
@@ -54,6 +65,76 @@ export const customerHasCup = (state: Pick<GameState, 'customer' | 'sale'>) =>
 
 const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
+function customizationCandidates(plan: PlannedStep[], size: DrinkSize): Customizations[] {
+  const candidates: Customizations[] = []
+  const step = plan.find((step) => {
+    const op = step.operation
+    return (
+      op.action === 'espresso' ||
+      (op.action === 'add' &&
+        op.materialId !== 'frappuccino-roast' &&
+        op.amount.kind === 'count' &&
+        op.amount.unit === 'pump')
+    )
+  })
+  const amount = step && countAmount(step)
+
+  if (step && amount) {
+    candidates.push({
+      ...noCustomizations(),
+      quantities: { [step.id]: amount.unit === 'shot' ? amount.value + 1 : Math.max(0, amount.value - 1) },
+    })
+  }
+
+  if (plan.some((step) => step.operation.action === 'espresso') && baseCoffee(plan) === 'regular') {
+    candidates.push({ ...noCustomizations(), coffee: 'decaf' }, { ...noCustomizations(), coffee: 'blonde' })
+  }
+
+  if (plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk')) {
+    candidates.push(
+      { ...noCustomizations(), milk: 'soy-milk' },
+      { ...noCustomizations(), milk: 'low-fat-milk' },
+      { ...noCustomizations(), milkAmount: 'less' },
+    )
+  }
+
+  if (plan.some((step) => step.operation.action === 'steam')) {
+    candidates.push({ ...noCustomizations(), milkFoam: 'less' }, { ...noCustomizations(), milkTemperature: 'x-hot' })
+  }
+
+  const omission = plan.find(canOmit)
+
+  if (omission) {
+    candidates.push(
+      { ...noCustomizations(), omitted: [omission.id] },
+      { ...noCustomizations(), levels: { [omission.id]: 'less' } },
+    )
+  }
+
+  if (hasServingCup(plan)) {
+    if (!plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'vanilla-syrup')) {
+      candidates.push({ ...noCustomizations(), syrups: { 'vanilla-syrup': 2 } })
+    }
+
+    if (!existingTopping(plan, 'whipped')) {
+      candidates.push({ ...noCustomizations(), toppings: { whipped: 'normal' } })
+    }
+  }
+
+  if (blenderStep(plan)) {
+    candidates.push({ ...noCustomizations(), roast: Math.min(9, baseRoastPumps(plan) + 1) })
+
+    if (hasServingCup(plan)) {
+      candidates.push({
+        ...noCustomizations(),
+        javaChips: { scoops: baseChipScoops(plan) || customizationRules.chipScoops[size], mode: 'split' },
+      })
+    }
+  }
+
+  return candidates
+}
+
 export function createCustomer(orderNumber: number): Customer | null {
   if (!orderSequence.length) {
     return null
@@ -69,37 +150,7 @@ export function createCustomer(orderNumber: number): Customer | null {
 
     if (index === 0 && orderNumber % 2 === 0) {
       const plan = recipeFor(recipe, size, service).steps
-      const candidates: Customizations[] = []
-      const step = plan.find(
-        (step) =>
-          step.operation.action === 'espresso' ||
-          (step.operation.action === 'add' &&
-            step.operation.amount.kind === 'count' &&
-            step.operation.amount.unit === 'pump'),
-      )
-      const amount = step && countAmount(step)
-      if (step && amount) {
-        candidates.push({
-          ...noCustomizations(),
-          quantities: { [step.id]: amount.unit === 'shot' ? amount.value + 1 : Math.max(0, amount.value - 1) },
-        })
-      }
-      if (plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular')) {
-        candidates.push({ ...noCustomizations(), coffee: 'decaf' })
-      }
-      if (plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk')) {
-        candidates.push({ ...noCustomizations(), milk: '두유' })
-      }
-      const omission = plan.find(canOmit)
-      if (omission) {
-        candidates.push({ ...noCustomizations(), omitted: [omission.id] })
-      }
-      if (omission) {
-        candidates.push({ ...noCustomizations(), levels: { [omission.id]: 'less' } })
-      }
-      if (plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup')) {
-        candidates.push({ ...noCustomizations(), syrups: { '바닐라-시럽': 2 } })
-      }
+      const candidates = customizationCandidates(plan, size)
       const proposed = candidates[Math.floor(orderNumber / 2) % candidates.length]
 
       if (proposed) {

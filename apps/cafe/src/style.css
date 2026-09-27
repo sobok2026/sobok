@@ -68,6 +68,23 @@
 
 @custom-variant compact (@media (height <= 40.625rem));
 
+#cafe-receipt-print {
+  display: none;
+}
+
+@media print {
+  body > :not(#cafe-receipt-print) {
+    display: none !important;
+  }
+
+  #cafe-receipt-print {
+    display: block;
+    width: 80mm;
+    margin: 0 auto;
+    background: white;
+  }
+}
+
 @layer base {
   html {
     background: var(--color-page);

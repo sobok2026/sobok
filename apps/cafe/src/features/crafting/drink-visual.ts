@@ -1,25 +1,15 @@
 import * as THREE from 'three'
-import { INGREDIENTS, type Ingredient } from '../../content/ingredients'
+import type { Ingredient } from '../../content/ingredients'
 import type { ResolvedOperation } from '../../content/recipe-plan'
+import { canvasFont, paintTexture } from '../../shared/visuals/canvas-text'
 import { cupScale } from '../../shared/visuals/cup-profiles'
-import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius } from '../../shared/visuals/cup-visual'
+import { CUP_DIMENSIONS, createCupBody, cupRadius } from '../../shared/visuals/cup-visual'
 import { createIceScoop, type IceScoopSize } from '../../shared/visuals/ice-scoop'
+import { materialColor, materialGroup } from '../../shared/visuals/material-color'
 import { workBox as box, workCylinder as cylinder, workMaterial as standard } from '../../shared/visuals/work-geometry'
 import type { CupKind } from '../inventory/cups'
 import { createBlenderJar } from '../preparation/blender'
 import type { ProductionState, ProductionTool, WorkStep } from '../production/workflow'
-
-const groupColors: Record<Ingredient['visualGroup'], string> = {
-  coffee: '#4d2b18',
-  milk: '#eee1c7',
-  tea: '#967345',
-  sauce: '#cdad74',
-  foam: '#fff2d7',
-  powder: '#936d42',
-  ice: '#deeeeb',
-  water: '#d7e9e1',
-  other: '#dfc29b',
-}
 
 export type VesselVisualState = {
   fill: number
@@ -30,15 +20,8 @@ export type VesselVisualState = {
   foam: boolean
 }
 
-export type DrinkVisualState = { kind: CupKind; lidded: boolean; vessel: VesselVisualState; targetFill?: number }
-
-const materialGroup = (id: string): Ingredient['visualGroup'] =>
-  INGREDIENTS[id]?.visualGroup ?? (id === 'water' || id === 'ice' ? id : 'other')
-
-export function materialColor(id: string, fallback = '#dfc29b') {
-  const material = INGREDIENTS[id]
-  return material?.color ?? (material || id === 'water' || id === 'ice' ? groupColors[materialGroup(id)] : fallback)
-}
+/** The order sticker text, one line each, or null before the player sticks it on. */
+export type DrinkVisualState = { kind: CupKind; lidded: boolean; vessel: VesselVisualState; sticker: string[] | null }
 
 export function projectVessel(session: ProductionState, vesselId: string, fallbackColor: string): VesselVisualState {
   const vessel = session.vessels[vesselId]
@@ -142,17 +125,56 @@ export function workVesselShape(id: string, steps: WorkStep[]): 'pitcher' | 'sho
   return 'pitcher'
 }
 
-export function createDrinkVisual(parent: THREE.Object3D) {
+/** A printed order sticker on the side of the cup that faces the player: +1 toward the camera, -1 away. */
+function createSticker(root: THREE.Object3D, facing: 1 | -1) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 160
+  const context = canvas.getContext('2d')!
+  const map = new THREE.CanvasTexture(canvas)
+  map.colorSpace = THREE.SRGBColorSpace
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1),
+    new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false }),
+  )
+  mesh.rotation.y = facing > 0 ? 0 : Math.PI
+  mesh.renderOrder = 2
+  root.add(mesh)
+  let printed = ''
+
+  return (kind: CupKind, lines: string[] | null) => {
+    mesh.visible = !!lines
+    if (!lines) {
+      return
+    }
+    const { floor, height } = CUP_DIMENSIONS[kind]
+    const y = floor + (height - floor) * 0.5
+    const width = cupRadius(kind, y) * 1.05
+    mesh.scale.set(width, width * 0.625, 1)
+    mesh.position.set(0, y, facing * (cupRadius(kind, y) + 0.003))
+    const text = lines.join('\n')
+    if (text === printed) {
+      return
+    }
+    printed = text
+    paintTexture(map, () => {
+      context.fillStyle = '#fbfaf4'
+      context.fillRect(0, 0, 256, 160)
+      context.fillStyle = '#1f2a26'
+      context.textBaseline = 'top'
+      lines.forEach((line, index) => {
+        context.font = canvasFont(index === 0 ? 30 : 24, index === 0 ? 700 : 500)
+        context.fillText(line, 14, 12 + index * 34, 228)
+      })
+    })
+  }
+}
+
+export function createDrinkVisual(parent: THREE.Object3D, facing: 1 | -1 = 1) {
   const root = new THREE.Group()
   parent.add(root)
   const bodies = new Map<CupKind, ReturnType<typeof createCupBody>>()
-  const target = new THREE.Mesh(
-    new THREE.TorusGeometry(1, 0.012, 5, 48),
-    new THREE.MeshBasicMaterial({ color: '#d69629', transparent: true, opacity: 0.95 }),
-  )
-  target.rotation.x = Math.PI / 2
-  target.renderOrder = 2
-  root.add(target)
+  const updateSticker = createSticker(root, facing)
   const layers = Array.from({ length: 9 }, () => {
     const mesh = cylinder(root, 1, 1, 1, standard('#dfc29b'))
     return { mesh, vertices: new Float32Array(mesh.geometry.getAttribute('position').array), height: -1, fill: -1 }
@@ -181,12 +203,7 @@ export function createDrinkVisual(parent: THREE.Object3D) {
     const kindChanged = previousKind !== view.kind
     previousKind = view.kind
     const scale = cupScale(view.kind)
-    target.visible = view.targetFill !== undefined && !view.lidded
-
-    if (view.targetFill !== undefined) {
-      target.position.y = cupFillY(view.kind, view.targetFill)
-      target.scale.setScalar(cupRadius(view.kind, target.position.y) + 0.005)
-    }
+    updateSticker(view.kind, view.sticker)
 
     const { floor, height: rim } = CUP_DIMENSIONS[view.kind]
     let height = floor + 0.008
@@ -297,13 +314,37 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
   }
 
   const label = blender?.label ?? box(root, radius * 0.85, height * 0.2, 0.005, cream, 0, height * 0.45, radius)
+  const bottom = blender ? 0.032 : 0.007
+  const etched = standard('#3b4a43')
+  const ticks: THREE.Mesh[] = []
+  let etchedFills = ''
+
+  /** Lines etched on the inside of a pitcher, both faces, so the player reads them from either side. */
+  function etch(fills: number[]) {
+    const key = fills.join('|')
+    if (key === etchedFills) {
+      return
+    }
+    etchedFills = key
+    for (const tick of ticks.splice(0)) {
+      root.remove(tick)
+      tick.geometry.dispose()
+    }
+    for (const fill of fills) {
+      const wall = radius * (0.8 + 0.2 * fill) + 0.001
+      for (const side of [1, -1]) {
+        const tick = box(root, 0.04, 0.003, 0.002, etched, 0, bottom + fill * (height - 0.04), side * wall)
+        ticks.push(tick)
+      }
+    }
+  }
 
   function update(
     view: VesselVisualState,
-    options: { lidded?: boolean; stirring?: boolean; labelled?: boolean; now: number },
+    options: { lidded?: boolean; stirring?: boolean; labelled?: boolean; marks?: number[]; now: number },
   ) {
+    etch(options.marks ?? [])
     const liquidHeight = Math.max(0.001, view.fill * (height - 0.04))
-    const bottom = blender ? 0.032 : 0.007
     liquid.visible = view.fill > 0
     liquid.scale.y = liquidHeight
     liquid.position.y = bottom + liquidHeight / 2

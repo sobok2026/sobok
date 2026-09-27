@@ -16,12 +16,24 @@ export type PosAction =
   | { type: 'pos-pay'; id: string; method: 'cash' | 'card'; tendered: number }
   | { type: 'pos-void'; id: string }
 
+export type ReceiptAction =
+  | {
+      type: 'pos-cash-receipt'
+      transactionId: string
+      id: string
+      kind: 'personal' | 'business' | 'unissued'
+      lastFour: string | null
+    }
+  | { type: 'pos-print-receipt'; transactionId: string }
+
 export type Action =
   | PosAction
+  | ReceiptAction
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }
   | { type: 'prep-use' }
   | { type: 'prep-confirm'; observation?: { id: string; value: boolean } }
+  | { type: 'prep-choose'; key: string; value: string }
   | { type: 'discard-preparation' }
   | { type: 'wash-tool' }
   | { type: 'wash-use' }
@@ -57,6 +69,10 @@ export type Action =
   | { type: 'discard-cold-brew' }
   | { type: 'place-cup'; station: StationId }
   | { type: 'pick-cup'; station: StationId }
+  | { type: 'place-vessel'; station: StationId }
+  | { type: 'pick-vessel'; station: StationId; vessel: string }
+  | { type: 'attach-sticker' }
+  | { type: 'choose'; station: StationId; key: string; value: string }
   | { type: 'tool'; station: StationId }
   | { type: 'use-start'; station: StationId }
   | { type: 'confirm-craft'; station: StationId; observation?: { id: string; value: boolean } }

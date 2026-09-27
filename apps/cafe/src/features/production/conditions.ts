@@ -24,6 +24,7 @@ export function observationStep(step: WorkStep, session: ProductionState): WorkS
     requiresMixedMaterialId: null,
     inputRequirements: null,
     requiresReusableTool: false,
+    choices: [],
   }
 }
 
@@ -32,6 +33,7 @@ export function skipObservedSteps(steps: WorkStep[], session: ProductionState) {
     session.cursor++
     session.progress = 0
     session.stepStart = null
+    session.choices = {}
   }
 }
 

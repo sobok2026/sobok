@@ -3,6 +3,7 @@ import { recipeVariant } from '../../content/recipe-catalog'
 import { planRecipe } from '../../content/recipe-plan'
 import { preparationStockOutput } from '../../content/stock-amounts'
 import type { ColdBrew } from '../../simulation/state'
+import { type Judgement, MEASURE_TOLERANCE } from '../production/runtime'
 
 const { variant } = recipeVariant(recipeCatalog, 'cold-brew-batch', 'standard')
 const operations = planRecipe(variant, { container: 'standard-cup', service: 'takeaway' }).map((step) => step.operation)
@@ -42,7 +43,8 @@ export const COLD_BREW_STEPS = [
     unit: 'lb',
     target: COLD_BREW_BEANS,
     rate: COLD_BREW_BEANS / 4,
-    tolerance: 0,
+    // One bag holds one batch, so the bag itself stops the pour.
+    cap: COLD_BREW_BEANS,
     tool: 'bean-bag' as ColdBrewTool,
   },
   {
@@ -50,13 +52,22 @@ export const COLD_BREW_STEPS = [
     unit: 'L',
     target: COLD_BREW_WATER,
     rate: COLD_BREW_WATER / 4,
-    tolerance: 0,
+    cap: COLD_BREW_WATER * 1.5,
     tool: 'water-jug' as ColdBrewTool,
   },
-  { label: `${COLD_BREW_HOURS}시간 추출 시작`, unit: '회', target: 1, rate: 0, tolerance: 0, tool: null },
+  { label: '추출 시작', unit: '회', target: 1, rate: 0, cap: 1, tool: null },
 ] as const
 
 export const coldBrewStep = (brew: ColdBrew) => COLD_BREW_STEPS[brew.step]
+
+/** Measured like drinks: within the shared tolerance passes, less continues, more is a spoiled batch. */
+export function judgeColdBrew(brew: ColdBrew): Judgement {
+  const step = coldBrewStep(brew)
+  if (brew.progress + 1e-9 < step.target * (1 - MEASURE_TOLERANCE)) {
+    return 'under'
+  }
+  return brew.progress - 1e-9 > step.target * (1 + MEASURE_TOLERANCE) ? 'over' : 'pass'
+}
 
 export function createColdBrew(): ColdBrew {
   return {

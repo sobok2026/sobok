@@ -128,6 +128,9 @@ export function NumericPad({
   decimal = false,
   money = false,
   disabled = false,
+  maxLength = 8,
+  shortcut = '00',
+  preserveLeadingZeros = false,
 }: {
   value: string
   onChange: (value: string) => void
@@ -135,10 +138,13 @@ export function NumericPad({
   decimal?: boolean
   money?: boolean
   disabled?: boolean
+  maxLength?: number
+  shortcut?: '00' | '010'
+  preserveLeadingZeros?: boolean
 }) {
   const append = (key: string) => {
-    const next = appendKey(value, key)
-    if (next.length <= 8 && /^\d*(\.5)?$/.test(next)) {
+    const next = preserveLeadingZeros ? value + key : appendKey(value, key)
+    if (next.length <= maxLength && /^\d*(\.5)?$/.test(next)) {
       onChange(next)
     }
   }
@@ -202,11 +208,11 @@ export function NumericPad({
       </PosButton>
       <PosButton
         tone="key"
-        onClick={() => append(decimal ? '.5' : '00')}
+        onClick={() => append(decimal ? '.5' : shortcut)}
         disabled={disabled}
         className="col-span-2 text-xl"
       >
-        {decimal ? '.5' : '00'}
+        {decimal ? '.5' : shortcut}
       </PosButton>
       {money &&
         [1000, 10000, 50000].map((amount, index) => (

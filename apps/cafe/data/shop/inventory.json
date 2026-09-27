@@ -1,6 +1,20 @@
 {
   "note": "게임 재고 운영값이다. 입고 규격·가격·초기 양·표현색을 포함하며 실제 매장 규격을 의미하지 않는다. quality.json에 확인된 보관·기한 기준이 있는 재료는 이 파일에 해당 값을 중복 선언하지 않는다. 그 외 재료의 보관 장소와 기한은 게임 운영값으로 이 파일에 모두 명시한다. utility는 이 목록에 없고 재고를 소비하지 않는다. prepared 및 생산 연결 여부는 원문 materials.json만 따른다.",
   "materials": {
+    "low-fat-milk": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 3000,
+      "startingAmount": 0,
+      "color": "#f2edde",
+      "visualGroup": "milk",
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      }
+    },
     "beans": {
       "stockUnit": "g",
       "unit": "g",
@@ -46,7 +60,7 @@
       "color": "#b68e65",
       "visualGroup": "powder"
     },
-    "mochaPowder": {
+    "mocha-powder": {
       "stockUnit": "pack",
       "unit": "봉",
       "pack": 1,
@@ -78,7 +92,7 @@
       "color": "#e8d6b5",
       "visualGroup": "foam"
     },
-    "coldBrew": {
+    "cold-brew": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 3000,
@@ -96,7 +110,7 @@
       "color": "#ece4c9",
       "visualGroup": "sauce"
     },
-    "hojichaPowder": {
+    "hojicha-powder": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -119,7 +133,7 @@
       "color": "#bf8b58",
       "visualGroup": "tea"
     },
-    "matchaPowder": {
+    "matcha-powder": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -235,7 +249,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "더블-블랙-티-베이스": {
+    "double-black-tea-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -249,7 +263,7 @@
       "color": "#a27143",
       "visualGroup": "tea"
     },
-    "알로에-토핑": {
+    "aloe-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -263,7 +277,7 @@
       "color": "#c6d6b4",
       "visualGroup": "other"
     },
-    "쫀득-펄-토핑": {
+    "chewy-pearl-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -277,7 +291,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "콜드-폼": {
+    "cold-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 390,
@@ -291,7 +305,7 @@
       "color": "#f1e9d7",
       "visualGroup": "foam"
     },
-    "카스텔라-토핑": {
+    "castella-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -305,7 +319,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "크림향-베이스": {
+    "cream-flavored-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -319,11 +333,11 @@
       "color": "#efe5d1",
       "visualGroup": "sauce"
     },
-    "일반-휘핑-크림": {
+    "whipped-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
-      "price": 0,
+      "price": 6000,
       "storage": "fridge",
       "lifetime": {
         "amount": 24,
@@ -331,9 +345,10 @@
       },
       "startingAmount": 0,
       "color": "#f4ecdc",
-      "visualGroup": "foam"
+      "visualGroup": "foam",
+      "purchasedPrepared": true
     },
-    "유자-v-베이스": {
+    "yuja-v-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -347,7 +362,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "앱솔루트-보드카": {
+    "absolut-vodka": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -361,7 +376,7 @@
       "color": "#e3ece4",
       "visualGroup": "water"
     },
-    "레모네이드": {
+    "lemonade": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -375,7 +390,7 @@
       "color": "#eaca75",
       "visualGroup": "sauce"
     },
-    "화이트-뱅쇼-시럽": {
+    "white-vin-chaud-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -389,7 +404,7 @@
       "color": "#e8db9e",
       "visualGroup": "sauce"
     },
-    "딸기-소스": {
+    "strawberry-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -403,7 +418,7 @@
       "color": "#c8738e",
       "visualGroup": "sauce"
     },
-    "동결건조-딸기-그릿": {
+    "freeze-dried-strawberry-grits": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -417,7 +432,7 @@
       "color": "#c8738e",
       "visualGroup": "other"
     },
-    "텐커레이-넘버-텐": {
+    "tanqueray-number-ten": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 750,
@@ -431,7 +446,7 @@
       "color": "#e3ece4",
       "visualGroup": "water"
     },
-    "드라이-버무스": {
+    "dry-vermouth": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -445,7 +460,7 @@
       "color": "#e4d9b3",
       "visualGroup": "sauce"
     },
-    "그린올리브": {
+    "green-olive": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -459,7 +474,7 @@
       "color": "#91a466",
       "visualGroup": "other"
     },
-    "에반-윌리엄스-블랙-위스키": {
+    "evan-williams-black-whiskey": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -473,7 +488,7 @@
       "color": "#b1814b",
       "visualGroup": "sauce"
     },
-    "바닐라-크림-베이스": {
+    "vanilla-cream-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -487,7 +502,7 @@
       "color": "#f4ead6",
       "visualGroup": "milk"
     },
-    "리저브-다크-초콜릿-소스": {
+    "reserve-dark-chocolate-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 320,
@@ -501,7 +516,7 @@
       "color": "#503527",
       "visualGroup": "sauce"
     },
-    "아페롤": {
+    "aperol": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -515,7 +530,7 @@
       "color": "#dc9651",
       "visualGroup": "sauce"
     },
-    "칸티-프로세코": {
+    "canti-prosecco": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -529,7 +544,7 @@
       "color": "#e4d9b3",
       "visualGroup": "sauce"
     },
-    "리저브-다크-초콜릿-파우더": {
+    "reserve-dark-chocolate-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 200,
@@ -543,7 +558,7 @@
       "color": "#543c2d",
       "visualGroup": "powder"
     },
-    "레몬-웨지": {
+    "lemon-wedge": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -557,7 +572,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "위스키": {
+    "whiskey": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -571,7 +586,7 @@
       "color": "#b1814b",
       "visualGroup": "sauce"
     },
-    "앙고스투라-비터": {
+    "angostura-bitters": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -585,7 +600,7 @@
       "color": "#8e5a43",
       "visualGroup": "sauce"
     },
-    "블루-라임-베이스": {
+    "blue-lime-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -599,7 +614,7 @@
       "color": "#8cb4d5",
       "visualGroup": "sauce"
     },
-    "일품-진로": {
+    "ilpoom-jinro": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -613,7 +628,7 @@
       "color": "#e3ece4",
       "visualGroup": "water"
     },
-    "쿼드-스트랭스-히비스커스-티": {
+    "quad-strength-hibiscus-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -627,7 +642,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "리저브-위스키향-시럽": {
+    "reserve-whiskey-flavored-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -641,7 +656,7 @@
       "color": "#b1814b",
       "visualGroup": "sauce"
     },
-    "위스키-인퓨즈드-콜드브루": {
+    "whiskey-infused-cold-brew": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -655,7 +670,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "히비스커스-티백": {
+    "hibiscus-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -669,7 +684,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "바-믹사토-말차-샷": {
+    "bar-mixato-matcha-shot": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 100,
@@ -683,7 +698,7 @@
       "color": "#6c8a48",
       "visualGroup": "tea"
     },
-    "오미자-베이스": {
+    "omija-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -697,7 +712,7 @@
       "color": "#ae556b",
       "visualGroup": "sauce"
     },
-    "유스베리-티-베이스": {
+    "youthberry-tea-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -711,7 +726,7 @@
       "color": "#c97b91",
       "visualGroup": "tea"
     },
-    "애플민트": {
+    "apple-mint": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -725,7 +740,7 @@
       "color": "#6c8a48",
       "visualGroup": "other"
     },
-    "라임-웨지": {
+    "lime-wedge": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -739,7 +754,7 @@
       "color": "#aac064",
       "visualGroup": "other"
     },
-    "민트향시럽r": {
+    "mint-flavored-syrup-r": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -753,7 +768,7 @@
       "color": "#c8d7b1",
       "visualGroup": "sauce"
     },
-    "라임-베이스": {
+    "lime-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -767,7 +782,7 @@
       "color": "#a8bf6d",
       "visualGroup": "sauce"
     },
-    "유자진저-베이스": {
+    "yuja-ginger-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -781,7 +796,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "바카디-카르타-블랑카": {
+    "bacardi-carta-blanca": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -795,7 +810,7 @@
       "color": "#e3ece4",
       "visualGroup": "water"
     },
-    "유스베리-티백": {
+    "youthberry-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -809,7 +824,7 @@
       "color": "#c97b91",
       "visualGroup": "tea"
     },
-    "바닐라빈-시럽": {
+    "vanilla-bean-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -823,7 +838,7 @@
       "color": "#e6d7b7",
       "visualGroup": "sauce"
     },
-    "리저브-초코-파우더": {
+    "reserve-choco-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -837,7 +852,7 @@
       "color": "#694832",
       "visualGroup": "powder"
     },
-    "코코넛-믹스": {
+    "coconut-mix": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 2000,
@@ -851,7 +866,7 @@
       "color": "#f0ead8",
       "visualGroup": "milk"
     },
-    "통팥-베이스": {
+    "whole-red-bean-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -865,7 +880,7 @@
       "color": "#885950",
       "visualGroup": "sauce"
     },
-    "돌체-소스": {
+    "dolce-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -879,7 +894,7 @@
       "color": "#eddcb6",
       "visualGroup": "sauce"
     },
-    "요거트-파우더": {
+    "yogurt-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -893,7 +908,7 @@
       "color": "#eee7d6",
       "visualGroup": "powder"
     },
-    "블루베리-베이스": {
+    "blueberry-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -907,7 +922,7 @@
       "color": "#8766a5",
       "visualGroup": "sauce"
     },
-    "코코넛-워터": {
+    "coconut-water": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -921,7 +936,7 @@
       "color": "#e9e8d9",
       "visualGroup": "water"
     },
-    "더블-스트랭스-조이풀-메들리-티": {
+    "double-strength-joyful-medley-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -935,7 +950,7 @@
       "color": "#b39758",
       "visualGroup": "tea"
     },
-    "애프리콧-소스": {
+    "apricot-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -949,7 +964,7 @@
       "color": "#efa86b",
       "visualGroup": "sauce"
     },
-    "딸기-리프레셔-베이스": {
+    "strawberry-refresher-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -963,7 +978,7 @@
       "color": "#c8738e",
       "visualGroup": "sauce"
     },
-    "피치-베이스": {
+    "peach-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -977,7 +992,7 @@
       "color": "#e4b39a",
       "visualGroup": "sauce"
     },
-    "피치-망고-용과-토핑": {
+    "peach-mango-dragon-fruit-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -991,7 +1006,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "조이풀-메들리-필로우-티백": {
+    "joyful-medley-pillow-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -1005,7 +1020,7 @@
       "color": "#a4ad72",
       "visualGroup": "tea"
     },
-    "코코넛-베이스": {
+    "coconut-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1019,7 +1034,7 @@
       "color": "#f1eadb",
       "visualGroup": "sauce"
     },
-    "허니-자몽-소스": {
+    "honey-grapefruit-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1033,7 +1048,7 @@
       "color": "#df996b",
       "visualGroup": "sauce"
     },
-    "제로-클래식-시럽": {
+    "zero-classic-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1047,7 +1062,7 @@
       "color": "#ece4c9",
       "visualGroup": "sauce"
     },
-    "스타벅스-레모네이드": {
+    "starbucks-lemonade": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1061,7 +1076,7 @@
       "color": "#eaca75",
       "visualGroup": "sauce"
     },
-    "레몬-코코-젤리": {
+    "lemon-coco-jelly": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1075,7 +1090,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "씨솔트-카라멜-드리즐": {
+    "sea-salt-caramel-drizzle": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1089,7 +1104,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "쏠티-클라우드-폼": {
+    "salty-cloud-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 420,
@@ -1103,7 +1118,7 @@
       "color": "#f4ecdc",
       "visualGroup": "foam"
     },
-    "씨솔트-카라멜-베이스": {
+    "sea-salt-caramel-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1117,7 +1132,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "파인애플-소스": {
+    "pineapple-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1131,7 +1146,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "블루-스피룰리나-파우더": {
+    "blue-spirulina-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1145,7 +1160,7 @@
       "color": "#54a9c6",
       "visualGroup": "powder"
     },
-    "스노우-폼-파우더": {
+    "snow-foam-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1159,7 +1174,7 @@
       "color": "#eee7d6",
       "visualGroup": "powder"
     },
-    "돌체-시럽": {
+    "dolce-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1173,7 +1188,7 @@
       "color": "#eddcb6",
       "visualGroup": "sauce"
     },
-    "체리-자두-베이스": {
+    "cherry-plum-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1187,7 +1202,7 @@
       "color": "#ae556b",
       "visualGroup": "sauce"
     },
-    "더블-스트랭스-블랙-티": {
+    "double-strength-black-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1201,7 +1216,7 @@
       "color": "#a27143",
       "visualGroup": "tea"
     },
-    "딸기-베이스": {
+    "strawberry-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1215,7 +1230,7 @@
       "color": "#c8738e",
       "visualGroup": "sauce"
     },
-    "연유": {
+    "condensed-milk": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1229,7 +1244,7 @@
       "color": "#eee4ce",
       "visualGroup": "milk"
     },
-    "오트-밀크": {
+    "oat-milk": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1243,7 +1258,7 @@
       "color": "#e8deca",
       "visualGroup": "milk"
     },
-    "바닐라-시럽": {
+    "vanilla-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1257,7 +1272,7 @@
       "color": "#e6d7b7",
       "visualGroup": "sauce"
     },
-    "수박-베이스": {
+    "watermelon-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1271,7 +1286,7 @@
       "color": "#dc727a",
       "visualGroup": "sauce"
     },
-    "냉동-수박-다이스": {
+    "frozen-watermelon-dice": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1285,7 +1300,7 @@
       "color": "#dc727a",
       "visualGroup": "other"
     },
-    "초콜릿-땅콩-토핑": {
+    "chocolate-peanut-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1299,7 +1314,7 @@
       "color": "#705040",
       "visualGroup": "other"
     },
-    "베르가못-시럽": {
+    "bergamot-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1313,7 +1328,7 @@
       "color": "#d7c986",
       "visualGroup": "sauce"
     },
-    "화이트-모카-소스": {
+    "white-mocha-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1327,7 +1342,7 @@
       "color": "#eee5cb",
       "visualGroup": "sauce"
     },
-    "아이스-커피": {
+    "iced-coffee": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1341,7 +1356,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "프렌치-바닐라-시럽": {
+    "french-vanilla-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1355,7 +1370,7 @@
       "color": "#e6d7b7",
       "visualGroup": "sauce"
     },
-    "폼-베이스": {
+    "foam-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1369,7 +1384,7 @@
       "color": "#efe5d1",
       "visualGroup": "sauce"
     },
-    "팥앙금-찹쌀떡": {
+    "red-bean-paste-rice-cake": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -1383,7 +1398,7 @@
       "color": "#d6b66d",
       "visualGroup": "other"
     },
-    "팥앙금-찹쌀떡-반절": {
+    "half-red-bean-paste-rice-cake": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 2,
@@ -1397,7 +1412,7 @@
       "color": "#d6b66d",
       "visualGroup": "other"
     },
-    "우유-베이스-파우더": {
+    "milk-base-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1411,7 +1426,7 @@
       "color": "#eee7d6",
       "visualGroup": "powder"
     },
-    "그래놀라-믹스": {
+    "granola-mix": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1425,7 +1440,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "인절미-크림": {
+    "injeolmi-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 430,
@@ -1439,7 +1454,7 @@
       "color": "#e6d5b7",
       "visualGroup": "foam"
     },
-    "콩고물-파우더": {
+    "roasted-soybean-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1453,7 +1468,7 @@
       "color": "#b68e65",
       "visualGroup": "powder"
     },
-    "인절미-소스": {
+    "injeolmi-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1467,7 +1482,7 @@
       "color": "#bf8b58",
       "visualGroup": "sauce"
     },
-    "요거트-크림": {
+    "yogurt-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 400,
@@ -1481,7 +1496,7 @@
       "color": "#f4ecdc",
       "visualGroup": "foam"
     },
-    "뉴-자몽-망고-소스": {
+    "new-grapefruit-mango-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1495,7 +1510,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "애플망고-소스": {
+    "apple-mango-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1509,7 +1524,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "애플망고-베이스": {
+    "apple-mango-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1200,
@@ -1523,7 +1538,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "망고-별-토핑": {
+    "mango-star-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1537,7 +1552,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "키위-베이스": {
+    "kiwi-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1551,7 +1566,7 @@
       "color": "#8daf54",
       "visualGroup": "sauce"
     },
-    "크림-베이스": {
+    "cream-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1565,7 +1580,7 @@
       "color": "#efe5d1",
       "visualGroup": "sauce"
     },
-    "슈-폼": {
+    "choux-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 440,
@@ -1579,7 +1594,7 @@
       "color": "#ecdaa6",
       "visualGroup": "foam"
     },
-    "쿠키-토핑": {
+    "cookie-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1593,7 +1608,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "그린티-티백": {
+    "green-tea-bag-for-base": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -1607,7 +1622,7 @@
       "color": "#aaba73",
       "visualGroup": "tea"
     },
-    "더블-스트랭스-그린-티": {
+    "double-strength-green-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 2000,
@@ -1621,7 +1636,7 @@
       "color": "#aaba73",
       "visualGroup": "tea"
     },
-    "매실-베이스": {
+    "maesil-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1635,7 +1650,7 @@
       "color": "#a8bf6d",
       "visualGroup": "sauce"
     },
-    "리치-보바-토핑": {
+    "lychee-boba-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1649,7 +1664,7 @@
       "color": "#f0ead8",
       "visualGroup": "other"
     },
-    "헤이즐넛-시럽": {
+    "hazelnut-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -1663,7 +1678,7 @@
       "color": "#b89469",
       "visualGroup": "sauce"
     },
-    "그린-피스타치오-폼": {
+    "green-pistachio-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 460,
@@ -1677,7 +1692,7 @@
       "color": "#c5d6a4",
       "visualGroup": "foam"
     },
-    "카다이프-토핑": {
+    "kadayif-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1691,7 +1706,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "그린-피스타치오-소스": {
+    "green-pistachio-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1705,7 +1720,7 @@
       "color": "#6c8a48",
       "visualGroup": "sauce"
     },
-    "백도-파우더": {
+    "white-peach-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1719,7 +1734,7 @@
       "color": "#ecd1bd",
       "visualGroup": "powder"
     },
-    "밀크-푸딩": {
+    "milk-pudding": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1733,7 +1748,7 @@
       "color": "#eee4ce",
       "visualGroup": "milk"
     },
-    "피치-젤리": {
+    "peach-jelly": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1747,7 +1762,7 @@
       "color": "#e4b39a",
       "visualGroup": "other"
     },
-    "체리블라썸-스트로베리-소스": {
+    "cherry-blossom-strawberry-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -1761,7 +1776,7 @@
       "color": "#c8738e",
       "visualGroup": "sauce"
     },
-    "블라썸-초콜릿-토핑": {
+    "blossom-chocolate-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -1775,7 +1790,7 @@
       "color": "#705040",
       "visualGroup": "other"
     },
-    "고양이-귀-사인판": {
+    "cat-ear-sign": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -1789,7 +1804,7 @@
       "color": "#d6b66d",
       "visualGroup": "other"
     },
-    "슈크림-말차-베이스": {
+    "custard-cream-matcha-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 480,
@@ -1803,7 +1818,7 @@
       "color": "#a9bd78",
       "visualGroup": "tea"
     },
-    "초콜릿-폼": {
+    "chocolate-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 350,
@@ -1817,7 +1832,7 @@
       "color": "#9b745d",
       "visualGroup": "foam"
     },
-    "피스타치오-폼": {
+    "pistachio-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 420,
@@ -1831,7 +1846,7 @@
       "color": "#c5d6a4",
       "visualGroup": "foam"
     },
-    "로즈-휘핑-크림": {
+    "rose-whipped-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 660,
@@ -1845,7 +1860,7 @@
       "color": "#dfb2bc",
       "visualGroup": "foam"
     },
-    "얼-그레이-폼": {
+    "earl-grey-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 560,
@@ -1859,7 +1874,7 @@
       "color": "#bba98e",
       "visualGroup": "foam"
     },
-    "더블-스트랭스-캐모마일-티": {
+    "double-strength-chamomile-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -1873,7 +1888,7 @@
       "color": "#ddc178",
       "visualGroup": "tea"
     },
-    "에스프레소-크림": {
+    "espresso-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 980,
@@ -1887,7 +1902,7 @@
       "color": "#c6aa87",
       "visualGroup": "foam"
     },
-    "돌체-폼": {
+    "dolce-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 360,
@@ -1901,7 +1916,7 @@
       "color": "#e8d6b5",
       "visualGroup": "foam"
     },
-    "얼-그레이-밀크-티-베이스": {
+    "earl-grey-milk-tea-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 2000,
@@ -1915,7 +1930,7 @@
       "color": "#c9b596",
       "visualGroup": "milk"
     },
-    "쿼드-스트랭스-캐모마일-티": {
+    "quad-strength-chamomile-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -1929,7 +1944,7 @@
       "color": "#ddc178",
       "visualGroup": "tea"
     },
-    "뱅쇼-베이스-프리믹스": {
+    "vin-chaud-base-premix": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1020,
@@ -1943,7 +1958,7 @@
       "color": "#874551",
       "visualGroup": "sauce"
     },
-    "캐모마일-유스베리-티-베이스": {
+    "chamomile-youthberry-tea-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 2000,
@@ -1957,7 +1972,7 @@
       "color": "#c97b91",
       "visualGroup": "tea"
     },
-    "릴렉싱-베이스": {
+    "relaxing-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 4000,
@@ -1971,7 +1986,7 @@
       "color": "#bf8b58",
       "visualGroup": "sauce"
     },
-    "버터-스카치-커피-크림": {
+    "butterscotch-coffee-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 510,
@@ -1985,7 +2000,7 @@
       "color": "#c7a376",
       "visualGroup": "foam"
     },
-    "말차-클라우드-폼": {
+    "matcha-cloud-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 320,
@@ -1999,7 +2014,7 @@
       "color": "#a9bf80",
       "visualGroup": "foam"
     },
-    "멜론-소스": {
+    "melon-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1010,
@@ -2013,7 +2028,7 @@
       "color": "#bad388",
       "visualGroup": "sauce"
     },
-    "마롱-에스프레소-크림": {
+    "marron-espresso-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 510,
@@ -2027,7 +2042,7 @@
       "color": "#c6aa87",
       "visualGroup": "foam"
     },
-    "말차-글레이즈드-베이스": {
+    "matcha-glazed-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 400,
@@ -2041,7 +2056,7 @@
       "color": "#6c8a48",
       "visualGroup": "tea"
     },
-    "멜론-베이스": {
+    "melon-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1500,
@@ -2055,7 +2070,7 @@
       "color": "#bad388",
       "visualGroup": "sauce"
     },
-    "멜론-휘핑": {
+    "melon-whipped-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 480,
@@ -2069,7 +2084,7 @@
       "color": "#d8e4bc",
       "visualGroup": "foam"
     },
-    "마카다미아-베이스": {
+    "macadamia-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1600,
@@ -2083,7 +2098,7 @@
       "color": "#d7c19d",
       "visualGroup": "sauce"
     },
-    "퍼플-머스캣-토핑": {
+    "purple-muscat-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 1000,
@@ -2097,7 +2112,7 @@
       "color": "#9167ad",
       "visualGroup": "other"
     },
-    "클래식-밀크-티-베이스": {
+    "classic-milk-tea-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1040,
@@ -2111,7 +2126,7 @@
       "color": "#c9b596",
       "visualGroup": "milk"
     },
-    "위스키-크림": {
+    "whiskey-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 540,
@@ -2125,7 +2140,7 @@
       "color": "#e8d6b5",
       "visualGroup": "foam"
     },
-    "쏠티드-브라운-버터리-토핑": {
+    "salted-brown-buttery-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2139,7 +2154,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "피스타치오-소스": {
+    "pistachio-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2153,7 +2168,7 @@
       "color": "#6c8a48",
       "visualGroup": "sauce"
     },
-    "심플-시럽": {
+    "simple-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2167,7 +2182,7 @@
       "color": "#ece4c9",
       "visualGroup": "sauce"
     },
-    "로즈-파우더": {
+    "rose-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2181,7 +2196,7 @@
       "color": "#c8738e",
       "visualGroup": "powder"
     },
-    "루비-초콜릿-토핑": {
+    "ruby-chocolate-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2195,7 +2210,7 @@
       "color": "#d594a4",
       "visualGroup": "other"
     },
-    "핑크-자몽-베이스": {
+    "pink-grapefruit-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2209,7 +2224,7 @@
       "color": "#c8738e",
       "visualGroup": "sauce"
     },
-    "건-라임-토핑": {
+    "dried-lime-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2223,7 +2238,7 @@
       "color": "#91a466",
       "visualGroup": "other"
     },
-    "유자-배-베이스": {
+    "yuja-pear-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2237,7 +2252,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "캐모마일-티백": {
+    "chamomile-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2251,7 +2266,7 @@
       "color": "#ddc178",
       "visualGroup": "tea"
     },
-    "에스프레소-칩": {
+    "espresso-chips": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2265,7 +2280,7 @@
       "color": "#694837",
       "visualGroup": "other"
     },
-    "시나몬-파우더": {
+    "cinnamon-powder": {
       "stockUnit": "tap",
       "unit": "톡",
       "pack": 100,
@@ -2279,7 +2294,7 @@
       "color": "#b68e65",
       "visualGroup": "powder"
     },
-    "브륄레-토핑": {
+    "brulee-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2293,7 +2308,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "카라멜-드리즐": {
+    "caramel-drizzle": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2307,7 +2322,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "돌체-스파이스-시럽": {
+    "dolce-spice-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2321,7 +2336,7 @@
       "color": "#cda467",
       "visualGroup": "sauce"
     },
-    "버터-스카치-소스": {
+    "butterscotch-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2335,7 +2350,7 @@
       "color": "#cda467",
       "visualGroup": "sauce"
     },
-    "마롱-바닐라-시럽": {
+    "marron-vanilla-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2349,7 +2364,7 @@
       "color": "#b89469",
       "visualGroup": "sauce"
     },
-    "트리플-베리-소스": {
+    "triple-berry-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2363,7 +2378,7 @@
       "color": "#a95d81",
       "visualGroup": "sauce"
     },
-    "트리플-베리-폼": {
+    "triple-berry-foam": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -2377,7 +2392,7 @@
       "color": "#c995b0",
       "visualGroup": "foam"
     },
-    "프렌즈-초콜릿-토핑": {
+    "friends-chocolate-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2391,7 +2406,7 @@
       "color": "#705040",
       "visualGroup": "other"
     },
-    "블랙-아이스티": {
+    "black-iced-tea": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2405,7 +2420,7 @@
       "color": "#a27143",
       "visualGroup": "tea"
     },
-    "얼-그레이-티백": {
+    "earl-grey-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2419,7 +2434,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "홀리데이-캐모마일-티-파우치": {
+    "holiday-chamomile-tea-pouch": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2433,7 +2448,7 @@
       "color": "#ddc178",
       "visualGroup": "tea"
     },
-    "크리스마스-뱅쇼-베이스": {
+    "christmas-vin-chaud-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2447,7 +2462,7 @@
       "color": "#874551",
       "visualGroup": "sauce"
     },
-    "뱅쇼-과일-토핑": {
+    "vin-chaud-fruit-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2461,7 +2476,7 @@
       "color": "#dab374",
       "visualGroup": "other"
     },
-    "허니-캐모마일-시럽": {
+    "honey-chamomile-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2475,7 +2490,7 @@
       "color": "#d7c986",
       "visualGroup": "sauce"
     },
-    "옐로우-파우더": {
+    "yellow-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2489,7 +2504,7 @@
       "color": "#e1c964",
       "visualGroup": "powder"
     },
-    "로즈마리": {
+    "rosemary": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -2503,7 +2518,7 @@
       "color": "#718f5e",
       "visualGroup": "other"
     },
-    "핑크-리치-보바": {
+    "pink-lychee-boba": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2517,7 +2532,7 @@
       "color": "#c8738e",
       "visualGroup": "other"
     },
-    "레몬그라스-리치-베이스": {
+    "lemongrass-lychee-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2531,7 +2546,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "월리-체리-소스": {
+    "wally-cherry-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2545,7 +2560,7 @@
       "color": "#ae556b",
       "visualGroup": "sauce"
     },
-    "블루-바닐라-푸딩": {
+    "blue-vanilla-pudding": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2559,7 +2574,7 @@
       "color": "#a9d0e4",
       "visualGroup": "other"
     },
-    "월리-체리-드리즐": {
+    "wally-cherry-drizzle": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2573,7 +2588,7 @@
       "color": "#ae556b",
       "visualGroup": "other"
     },
-    "월리-사인판": {
+    "wally-sign": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -2587,7 +2602,7 @@
       "color": "#d6b66d",
       "visualGroup": "other"
     },
-    "무지방-우유": {
+    "nonfat-milk": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2601,7 +2616,7 @@
       "color": "#f2edde",
       "visualGroup": "milk"
     },
-    "칸탈로프-멜론-청크": {
+    "cantaloupe-melon-chunks": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2615,7 +2630,7 @@
       "color": "#efa86b",
       "visualGroup": "other"
     },
-    "멜론-시럽": {
+    "melon-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2629,7 +2644,7 @@
       "color": "#bad388",
       "visualGroup": "sauce"
     },
-    "마롱-베이스": {
+    "marron-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2643,7 +2658,7 @@
       "color": "#d7c19d",
       "visualGroup": "sauce"
     },
-    "고객-선택-시럽": {
+    "customer-selected-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2657,7 +2672,7 @@
       "color": "#bf8b58",
       "visualGroup": "sauce"
     },
-    "홍차-티백": {
+    "black-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2671,7 +2686,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "허브-티-티백": {
+    "herbal-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2685,7 +2700,7 @@
       "color": "#a4ad72",
       "visualGroup": "tea"
     },
-    "화이트-티-티백": {
+    "white-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2699,7 +2714,7 @@
       "color": "#d9d2a5",
       "visualGroup": "tea"
     },
-    "녹차-티백": {
+    "green-tea-bag-for-iced-tea": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -2713,7 +2728,7 @@
       "color": "#aaba73",
       "visualGroup": "tea"
     },
-    "오트사이드": {
+    "oatside": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2727,7 +2742,7 @@
       "color": "#e8deca",
       "visualGroup": "milk"
     },
-    "망고패션-베이스": {
+    "mango-passion-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2741,7 +2756,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "화이트피치-청크": {
+    "white-peach-chunks": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2755,7 +2770,7 @@
       "color": "#ecd1bd",
       "visualGroup": "other"
     },
-    "망고-용과-토핑": {
+    "mango-dragon-fruit-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2769,7 +2784,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "로스티드-마카다미아향-시럽": {
+    "roasted-macadamia-flavored-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2783,7 +2798,7 @@
       "color": "#b89469",
       "visualGroup": "sauce"
     },
-    "마카다미아-크런치-토핑": {
+    "macadamia-crunch-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2797,7 +2812,7 @@
       "color": "#b68e65",
       "visualGroup": "other"
     },
-    "화이트모카-시럽": {
+    "white-mocha-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2811,7 +2826,7 @@
       "color": "#eee5cb",
       "visualGroup": "sauce"
     },
-    "커피향-베이스": {
+    "coffee-flavored-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2825,7 +2840,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "흑당-시럽": {
+    "brown-sugar-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2839,7 +2854,7 @@
       "color": "#694731",
       "visualGroup": "sauce"
     },
-    "솔티드-카라멜-시럽": {
+    "salted-caramel-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -2853,7 +2868,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "자몽-망고-소스": {
+    "grapefruit-mango-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2867,7 +2882,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "그린-머스캣-베이스": {
+    "green-muscat-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2881,7 +2896,7 @@
       "color": "#a9c967",
       "visualGroup": "sauce"
     },
-    "퍼플-머스캣-젤리": {
+    "purple-muscat-jelly": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2895,7 +2910,7 @@
       "color": "#9167ad",
       "visualGroup": "other"
     },
-    "화이트-펄-토핑": {
+    "white-pearl-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2909,7 +2924,7 @@
       "color": "#f0ead8",
       "visualGroup": "other"
     },
-    "자몽-쌕": {
+    "grapefruit-pulp": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2923,7 +2938,7 @@
       "color": "#df996b",
       "visualGroup": "other"
     },
-    "패션-탱고-티": {
+    "passion-tango-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2937,7 +2952,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "망고-패션-프루트-주스": {
+    "mango-passion-fruit-juice": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2951,7 +2966,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "파인코코-베이스": {
+    "pineapple-coconut-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2965,7 +2980,7 @@
       "color": "#e7bc59",
       "visualGroup": "sauce"
     },
-    "동결건조-망고-용과": {
+    "freeze-dried-mango-dragon-fruit": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -2979,7 +2994,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "토닉-워터": {
+    "tonic-water": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -2993,7 +3008,7 @@
       "color": "#e9e8d9",
       "visualGroup": "water"
     },
-    "잉글리쉬-브렉퍼스트-티백": {
+    "english-breakfast-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3007,7 +3022,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "프라푸치노-로스트-파우더": {
+    "frappuccino-roast-powder": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -3021,7 +3036,7 @@
       "color": "#694c39",
       "visualGroup": "powder"
     },
-    "폰세카-타우니-포트": {
+    "fonseca-tawny-port": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -3035,7 +3050,7 @@
       "color": "#8e5a43",
       "visualGroup": "sauce"
     },
-    "레드-뱅쇼-베이스": {
+    "red-vin-chaud-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3049,7 +3064,7 @@
       "color": "#874551",
       "visualGroup": "sauce"
     },
-    "허브-스파이스-티백": {
+    "herbal-spice-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3063,7 +3078,7 @@
       "color": "#a4ad72",
       "visualGroup": "tea"
     },
-    "하프-오렌지-슬라이스": {
+    "half-orange-slice": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3077,7 +3092,7 @@
       "color": "#e3a148",
       "visualGroup": "other"
     },
-    "레몬-슬라이스": {
+    "lemon-slice": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3091,7 +3106,7 @@
       "color": "#d8b44e",
       "visualGroup": "other"
     },
-    "화이트-상그리아-베이스": {
+    "white-sangria-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3105,7 +3120,7 @@
       "color": "#e8db9e",
       "visualGroup": "sauce"
     },
-    "복숭아-소스": {
+    "peach-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3119,11 +3134,11 @@
       "color": "#e4b39a",
       "visualGroup": "sauce"
     },
-    "프라푸치노-로스트": {
+    "frappuccino-roast": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
-      "price": 0,
+      "price": 6000,
       "storage": "fridge",
       "lifetime": {
         "amount": 24,
@@ -3131,9 +3146,10 @@
       },
       "startingAmount": 0,
       "color": "#634630",
-      "visualGroup": "coffee"
+      "visualGroup": "coffee",
+      "purchasedPrepared": true
     },
-    "커피-베이스": {
+    "coffee-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3147,7 +3163,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "말차-글레이즈드-소스": {
+    "matcha-glazed-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3161,7 +3177,7 @@
       "color": "#6c8a48",
       "visualGroup": "tea"
     },
-    "베르가못-크림": {
+    "bergamot-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -3175,7 +3191,7 @@
       "color": "#e8d6b5",
       "visualGroup": "foam"
     },
-    "스노우-토핑": {
+    "snow-topping": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -3189,7 +3205,7 @@
       "color": "#f0ead8",
       "visualGroup": "other"
     },
-    "허니-레몬-소스": {
+    "honey-lemon-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3203,7 +3219,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "타임": {
+    "thyme": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -3217,7 +3233,7 @@
       "color": "#718f5e",
       "visualGroup": "other"
     },
-    "카라멜-시럽": {
+    "caramel-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -3231,7 +3247,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "카라멜-소스": {
+    "caramel-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3245,7 +3261,7 @@
       "color": "#d6b672",
       "visualGroup": "sauce"
     },
-    "화이트-초콜릿-모카-소스": {
+    "white-chocolate-mocha-sauce": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3259,7 +3275,7 @@
       "color": "#eee5cb",
       "visualGroup": "sauce"
     },
-    "오트앤유": {
+    "oat-and-u": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3273,7 +3289,7 @@
       "color": "#e8deca",
       "visualGroup": "milk"
     },
-    "에스프레소-휘핑-크림": {
+    "espresso-whipped-cream": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -3287,7 +3303,7 @@
       "color": "#c6aa87",
       "visualGroup": "foam"
     },
-    "초코-파우더": {
+    "choco-powder": {
       "stockUnit": "tap",
       "unit": "톡",
       "pack": 100,
@@ -3301,7 +3317,7 @@
       "color": "#694832",
       "visualGroup": "powder"
     },
-    "커피-프라푸치노-베이스": {
+    "coffee-frappuccino-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3315,7 +3331,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "크림-프라푸치노-베이스": {
+    "cream-frappuccino-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3329,7 +3345,7 @@
       "color": "#efe5d1",
       "visualGroup": "sauce"
     },
-    "프라푸치노-칩": {
+    "frappuccino-chips": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -3343,7 +3359,7 @@
       "color": "#694837",
       "visualGroup": "other"
     },
-    "시그니처-초콜릿-프리믹스": {
+    "signature-chocolate-premix": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3357,7 +3373,7 @@
       "color": "#503527",
       "visualGroup": "sauce"
     },
-    "리저브-바닐라-빈-시럽": {
+    "reserve-vanilla-bean-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -3371,7 +3387,7 @@
       "color": "#e6d7b7",
       "visualGroup": "sauce"
     },
-    "리저브-민트-시럽": {
+    "reserve-mint-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 100,
@@ -3385,7 +3401,7 @@
       "color": "#c8d7b1",
       "visualGroup": "sauce"
     },
-    "리저브-다크-모카-파우더": {
+    "reserve-dark-mocha-powder": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -3399,7 +3415,7 @@
       "color": "#543c2d",
       "visualGroup": "powder"
     },
-    "리저브-콜드-브루": {
+    "reserve-cold-brew": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3413,7 +3429,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "리저브-스위트-크림-베이스": {
+    "reserve-sweet-cream-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 490,
@@ -3427,7 +3443,7 @@
       "color": "#f4ead6",
       "visualGroup": "milk"
     },
-    "리저브-에스프레소-원두": {
+    "reserve-espresso-beans": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -3441,7 +3457,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "민트-잎": {
+    "mint-leaves": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 100,
@@ -3455,7 +3471,7 @@
       "color": "#6c8a48",
       "visualGroup": "other"
     },
-    "아이스크림": {
+    "ice-cream": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 1000,
@@ -3469,7 +3485,7 @@
       "color": "#eee4ce",
       "visualGroup": "milk"
     },
-    "티바나-패션-탱고-아이스-티백": {
+    "teavana-passion-tango-iced-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3483,7 +3499,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "블랙-아이스-티백": {
+    "black-iced-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3497,7 +3513,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "티바나-민트-블렌드-풀-리프-티백": {
+    "teavana-mint-blend-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3511,7 +3527,7 @@
       "color": "#b7c58e",
       "visualGroup": "tea"
     },
-    "더블-스트랭스-패션-탱고-티": {
+    "double-strength-passion-tango-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 2000,
@@ -3525,7 +3541,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "더블-스트랭스-민트-티": {
+    "double-strength-mint-tea": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
@@ -3539,7 +3555,7 @@
       "color": "#b7c58e",
       "visualGroup": "tea"
     },
-    "유자-베이스": {
+    "yuja-base": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3553,7 +3569,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "딸기-슬라이스": {
+    "strawberry-slice": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -3567,7 +3583,7 @@
       "color": "#c8738e",
       "visualGroup": "other"
     },
-    "진저에일-토닉워터": {
+    "ginger-ale-tonic-water": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3581,7 +3597,7 @@
       "color": "#dcc88c",
       "visualGroup": "water"
     },
-    "유기농-말차": {
+    "organic-matcha": {
       "stockUnit": "scoop",
       "unit": "스쿱",
       "pack": 80,
@@ -3595,7 +3611,7 @@
       "color": "#6c8a48",
       "visualGroup": "tea"
     },
-    "망고-패션후르츠-주스": {
+    "mango-passion-fruit-juice-for-banana": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3609,7 +3625,7 @@
       "color": "#d8b44e",
       "visualGroup": "sauce"
     },
-    "바나나": {
+    "banana": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3623,7 +3639,7 @@
       "color": "#e7cf87",
       "visualGroup": "other"
     },
-    "오늘의-커피": {
+    "todays-coffee": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3637,7 +3653,7 @@
       "color": "#705040",
       "visualGroup": "coffee"
     },
-    "고객이-선택한-향-시럽": {
+    "customer-selected-flavored-syrup": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 750,
@@ -3651,7 +3667,7 @@
       "color": "#bf8b58",
       "visualGroup": "sauce"
     },
-    "디카페인-에스프레소-로스트": {
+    "decaf-espresso-roast": {
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
@@ -3665,7 +3681,7 @@
       "color": "#634630",
       "visualGroup": "coffee"
     },
-    "잉글리쉬-브렉퍼스트-풀-리프-티백": {
+    "english-breakfast-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3679,7 +3695,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "얼-그레이-풀-리프-티백": {
+    "earl-grey-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3693,7 +3709,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "차이-풀-리프-티백": {
+    "chai-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3707,7 +3723,7 @@
       "color": "#946741",
       "visualGroup": "tea"
     },
-    "히비스커스-풀-리프-티백": {
+    "hibiscus-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3721,7 +3737,7 @@
       "color": "#b75875",
       "visualGroup": "tea"
     },
-    "캐모마일-풀-리프-티백": {
+    "chamomile-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3735,7 +3751,7 @@
       "color": "#ddc178",
       "visualGroup": "tea"
     },
-    "유스베리-풀-리프-티백": {
+    "youthberry-full-leaf-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3749,7 +3765,7 @@
       "color": "#c97b91",
       "visualGroup": "tea"
     },
-    "제주-유기-녹차-풀-리프-티백": {
+    "jeju-organic-full-leaf-green-tea-bag": {
       "stockUnit": "piece",
       "unit": "개",
       "pack": 20,
@@ -3763,7 +3779,7 @@
       "color": "#aaba73",
       "visualGroup": "tea"
     },
-    "두유": {
+    "soy-milk": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
@@ -3777,7 +3793,7 @@
       "color": "#e8deca",
       "visualGroup": "milk"
     },
-    "1-2-디카페인-에스프레소": {
+    "half-decaf-espresso": {
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,

@@ -61,7 +61,7 @@ export function advanceWork(work: WorkContext, dt: number) {
       !c ||
       c.id !== work.input.cupId ||
       c.craft.cursor !== work.input.step ||
-      c.craft.location !== work.input.station ||
+      op?.station !== work.input.station ||
       op?.id !== work.input.operation
     ) {
       work.input = null

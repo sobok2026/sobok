@@ -10,6 +10,21 @@ export const currentTicket = (state: {
     ? (state.sale.lines.find((line) => line.served < line.quantity) ?? null)
     : null
 
+/**
+ * Stickers the printer has put out for drinks not yet delivered and not yet on a cup. A remade drink gets a new
+ * sticker, so the count follows the paid order rather than a separate stock.
+ */
+export function pendingStickers(state: {
+  sale: { paidAt: number | null; lines: OrderLine[] } | null
+  cup: { craft: { sticker: boolean } } | null
+}) {
+  if (!state.sale || state.sale.paidAt === null) {
+    return 0
+  }
+  const open = state.sale.lines.reduce((sum, line) => sum + line.quantity - line.served, 0)
+  return Math.max(0, open - (state.cup?.craft.sticker ? 1 : 0))
+}
+
 export const itemPrice = (item: OrderItem) => recipeFor(item.recipe, item.size, item.service, item.customizations).price
 
 export const itemCustomizations = (item: OrderItem) =>
@@ -42,6 +57,12 @@ function itemKey(item: OrderItem) {
       .sort(),
     [...omitted].sort(),
     Object.entries(levels).sort(),
+    Object.entries(item.customizations.toppings).sort(),
+    item.customizations.roast,
+    item.customizations.javaChips,
+    item.customizations.milkAmount,
+    item.customizations.milkFoam,
+    item.customizations.milkTemperature,
   ])
 }
 

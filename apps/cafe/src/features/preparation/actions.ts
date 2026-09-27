@@ -8,6 +8,7 @@ import { decideObservation, skipObservedSteps } from '../production/conditions'
 import {
   applyProduction,
   beginProduction,
+  chooseSetting,
   confirmProduction,
   releaseProductionTool,
   workIsBusy,
@@ -36,7 +37,7 @@ export function handlePreparationActions(
   work: WorkContext,
   action: Extract<
     Action,
-    { type: 'start-preparation' | 'prep-tool' | 'prep-use' | 'prep-confirm' | 'discard-preparation' }
+    { type: 'start-preparation' | 'prep-tool' | 'prep-use' | 'prep-confirm' | 'prep-choose' | 'discard-preparation' }
   >,
 ) {
   const s = work.state
@@ -121,9 +122,17 @@ export function handlePreparationActions(
       if (!step || !reserveTool(work, prep, step)) {
         break
       }
-      beginProduction(work, prep, step, ownerFor(prep))
-      if (workIsBusy(work, ownerFor(prep))) {
+      if (beginProduction(work, prep, step, ownerFor(prep))) {
         prep.stage = 'processing'
+        skipObservedSteps(PREPARATIONS[prep.recipe].steps, prep)
+      }
+      break
+    }
+    case 'prep-choose': {
+      const prep = s.preparation
+      const step = prep?.stage === 'measuring' && !prep.fault ? preparationStep(prep) : undefined
+      if (prep && step) {
+        chooseSetting(prep, step, action.key, action.value)
       }
       break
     }

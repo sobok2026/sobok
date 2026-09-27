@@ -90,7 +90,8 @@ export const INGREDIENTS: Record<string, Ingredient> = Object.fromEntries(
           lifetime,
           id: material.id,
           name: material.name,
-          prepared: material.kind === 'prepared',
+          // Purchased finished packs follow the opening/label workflow, while source kind stays in the catalog.
+          prepared: material.kind === 'prepared' && !supply.purchasedPrepared,
           preparationId: material.preparationId,
         },
       ],

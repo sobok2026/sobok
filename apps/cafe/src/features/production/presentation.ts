@@ -1,8 +1,9 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import { recipeCatalog } from '../../content/catalog'
 import type { ResolvedOperation } from '../../content/recipe-plan'
-import type { RecipeTemperature } from '../../content/recipe-schema'
-import { continuousWork, readyWork } from './runtime'
+import type { RecipeAmount, RecipeTemperature } from '../../content/recipe-schema'
+import { toward } from '../../content/stations'
+import { continuousWork } from './runtime'
 import { itemName, portionNames } from './step-labels'
 import type { WorkStep } from './workflow'
 
@@ -176,57 +177,82 @@ export function operationNotes(step: WorkStep): string[] {
   return details
 }
 
-export function workProgressLabel(step: WorkStep, progress: number): string {
-  if (step.kind === 'condition') {
-    return '상태 확인 대기'
-  }
-  const op = step.operation
-  const goal = range(step.target, step.maximum ?? step.target)
-  const minimum = step.maximum === null ? ' 이상' : ''
-  if (step.mixesMaterialId) {
-    return readyWork(step, progress) ? '재혼합 완료' : '재혼합 전'
-  }
-  if (step.kind === 'machine') {
-    return `${formatDecimal(progress)} / ${goal}회${minimum}`
-  }
+const vesselLabel = (id: string) => (id === 'serving-cup' ? '컵' : nameOf(id))
 
-  if ('amount' in op && op.amount) {
-    const amount = op.amount
-    if (amount.kind === 'amount' || amount.kind === 'amount-range') {
-      return `${formatDecimal(progress)} / ${goal}${amount.unit}${minimum}`
-    }
-    if (amount.kind === 'count' || amount.kind === 'count-range') {
-      return `${formatDecimal(progress)} / ${goal}${countUnits[amount.unit]}${minimum}`
-    }
-    if (amount.kind === 'depth' || amount.kind === 'depth-range') {
-      return `${formatDecimal(progress)} / ${goal}mm${minimum}`
-    }
-    if (amount.kind === 'fraction') {
-      return `${formatDecimal(progress * amount.denominator)}/${amount.denominator} · 목표 ${amount.numerator}/${
-        amount.denominator
-      }`
-    }
-    return `${Math.floor(Math.min(1, progress / step.target) * 100)}%`
-  }
-
-  if (step.kind === 'confirm' || step.unit === '완료') {
-    return readyWork(step, progress) ? '동작 완료' : '동작 전'
-  }
-  return `${formatDecimal(progress)} / ${goal}${step.unit}${minimum}`
+function countUnit(amount: RecipeAmount) {
+  return amount.kind === 'count' || amount.kind === 'count-range' ? countUnits[amount.unit] : null
 }
 
-const numericAmounts = ['amount', 'amount-range', 'count', 'count-range', 'depth', 'depth-range', 'fraction']
+const addVerbs: Partial<Record<keyof typeof countUnits, string>> = {
+  pump: '펌핑',
+  scoop: '담기',
+  tap: '뿌리기',
+  turn: '두르기',
+  piece: '넣기',
+  pack: '넣기',
+  bag: '넣기',
+  drop: '떨어뜨리기',
+}
 
-/** The written target for steps whose progress reads only as a percentage, such as filling to a cup line. */
-export function workTargetCaption(step: WorkStep): string | null {
-  if (step.kind === 'condition' || step.kind === 'machine' || step.mixesMaterialId || !step.measurement) {
+/** What the hands do and to which vessel. The title never carries the amount; the recipe keeps that. */
+export function workTitle(step: WorkStep): string {
+  if (step.kind === 'condition' || step.mixesMaterialId) {
+    return step.label
+  }
+  const op = step.operation
+
+  switch (op.action) {
+    case 'add': {
+      const unit = op.amount.kind === 'count' || op.amount.kind === 'count-range' ? op.amount.unit : null
+      const verb = (unit && addVerbs[unit]) ?? (op.materialId === 'ice' ? '담기' : '붓기')
+      return `${vesselLabel(op.into)}에 ${nameOf(op.materialId)} ${verb}`
+    }
+    case 'transfer':
+      return `${vesselLabel(op.from)}에서 ${toward(vesselLabel(op.into))} 붓기`
+    case 'strain':
+      return `${vesselLabel(op.from)}에서 ${toward(vesselLabel(op.into))} 걸러 붓기`
+    case 'espresso':
+      return `${vesselLabel(op.into)}에 샷 추출`
+    case 'steam':
+      return op.vessel.startsWith('steam-pitcher') ? '우유 스팀' : `${vesselLabel(op.vessel)} 스팀`
+    case 'mix':
+      return `${vesselLabel(op.vessel)} 젓기`
+    case 'shake':
+      return `${vesselLabel(op.vessel)} 흔들기`
+    case 'swirl':
+      return `${vesselLabel(op.vessel)} 돌려 섞기`
+    case 'muddle':
+      return `${vesselLabel(op.vessel)} 으깨기`
+    case 'run-machine':
+      return `${nameOf(op.equipmentId)} 작동`
+    case 'serve':
+      return '제공 준비'
+    default:
+      return step.label
+  }
+}
+
+/**
+ * What the instrument in the player's hand reads: pumps pressed, shots pulled, millilitres on the jug, seconds
+ * held. Fill lines have no reading; the player reads them on the vessel. The target is never shown.
+ */
+export function workReading(step: WorkStep, progress: number): string | null {
+  if (step.kind === 'condition' || step.mixesMaterialId) {
     return null
   }
   const op = step.operation
-  if (!('amount' in op) || !op.amount || numericAmounts.includes(op.amount.kind)) {
-    return null
+  const amount = 'amount' in op ? op.amount : undefined
+
+  if (step.kind === 'count') {
+    return `${formatDecimal(progress)}${(amount && countUnit(amount)) ?? step.unit}`
   }
-  return `목표 · ${step.measurement}`
+  if (step.kind === 'mix') {
+    return step.unit === '초' ? `${formatDecimal(progress)}초` : null
+  }
+  if (step.kind === 'pour' && amount && (amount.kind === 'amount' || amount.kind === 'amount-range')) {
+    return `${formatDecimal(progress)}${amount.unit}`
+  }
+  return null
 }
 
 const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {
@@ -276,7 +302,10 @@ export function workUseLabel(step: WorkStep): string {
     if (step.operation.action === 'steep') {
       return '우리기 시작'
     }
-    return step.seconds === null ? '작동 확인' : '작동 시작'
+    return step.operation.action === 'steam' ? '스팀 시작' : '작동'
+  }
+  if (step.operation.action === 'run-machine') {
+    return '작동'
   }
 
   const action = actionLabels[step.operation.action] ?? '진행'

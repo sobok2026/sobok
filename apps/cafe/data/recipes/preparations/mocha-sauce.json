@@ -17,7 +17,7 @@
           "operations": [
             {
               "action": "add",
-              "materialId": "mochaPowder",
+              "materialId": "mocha-powder",
               "into": "mixing-pitcher",
               "amount": {
                 "kind": "count",

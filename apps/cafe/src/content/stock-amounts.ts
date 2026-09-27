@@ -253,6 +253,66 @@ export function vesselLineFill(
   return heightAtVolume(shape, volume) / shape.heightMillimeters
 }
 
+export type VesselMark = { label: string | null; fill: number }
+export type VesselProfile = { shape: StockGeometry; marks: VesselMark[]; cup: boolean }
+
+const sizeMarkLabels = { short: 'S', tall: 'T', grande: 'G', venti: 'V' } as const
+const lineMarkLabels: Record<string, string> = { lower: '하단', middle: '중간', upper: '상단', max: 'MAX' }
+const printedCupStyles: StockContext['cupStyle'][] = ['iced-plastic', 'iced-glass']
+
+/**
+ * The outline and the lines a player can see on a vessel. Cups show the lines printed for their own size and only
+ * on clear cold cups. A pitcher is one physical tool, so its size family is etched for every size at once.
+ * A recipe mark on a cup appears only when the step names it, because a cup carries no other marks.
+ */
+export function vesselProfile(
+  catalog: RecipeCatalog,
+  id: string,
+  context: StockContext,
+  namedMark?: string,
+): VesselProfile {
+  const model = requireValue(rules.vessels[id], `${id}: 게임 용기 형상이 없습니다.`)
+  const size = context.size ?? 'single'
+  const shape = geometry(id, size, context)
+  const fill = (volume: number) => heightAtVolume(shape, volume) / shape.heightMillimeters
+  const marks: VesselMark[] = []
+  const cup = !!model.cupStyles
+
+  if (!cup || printedCupStyles.includes(context.cupStyle)) {
+    for (const [line, volumes] of Object.entries(model.lines)) {
+      if (line === 'size' && !cup) {
+        for (const [key, label] of Object.entries(sizeMarkLabels)) {
+          const volume = volumes[key as keyof typeof sizeMarkLabels]
+          if (volume !== undefined && volume <= shape.capacityMilliliters) {
+            marks.push({ label, fill: fill(volume) })
+          }
+        }
+        continue
+      }
+      if (cup && line === 'max') {
+        continue
+      }
+      const printed =
+        cup && size !== 'single'
+          ? lineVolume(catalog, id, size, line as 'lower' | 'middle' | 'upper', context.cupStyle)
+          : null
+      const volume = printed ?? volumes[size]
+      if (volume !== undefined) {
+        marks.push({ label: cup ? null : (lineMarkLabels[line] ?? line), fill: fill(volume) })
+      }
+    }
+  }
+
+  for (const [name, volumes] of Object.entries(model.marks)) {
+    const volume = volumes[size]
+    if (volume !== undefined && (!cup || name === namedMark)) {
+      marks.push({ label: name, fill: fill(volume) })
+    }
+  }
+
+  return { shape, marks, cup }
+}
+
 function projectVessel(state: StockVessel, id: string, context: StockContext) {
   state.materials = {}
 
@@ -900,10 +960,25 @@ export function scaleStockEffect(
   context: StockContext,
   portion: number,
 ): StockEffect {
+  let multiplier = portion
+  let transfer = effect.transfer
+
+  if (transfer) {
+    const required = (transfer.requiredMilliliters ?? transfer.availableMilliliters) * portion
+    const moved = Math.min(required, transfer.availableMilliliters)
+    multiplier = transfer.movedMilliliters > EPSILON ? moved / transfer.movedMilliliters : 0
+    transfer = {
+      ...transfer,
+      requiredMilliliters: transfer.requiredMilliliters === null ? null : required,
+      movedMilliliters: moved,
+    }
+  }
+
   const scaled: StockEffect = {
     ...effect,
-    costs: Object.fromEntries(Object.entries(effect.costs).map(([id, value]) => [id, value * portion])),
-    stockHeld: Object.fromEntries(Object.entries(effect.stockHeld).map(([id, value]) => [id, value * portion])),
+    transfer,
+    costs: Object.fromEntries(Object.entries(effect.costs).map(([id, value]) => [id, value * multiplier])),
+    stockHeld: Object.fromEntries(Object.entries(effect.stockHeld).map(([id, value]) => [id, value * multiplier])),
     vessels: Object.fromEntries(
       Object.entries(effect.vessels).map(([id, change]) => [
         id,
@@ -911,8 +986,8 @@ export function scaleStockEffect(
           ...change,
           layers: change.layers.map((layer) => ({
             ...layer,
-            quantity: layer.quantity * portion,
-            milliliters: layer.milliliters * portion,
+            quantity: layer.quantity * multiplier,
+            milliliters: layer.milliliters * multiplier,
           })),
         },
       ]),
@@ -940,8 +1015,9 @@ export function planStockCosts(catalog: RecipeCatalog, plan: PlannedStep[], cont
             )
         : undefined
     let effect = buildStockEffect(catalog, state, step.operation, context, nextAdd)
-    if (step.portion !== undefined) {
-      effect = scaleStockEffect(state, effect, context, step.portion)
+    const portion = step.portion ?? step.foamPortion
+    if (portion !== undefined) {
+      effect = scaleStockEffect(state, effect, context, portion)
     }
     state = projectStockEffect(state, effect, context, 0, 1)
     return effect.costs

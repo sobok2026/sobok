@@ -15,13 +15,31 @@
   "utilityUnits": {
     "water": "ml",
     "ice": "g",
-    "스테인리스-얼음": "g",
-    "일회용-컵-실링": "piece",
+    "stainless-steel-ice": "g",
+    "disposable-cup-seal": "piece",
     "toddy-paper-filter": "piece",
     "toddy-filter-tie": "piece",
     "cold-brew-grounds": "ml"
   },
   "materials": {
+    "low-fat-milk": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
     "beans": {
       "millilitersPerStockUnit": 2.5,
       "gramsPerStockUnit": 1,
@@ -112,7 +130,7 @@
       },
       "phase": "solid"
     },
-    "mochaPowder": {
+    "mocha-powder": {
       "millilitersPerStockUnit": 600,
       "gramsPerStockUnit": 500,
       "counts": {
@@ -166,7 +184,7 @@
       },
       "phase": "foam"
     },
-    "coldBrew": {
+    "cold-brew": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -202,7 +220,7 @@
       },
       "phase": "liquid"
     },
-    "hojichaPowder": {
+    "hojicha-powder": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -238,7 +256,7 @@
       },
       "phase": "liquid"
     },
-    "matchaPowder": {
+    "matcha-powder": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -436,7 +454,7 @@
       },
       "phase": "solid"
     },
-    "더블-블랙-티-베이스": {
+    "double-black-tea-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -454,7 +472,7 @@
       },
       "phase": "liquid"
     },
-    "알로에-토핑": {
+    "aloe-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -472,7 +490,7 @@
       },
       "phase": "solid"
     },
-    "쫀득-펄-토핑": {
+    "chewy-pearl-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -490,7 +508,7 @@
       },
       "phase": "solid"
     },
-    "콜드-폼": {
+    "cold-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -508,7 +526,7 @@
       },
       "phase": "solid"
     },
-    "카스텔라-토핑": {
+    "castella-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -526,7 +544,7 @@
       },
       "phase": "solid"
     },
-    "크림향-베이스": {
+    "cream-flavored-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -544,7 +562,7 @@
       },
       "phase": "liquid"
     },
-    "일반-휘핑-크림": {
+    "whipped-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -562,7 +580,7 @@
       },
       "phase": "foam"
     },
-    "유자-v-베이스": {
+    "yuja-v-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -580,7 +598,7 @@
       },
       "phase": "liquid"
     },
-    "앱솔루트-보드카": {
+    "absolut-vodka": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -598,7 +616,7 @@
       },
       "phase": "liquid"
     },
-    "레모네이드": {
+    "lemonade": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -616,7 +634,7 @@
       },
       "phase": "liquid"
     },
-    "화이트-뱅쇼-시럽": {
+    "white-vin-chaud-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -634,7 +652,7 @@
       },
       "phase": "liquid"
     },
-    "딸기-소스": {
+    "strawberry-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -652,7 +670,7 @@
       },
       "phase": "liquid"
     },
-    "동결건조-딸기-그릿": {
+    "freeze-dried-strawberry-grits": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -670,7 +688,7 @@
       },
       "phase": "solid"
     },
-    "텐커레이-넘버-텐": {
+    "tanqueray-number-ten": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -688,7 +706,7 @@
       },
       "phase": "solid"
     },
-    "드라이-버무스": {
+    "dry-vermouth": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -706,7 +724,7 @@
       },
       "phase": "liquid"
     },
-    "그린올리브": {
+    "green-olive": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -724,7 +742,7 @@
       },
       "phase": "solid"
     },
-    "에반-윌리엄스-블랙-위스키": {
+    "evan-williams-black-whiskey": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -742,7 +760,7 @@
       },
       "phase": "liquid"
     },
-    "바닐라-크림-베이스": {
+    "vanilla-cream-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -760,7 +778,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-다크-초콜릿-소스": {
+    "reserve-dark-chocolate-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -778,7 +796,7 @@
       },
       "phase": "liquid"
     },
-    "아페롤": {
+    "aperol": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -796,7 +814,7 @@
       },
       "phase": "liquid"
     },
-    "칸티-프로세코": {
+    "canti-prosecco": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -814,7 +832,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-다크-초콜릿-파우더": {
+    "reserve-dark-chocolate-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -832,7 +850,7 @@
       },
       "phase": "solid"
     },
-    "레몬-웨지": {
+    "lemon-wedge": {
       "millilitersPerStockUnit": 15,
       "gramsPerStockUnit": 15,
       "counts": {
@@ -850,7 +868,7 @@
       },
       "phase": "solid"
     },
-    "위스키": {
+    "whiskey": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -868,7 +886,7 @@
       },
       "phase": "liquid"
     },
-    "앙고스투라-비터": {
+    "angostura-bitters": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -886,7 +904,7 @@
       },
       "phase": "liquid"
     },
-    "블루-라임-베이스": {
+    "blue-lime-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -904,7 +922,7 @@
       },
       "phase": "liquid"
     },
-    "일품-진로": {
+    "ilpoom-jinro": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -922,7 +940,7 @@
       },
       "phase": "liquid"
     },
-    "쿼드-스트랭스-히비스커스-티": {
+    "quad-strength-hibiscus-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -940,7 +958,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-위스키향-시럽": {
+    "reserve-whiskey-flavored-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -958,7 +976,7 @@
       },
       "phase": "liquid"
     },
-    "스테인리스-얼음": {
+    "stainless-steel-ice": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -976,7 +994,7 @@
       },
       "phase": "solid"
     },
-    "위스키-인퓨즈드-콜드브루": {
+    "whiskey-infused-cold-brew": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -994,7 +1012,7 @@
       },
       "phase": "liquid"
     },
-    "히비스커스-티백": {
+    "hibiscus-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -1012,7 +1030,7 @@
       },
       "phase": "solid"
     },
-    "바-믹사토-말차-샷": {
+    "bar-mixato-matcha-shot": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1030,7 +1048,7 @@
       },
       "phase": "liquid"
     },
-    "오미자-베이스": {
+    "omija-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1048,7 +1066,7 @@
       },
       "phase": "liquid"
     },
-    "유스베리-티-베이스": {
+    "youthberry-tea-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1066,7 +1084,7 @@
       },
       "phase": "liquid"
     },
-    "애플민트": {
+    "apple-mint": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1084,7 +1102,7 @@
       },
       "phase": "solid"
     },
-    "라임-웨지": {
+    "lime-wedge": {
       "millilitersPerStockUnit": 15,
       "gramsPerStockUnit": 15,
       "counts": {
@@ -1102,7 +1120,7 @@
       },
       "phase": "solid"
     },
-    "민트향시럽r": {
+    "mint-flavored-syrup-r": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1120,7 +1138,7 @@
       },
       "phase": "solid"
     },
-    "라임-베이스": {
+    "lime-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1138,7 +1156,7 @@
       },
       "phase": "liquid"
     },
-    "유자진저-베이스": {
+    "yuja-ginger-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1156,7 +1174,7 @@
       },
       "phase": "liquid"
     },
-    "바카디-카르타-블랑카": {
+    "bacardi-carta-blanca": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1174,7 +1192,7 @@
       },
       "phase": "liquid"
     },
-    "유스베리-티백": {
+    "youthberry-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -1192,7 +1210,7 @@
       },
       "phase": "solid"
     },
-    "바닐라빈-시럽": {
+    "vanilla-bean-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1210,7 +1228,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-초코-파우더": {
+    "reserve-choco-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1228,7 +1246,7 @@
       },
       "phase": "solid"
     },
-    "코코넛-믹스": {
+    "coconut-mix": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1246,7 +1264,7 @@
       },
       "phase": "liquid"
     },
-    "통팥-베이스": {
+    "whole-red-bean-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1264,97 +1282,7 @@
       },
       "phase": "liquid"
     },
-    "돌체-소스": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1.08,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "요거트-파우더": {
-      "millilitersPerStockUnit": 1.81818182,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 2.75,
-        "bag": 500,
-        "pack": 500,
-        "tap": 0.1375,
-        "turn": 2.75,
-        "drop": 0.0275,
-        "cup": 110.0,
-        "cycle": 2.75,
-        "shot": 16.5,
-        "pump": 4.125,
-        "scoop": 2.75
-      },
-      "phase": "solid"
-    },
-    "블루베리-베이스": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "코코넛-워터": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "더블-스트랭스-조이풀-메들리-티": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "애프리콧-소스": {
+    "dolce-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1372,43 +1300,7 @@
       },
       "phase": "liquid"
     },
-    "딸기-리프레셔-베이스": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "피치-베이스": {
-      "millilitersPerStockUnit": 1,
-      "gramsPerStockUnit": 1,
-      "counts": {
-        "piece": 30.0,
-        "bag": 1000,
-        "pack": 1000,
-        "tap": 0.25,
-        "turn": 5.0,
-        "drop": 0.05,
-        "cup": 200.0,
-        "cycle": 5.0,
-        "shot": 30.0,
-        "pump": 7.5,
-        "scoop": 5.0
-      },
-      "phase": "liquid"
-    },
-    "피치-망고-용과-토핑": {
+    "yogurt-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1426,7 +1318,133 @@
       },
       "phase": "solid"
     },
-    "조이풀-메들리-필로우-티백": {
+    "blueberry-base": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "coconut-water": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "double-strength-joyful-medley-tea": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "apricot-sauce": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1.08,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "strawberry-refresher-base": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "peach-base": {
+      "millilitersPerStockUnit": 1,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 30.0,
+        "bag": 1000,
+        "pack": 1000,
+        "tap": 0.25,
+        "turn": 5.0,
+        "drop": 0.05,
+        "cup": 200.0,
+        "cycle": 5.0,
+        "shot": 30.0,
+        "pump": 7.5,
+        "scoop": 5.0
+      },
+      "phase": "liquid"
+    },
+    "peach-mango-dragon-fruit-topping": {
+      "millilitersPerStockUnit": 1.81818182,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 2.75,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1375,
+        "turn": 2.75,
+        "drop": 0.0275,
+        "cup": 110.0,
+        "cycle": 2.75,
+        "shot": 16.5,
+        "pump": 4.125,
+        "scoop": 2.75
+      },
+      "phase": "solid"
+    },
+    "joyful-medley-pillow-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -1444,7 +1462,7 @@
       },
       "phase": "solid"
     },
-    "코코넛-베이스": {
+    "coconut-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1462,7 +1480,7 @@
       },
       "phase": "liquid"
     },
-    "허니-자몽-소스": {
+    "honey-grapefruit-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1480,7 +1498,7 @@
       },
       "phase": "liquid"
     },
-    "제로-클래식-시럽": {
+    "zero-classic-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1498,7 +1516,7 @@
       },
       "phase": "liquid"
     },
-    "스타벅스-레모네이드": {
+    "starbucks-lemonade": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1516,7 +1534,7 @@
       },
       "phase": "liquid"
     },
-    "레몬-코코-젤리": {
+    "lemon-coco-jelly": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1534,7 +1552,7 @@
       },
       "phase": "solid"
     },
-    "씨솔트-카라멜-드리즐": {
+    "sea-salt-caramel-drizzle": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1552,7 +1570,7 @@
       },
       "phase": "solid"
     },
-    "쏠티-클라우드-폼": {
+    "salty-cloud-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -1570,7 +1588,7 @@
       },
       "phase": "foam"
     },
-    "씨솔트-카라멜-베이스": {
+    "sea-salt-caramel-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1588,7 +1606,7 @@
       },
       "phase": "liquid"
     },
-    "파인애플-소스": {
+    "pineapple-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1606,7 +1624,7 @@
       },
       "phase": "liquid"
     },
-    "블루-스피룰리나-파우더": {
+    "blue-spirulina-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1624,7 +1642,7 @@
       },
       "phase": "solid"
     },
-    "스노우-폼-파우더": {
+    "snow-foam-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1642,7 +1660,7 @@
       },
       "phase": "solid"
     },
-    "돌체-시럽": {
+    "dolce-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1660,7 +1678,7 @@
       },
       "phase": "liquid"
     },
-    "체리-자두-베이스": {
+    "cherry-plum-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1678,7 +1696,7 @@
       },
       "phase": "liquid"
     },
-    "더블-스트랭스-블랙-티": {
+    "double-strength-black-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1696,7 +1714,7 @@
       },
       "phase": "liquid"
     },
-    "딸기-베이스": {
+    "strawberry-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1714,7 +1732,7 @@
       },
       "phase": "liquid"
     },
-    "연유": {
+    "condensed-milk": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1732,7 +1750,7 @@
       },
       "phase": "solid"
     },
-    "오트-밀크": {
+    "oat-milk": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1750,7 +1768,7 @@
       },
       "phase": "liquid"
     },
-    "바닐라-시럽": {
+    "vanilla-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1768,7 +1786,7 @@
       },
       "phase": "liquid"
     },
-    "수박-베이스": {
+    "watermelon-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1786,7 +1804,7 @@
       },
       "phase": "liquid"
     },
-    "냉동-수박-다이스": {
+    "frozen-watermelon-dice": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1804,7 +1822,7 @@
       },
       "phase": "solid"
     },
-    "초콜릿-땅콩-토핑": {
+    "chocolate-peanut-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1822,7 +1840,7 @@
       },
       "phase": "solid"
     },
-    "베르가못-시럽": {
+    "bergamot-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1840,7 +1858,7 @@
       },
       "phase": "liquid"
     },
-    "화이트-모카-소스": {
+    "white-mocha-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1858,7 +1876,7 @@
       },
       "phase": "liquid"
     },
-    "아이스-커피": {
+    "iced-coffee": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1876,7 +1894,7 @@
       },
       "phase": "liquid"
     },
-    "프렌치-바닐라-시럽": {
+    "french-vanilla-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -1894,7 +1912,7 @@
       },
       "phase": "liquid"
     },
-    "폼-베이스": {
+    "foam-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1912,7 +1930,7 @@
       },
       "phase": "liquid"
     },
-    "팥앙금-찹쌀떡": {
+    "red-bean-paste-rice-cake": {
       "millilitersPerStockUnit": 40,
       "gramsPerStockUnit": 40,
       "counts": {
@@ -1930,7 +1948,7 @@
       },
       "phase": "solid"
     },
-    "팥앙금-찹쌀떡-반절": {
+    "half-red-bean-paste-rice-cake": {
       "millilitersPerStockUnit": 20,
       "gramsPerStockUnit": 20,
       "counts": {
@@ -1948,7 +1966,7 @@
       },
       "phase": "solid"
     },
-    "우유-베이스-파우더": {
+    "milk-base-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1966,7 +1984,7 @@
       },
       "phase": "solid"
     },
-    "그래놀라-믹스": {
+    "granola-mix": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -1984,7 +2002,7 @@
       },
       "phase": "solid"
     },
-    "인절미-크림": {
+    "injeolmi-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2002,7 +2020,7 @@
       },
       "phase": "foam"
     },
-    "콩고물-파우더": {
+    "roasted-soybean-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2020,7 +2038,7 @@
       },
       "phase": "solid"
     },
-    "인절미-소스": {
+    "injeolmi-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2038,7 +2056,7 @@
       },
       "phase": "liquid"
     },
-    "요거트-크림": {
+    "yogurt-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2056,7 +2074,7 @@
       },
       "phase": "foam"
     },
-    "뉴-자몽-망고-소스": {
+    "new-grapefruit-mango-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2074,7 +2092,7 @@
       },
       "phase": "liquid"
     },
-    "애플망고-소스": {
+    "apple-mango-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2092,7 +2110,7 @@
       },
       "phase": "liquid"
     },
-    "애플망고-베이스": {
+    "apple-mango-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2110,7 +2128,7 @@
       },
       "phase": "liquid"
     },
-    "망고-별-토핑": {
+    "mango-star-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2128,7 +2146,7 @@
       },
       "phase": "solid"
     },
-    "키위-베이스": {
+    "kiwi-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2146,7 +2164,7 @@
       },
       "phase": "liquid"
     },
-    "크림-베이스": {
+    "cream-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2164,7 +2182,7 @@
       },
       "phase": "liquid"
     },
-    "슈-폼": {
+    "choux-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2182,7 +2200,7 @@
       },
       "phase": "foam"
     },
-    "쿠키-토핑": {
+    "cookie-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2200,7 +2218,7 @@
       },
       "phase": "solid"
     },
-    "그린티-티백": {
+    "green-tea-bag-for-base": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -2218,7 +2236,7 @@
       },
       "phase": "solid"
     },
-    "더블-스트랭스-그린-티": {
+    "double-strength-green-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2236,7 +2254,7 @@
       },
       "phase": "liquid"
     },
-    "매실-베이스": {
+    "maesil-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2254,7 +2272,7 @@
       },
       "phase": "liquid"
     },
-    "리치-보바-토핑": {
+    "lychee-boba-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2272,7 +2290,7 @@
       },
       "phase": "solid"
     },
-    "헤이즐넛-시럽": {
+    "hazelnut-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2290,7 +2308,7 @@
       },
       "phase": "liquid"
     },
-    "그린-피스타치오-폼": {
+    "green-pistachio-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2308,7 +2326,7 @@
       },
       "phase": "foam"
     },
-    "카다이프-토핑": {
+    "kadayif-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2326,7 +2344,7 @@
       },
       "phase": "solid"
     },
-    "그린-피스타치오-소스": {
+    "green-pistachio-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2344,7 +2362,7 @@
       },
       "phase": "liquid"
     },
-    "백도-파우더": {
+    "white-peach-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2362,7 +2380,7 @@
       },
       "phase": "solid"
     },
-    "밀크-푸딩": {
+    "milk-pudding": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2380,7 +2398,7 @@
       },
       "phase": "solid"
     },
-    "피치-젤리": {
+    "peach-jelly": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2398,7 +2416,7 @@
       },
       "phase": "solid"
     },
-    "체리블라썸-스트로베리-소스": {
+    "cherry-blossom-strawberry-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2416,7 +2434,7 @@
       },
       "phase": "liquid"
     },
-    "블라썸-초콜릿-토핑": {
+    "blossom-chocolate-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2434,7 +2452,7 @@
       },
       "phase": "solid"
     },
-    "고양이-귀-사인판": {
+    "cat-ear-sign": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2452,7 +2470,7 @@
       },
       "phase": "solid"
     },
-    "슈크림-말차-베이스": {
+    "custard-cream-matcha-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2470,7 +2488,7 @@
       },
       "phase": "liquid"
     },
-    "초콜릿-폼": {
+    "chocolate-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2488,7 +2506,7 @@
       },
       "phase": "foam"
     },
-    "피스타치오-폼": {
+    "pistachio-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2506,7 +2524,7 @@
       },
       "phase": "foam"
     },
-    "로즈-휘핑-크림": {
+    "rose-whipped-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2524,7 +2542,7 @@
       },
       "phase": "foam"
     },
-    "얼-그레이-폼": {
+    "earl-grey-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2542,7 +2560,7 @@
       },
       "phase": "foam"
     },
-    "더블-스트랭스-캐모마일-티": {
+    "double-strength-chamomile-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2560,7 +2578,7 @@
       },
       "phase": "liquid"
     },
-    "에스프레소-크림": {
+    "espresso-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2578,7 +2596,7 @@
       },
       "phase": "foam"
     },
-    "돌체-폼": {
+    "dolce-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2596,7 +2614,7 @@
       },
       "phase": "foam"
     },
-    "얼-그레이-밀크-티-베이스": {
+    "earl-grey-milk-tea-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2614,7 +2632,7 @@
       },
       "phase": "liquid"
     },
-    "쿼드-스트랭스-캐모마일-티": {
+    "quad-strength-chamomile-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2632,7 +2650,7 @@
       },
       "phase": "liquid"
     },
-    "뱅쇼-베이스-프리믹스": {
+    "vin-chaud-base-premix": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2650,7 +2668,7 @@
       },
       "phase": "liquid"
     },
-    "캐모마일-유스베리-티-베이스": {
+    "chamomile-youthberry-tea-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2668,7 +2686,7 @@
       },
       "phase": "liquid"
     },
-    "릴렉싱-베이스": {
+    "relaxing-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2686,7 +2704,7 @@
       },
       "phase": "liquid"
     },
-    "버터-스카치-커피-크림": {
+    "butterscotch-coffee-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2704,7 +2722,7 @@
       },
       "phase": "solid"
     },
-    "말차-클라우드-폼": {
+    "matcha-cloud-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2722,7 +2740,7 @@
       },
       "phase": "foam"
     },
-    "멜론-소스": {
+    "melon-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2740,7 +2758,7 @@
       },
       "phase": "liquid"
     },
-    "마롱-에스프레소-크림": {
+    "marron-espresso-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2758,7 +2776,7 @@
       },
       "phase": "foam"
     },
-    "말차-글레이즈드-베이스": {
+    "matcha-glazed-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2776,7 +2794,7 @@
       },
       "phase": "liquid"
     },
-    "멜론-베이스": {
+    "melon-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2794,7 +2812,7 @@
       },
       "phase": "liquid"
     },
-    "멜론-휘핑": {
+    "melon-whipped-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2812,7 +2830,7 @@
       },
       "phase": "foam"
     },
-    "마카다미아-베이스": {
+    "macadamia-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2830,7 +2848,7 @@
       },
       "phase": "liquid"
     },
-    "퍼플-머스캣-토핑": {
+    "purple-muscat-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2848,7 +2866,7 @@
       },
       "phase": "solid"
     },
-    "클래식-밀크-티-베이스": {
+    "classic-milk-tea-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2866,7 +2884,7 @@
       },
       "phase": "liquid"
     },
-    "위스키-크림": {
+    "whiskey-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -2884,7 +2902,7 @@
       },
       "phase": "foam"
     },
-    "쏠티드-브라운-버터리-토핑": {
+    "salted-brown-buttery-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2902,7 +2920,7 @@
       },
       "phase": "solid"
     },
-    "피스타치오-소스": {
+    "pistachio-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2920,7 +2938,7 @@
       },
       "phase": "liquid"
     },
-    "심플-시럽": {
+    "simple-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -2938,7 +2956,7 @@
       },
       "phase": "liquid"
     },
-    "로즈-파우더": {
+    "rose-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2956,7 +2974,7 @@
       },
       "phase": "solid"
     },
-    "루비-초콜릿-토핑": {
+    "ruby-chocolate-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2974,7 +2992,7 @@
       },
       "phase": "solid"
     },
-    "핑크-자몽-베이스": {
+    "pink-grapefruit-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -2992,7 +3010,7 @@
       },
       "phase": "liquid"
     },
-    "건-라임-토핑": {
+    "dried-lime-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3010,7 +3028,7 @@
       },
       "phase": "solid"
     },
-    "유자-배-베이스": {
+    "yuja-pear-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3028,7 +3046,7 @@
       },
       "phase": "liquid"
     },
-    "캐모마일-티백": {
+    "chamomile-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3046,7 +3064,7 @@
       },
       "phase": "solid"
     },
-    "에스프레소-칩": {
+    "espresso-chips": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3064,7 +3082,7 @@
       },
       "phase": "solid"
     },
-    "시나몬-파우더": {
+    "cinnamon-powder": {
       "millilitersPerStockUnit": 0.25,
       "gramsPerStockUnit": 0.1375,
       "counts": {
@@ -3082,7 +3100,7 @@
       },
       "phase": "solid"
     },
-    "브륄레-토핑": {
+    "brulee-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3100,7 +3118,7 @@
       },
       "phase": "solid"
     },
-    "카라멜-드리즐": {
+    "caramel-drizzle": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3118,7 +3136,7 @@
       },
       "phase": "solid"
     },
-    "돌체-스파이스-시럽": {
+    "dolce-spice-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3136,7 +3154,7 @@
       },
       "phase": "liquid"
     },
-    "버터-스카치-소스": {
+    "butterscotch-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3154,7 +3172,7 @@
       },
       "phase": "liquid"
     },
-    "마롱-바닐라-시럽": {
+    "marron-vanilla-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3172,7 +3190,7 @@
       },
       "phase": "liquid"
     },
-    "트리플-베리-소스": {
+    "triple-berry-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3190,7 +3208,7 @@
       },
       "phase": "liquid"
     },
-    "트리플-베리-폼": {
+    "triple-berry-foam": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -3208,7 +3226,7 @@
       },
       "phase": "foam"
     },
-    "프렌즈-초콜릿-토핑": {
+    "friends-chocolate-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3226,7 +3244,7 @@
       },
       "phase": "solid"
     },
-    "블랙-아이스티": {
+    "black-iced-tea": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3244,7 +3262,7 @@
       },
       "phase": "solid"
     },
-    "얼-그레이-티백": {
+    "earl-grey-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3262,7 +3280,7 @@
       },
       "phase": "solid"
     },
-    "홀리데이-캐모마일-티-파우치": {
+    "holiday-chamomile-tea-pouch": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3280,7 +3298,7 @@
       },
       "phase": "solid"
     },
-    "크리스마스-뱅쇼-베이스": {
+    "christmas-vin-chaud-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3298,7 +3316,7 @@
       },
       "phase": "liquid"
     },
-    "뱅쇼-과일-토핑": {
+    "vin-chaud-fruit-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3316,7 +3334,7 @@
       },
       "phase": "solid"
     },
-    "허니-캐모마일-시럽": {
+    "honey-chamomile-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3334,7 +3352,7 @@
       },
       "phase": "liquid"
     },
-    "옐로우-파우더": {
+    "yellow-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3352,7 +3370,7 @@
       },
       "phase": "solid"
     },
-    "로즈마리": {
+    "rosemary": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3370,7 +3388,7 @@
       },
       "phase": "solid"
     },
-    "핑크-리치-보바": {
+    "pink-lychee-boba": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3388,7 +3406,7 @@
       },
       "phase": "solid"
     },
-    "레몬그라스-리치-베이스": {
+    "lemongrass-lychee-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3406,7 +3424,7 @@
       },
       "phase": "liquid"
     },
-    "월리-체리-소스": {
+    "wally-cherry-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3424,7 +3442,7 @@
       },
       "phase": "liquid"
     },
-    "블루-바닐라-푸딩": {
+    "blue-vanilla-pudding": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3442,7 +3460,7 @@
       },
       "phase": "solid"
     },
-    "월리-체리-드리즐": {
+    "wally-cherry-drizzle": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3460,7 +3478,7 @@
       },
       "phase": "solid"
     },
-    "월리-사인판": {
+    "wally-sign": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3478,7 +3496,7 @@
       },
       "phase": "solid"
     },
-    "무지방-우유": {
+    "nonfat-milk": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3496,7 +3514,7 @@
       },
       "phase": "liquid"
     },
-    "칸탈로프-멜론-청크": {
+    "cantaloupe-melon-chunks": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3514,7 +3532,7 @@
       },
       "phase": "solid"
     },
-    "멜론-시럽": {
+    "melon-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3532,7 +3550,7 @@
       },
       "phase": "liquid"
     },
-    "마롱-베이스": {
+    "marron-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3550,7 +3568,7 @@
       },
       "phase": "liquid"
     },
-    "고객-선택-시럽": {
+    "customer-selected-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3568,7 +3586,7 @@
       },
       "phase": "liquid"
     },
-    "홍차-티백": {
+    "black-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3586,7 +3604,7 @@
       },
       "phase": "solid"
     },
-    "허브-티-티백": {
+    "herbal-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3604,7 +3622,7 @@
       },
       "phase": "solid"
     },
-    "화이트-티-티백": {
+    "white-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3622,7 +3640,7 @@
       },
       "phase": "solid"
     },
-    "녹차-티백": {
+    "green-tea-bag-for-iced-tea": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -3640,7 +3658,7 @@
       },
       "phase": "solid"
     },
-    "오트사이드": {
+    "oatside": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3658,7 +3676,7 @@
       },
       "phase": "liquid"
     },
-    "망고패션-베이스": {
+    "mango-passion-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3676,7 +3694,7 @@
       },
       "phase": "liquid"
     },
-    "화이트피치-청크": {
+    "white-peach-chunks": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3694,7 +3712,7 @@
       },
       "phase": "solid"
     },
-    "망고-용과-토핑": {
+    "mango-dragon-fruit-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3712,7 +3730,7 @@
       },
       "phase": "solid"
     },
-    "로스티드-마카다미아향-시럽": {
+    "roasted-macadamia-flavored-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3730,7 +3748,7 @@
       },
       "phase": "liquid"
     },
-    "마카다미아-크런치-토핑": {
+    "macadamia-crunch-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3748,7 +3766,7 @@
       },
       "phase": "solid"
     },
-    "화이트모카-시럽": {
+    "white-mocha-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3766,7 +3784,7 @@
       },
       "phase": "liquid"
     },
-    "커피향-베이스": {
+    "coffee-flavored-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3784,7 +3802,7 @@
       },
       "phase": "liquid"
     },
-    "흑당-시럽": {
+    "brown-sugar-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3802,7 +3820,7 @@
       },
       "phase": "liquid"
     },
-    "솔티드-카라멜-시럽": {
+    "salted-caramel-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3820,7 +3838,7 @@
       },
       "phase": "liquid"
     },
-    "자몽-망고-소스": {
+    "grapefruit-mango-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -3838,7 +3856,7 @@
       },
       "phase": "liquid"
     },
-    "그린-머스캣-베이스": {
+    "green-muscat-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3856,7 +3874,7 @@
       },
       "phase": "liquid"
     },
-    "퍼플-머스캣-젤리": {
+    "purple-muscat-jelly": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3874,7 +3892,7 @@
       },
       "phase": "solid"
     },
-    "화이트-펄-토핑": {
+    "white-pearl-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3892,7 +3910,7 @@
       },
       "phase": "solid"
     },
-    "자몽-쌕": {
+    "grapefruit-pulp": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3910,7 +3928,7 @@
       },
       "phase": "solid"
     },
-    "패션-탱고-티": {
+    "passion-tango-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3928,7 +3946,7 @@
       },
       "phase": "liquid"
     },
-    "망고-패션-프루트-주스": {
+    "mango-passion-fruit-juice": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3946,7 +3964,7 @@
       },
       "phase": "liquid"
     },
-    "파인코코-베이스": {
+    "pineapple-coconut-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3964,7 +3982,7 @@
       },
       "phase": "liquid"
     },
-    "동결건조-망고-용과": {
+    "freeze-dried-mango-dragon-fruit": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -3982,7 +4000,7 @@
       },
       "phase": "solid"
     },
-    "토닉-워터": {
+    "tonic-water": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4000,7 +4018,7 @@
       },
       "phase": "liquid"
     },
-    "잉글리쉬-브렉퍼스트-티백": {
+    "english-breakfast-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4018,7 +4036,7 @@
       },
       "phase": "solid"
     },
-    "프라푸치노-로스트-파우더": {
+    "frappuccino-roast-powder": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4036,7 +4054,7 @@
       },
       "phase": "solid"
     },
-    "폰세카-타우니-포트": {
+    "fonseca-tawny-port": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4054,7 +4072,7 @@
       },
       "phase": "liquid"
     },
-    "레드-뱅쇼-베이스": {
+    "red-vin-chaud-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4072,7 +4090,7 @@
       },
       "phase": "liquid"
     },
-    "허브-스파이스-티백": {
+    "herbal-spice-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4090,7 +4108,7 @@
       },
       "phase": "solid"
     },
-    "하프-오렌지-슬라이스": {
+    "half-orange-slice": {
       "millilitersPerStockUnit": 15,
       "gramsPerStockUnit": 15,
       "counts": {
@@ -4108,7 +4126,7 @@
       },
       "phase": "solid"
     },
-    "레몬-슬라이스": {
+    "lemon-slice": {
       "millilitersPerStockUnit": 15,
       "gramsPerStockUnit": 15,
       "counts": {
@@ -4126,7 +4144,7 @@
       },
       "phase": "solid"
     },
-    "화이트-상그리아-베이스": {
+    "white-sangria-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4144,7 +4162,7 @@
       },
       "phase": "liquid"
     },
-    "복숭아-소스": {
+    "peach-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4162,7 +4180,7 @@
       },
       "phase": "liquid"
     },
-    "프라푸치노-로스트": {
+    "frappuccino-roast": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4180,7 +4198,7 @@
       },
       "phase": "liquid"
     },
-    "커피-베이스": {
+    "coffee-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4198,7 +4216,7 @@
       },
       "phase": "liquid"
     },
-    "말차-글레이즈드-소스": {
+    "matcha-glazed-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4216,7 +4234,7 @@
       },
       "phase": "liquid"
     },
-    "베르가못-크림": {
+    "bergamot-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -4234,7 +4252,7 @@
       },
       "phase": "foam"
     },
-    "스노우-토핑": {
+    "snow-topping": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4252,7 +4270,7 @@
       },
       "phase": "solid"
     },
-    "허니-레몬-소스": {
+    "honey-lemon-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4270,7 +4288,7 @@
       },
       "phase": "liquid"
     },
-    "타임": {
+    "thyme": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4288,7 +4306,7 @@
       },
       "phase": "solid"
     },
-    "일회용-컵-실링": {
+    "disposable-cup-seal": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -4306,7 +4324,7 @@
       },
       "phase": "solid"
     },
-    "카라멜-시럽": {
+    "caramel-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4324,7 +4342,7 @@
       },
       "phase": "liquid"
     },
-    "카라멜-소스": {
+    "caramel-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4342,7 +4360,7 @@
       },
       "phase": "liquid"
     },
-    "화이트-초콜릿-모카-소스": {
+    "white-chocolate-mocha-sauce": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4360,7 +4378,7 @@
       },
       "phase": "liquid"
     },
-    "오트앤유": {
+    "oat-and-u": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4378,7 +4396,7 @@
       },
       "phase": "liquid"
     },
-    "에스프레소-휘핑-크림": {
+    "espresso-whipped-cream": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 0.65,
       "counts": {
@@ -4396,7 +4414,7 @@
       },
       "phase": "foam"
     },
-    "초코-파우더": {
+    "choco-powder": {
       "millilitersPerStockUnit": 0.25,
       "gramsPerStockUnit": 0.1375,
       "counts": {
@@ -4414,7 +4432,7 @@
       },
       "phase": "solid"
     },
-    "커피-프라푸치노-베이스": {
+    "coffee-frappuccino-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4432,7 +4450,7 @@
       },
       "phase": "liquid"
     },
-    "크림-프라푸치노-베이스": {
+    "cream-frappuccino-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4450,7 +4468,7 @@
       },
       "phase": "liquid"
     },
-    "프라푸치노-칩": {
+    "frappuccino-chips": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -4468,7 +4486,7 @@
       },
       "phase": "solid"
     },
-    "시그니처-초콜릿-프리믹스": {
+    "signature-chocolate-premix": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4486,7 +4504,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-바닐라-빈-시럽": {
+    "reserve-vanilla-bean-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4504,7 +4522,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-민트-시럽": {
+    "reserve-mint-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4522,7 +4540,7 @@
       },
       "phase": "solid"
     },
-    "리저브-다크-모카-파우더": {
+    "reserve-dark-mocha-powder": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -4540,7 +4558,7 @@
       },
       "phase": "solid"
     },
-    "리저브-콜드-브루": {
+    "reserve-cold-brew": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4558,7 +4576,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-스위트-크림-베이스": {
+    "reserve-sweet-cream-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4576,7 +4594,7 @@
       },
       "phase": "liquid"
     },
-    "리저브-에스프레소-원두": {
+    "reserve-espresso-beans": {
       "millilitersPerStockUnit": 2.5,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4594,7 +4612,7 @@
       },
       "phase": "solid"
     },
-    "민트-잎": {
+    "mint-leaves": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4612,7 +4630,7 @@
       },
       "phase": "solid"
     },
-    "아이스크림": {
+    "ice-cream": {
       "millilitersPerStockUnit": 1.0,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4630,7 +4648,7 @@
       },
       "phase": "liquid"
     },
-    "티바나-패션-탱고-아이스-티백": {
+    "teavana-passion-tango-iced-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4648,7 +4666,7 @@
       },
       "phase": "solid"
     },
-    "블랙-아이스-티백": {
+    "black-iced-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4666,7 +4684,7 @@
       },
       "phase": "solid"
     },
-    "티바나-민트-블렌드-풀-리프-티백": {
+    "teavana-mint-blend-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4684,7 +4702,7 @@
       },
       "phase": "solid"
     },
-    "더블-스트랭스-패션-탱고-티": {
+    "double-strength-passion-tango-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4702,7 +4720,7 @@
       },
       "phase": "liquid"
     },
-    "더블-스트랭스-민트-티": {
+    "double-strength-mint-tea": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4720,7 +4738,7 @@
       },
       "phase": "solid"
     },
-    "유자-베이스": {
+    "yuja-base": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4738,7 +4756,7 @@
       },
       "phase": "liquid"
     },
-    "딸기-슬라이스": {
+    "strawberry-slice": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 5,
       "counts": {
@@ -4756,7 +4774,7 @@
       },
       "phase": "solid"
     },
-    "진저에일-토닉워터": {
+    "ginger-ale-tonic-water": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4774,7 +4792,7 @@
       },
       "phase": "liquid"
     },
-    "유기농-말차": {
+    "organic-matcha": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.75,
       "counts": {
@@ -4792,7 +4810,7 @@
       },
       "phase": "solid"
     },
-    "망고-패션후르츠-주스": {
+    "mango-passion-fruit-juice-for-banana": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4810,7 +4828,7 @@
       },
       "phase": "liquid"
     },
-    "바나나": {
+    "banana": {
       "millilitersPerStockUnit": 100,
       "gramsPerStockUnit": 100,
       "counts": {
@@ -4828,7 +4846,7 @@
       },
       "phase": "solid"
     },
-    "오늘의-커피": {
+    "todays-coffee": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4846,7 +4864,7 @@
       },
       "phase": "liquid"
     },
-    "고객이-선택한-향-시럽": {
+    "customer-selected-flavored-syrup": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1.08,
       "counts": {
@@ -4864,7 +4882,7 @@
       },
       "phase": "liquid"
     },
-    "디카페인-에스프레소-로스트": {
+    "decaf-espresso-roast": {
       "millilitersPerStockUnit": 1.81818182,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -4882,7 +4900,7 @@
       },
       "phase": "solid"
     },
-    "잉글리쉬-브렉퍼스트-풀-리프-티백": {
+    "english-breakfast-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4900,7 +4918,7 @@
       },
       "phase": "solid"
     },
-    "얼-그레이-풀-리프-티백": {
+    "earl-grey-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4918,7 +4936,7 @@
       },
       "phase": "solid"
     },
-    "차이-풀-리프-티백": {
+    "chai-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4936,7 +4954,7 @@
       },
       "phase": "solid"
     },
-    "히비스커스-풀-리프-티백": {
+    "hibiscus-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4954,7 +4972,7 @@
       },
       "phase": "solid"
     },
-    "캐모마일-풀-리프-티백": {
+    "chamomile-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4972,7 +4990,7 @@
       },
       "phase": "solid"
     },
-    "유스베리-풀-리프-티백": {
+    "youthberry-full-leaf-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -4990,7 +5008,7 @@
       },
       "phase": "solid"
     },
-    "제주-유기-녹차-풀-리프-티백": {
+    "jeju-organic-full-leaf-green-tea-bag": {
       "millilitersPerStockUnit": 5,
       "gramsPerStockUnit": 2.0,
       "counts": {
@@ -5008,7 +5026,7 @@
       },
       "phase": "solid"
     },
-    "두유": {
+    "soy-milk": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -5026,7 +5044,7 @@
       },
       "phase": "liquid"
     },
-    "1-2-디카페인-에스프레소": {
+    "half-decaf-espresso": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,
       "counts": {
@@ -6458,7 +6476,7 @@
       "lines": {},
       "marks": {}
     },
-    "유자-v-베이스-container": {
+    "yuja-v-base-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -6501,7 +6519,7 @@
       "lines": {},
       "marks": {}
     },
-    "코코넛-믹스-container": {
+    "coconut-mix-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -6544,7 +6562,7 @@
       "lines": {},
       "marks": {}
     },
-    "블루베리-베이스-container": {
+    "blueberry-base-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -6587,7 +6605,7 @@
       "lines": {},
       "marks": {}
     },
-    "체리-자두-베이스-container": {
+    "cherry-plum-base-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -6630,7 +6648,7 @@
       "lines": {},
       "marks": {}
     },
-    "애플망고-베이스-container": {
+    "apple-mango-base-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -6673,7 +6691,7 @@
       "lines": {},
       "marks": {}
     },
-    "키위-베이스-container": {
+    "kiwi-base-container": {
       "geometry": {
         "single": {
           "capacityMilliliters": 1000,
@@ -8156,7 +8174,7 @@
     "decaf": {
       "beans": [
         {
-          "materialId": "디카페인-에스프레소-로스트",
+          "materialId": "decaf-espresso-roast",
           "share": 1
         }
       ],
@@ -8170,7 +8188,7 @@
           "share": 0.5
         },
         {
-          "materialId": "디카페인-에스프레소-로스트",
+          "materialId": "decaf-espresso-roast",
           "share": 0.5
         }
       ],
@@ -8210,7 +8228,7 @@
     "decaf-ristretto": {
       "beans": [
         {
-          "materialId": "디카페인-에스프레소-로스트",
+          "materialId": "decaf-espresso-roast",
           "share": 1
         }
       ],
@@ -8257,63 +8275,63 @@
     "charge": 1
   },
   "preparationOutputs": {
-    "클래식-밀크-티-베이스-제조/standard": {
-      "materialId": "클래식-밀크-티-베이스",
+    "classic-milk-tea-base/standard": {
+      "materialId": "classic-milk-tea-base",
       "amount": 1040,
       "stockUnit": "ml"
     },
-    "돌체-폼-제조/standard": {
-      "materialId": "돌체-폼",
+    "dolce-foam/standard": {
+      "materialId": "dolce-foam",
       "amount": 360,
       "stockUnit": "ml"
     },
-    "위스키-크림-제조/standard": {
-      "materialId": "위스키-크림",
+    "whiskey-cream/standard": {
+      "materialId": "whiskey-cream",
       "amount": 540,
       "stockUnit": "ml"
     },
-    "바-믹사토-말차-샷-제조/standard": {
-      "materialId": "바-믹사토-말차-샷",
+    "bar-mixato-matcha-shot/standard": {
+      "materialId": "bar-mixato-matcha-shot",
       "amount": 100,
       "stockUnit": "ml"
     },
-    "그린-피스타치오-폼-제조/standard": {
-      "materialId": "그린-피스타치오-폼",
+    "green-pistachio-foam/standard": {
+      "materialId": "green-pistachio-foam",
       "amount": 460,
       "stockUnit": "ml"
     },
-    "로즈-휘핑-크림-제조/standard": {
-      "materialId": "로즈-휘핑-크림",
+    "rose-whipped-cream/standard": {
+      "materialId": "rose-whipped-cream",
       "amount": 660,
       "stockUnit": "ml"
     },
-    "릴렉싱-베이스-제조/standard": {
-      "materialId": "릴렉싱-베이스",
+    "relaxing-base/standard": {
+      "materialId": "relaxing-base",
       "amount": 4000,
       "stockUnit": "ml"
     },
-    "멜론-소스-제조/standard": {
-      "materialId": "멜론-소스",
+    "melon-sauce/standard": {
+      "materialId": "melon-sauce",
       "amount": 1010,
       "stockUnit": "ml"
     },
-    "멜론-소스-제조/half": {
-      "materialId": "멜론-소스",
+    "melon-sauce/half": {
+      "materialId": "melon-sauce",
       "amount": 500,
       "stockUnit": "ml"
     },
-    "마카다미아-베이스-제조/standard": {
-      "materialId": "마카다미아-베이스",
+    "macadamia-base/standard": {
+      "materialId": "macadamia-base",
       "amount": 1600,
       "stockUnit": "ml"
     },
-    "마롱-에스프레소-크림-제조/standard": {
-      "materialId": "마롱-에스프레소-크림",
+    "marron-espresso-cream/standard": {
+      "materialId": "marron-espresso-cream",
       "amount": 510,
       "stockUnit": "ml"
     },
-    "리저브-다크-초콜릿-소스-제조/standard": {
-      "materialId": "리저브-다크-초콜릿-소스",
+    "reserve-dark-chocolate-sauce/standard": {
+      "materialId": "reserve-dark-chocolate-sauce",
       "amount": 320,
       "stockUnit": "ml"
     },
@@ -8327,13 +8345,13 @@
       "amount": 900,
       "stockUnit": "ml"
     },
-    "요거트-크림-제조/standard": {
-      "materialId": "요거트-크림",
+    "yogurt-cream/standard": {
+      "materialId": "yogurt-cream",
       "amount": 400,
       "stockUnit": "ml"
     },
-    "요거트-크림-제조/large": {
-      "materialId": "요거트-크림",
+    "yogurt-cream/large": {
+      "materialId": "yogurt-cream",
       "amount": 800,
       "stockUnit": "ml"
     },
@@ -8342,98 +8360,98 @@
       "amount": 600,
       "stockUnit": "ml"
     },
-    "쿼드-스트랭스-히비스커스-티-제조/standard": {
-      "materialId": "쿼드-스트랭스-히비스커스-티",
+    "quad-strength-hibiscus-tea/standard": {
+      "materialId": "quad-strength-hibiscus-tea",
       "amount": 500,
       "stockUnit": "ml"
     },
     "cold-brew-toddy/standard": {
-      "materialId": "coldBrew",
+      "materialId": "cold-brew",
       "amount": 6000,
       "stockUnit": "ml"
     },
-    "쿼드-스트랭스-캐모마일-티-제조/standard": {
-      "materialId": "쿼드-스트랭스-캐모마일-티",
+    "quad-strength-chamomile-tea/standard": {
+      "materialId": "quad-strength-chamomile-tea",
       "amount": 500,
       "stockUnit": "ml"
     },
-    "쿼드-스트랭스-캐모마일-티-제조/large": {
-      "materialId": "쿼드-스트랭스-캐모마일-티",
+    "quad-strength-chamomile-tea/large": {
+      "materialId": "quad-strength-chamomile-tea",
       "amount": 1000,
       "stockUnit": "ml"
     },
-    "퍼플-머스캣-토핑/standard": {
-      "materialId": "퍼플-머스캣-토핑",
+    "purple-muscat-topping/standard": {
+      "materialId": "purple-muscat-topping",
       "amount": 1000,
       "stockUnit": "g"
     },
-    "뱅쇼-베이스-프리믹스-제조/standard": {
-      "materialId": "뱅쇼-베이스-프리믹스",
+    "vin-chaud-base-premix/standard": {
+      "materialId": "vin-chaud-base-premix",
       "amount": 1020,
       "stockUnit": "ml"
     },
-    "슈크림-말차-베이스-제조/standard": {
-      "materialId": "슈크림-말차-베이스",
+    "custard-cream-matcha-base/standard": {
+      "materialId": "custard-cream-matcha-base",
       "amount": 480,
       "stockUnit": "ml"
     },
-    "에스프레소-크림-제조/large": {
-      "materialId": "에스프레소-크림",
+    "espresso-cream/large": {
+      "materialId": "espresso-cream",
       "amount": 980,
       "stockUnit": "ml"
     },
-    "에스프레소-크림-제조/small": {
-      "materialId": "에스프레소-크림",
+    "espresso-cream/small": {
+      "materialId": "espresso-cream",
       "amount": 350,
       "stockUnit": "ml"
     },
-    "슈-폼-제조/standard": {
-      "materialId": "슈-폼",
+    "choux-foam/standard": {
+      "materialId": "choux-foam",
       "amount": 440,
       "stockUnit": "ml"
     },
-    "얼-그레이-밀크-티-베이스-제조/standard": {
-      "materialId": "얼-그레이-밀크-티-베이스",
+    "earl-grey-milk-tea-base/standard": {
+      "materialId": "earl-grey-milk-tea-base",
       "amount": 2000,
       "stockUnit": "ml"
     },
-    "말차-클라우드-폼-제조/standard": {
-      "materialId": "말차-클라우드-폼",
+    "matcha-cloud-foam/standard": {
+      "materialId": "matcha-cloud-foam",
       "amount": 320,
       "stockUnit": "ml"
     },
-    "말차-클라우드-폼-제조/large": {
-      "materialId": "말차-클라우드-폼",
+    "matcha-cloud-foam/large": {
+      "materialId": "matcha-cloud-foam",
       "amount": 640,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-조이풀-메들리-티-제조/standard": {
-      "materialId": "더블-스트랭스-조이풀-메들리-티",
+    "double-strength-joyful-medley-tea/standard": {
+      "materialId": "double-strength-joyful-medley-tea",
       "amount": 1000,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-민트-티-제조/batch": {
-      "materialId": "더블-스트랭스-민트-티",
+    "double-strength-mint-tea/batch": {
+      "materialId": "double-strength-mint-tea",
       "amount": 500,
       "stockUnit": "ml"
     },
-    "코코넛-믹스-제조/standard": {
-      "materialId": "코코넛-믹스",
+    "coconut-mix/standard": {
+      "materialId": "coconut-mix",
       "amount": 2000,
       "stockUnit": "ml"
     },
-    "콜드-폼-제조/standard": {
-      "materialId": "콜드-폼",
+    "cold-foam/standard": {
+      "materialId": "cold-foam",
       "amount": 390,
       "stockUnit": "ml"
     },
-    "초콜릿-폼-제조/standard": {
-      "materialId": "초콜릿-폼",
+    "chocolate-foam/standard": {
+      "materialId": "chocolate-foam",
       "amount": 350,
       "stockUnit": "ml"
     },
-    "초콜릿-폼-제조/double": {
-      "materialId": "초콜릿-폼",
+    "chocolate-foam/double": {
+      "materialId": "chocolate-foam",
       "amount": 710,
       "stockUnit": "ml"
     },
@@ -8442,58 +8460,58 @@
       "amount": 250,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-그린-티/standard": {
-      "materialId": "더블-스트랭스-그린-티",
+    "double-strength-green-tea/standard": {
+      "materialId": "double-strength-green-tea",
       "amount": 2000,
       "stockUnit": "ml"
     },
-    "유스베리-티-베이스-제조/standard": {
-      "materialId": "유스베리-티-베이스",
+    "youthberry-tea-base/standard": {
+      "materialId": "youthberry-tea-base",
       "amount": 500,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-캐모마일-티-제조/standard": {
-      "materialId": "더블-스트랭스-캐모마일-티",
+    "double-strength-chamomile-tea/standard": {
+      "materialId": "double-strength-chamomile-tea",
       "amount": 500,
       "stockUnit": "ml"
     },
-    "멜론-베이스-제조/standard": {
-      "materialId": "멜론-베이스",
+    "melon-base/standard": {
+      "materialId": "melon-base",
       "amount": 1500,
       "stockUnit": "ml"
     },
-    "멜론-베이스-제조/large": {
-      "materialId": "멜론-베이스",
+    "melon-base/large": {
+      "materialId": "melon-base",
       "amount": 3000,
       "stockUnit": "ml"
     },
-    "팥앙금-찹쌀떡-반절-제조/standard": {
-      "materialId": "팥앙금-찹쌀떡-반절",
+    "half-red-bean-paste-rice-cake/standard": {
+      "materialId": "half-red-bean-paste-rice-cake",
       "amount": 2,
       "stockUnit": "piece"
     },
-    "멜론-휘핑-제조/itis": {
-      "materialId": "멜론-휘핑",
+    "melon-whipped-cream/itis": {
+      "materialId": "melon-whipped-cream",
       "amount": 480,
       "stockUnit": "ml"
     },
-    "멜론-휘핑-제조/machine": {
-      "materialId": "멜론-휘핑",
+    "melon-whipped-cream/machine": {
+      "materialId": "melon-whipped-cream",
       "amount": 3000,
       "stockUnit": "ml"
     },
-    "쏠티-클라우드-폼-제조/standard": {
-      "materialId": "쏠티-클라우드-폼",
+    "salty-cloud-foam/standard": {
+      "materialId": "salty-cloud-foam",
       "amount": 420,
       "stockUnit": "ml"
     },
-    "애플망고-베이스-제조/standard": {
-      "materialId": "애플망고-베이스",
+    "apple-mango-base/standard": {
+      "materialId": "apple-mango-base",
       "amount": 1200,
       "stockUnit": "ml"
     },
-    "리저브-스위트-크림-베이스-제조/batch": {
-      "materialId": "리저브-스위트-크림-베이스",
+    "reserve-sweet-cream-base/batch": {
+      "materialId": "reserve-sweet-cream-base",
       "amount": 490,
       "stockUnit": "ml"
     },
@@ -8508,57 +8526,57 @@
       "stockUnit": "ml"
     },
     "cold-brew-batch/standard": {
-      "materialId": "coldBrew",
+      "materialId": "cold-brew",
       "amount": 3000,
       "stockUnit": "ml"
     },
-    "말차-글레이즈드-베이스-제조/standard": {
-      "materialId": "말차-글레이즈드-베이스",
+    "matcha-glazed-base/standard": {
+      "materialId": "matcha-glazed-base",
       "amount": 400,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-패션-탱고-티-제조/batch": {
-      "materialId": "더블-스트랭스-패션-탱고-티",
+    "double-strength-passion-tango-tea/batch": {
+      "materialId": "double-strength-passion-tango-tea",
       "amount": 2000,
       "stockUnit": "ml"
     },
-    "캐모마일-유스베리티-베이스-제조/standard": {
-      "materialId": "캐모마일-유스베리-티-베이스",
+    "chamomile-youthberry-tea-base/standard": {
+      "materialId": "chamomile-youthberry-tea-base",
       "amount": 2000,
       "stockUnit": "ml"
     },
-    "버터-스카치-커피-크림-제조/standard": {
-      "materialId": "버터-스카치-커피-크림",
+    "butterscotch-coffee-cream/standard": {
+      "materialId": "butterscotch-coffee-cream",
       "amount": 510,
       "stockUnit": "ml"
     },
-    "버터-스카치-커피-크림-제조/large": {
-      "materialId": "버터-스카치-커피-크림",
+    "butterscotch-coffee-cream/large": {
+      "materialId": "butterscotch-coffee-cream",
       "amount": 1020,
       "stockUnit": "ml"
     },
-    "피스타치오-폼-제조/standard": {
-      "materialId": "피스타치오-폼",
+    "pistachio-foam/standard": {
+      "materialId": "pistachio-foam",
       "amount": 420,
       "stockUnit": "ml"
     },
-    "피스타치오-폼-제조/double": {
-      "materialId": "피스타치오-폼",
+    "pistachio-foam/double": {
+      "materialId": "pistachio-foam",
       "amount": 840,
       "stockUnit": "ml"
     },
-    "인절미-크림-제조/standard": {
-      "materialId": "인절미-크림",
+    "injeolmi-cream/standard": {
+      "materialId": "injeolmi-cream",
       "amount": 430,
       "stockUnit": "ml"
     },
-    "인절미-크림-제조/large": {
-      "materialId": "인절미-크림",
+    "injeolmi-cream/large": {
+      "materialId": "injeolmi-cream",
       "amount": 860,
       "stockUnit": "ml"
     },
-    "얼-그레이-폼-제조/standard": {
-      "materialId": "얼-그레이-폼",
+    "earl-grey-foam/standard": {
+      "materialId": "earl-grey-foam",
       "amount": 560,
       "stockUnit": "ml"
     },
@@ -8572,13 +8590,13 @@
       "amount": 2370,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-블랙-티-추출/1l": {
-      "materialId": "더블-스트랭스-블랙-티",
+    "double-strength-black-tea/1l": {
+      "materialId": "double-strength-black-tea",
       "amount": 1000,
       "stockUnit": "ml"
     },
-    "더블-스트랭스-블랙-티-추출/2l": {
-      "materialId": "더블-스트랭스-블랙-티",
+    "double-strength-black-tea/2l": {
+      "materialId": "double-strength-black-tea",
       "amount": 2000,
       "stockUnit": "ml"
     }

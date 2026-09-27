@@ -29,7 +29,7 @@ function buildPreparations() {
       continue
     }
     for (const variant of recipe.variants) {
-      if (variant.output?.materialId === 'coldBrew') {
+      if (variant.output?.materialId === 'cold-brew') {
         continue
       }
       const id = `${recipe.id}:${variant.id}`

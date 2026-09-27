@@ -3,7 +3,14 @@ import { expiryAt } from '../../content/lifetime'
 import { recipeCup } from '../../content/recipes'
 import { isCupSurface, type StationId } from '../../content/stations'
 import { needsCleaning } from '../../features/cleaning/rules'
-import { craftStations, nextStep } from '../../features/crafting/rules'
+import {
+  craftStations,
+  craftWorkStation,
+  cupRecipe,
+  heldVessel,
+  nextStep,
+  vesselToPick,
+} from '../../features/crafting/rules'
 import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
 import { currentTicket } from '../../features/service/orders'
@@ -61,14 +68,26 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
       : 'work'
   }
 
-  if (
-    current.cup &&
-    craftStations.includes(id) &&
-    (current.cup.craft.location === 'hand' || current.cup.craft.location === id)
-  ) {
-    return current.cup.craft.location === 'hand'
-      ? { type: 'place-cup', station: id }
-      : { type: 'pick-cup', station: id }
+  const cup = current.cup
+  if (id === 'printer') {
+    return cup?.craft.location === 'hand' && !cup.craft.sticker ? { type: 'attach-sticker' } : null
+  }
+  if (cup && craftStations.includes(id)) {
+    if (cup.craft.location === 'hand') {
+      return { type: 'place-cup', station: id }
+    }
+    if (heldVessel(cup)) {
+      return { type: 'place-vessel', station: id }
+    }
+    const vessel = vesselToPick(current, id)
+    if (vessel) {
+      return vessel === cupRecipe(cup).vesselId
+        ? { type: 'pick-cup', station: id }
+        : { type: 'pick-vessel', station: id, vessel }
+    }
+    if (craftWorkStation(current) === id) {
+      return 'work'
+    }
   }
   return stationDefault(current, id)
 }
@@ -168,7 +187,7 @@ export function confirmationAt(state: GameState, station: StationId): Action | n
     if (brew.fault) {
       return null
     } else if (brew.stage === 'finished') {
-      return brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
+      return brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS['cold-brew'].lifetime) <= state.time
         ? null
         : { type: 'collect-cold-brew' }
     } else if (brew.stage === 'ready') {

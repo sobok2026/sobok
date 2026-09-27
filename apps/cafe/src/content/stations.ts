@@ -6,6 +6,7 @@ export const staffFacingZ = (z: number) => 2 * BAR_CENTER_Z - z
 
 export const STATIONS = {
   pos: { name: 'POS', x: -4.8, z: -1.4 },
+  printer: { name: '스티커 프린터', x: -4.33, z: -1.4 },
   cups: { name: '컵 보관대', x: -3.7, z: -1.4 },
   espresso: { name: '에스프레소 머신', x: -2.27, z: -1.4 },
   steam: { name: '스팀 완드', x: -2.94, z: -1.4 },

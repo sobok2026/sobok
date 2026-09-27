@@ -1,3 +1,4 @@
+import { gameToppingAmount } from './customization-options'
 import { INGREDIENTS } from './ingredients'
 import { type RecipeCatalog, recipeVariant } from './recipe-catalog'
 import { type PlannedStep, planRecipe, type RecipeContext } from './recipe-plan'
@@ -25,7 +26,9 @@ export function productionPlan(variant: RecipeVariant, context: RecipeContext): 
     }
   }
 
-  const plan = planRecipe(variant, { ...context, alternatives: { ...alternatives, ...context.alternatives } })
+  const plan = planRecipe(variant, { ...context, alternatives: { ...alternatives, ...context.alternatives } }).map(
+    gameToppingAmount,
+  )
   if (!plan.length) {
     throw new Error('제조 순서가 없습니다.')
   }
@@ -116,7 +119,7 @@ export function preparationVariant(
 export function requirePreparationRoutes(catalog: RecipeCatalog, plan: PlannedStep[], path = new Set<string>()) {
   for (const step of plan) {
     const materialId = operationMaterialId(step.operation)
-    if (!materialId || catalog.materials.get(materialId)?.kind !== 'prepared') {
+    if (!materialId || catalog.materials.get(materialId)?.kind !== 'prepared' || !INGREDIENTS[materialId]?.prepared) {
       continue
     }
     preparationVariant(catalog, materialId, path)

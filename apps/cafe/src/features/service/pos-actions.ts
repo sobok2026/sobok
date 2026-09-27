@@ -5,6 +5,7 @@ import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { customerToPickup } from './customer'
 import { itemPrice, orderMatchesRequest, salePaid, saleTotal } from './orders'
+import { recordTransaction } from './transactions'
 
 export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
   const fail = (text: string) => say(s, text, 'error')
@@ -66,6 +67,7 @@ export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
 
     if (salePaid(sale) === saleTotal(sale)) {
       sale.paidAt = s.time
+      recordTransaction(s, sale)
       const total = saleTotal(sale)
       s.cash += total
       s.totals.revenue += total

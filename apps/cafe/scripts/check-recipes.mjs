@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { buildMenu } from '../src/content/playable-menu.ts'
-import { parseRecipeCatalog, recipeVariantExecutionIssues } from '../src/content/recipe-catalog.ts'
+import { parseRecipeCatalog, recipeVariant, recipeVariantExecutionIssues } from '../src/content/recipe-catalog.ts'
+import { catalogIdSchema } from '../src/content/recipe-schema.ts'
 
 const root = new URL('../data/', import.meta.url)
 const read = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'))
@@ -14,7 +15,11 @@ async function recipesAt(folder) {
       result.push(...(await recipesAt(url)))
     } else if (entry.name.endsWith('.json')) {
       try {
-        result.push(JSON.parse(await readFile(url, 'utf8')))
+        const recipe = JSON.parse(await readFile(url, 'utf8'))
+        if (entry.name !== `${recipe.id}.json`) {
+          throw new Error('레시피 파일명은 문서 ID와 같아야 합니다.')
+        }
+        result.push(recipe)
       } catch (error) {
         throw new Error(`${url.pathname}: ${error.message}`)
       }
@@ -25,13 +30,24 @@ async function recipesAt(folder) {
 }
 
 try {
-  const [recipes, materials, equipment, vessels] = await Promise.all([
+  const [recipes, materials, equipment, vessels, posMenu] = await Promise.all([
     recipesAt(new URL('recipes/', root)),
     read('materials.json'),
     read('equipment.json'),
     read('vessels.json'),
+    read('shop/pos-menu.json'),
   ])
   const catalog = parseRecipeCatalog({ recipes, materials, equipment, vessels })
+
+  for (const [menuId, entry] of Object.entries(posMenu)) {
+    const [recipeId, variantId] = menuId.split(':')
+    if (menuId !== `${recipeId}:${variantId}`) {
+      throw new Error(`POS 메뉴 ID 형식을 확인해주세요: ${menuId}`)
+    }
+    recipeVariant(catalog, recipeId, variantId)
+    catalogIdSchema.parse(entry.family)
+  }
+
   const variants = [...catalog.recipes.values()].flatMap((recipe) => recipe.variants)
   const reviewCount = variants.filter((variant) => variant.review.length).length
   const unresolved = [...catalog.recipes.values()].flatMap((recipe) =>

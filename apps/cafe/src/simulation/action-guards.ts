@@ -12,6 +12,8 @@ export function canDispatch(work: WorkContext, action: Action) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
 
+  if (action.type === 'pos-cash-receipt' || action.type === 'pos-print-receipt') return true
+
   if (
     carriedBatch(s) &&
     ![
@@ -111,6 +113,9 @@ export function canDispatch(work: WorkContext, action: Action) {
     [
       'take-cup',
       'pick-cup',
+      'pick-vessel',
+      'attach-sticker',
+      'choose',
       'tool',
       'use-start',
       'confirm-craft',

@@ -1,30 +1,69 @@
-import { recipeCup, recipeFor } from '../../content/recipes'
+import { recipeCup } from '../../content/recipes'
+import { STATIONS, type StationId } from '../../content/stations'
 import { josa } from '../../shared/format'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
+import { cupHandsBusy } from '../../simulation/hands'
 import type { WorkContext } from '../../simulation/work-context'
-import { CUP_NAMES, cleanCupCount, cupService, isReusableCup } from '../inventory/cups'
+import { CUP_NAMES, cleanCupCount, isReusableCup } from '../inventory/cups'
 import { addAmounts } from '../inventory/inventory'
 import { decideObservation, skipObservedSteps } from '../production/conditions'
 import {
   applyProduction,
   beginProduction,
+  chooseSetting,
   confirmProduction,
   releaseProductionTool,
-  workIsBusy,
 } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
 import { currentTicket } from '../service/orders'
-import { craftStations, createCraft, nextStep, operationFor, toolName } from './rules'
+import {
+  craftStations,
+  createCraft,
+  cupRecipe,
+  heldVessel,
+  misplacedVessels,
+  nextStep,
+  operationFor,
+  stepVessels,
+  toolName,
+  vesselBusy,
+  vesselName,
+  vesselPlace,
+} from './rules'
 
-export function handleCraftActions(
-  work: WorkContext,
-  action: Extract<
-    Action,
-    { type: 'take-cup' | 'place-cup' | 'pick-cup' | 'tool' | 'use-start' | 'confirm-craft' | 'discard-cup' }
-  >,
-) {
+type CraftAction = Extract<
+  Action,
+  {
+    type:
+      | 'take-cup'
+      | 'place-cup'
+      | 'pick-cup'
+      | 'place-vessel'
+      | 'pick-vessel'
+      | 'attach-sticker'
+      | 'choose'
+      | 'tool'
+      | 'use-start'
+      | 'confirm-craft'
+      | 'discard-cup'
+  }
+>
+
+/** The vessel a machine works on, which stays busy while the machine runs. */
+function machineVessel(step: WorkStep) {
+  const operation = step.operation
+  if ('vessel' in operation) {
+    return operation.vessel
+  }
+  return 'into' in operation ? operation.into : undefined
+}
+
+const heldCup = (cup: NonNullable<WorkContext['state']['cup']>, servingId: string) =>
+  cup.craft.location === 'hand' ? servingId : null
+
+export function handleCraftActions(work: WorkContext, action: CraftAction) {
   const s = work.state
   const fail = (message: string) => say(s, message, 'error')
 
@@ -68,11 +107,7 @@ export function handleCraftActions(
     return
   }
   const session = cup.craft
-  const owner = {
-    kind: 'drink' as const,
-    id: cup.id,
-    station: session.location === 'hand' ? ('pickup' as const) : session.location,
-  }
+  const { steps, vesselId: servingId } = cupRecipe(cup)
 
   if (action.type === 'discard-cup') {
     addAmounts(s.totals.disposed, session.consumed)
@@ -91,42 +126,63 @@ export function handleCraftActions(
     return
   }
 
-  if (action.type === 'place-cup') {
-    if (!craftStations.includes(action.station) || session.location !== 'hand' || workIsBusy(work, owner)) {
+  if (action.type === 'attach-sticker') {
+    if (session.sticker) {
+      fail('이 컵에는 이미 스티커를 붙였어요.')
       return
     }
-
-    if ((action.station === 'mix' && s.cleaning?.station === 'mix') || (action.station === 'prep' && s.preparation)) {
-      fail('이 작업대를 사용 중이에요.')
+    if (session.location !== 'hand') {
+      fail('컵을 들고 와서 스티커를 붙여주세요.')
       return
     }
-
-    session.location = action.station
-    say(s, '컵을 내려놓았어요.')
-    return
-  }
-
-  if (action.type === 'pick-cup') {
-    if (session.location !== action.station || workIsBusy(work, owner)) {
-      return
-    }
-
-    if (session.tool || s.preparation?.tool) {
-      fail('도구를 먼저 내려놓아주세요.')
-      return
-    }
-
-    session.location = 'hand'
-    say(s, '컵을 집었어요.')
-    return
-  }
-
-  if (session.location !== action.station || s.preparation?.tool) {
-    fail('작업대에 컵을 놓고 다른 도구를 내려놓아주세요.')
+    session.sticker = true
+    say(s, '주문 스티커를 붙였어요.')
     return
   }
 
   const step = operationFor(cup.recipe, session)
+  const occupied = (station: StationId) =>
+    (station === 'mix' && s.cleaning?.station === 'mix') || (station === 'prep' && !!s.preparation)
+
+  if (action.type === 'place-cup' || action.type === 'place-vessel') {
+    const held = action.type === 'place-cup' ? heldCup(cup, servingId) : heldVessel(cup)
+    if (!held || !craftStations.includes(action.station)) {
+      return
+    }
+    if (occupied(action.station)) {
+      fail('이 작업대를 사용 중이에요.')
+      return
+    }
+    if (held === servingId) {
+      session.location = action.station
+    } else {
+      session.places[held] = action.station
+    }
+    say(s, `${josa(vesselName(cup, held), '을', '를')} 내려놓았어요.`)
+    return
+  }
+
+  if (action.type === 'pick-cup' || action.type === 'pick-vessel') {
+    const id = action.type === 'pick-cup' ? servingId : action.vessel
+    if (vesselPlace(cup, id, step) !== action.station || (id !== servingId && !session.places[id])) {
+      return
+    }
+    if (vesselBusy(s, cup, id)) {
+      fail('장비가 아직 작동 중이에요.')
+      return
+    }
+    if (cupHandsBusy(cup) || s.preparation?.tool) {
+      fail('들고 있는 것을 먼저 내려놓아주세요.')
+      return
+    }
+    if (id === servingId) {
+      session.location = 'hand'
+    } else {
+      session.places[id] = 'hand'
+    }
+    say(s, `${josa(vesselName(cup, id), '을', '를')} 집었어요.`)
+    return
+  }
 
   if (action.type === 'tool' && session.tool) {
     const name = toolName(session.tool)
@@ -135,13 +191,38 @@ export function handleCraftActions(
     return
   }
 
-  if (!step || step.station !== action.station || session.fault || workIsBusy(work, owner)) {
+  if (!step || step.station !== action.station || session.fault) {
+    return
+  }
+
+  if (!session.sticker) {
+    fail('컵에 주문 스티커를 먼저 붙여주세요.')
+    return
+  }
+
+  if (session.location === 'hand' || heldVessel(cup) || s.preparation?.tool) {
+    fail('들고 있는 용기와 도구를 먼저 내려놓아주세요.')
+    return
+  }
+
+  const misplaced = misplacedVessels(cup, step)[0]
+  if (misplaced) {
+    fail(`${josa(vesselName(cup, misplaced.id), '을', '를')} ${STATIONS[step.station].name}에 먼저 놓아주세요.`)
+    return
+  }
+
+  const busy = stepVessels(step, servingId).find((id) => vesselBusy(s, cup, id))
+  if (busy) {
+    fail(`${josa(vesselName(cup, busy), '이', '가')} 아직 장비에서 작동 중이에요.`)
+    return
+  }
+
+  if (action.type === 'choose') {
+    chooseSetting(session, step, action.key, action.value)
     return
   }
 
   if (action.type === 'confirm-craft' && step.kind === 'condition') {
-    const steps = recipeFor(cup.recipe, session.size, cupService(session.kind), session.customizations).steps
-
     if (!action.observation || !decideObservation(steps, session, action.observation.id, action.observation.value)) {
       fail('현재 단계에서 관찰한 상태를 선택해주세요.')
       return
@@ -171,23 +252,32 @@ export function handleCraftActions(
     session.reservedTool = true
   }
 
+  // A helper vessel comes out at the station of its first step and stays there until the player moves it.
+  for (const id of stepVessels(step, servingId)) {
+    if (id !== servingId && !session.places[id]) {
+      session.places[id] = step.station
+    }
+  }
+
+  const owner = { kind: 'drink' as const, id: cup.id, station: action.station, vessel: machineVessel(step) }
+
   if (action.type === 'tool') {
     if (step.tool) {
       session.tool = step.tool.id
       say(s, `${step.tool.name}를 집었어요.`)
     }
   } else if (action.type === 'use-start') {
-    beginProduction(work, session, step, { ...owner, station: action.station })
+    if (beginProduction(work, session, step, owner)) {
+      skipObservedSteps(steps, session)
+    }
   } else if (action.type === 'confirm-craft') {
-    if (!confirmProduction(work, session, step, { ...owner, station: action.station })) {
+    const lid = session.choices.lid
+    if (!confirmProduction(work, session, step, owner)) {
       return
     }
-    skipObservedSteps(
-      recipeFor(cup.recipe, session.size, cupService(session.kind), session.customizations).steps,
-      session,
-    )
+    skipObservedSteps(steps, session)
     if (step.operation.action === 'serve') {
-      session.lidded = step.operation.lid === 'always'
+      session.lidded = lid !== undefined && lid !== 'none'
     }
     if (!nextStep(s)) {
       releaseProductionTool(work, session)

@@ -261,7 +261,7 @@
       "notes": [],
       "review": [],
       "output": {
-        "materialId": "coldBrew",
+        "materialId": "cold-brew",
         "amount": {
           "kind": "amount",
           "value": 6,

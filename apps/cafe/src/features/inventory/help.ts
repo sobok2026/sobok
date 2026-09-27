@@ -36,7 +36,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       reason: '준비 배합은 완성한 뒤 라벨을 쓰고 보관해야 음료에 넣을 수 있어요.',
     }
   }
-  if (ingredient === 'coldBrew') {
+  if (ingredient === 'cold-brew') {
     return {
       title: '추출액을 준비하세요',
       action:

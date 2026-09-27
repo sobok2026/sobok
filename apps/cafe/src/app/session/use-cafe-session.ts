@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { StationId } from '../../content/stations'
+import { craftWorkStation } from '../../features/crafting/rules'
 import { carriedBatch } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
 import { customerWalking } from '../../features/service/customer'
 import type { Action } from '../../simulation/actions'
+import { cupHandsBusy } from '../../simulation/hands'
 import { initialState } from '../../simulation/initial-state'
 import type { GameState } from '../../simulation/state'
 import type { CafeStore } from '../../simulation/store'
@@ -245,10 +247,14 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     if ((action.type === 'collect-cup' && cupCount(current.cleaning?.heldCups)) || action.type === 'drop-used-cups') {
       closePanel()
     }
-    if (action.type === 'place-cup' && current.cup?.craft.location === action.station) {
+    if (
+      (action.type === 'place-cup' || action.type === 'place-vessel') &&
+      !cupHandsBusy(current.cup) &&
+      craftWorkStation(current) === action.station
+    ) {
       scene.current?.unlockForCraft()
     }
-    if (action.type === 'pick-cup' && current.cup?.craft.location === 'hand') {
+    if ((action.type === 'pick-cup' || action.type === 'pick-vessel') && cupHandsBusy(current.cup)) {
       scene.current?.lock()
     }
 
@@ -284,14 +290,6 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     }
 
     void persist()
-  }
-
-  function moveCup(station: StationId) {
-    const cup = store.getSnapshot().cup
-    if (!cup) {
-      return
-    }
-    act(cup.craft.location === 'hand' ? { type: 'place-cup', station } : { type: 'pick-cup', station })
   }
 
   function use(station: StationId) {
@@ -534,7 +532,6 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     resume,
     start,
     act,
-    moveCup,
     use,
     stopUse,
     tool,

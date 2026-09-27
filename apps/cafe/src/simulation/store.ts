@@ -6,6 +6,7 @@ import { expirePreparation, handlePreparationActions } from '../features/prepara
 import { handleOrderActions } from '../features/service/actions'
 import { advanceCustomer } from '../features/service/customer-progress'
 import { handlePosActions } from '../features/service/pos-actions'
+import { handleReceiptActions } from '../features/service/receipt-actions'
 import { handleShiftActions } from '../features/shift/actions'
 import { handleWashingActions } from '../features/washing/actions'
 import { canDispatch } from './action-guards'
@@ -60,6 +61,10 @@ export class CafeStore {
 
     if (canDispatch(work, action)) {
       switch (action.type) {
+        case 'pos-cash-receipt':
+        case 'pos-print-receipt':
+          handleReceiptActions(work, action)
+          break
         case 'pos-add':
         case 'pos-update':
         case 'pos-remove':
@@ -80,6 +85,10 @@ export class CafeStore {
         case 'take-cup':
         case 'place-cup':
         case 'pick-cup':
+        case 'place-vessel':
+        case 'pick-vessel':
+        case 'attach-sticker':
+        case 'choose':
         case 'tool':
         case 'use-start':
         case 'confirm-craft':
@@ -124,6 +133,7 @@ export class CafeStore {
         case 'prep-tool':
         case 'prep-use':
         case 'prep-confirm':
+        case 'prep-choose':
         case 'discard-preparation':
           handlePreparationActions(work, action)
           break

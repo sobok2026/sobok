@@ -58,6 +58,78 @@ const paymentSchema = z.object({
   tendered: z.number().int().positive().max(100000000),
 })
 
+const cashReceiptSchema = z
+  .object({
+    id: z.string().min(1).max(100),
+    kind: z.enum(['personal', 'business', 'unissued']),
+    lastFour: z
+      .string()
+      .regex(/^\d{4}$/)
+      .nullable(),
+    issuedAt: timestamp,
+  })
+  .refine(
+    (receipt) => (receipt.kind === 'unissued' ? receipt.lastFour === null : receipt.lastFour !== null),
+    '현금영수증 발행 정보를 확인해주세요.',
+  )
+export type CashReceipt = z.infer<typeof cashReceiptSchema>
+
+const transactionSchema = z
+  .object({
+    id: z.string().min(1).max(100),
+    orderNumber: z.number().int().min(1).max(100000),
+    day: z.number().int().min(1).max(10000),
+    paidAt: timestamp,
+    lines: z
+      .array(
+        z.object({
+          id: z.string().min(1).max(100),
+          name: z.string().min(1).max(200),
+          specification: z.string().max(200),
+          customizations: z.array(z.string().max(200)).max(100),
+          quantity: z.number().int().min(1).max(99),
+          unitPrice: z.number().int().positive().max(100000000),
+        }),
+      )
+      .min(1)
+      .max(50),
+    payments: z.array(paymentSchema).min(1).max(20),
+    cashReceipts: z.array(cashReceiptSchema),
+    printCount: z.number().int().min(0).max(100000),
+    lastPrintedAt: timestamp.nullable(),
+  })
+  .superRefine((transaction, context) => {
+    const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+    const total = transaction.lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0)
+    const paid = transaction.payments.reduce((sum, payment) => sum + payment.amount, 0)
+
+    if (total !== paid) invalid('거래 내역의 주문 금액과 결제 금액이 달라요.')
+    if (new Set(transaction.lines.map((line) => line.id)).size !== transaction.lines.length) {
+      invalid('거래 내역의 주문 항목이 중복됩니다.')
+    }
+    if (new Set(transaction.payments.map((payment) => payment.id)).size !== transaction.payments.length) {
+      invalid('거래 내역의 결제가 중복됩니다.')
+    }
+    if (new Set(transaction.cashReceipts.map((receipt) => receipt.id)).size !== transaction.cashReceipts.length) {
+      invalid('현금영수증 발행 이력이 중복됩니다.')
+    }
+    if (
+      transaction.payments.some(
+        (payment) =>
+          payment.tendered < payment.amount || (payment.method === 'card' && payment.tendered !== payment.amount),
+      )
+    ) {
+      invalid('거래 내역의 받은 금액을 확인해주세요.')
+    }
+    if (transaction.cashReceipts.length && !transaction.payments.some((payment) => payment.method === 'cash')) {
+      invalid('현금 결제가 없는 거래에는 현금영수증을 발행할 수 없어요.')
+    }
+    if ((transaction.printCount === 0) !== (transaction.lastPrintedAt === null)) {
+      invalid('영수증 출력 이력을 확인해주세요.')
+    }
+  })
+export type Transaction = z.infer<typeof transactionSchema>
+
 const saleSchema = z
   .object({
     customerId: z.string().min(1).max(100),
@@ -166,6 +238,7 @@ const jobSchema = z.object({
   stepIndex: quantity.optional(),
   equipmentId: z.string().optional(),
   preparationId: z.string().max(100).optional(),
+  vessel: z.string().max(100).optional(),
 })
 
 const totalsSchema = z.object({
@@ -187,13 +260,23 @@ const totalsSchema = z.object({
   prepared: quantity,
 })
 
-const craftSchema = productionStateSchema.extend({
-  customizations: customizationSchema,
-  kind: z.enum(cupKinds),
-  size: z.enum(drinkSizeIds),
-  location: z.union([z.literal('hand'), z.enum(stationIds)]),
-  lidded: z.boolean(),
-})
+const place = z.union([z.literal('hand'), z.enum(stationIds)])
+
+const craftSchema = productionStateSchema
+  .extend({
+    customizations: customizationSchema,
+    kind: z.enum(cupKinds),
+    size: z.enum(drinkSizeIds),
+    location: place,
+    // Helper vessels such as the steam pitcher keep their own place, apart from the cup.
+    places: z.record(z.string().max(100), place),
+    lidded: z.boolean(),
+    sticker: z.boolean(),
+  })
+  .refine(
+    (craft) => [craft.location, ...Object.values(craft.places)].filter((item) => item === 'hand').length <= 1,
+    '용기는 한 번에 하나만 들 수 있어요.',
+  )
 
 const preparationSchema = productionStateSchema
   .extend({
@@ -272,6 +355,12 @@ export const stateSchema = z
     orderNumber: z.number().int().min(1).max(100000),
     customer: customerSchema.nullable(),
     sale: saleSchema.nullable(),
+    transactions: z
+      .array(transactionSchema)
+      .refine(
+        (transactions) => new Set(transactions.map((transaction) => transaction.id)).size === transactions.length,
+        '거래 번호가 중복됩니다.',
+      ),
     preparation: preparationSchema.nullable(),
     coldBrew: coldBrewSchema.nullable(),
     washing: washingSchema.nullable(),
@@ -353,6 +442,15 @@ export const stateSchema = z
   )
   .refine(
     (state) =>
+      !state.sale ||
+      state.sale.paidAt === null ||
+      state.transactions.some(
+        (transaction) => transaction.id === state.sale!.customerId && transaction.paidAt === state.sale!.paidAt,
+      ),
+    '결제된 주문의 거래 내역이 없습니다.',
+  )
+  .refine(
+    (state) =>
       !state.customer?.visit ||
       (!!state.sale && state.sale.paidAt !== null && state.sale.lines.every((line) => line.served === line.quantity)),
     '모든 음료를 전달한 뒤 손님이 매장을 이용할 수 있어요.',
@@ -371,6 +469,7 @@ export const stateSchema = z
       !(
         state.supplyDelivery ||
         state.cup?.craft.location === 'hand' ||
+        Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
         state.cup?.craft.tool ||
         state.preparation?.tool ||
         state.coldBrew?.tool ||
@@ -395,7 +494,7 @@ export const stateSchema = z
           return true
         }
 
-        return batch.ingredient === 'coldBrew'
+        return batch.ingredient === 'cold-brew'
           ? batch.location !== 'prep' && state.coldBrew?.stage === 'ready' && state.coldBrew.batchId === batch.id
           : !!state.preparation &&
               PREPARATIONS[state.preparation.recipe].output.materialId === batch.ingredient &&
@@ -415,7 +514,7 @@ export const stateSchema = z
   .refine(
     (state) =>
       state.coldBrew?.stage !== 'ready' ||
-      state.batches.some((batch) => batch.id === state.coldBrew?.batchId && batch.ingredient === 'coldBrew'),
+      state.batches.some((batch) => batch.id === state.coldBrew?.batchId && batch.ingredient === 'cold-brew'),
     '회수한 콜드 브루 용기가 없어요.',
   )
   .refine(

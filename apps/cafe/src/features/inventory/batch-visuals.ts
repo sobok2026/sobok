@@ -10,7 +10,7 @@ const BATCH_COLORS: Partial<Record<string, string>> = {
   matcha: '#568438',
 }
 
-const BATCH_SCALES: Partial<Record<string, number>> = { coldBrew: 1.15, mocha: 1 }
+const BATCH_SCALES: Partial<Record<string, number>> = { 'cold-brew': 1.15, mocha: 1 }
 
 export function createBatchVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const vessel = new THREE.Group()

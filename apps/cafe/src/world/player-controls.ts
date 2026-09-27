@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import type { StationId } from '../content/stations'
-import { craftStations } from '../features/crafting/rules'
+import { craftWorkStation } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import { washDestination } from '../features/washing/rules'
@@ -209,11 +209,9 @@ export function createPlayerControls(
       return
     }
 
-    const c = options.getState().cup
-
     if (
       hovered &&
-      ((c?.craft.location === hovered && craftStations.includes(hovered)) ||
+      (craftWorkStation(options.getState()) === hovered ||
         (hovered === 'prep' && options.getState().preparation) ||
         (hovered === 'cold-prep' && options.getState().coldBrew) ||
         (hovered === 'wash' && options.getState().washing) ||

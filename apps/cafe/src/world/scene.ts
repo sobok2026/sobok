@@ -3,12 +3,14 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { canAccessStation, isCupSurface, isTable, STATIONS, type StationId, stationIds } from '../content/stations'
 import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visuals'
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
+import { craftingAt, craftWorkStation } from '../features/crafting/rules'
 import { createCraftVisuals, cupSpot } from '../features/crafting/visuals'
 import { createBatchVisuals } from '../features/inventory/batch-visuals'
 import { carriedBatch } from '../features/inventory/batches'
 import { cleanCupCount, cupCount } from '../features/inventory/cups'
 import { createSupplyVisuals } from '../features/inventory/supplies-visuals'
 import { createPreparationVisuals, PREP_SPOT } from '../features/preparation/visuals'
+import { createStickerPrinter } from '../features/service/sticker-printer'
 import { createCustomerVisuals } from '../features/service/visuals'
 import { createWashingVisuals, WASH_SPOT } from '../features/washing/visuals'
 import { objective } from '../simulation/guidance'
@@ -47,6 +49,9 @@ export type CafeScene = {
 }
 
 function pickWidth(id: StationId) {
+  if (id === 'printer') {
+    return 0.22
+  }
   if (id === 'espresso') {
     return 0.6
   }
@@ -81,6 +86,23 @@ function markerHeight(id: StationId) {
   return isTable(id) || id === 'condiment' || id === 'trash' ? 1.2 : 1.42
 }
 
+type Placement = { cupId: string; location: string; places: Record<string, string> } | null
+
+const placementOf = (state: GameState): Placement =>
+  state.cup ? { cupId: state.cup.id, location: state.cup.craft.location, places: { ...state.cup.craft.places } } : null
+
+/** The station where the cup or a helper vessel such as the steam pitcher was just set down. */
+function placedStation(previous: Placement, current: Placement): StationId | null {
+  if (!previous || !current || previous.cupId !== current.cupId) {
+    return null
+  }
+  if (previous.location === 'hand' && current.location !== 'hand') {
+    return current.location as StationId
+  }
+  const moved = Object.entries(current.places).find(([id, place]) => place !== 'hand' && previous.places[id] === 'hand')
+  return (moved?.[1] as StationId | undefined) ?? null
+}
+
 /** Which screen edge leads to a point the camera cannot see, or null while it is in view. */
 function offscreenSide(point: THREE.Vector3, scratch: THREE.Vector3, camera: THREE.PerspectiveCamera): GuideSide {
   const projected = scratch.copy(point).project(camera)
@@ -96,7 +118,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   scene.fog = new THREE.Fog('#e5e7de', 22, 55)
   const camera = new THREE.PerspectiveCamera(62, 1, 0.08, 65)
   camera.rotation.order = 'YXZ'
-  let previousCupPlace = ''
+  let previousPlacement: Placement = null
   let previousPreparation: string | null = null
   let previousWashing: string | null = null
   let previousCleaning: string | null = null
@@ -108,7 +130,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     camera.position.set(x, 1.65, z)
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
     const state = options.getState()
-    previousCupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
+    previousPlacement = placementOf(state)
     previousPreparation = state.preparation?.id ?? null
     previousWashing = state.washing?.id ?? null
     previousCleaning = state.cleaning?.id ?? null
@@ -143,6 +165,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
   const { obstacles, blender, register, syrupStation, cupStacks } = createShopInterior(scene)
+  const stickerPrinter = createStickerPrinter(scene)
   customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
@@ -245,14 +268,14 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     if (running) {
       animationTime += dt * 1000
     }
-    const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
-
-    if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
-      const spot = cupSpot(state.cup.craft.location)
+    const placement = placementOf(state)
+    // Look at whatever the player just set down, the cup or a helper vessel such as the steam pitcher.
+    const placed = placedStation(previousPlacement, placement)
+    if (placed) {
+      const spot = cupSpot(placed)
       camera.lookAt(spot[0], spot[1] + 0.16, spot[2])
     }
-
-    previousCupPlace = cupPlace
+    previousPlacement = placement
     if (state.preparation && state.preparation.id !== previousPreparation) {
       camera.lookAt(PREP_SPOT[0], PREP_SPOT[1] + 0.17, PREP_SPOT[2])
     }
@@ -305,7 +328,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       options.onGuideSide(side)
     }
     const benchFocused =
-      (state.cup && target === state.cup.craft.location) ||
+      craftingAt(state, target) ||
       (state.preparation && !carriedBatch(state) && target === 'prep') ||
       (state.coldBrew && !carriedBatch(state) && target === 'cold-prep') ||
       (state.washing && state.washing.stage !== 'carrying' && target === 'wash') ||
@@ -319,7 +342,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
 
     craftVisuals.update(
       state,
-      options.activeStation() !== null && options.activeStation() === state.cup?.craft.location,
+      options.activeStation() !== null && options.activeStation() === craftWorkStation(state),
       animationTime,
     )
     preparationVisuals.update(state, options.activeStation() === 'prep', animationTime)
@@ -330,6 +353,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     blender.update(state)
     register.update(state)
+    stickerPrinter.update(state)
     syrupStation.update(state)
 
     for (const stack of cupStacks)

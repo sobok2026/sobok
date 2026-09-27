@@ -41,7 +41,7 @@
       "unit": "hours"
     }
   },
-  "coldBrew": {
+  "cold-brew": {
     "storage": "fridge",
     "lifetime": {
       "amount": 7,
@@ -76,7 +76,7 @@
       "unit": "hours"
     }
   },
-  "matchaPowder": {
+  "matcha-powder": {
     "storage": "room",
     "lifetime": {
       "amount": 3,

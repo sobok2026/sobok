@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { baseCoffee, coffeeNames } from '../../content/customization-options'
 import {
   type Customizations,
   canOmit,
@@ -12,9 +13,17 @@ import type { PlannedStep } from '../../content/recipe-plan'
 import { recipeFor } from '../../content/recipes'
 import type { OrderLine } from '../../simulation/state'
 import { NumericPad, PosButton, PosDialog } from './PosControls'
+import { PosExtraCustomizations } from './PosExtraCustomizations'
 
 type Input = { id: string; label: string; value: number; unit: 'shot' | 'pump'; extra?: keyof typeof extraSyrups }
-const groups = { all: '전체', coffee: '커피', syrup: '시럽', milk: '우유', topping: '얼음 · 토핑' } as const
+const groups = {
+  all: '전체',
+  coffee: '커피',
+  syrup: '시럽',
+  milk: '우유',
+  java: '자바칩',
+  topping: '얼음 · 토핑',
+} as const
 type Group = keyof typeof groups
 const levelNames = { less: '적게', extra: '많이' } as const
 
@@ -23,7 +32,7 @@ function syrupLabel(custom: Customizations, id: keyof typeof extraSyrups) {
   if (pumps) {
     return `${pumps}펌프`
   }
-  return custom.milk === '두유' && id === '바닐라-시럽' ? '무료' : '+800원'
+  return custom.milk === 'soy-milk' && id === 'vanilla-syrup' ? '무료' : '+800원'
 }
 
 function toppingLabel(custom: Customizations, stepId: string) {
@@ -53,19 +62,24 @@ export function PosCustomize({
 
   const plan = line ? recipeFor(line.recipe, line.size, line.service).steps : []
   const custom = line?.customizations ?? noCustomizations()
+  const originalCoffee = baseCoffee(plan)
 
   const change = (next: Customizations) => {
     if (!line) {
-      return
+      return '주문 항목을 먼저 선택해주세요.'
     }
+
     try {
       recipeFor(line.recipe, line.size, line.service, next)
       onChange(next)
       setError('')
       setInput(null)
       setLevelStep(null)
+      return null
     } catch (error) {
-      setError(error instanceof Error ? error.message : '선택을 확인해주세요.')
+      const message = error instanceof Error ? error.message : '선택을 확인해주세요.'
+      setError(message)
+      return message
     }
   }
 
@@ -141,21 +155,26 @@ export function PosCustomize({
         </div>
         <div className="grid content-start grid-cols-3 gap-2 overflow-y-auto xl:grid-cols-4">
           {shown('coffee') &&
-            plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular') &&
-            (['regular', 'decaf', 'half-decaf'] as const).map((coffee) => (
+            plan.some((step) => step.operation.action === 'espresso') &&
+            (Object.keys(coffeeNames) as Array<keyof typeof coffeeNames>).map((coffee) => (
               <PosButton
                 key={coffee}
                 disabled={disabled}
-                aria-pressed={(custom.coffee ?? 'regular') === coffee}
+                aria-pressed={(custom.coffee ?? originalCoffee) === coffee}
                 className="min-h-22"
-                onClick={() => change({ ...custom, coffee: coffee === 'regular' ? null : coffee })}
+                onClick={() => change({ ...custom, coffee: coffee === originalCoffee ? null : coffee })}
               >
-                {{ regular: '일반 원두', decaf: '디카페인', 'half-decaf': '1/2 디카페인' }[coffee]}
-                <span className="mt-3 block text-xs">{coffee === 'regular' ? '기본' : '+300원'}</span>
+                {coffeeNames[coffee]}
+                <span className="mt-3 block text-xs">
+                  {['decaf', 'half-decaf'].includes(coffee) && !['decaf', 'half-decaf'].includes(originalCoffee)
+                    ? '+300원'
+                    : '0원'}
+                </span>
               </PosButton>
             ))}
           {plan
             .filter(customizableQuantity)
+            .filter((step) => step.operation.action !== 'add' || step.operation.materialId !== 'frappuccino-roast')
             .filter((step) => shown(step.operation.action === 'espresso' ? 'coffee' : 'syrup'))
             .map((step) => {
               const amount = countAmount(step)!
@@ -208,7 +227,7 @@ export function PosCustomize({
                 onClick={() => change({ ...custom, milk: id === 'milk' ? null : id })}
               >
                 {label}
-                <span className="mt-3 block text-xs">{id === '오트앤유' ? '+800원' : '무료'}</span>
+                <span className="mt-3 block text-xs">{id === 'oat-and-u' ? '+800원' : '무료'}</span>
               </PosButton>
             ))}
           {shown('topping') &&
@@ -224,6 +243,16 @@ export function PosCustomize({
                 <span className="mt-3 block text-right text-xs">{toppingLabel(custom, step.id)}</span>
               </PosButton>
             ))}
+          {line && (
+            <PosExtraCustomizations
+              key={line.id}
+              line={line}
+              plan={plan}
+              group={group}
+              disabled={disabled}
+              onApply={change}
+            />
+          )}
         </div>
         {error && !input && (
           <p role="alert" className="mt-3 text-sm text-danger">

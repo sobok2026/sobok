@@ -15,9 +15,10 @@ import { PosCheckout } from './PosCheckout'
 import { NumericPad, PosButton, PosDialog } from './PosControls'
 import { PosCustomize } from './PosCustomize'
 import { PosMenu, temperatureVariant } from './PosMenu'
+import { TransactionHistory } from './TransactionHistory'
 
 type View = 'order' | 'custom' | 'checkout'
-type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | null
+type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | 'transactions' | null
 
 export default function PosPanel({
   state,
@@ -446,7 +447,7 @@ export default function PosPanel({
               </PosButton>
             </nav>
           </div>
-          <footer className="grid min-h-14 shrink-0 grid-cols-5 gap-1">
+          <footer className="grid min-h-14 shrink-0 grid-cols-6 gap-1">
             <PosButton
               tone="dark"
               disabled={!editable}
@@ -479,6 +480,9 @@ export default function PosPanel({
             <PosButton tone="dark" onClick={() => setDialog('store')}>
               영업 관리
             </PosButton>
+            <PosButton tone="dark" onClick={() => setDialog('transactions')}>
+              거래 내역
+            </PosButton>
           </footer>
         </div>
         {dialog === 'request' && (
@@ -497,6 +501,11 @@ export default function PosPanel({
           <PosDialog title="매장 현황 · 영업 관리" onClose={closeDialog} wide>
             <ShiftLedger state={state} />
             <ShiftControls state={state} act={act} />
+          </PosDialog>
+        )}
+        {dialog === 'transactions' && (
+          <PosDialog title="거래 내역" onClose={closeDialog} wide>
+            <TransactionHistory state={state} act={act} />
           </PosDialog>
         )}
         {dialog === 'clear' && (

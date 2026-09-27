@@ -42,6 +42,10 @@
 
 ## 제조 데이터 작성 원칙
 
+- 재료·레시피·제조 구분·단계·장비·장비 프로그램·용기·POS 메뉴 그룹의 고정 ID는 영문 소문자·숫자를 하이픈으로 연결한 `kebab-case`로 작성한다. 장비 프로그램 번호처럼 숫자만 있는 ID도 허용한다.
+- 레시피 파일명은 문서 ID와 같게 둔다. 메뉴의 `recipeId:variantId`, 준비 산출량의 `recipeId/variantId`는 각 ID를 기존 구분자로 연결한다. 이름이 바뀌어도 ID는 유지하며 `name`·`label`·설명·원문 조건은 한글로 보존한다. 상태 필드·코드 변수의 `camelCase`와 실행 중 생성하는 UUID는 별도다.
+- ID 변경은 정의·참조·재고 키·POS 연결을 함께 수정한다. 이전 ID의 별칭·변환표·저장 버전·마이그레이션은 두지 않는다. 기존 ID가 남은 게임 저장·JSON 백업은 현재 형식으로 읽지 못할 수 있으며 새 근무를 시작한다.
+- 별도 등록된 재료는 영어 이름이 비슷해도 합치지 않는다. `green-tea-bag-for-base`와 `green-tea-bag-for-iced-tea`, `mango-passion-fruit-juice`와 `mango-passion-fruit-juice-for-banana`는 각각 유지한다.
 - `amount`는 투입량, `count`는 펌프·샷·스쿱 등의 횟수다. `line`, `mark`, `fill-volume`, `rim-gap`은 내용물이 도달할 기준이다. 투입량과 최종 도달선을 바꾸지 않는다.
 - 사이즈별 수량은 `by-size`로 기록한다. 다른 사이즈의 눈금·스쿱은 `referenceSize`로 지정한다.
 - 컵 기준선과 텀블러 ml 계량은 서로 다른 조건이다. 텀블러 수량을 컵 선의 실측 용량으로 쓰지 않는다.

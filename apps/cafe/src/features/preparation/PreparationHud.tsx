@@ -1,5 +1,5 @@
 import type { StationId } from '../../content/stations'
-import { HoldAction, WorkBlocker, WorkHeader, WorkHud, WorkLinks } from '../../shared/ui/WorkControls'
+import { HoldAction, WorkBlocker, WorkHeader, WorkHud, WorkLinks, WorkMeter } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import { preparationBlocker } from '../../simulation/guidance'
 import { cupHandsBusy } from '../../simulation/hands'
@@ -49,7 +49,7 @@ function PreparationWork({
     return (
       <>
         <WorkHeader title={definition.name} />
-        <WorkBlocker reason="다시 준비해야 해요" fix={prep.fault} />
+        <WorkBlocker reason="다시 준비해야 해요" fix={prep.fault} fault />
         {discard('배합 폐기')}
       </>
     )
@@ -63,8 +63,22 @@ function PreparationWork({
     return (
       <>
         <WorkHeader title="준비 상태 확인" />
-        <WorkBlocker reason="다음 단계를 찾을 수 없어요" fix="배합을 정리하고 다시 시작하세요." />
+        <WorkBlocker reason="다음 단계를 찾을 수 없어요" fix="배합을 정리하고 다시 시작하세요." fault />
         {discard('배합 정리')}
+      </>
+    )
+  }
+
+  if (job) {
+    return (
+      <>
+        <WorkHeader title={`${job.label} 중`} value={`${Math.max(0, Math.ceil(job.endsAt - state.time))}초`} />
+        <WorkMeter
+          label={job.label}
+          ratio={(state.time - job.startedAt) / Math.max(1e-9, job.endsAt - job.startedAt)}
+          valueText={`${Math.max(0, Math.ceil(job.endsAt - state.time))}초 남음`}
+        />
+        {discard('배합 폐기')}
       </>
     )
   }
@@ -74,14 +88,12 @@ function PreparationWork({
       <ProductionControls
         session={prep}
         step={step}
-        title={`${definition.name} · ${step.label}`}
-        job={job}
-        time={state.time}
-        blocker={workBlocker(state, prep, step, !!job)}
+        blocker={workBlocker(state, prep, step)}
         onTool={() => act({ type: 'prep-tool' })}
         onUse={() => act({ type: 'prep-use' })}
         onStop={stop}
         onConfirm={() => act({ type: 'prep-confirm' })}
+        onChoose={(key, value) => act({ type: 'prep-choose', key, value })}
         onObserve={(id, value) => act({ type: 'prep-confirm', observation: { id, value } })}
       />
       {discard('배합 폐기')}
@@ -89,9 +101,9 @@ function PreparationWork({
   )
 }
 
-function workBlocker(state: GameState, prep: Preparation, step: WorkStep, running: boolean) {
+function workBlocker(state: GameState, prep: Preparation, step: WorkStep) {
   if (cupHandsBusy(state.cup)) {
     return { reason: '손이 비어 있지 않아요', fix: '음료 컵과 도구를 먼저 내려놓으세요.' }
   }
-  return running ? null : preparationBlocker(state, prep, step)
+  return preparationBlocker(state, prep, step)
 }

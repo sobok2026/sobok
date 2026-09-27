@@ -26,6 +26,7 @@ export function initialState(): GameState {
     orderNumber: 1,
     customer: createCustomer(1),
     sale: null,
+    transactions: [],
     cup: null,
     preparation: null,
     coldBrew: null,

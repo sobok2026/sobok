@@ -2,6 +2,7 @@ import { recipeCatalog } from '../../content/catalog'
 import { type Costs, INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import type { StationId } from '../../content/stations'
 import { buildStockEffect, projectStockEffect, scaleStockEffect } from '../../content/stock-amounts'
+import { josa } from '../../shared/format'
 import { say, startJob } from '../../simulation/feedback'
 import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
@@ -9,9 +10,90 @@ import { addAmounts, available, batchIdsFor, consume } from '../inventory/invent
 import { observationStep } from './conditions'
 import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workflow'
 
-export type WorkOwner = { kind: 'drink' | 'preparation'; id: string; station: StationId }
+export type WorkOwner = { kind: 'drink' | 'preparation'; id: string; station: StationId; vessel?: string }
 export const continuousWork = (step: WorkStep) => step.kind === 'pour' || step.kind === 'mix'
-export const readyWork = (step: WorkStep, progress: number) => progress + PRODUCTION_EPSILON >= step.target
+/** Held pours and timings pass within this share of the recipe amount. Counts must match exactly. */
+export const MEASURE_TOLERANCE = 0.05
+/** Timed equipment runs by itself once started, so the step never waits for a confirmation. */
+export const backgroundWork = (step: WorkStep) => step.kind === 'machine' && step.seconds !== null
+
+export type Judgement = 'under' | 'pass' | 'over'
+
+export function judgeWork(step: WorkStep, progress: number): Judgement {
+  if (step.kind === 'condition') {
+    return 'pass'
+  }
+  const slack = continuousWork(step) ? MEASURE_TOLERANCE : 0
+  const low = step.target * (1 - slack)
+  const high = step.maximum === null ? Infinity : step.maximum * (1 + slack)
+  if (progress + PRODUCTION_EPSILON < low) {
+    return 'under'
+  }
+  return progress - PRODUCTION_EPSILON > high ? 'over' : 'pass'
+}
+
+export const readyWork = (step: WorkStep, progress: number) => judgeWork(step, progress) !== 'under'
+
+const transfersAll = (step: WorkStep) =>
+  step.operation.action === 'transfer' && step.operation.amount.kind === 'all' && step.portion === undefined
+
+/**
+ * How far input can go before the vessel or source physically stops it. The recipe target is not a stop:
+ * the player decides when to stop and the confirmation judges it.
+ */
+function progressCap(step: WorkStep) {
+  const limit = step.maximum ?? step.target
+  if (transfersAll(step) || step.kind === 'confirm' || step.kind === 'machine') {
+    return limit
+  }
+  return continuousWork(step) ? limit * 1.5 : limit + 10
+}
+
+function judgementText(step: WorkStep, judgement: Exclude<Judgement, 'pass'>) {
+  if (step.kind === 'count') {
+    return judgement === 'under' ? '횟수가 모자라요.' : '횟수가 많아요. 다시 만들어주세요.'
+  }
+  if (step.kind === 'mix') {
+    return judgement === 'under' ? '시간이 모자라요.' : '너무 오래 했어요. 다시 만들어주세요.'
+  }
+  if (step.kind === 'pour') {
+    return judgement === 'under' ? '아직 덜 부었어요.' : '너무 많이 부었어요. 다시 만들어주세요.'
+  }
+  return '아직 동작하지 않았어요.'
+}
+
+/** Checks the picks for this step. Unset or wrong picks are refused before anything is consumed. */
+export function checkChoices(work: WorkContext, session: ProductionState, step: WorkStep) {
+  for (const choice of step.choices) {
+    const picked = session.choices[choice.key]
+    if (!picked) {
+      say(work.state, `${josa(choice.label, '을', '를')} 먼저 고르세요.`, 'error')
+      return false
+    }
+    if (picked !== choice.answer) {
+      say(work.state, `${josa(choice.label, '이', '가')} 달라요.`, 'error')
+      return false
+    }
+  }
+  return true
+}
+
+export function chooseSetting(session: ProductionState, step: WorkStep, key: string, value: string) {
+  const choice = step.choices.find((item) => item.key === key)
+  // A pick locks once the step has started so a count cannot switch beans halfway.
+  if (!choice?.options.some((option) => option.value === value) || session.progress > PRODUCTION_EPSILON) {
+    return false
+  }
+  session.choices[key] = value
+  return true
+}
+
+export function advanceStep(session: ProductionState) {
+  session.cursor++
+  session.progress = 0
+  session.stepStart = null
+  session.choices = {}
+}
 
 export function missingInput(state: GameState, step: WorkStep, progress: number): IngredientId | undefined {
   const remaining = step.inputRequirements ? 1 : Math.max(0, 1 - progress / step.target)
@@ -69,7 +151,8 @@ function stockEffect(session: ProductionState, step: WorkStep) {
     step.stockContext,
     step.nextStockAdd ?? undefined,
   )
-  return step.portion === undefined ? effect : scaleStockEffect(session, effect, step.stockContext, step.portion)
+  const portion = step.portion ?? step.foamPortion
+  return portion === undefined ? effect : scaleStockEffect(session, effect, step.stockContext, portion)
 }
 
 export function stockAwareWorkStep(session: ProductionState, step: WorkStep): WorkStep {
@@ -94,13 +177,6 @@ export function stockAwareWorkStep(session: ProductionState, step: WorkStep): Wo
   }
 
   return { ...step, costs: stockEffect(session, step).costs }
-}
-
-export function productionTargetFill(session: ProductionState, step: WorkStep, vesselId: string) {
-  if (step.kind === 'condition' || step.mixesMaterialId) {
-    return undefined
-  }
-  return stockEffect(session, step).targetFills[vesselId]
 }
 
 function enoughToTransfer(work: WorkContext, session: ProductionState, step: WorkStep) {
@@ -180,19 +256,10 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     }
   }
 
-  if (continuousWork(step) || step.kind === 'confirm') {
-    delta = Math.min(delta, Math.max(0, (step.maximum ?? Infinity) - session.progress))
-  }
+  delta = Math.min(delta, Math.max(0, progressCap(step) - session.progress))
 
-  if (delta <= 0) {
+  if (delta <= PRODUCTION_EPSILON) {
     work.input = null
-    return
-  }
-
-  if (session.progress + delta > (step.maximum ?? Infinity) + PRODUCTION_EPSILON) {
-    session.fault = `${step.label}의 목표량을 초과했어요.`
-    work.input = null
-    say(work.state, session.fault, 'error')
     return
   }
 
@@ -227,7 +294,12 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
   }
 
   if (effect && nextStock) {
-    session.stepStart ??= { stepId: step.id, target, effect }
+    session.stepStart ??= {
+      stepId: step.id,
+      target,
+      effect,
+      fills: Object.fromEntries(Object.keys(effect.targetFills).map((id) => [id, session.vessels[id]?.fill ?? 0])),
+    }
     session.vessels = nextStock.vessels
     session.stockHeld = nextStock.stockHeld
   }
@@ -238,28 +310,43 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
   }
 }
 
-export function beginProduction(work: WorkContext, session: ProductionState, step: WorkStep, owner: WorkOwner) {
+/**
+ * Starts or continues the current step. Returns true when timed equipment took the step over, so the caller
+ * moves on to the next step while the machine runs.
+ */
+export function beginProduction(
+  work: WorkContext,
+  session: ProductionState,
+  step: WorkStep,
+  owner: WorkOwner,
+): boolean {
   if (step.kind === 'condition') {
     say(work.state, '관찰한 상태를 먼저 선택해주세요.', 'error')
-    return
+    return false
   }
 
-  if (session.fault || workIsBusy(work, owner)) {
-    return
+  if (session.fault) {
+    return false
   }
 
   if (work.state.jobs.some((job) => job.station === step.station)) {
     say(work.state, '장비를 사용 중이에요.', 'error')
-    return
+    return false
   }
 
   if (session.tool !== (step.tool?.id ?? null)) {
     say(work.state, step.tool ? `${step.tool.name}를 먼저 집어주세요.` : '도구를 먼저 내려놓아주세요.', 'error')
-    return
+    return false
+  }
+
+  if (step.choices.some((choice) => choice.key !== 'lid') && session.progress <= PRODUCTION_EPSILON) {
+    if (!checkChoices(work, session, step)) {
+      return false
+    }
   }
 
   if (!mixedInputReady(work, session, step)) {
-    return
+    return false
   }
 
   if (continuousWork(step)) {
@@ -267,22 +354,22 @@ export function beginProduction(work: WorkContext, session: ProductionState, ste
       owner.kind === 'drink'
         ? { kind: 'drink', cupId: owner.id, step: session.cursor, station: owner.station, operation: step.id }
         : { kind: 'prep', preparationId: owner.id, step: session.cursor, station: 'prep' }
-    return
+    return false
   }
 
-  if (step.kind === 'machine' && session.progress + PRODUCTION_EPSILON >= (step.maximum ?? Infinity)) {
-    return
-  }
   const before = session.progress
   applyProduction(work, session, step, step.increment)
-  if (session.progress <= before || step.kind !== 'machine' || step.seconds === null) {
-    return
+  if (session.progress <= before || !backgroundWork(step)) {
+    return false
   }
-  startJob(work.state, 'production', owner.station, step.label, step.seconds, {
+  startJob(work.state, 'production', owner.station, step.label, step.seconds!, {
     ...(owner.kind === 'drink' ? { cupId: owner.id } : { preparationId: owner.id }),
     stepIndex: session.cursor,
     equipmentId: step.equipmentId ?? undefined,
+    vessel: owner.vessel,
   })
+  advanceStep(session)
+  return true
 }
 
 export function confirmProduction(
@@ -296,21 +383,32 @@ export function confirmProduction(
     return false
   }
 
-  if (session.fault || workIsBusy(work, owner)) {
-    return false
-  }
-
-  if (!readyWork(step, session.progress)) {
-    say(work.state, '현재 단계의 목표까지 진행해주세요.', 'error')
-    return false
-  }
-
-  if (!enoughToTransfer(work, session, step)) {
+  if (session.fault || (owner.kind === 'preparation' && workIsBusy(work, owner)) || backgroundWork(step)) {
     return false
   }
 
   if (session.tool) {
     say(work.state, '도구를 내려놓은 뒤 확인해주세요.', 'error')
+    return false
+  }
+
+  if (step.choices.some((choice) => choice.key === 'lid') && !checkChoices(work, session, step)) {
+    return false
+  }
+
+  const judgement = step.choices.some((choice) => choice.key === 'lid') ? 'pass' : judgeWork(step, session.progress)
+  if (judgement === 'under') {
+    say(work.state, judgementText(step, judgement), 'error')
+    return false
+  }
+  if (judgement === 'over') {
+    session.fault = judgementText(step, judgement)
+    work.input = null
+    say(work.state, session.fault, 'error')
+    return false
+  }
+
+  if (!enoughToTransfer(work, session, step)) {
     return false
   }
 
@@ -337,9 +435,7 @@ export function confirmProduction(
   if (step.requiresMixedMaterialId) {
     delete session.mixedInputs[step.requiresMixedMaterialId]
   }
-  session.cursor++
-  session.progress = 0
-  session.stepStart = null
+  advanceStep(session)
   return true
 }
 

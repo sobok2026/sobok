@@ -4,8 +4,11 @@ import { money } from '../../shared/format'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
+import { CashReceiptForm } from './CashReceiptForm'
 import { orderMatchesRequest, saleChange, salePaid, saleQuantity, saleTotal } from './orders'
 import { NumericPad, PosButton } from './PosControls'
+import { ReceiptPreview } from './Receipt'
+import { transactionCash } from './transactions'
 
 export function PosCheckout({
   state,
@@ -22,6 +25,7 @@ export function PosCheckout({
   const [value, setValue] = useState('')
   const [recognized, setRecognized] = useState(false)
   const [error, setError] = useState('')
+  const [receiptView, setReceiptView] = useState<'cash' | 'preview' | null>(null)
   const attempt = useRef('')
 
   const sale = state.sale
@@ -30,6 +34,9 @@ export function PosCheckout({
     remaining = total - paid,
     change = saleChange(sale)
   const complete = !!sale && sale.paidAt !== null
+  const transaction = state.transactions.find((item) => item.id === sale?.customerId)
+  const needsCashReceipt = !!transaction && transactionCash(transaction) > 0 && !transaction.cashReceipts.length
+  const showingCashReceipt = complete && (needsCashReceipt || receiptView === 'cash')
   const matches = orderMatchesRequest(state)
 
   const pay = () => {
@@ -108,7 +115,10 @@ export function PosCheckout({
         className="flex min-h-0 min-w-0 flex-col overflow-y-auto rounded-md bg-white p-4 text-pos-ink"
         aria-label={checkoutLabel(complete, method)}
       >
-        {complete && (
+        {showingCashReceipt && transaction && (
+          <CashReceiptForm transaction={transaction} act={act} onDone={() => setReceiptView(null)} />
+        )}
+        {complete && !showingCashReceipt && (
           <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
             <span
               className="grid size-18 place-items-center rounded-full bg-pos-active text-4xl text-white"
@@ -120,6 +130,14 @@ export function PosCheckout({
             <p className="text-sm">음료 {saleQuantity(sale)}잔 · 제조 주문이 접수되었습니다.</p>
             <p className="text-3xl font-semibold tabular-nums">{money(total)}</p>
             {change > 0 && <p className="text-lg text-danger">거스름돈 {money(change)}</p>}
+            {transaction && (
+              <div className="grid w-full grid-cols-2 gap-2">
+                <PosButton onClick={() => setReceiptView('preview')}>영수증 보기</PosButton>
+                <PosButton disabled={!transactionCash(transaction)} onClick={() => setReceiptView('cash')}>
+                  현금영수증
+                </PosButton>
+              </div>
+            )}
             <PosButton tone="active" onClick={onClose} className="mt-4 w-full min-h-14">
               제조하러 가기 →
             </PosButton>
@@ -256,6 +274,9 @@ export function PosCheckout({
           </>
         )}
       </section>
+      {transaction && receiptView === 'preview' && (
+        <ReceiptPreview transaction={transaction} act={act} onClose={() => setReceiptView(null)} />
+      )}
     </div>
   )
 }

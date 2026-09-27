@@ -2,9 +2,19 @@ import { STATIONS } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { CraftState, GameState } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
-import { continuousWork, missingInput, readyWork } from '../production/runtime'
+import { workTitle } from '../production/presentation'
+import { backgroundWork, continuousWork, missingInput, readyWork } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
-import { nextStep, operationFor } from './rules'
+import {
+  cupRecipe,
+  heldVessel,
+  misplacedVessels,
+  nextCupStation,
+  nextVesselStation,
+  operationFor,
+  stepVessels,
+  vesselName,
+} from './rules'
 
 export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): Tip {
   const craft = cup.craft
@@ -16,37 +26,54 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
     }
   }
   const step = operationFor(cup.recipe, craft)
-  const source = nextStep(state)
-  if (!step || !source) {
+  if (!step) {
     return {
       title: '완성한 음료를 전달하세요',
       action: handoffAction(state, craft),
       reason: '한 잔씩 전달하고, 마지막 잔을 받으면 손님이 매장을 이용해요.',
     }
   }
-  const job = state.jobs.find((item) => item.cupId === cup.id)
-  if (job) {
+  if (!craft.sticker) {
     return {
-      title: `${job.label} 중이에요`,
-      action: '작동이 끝나면 횟수를 확인하세요. 목표 횟수까지 작동한 뒤 F로 완료를 확인하세요.',
-      reason: '작동 중에는 컵이 고정돼요. 장비 종료 후에도 완료 확인 전에는 같은 단계예요.',
+      title: '컵에 주문 스티커를 붙이세요',
+      action: '컵을 든 채 스티커 프린터를 보고 E를 누르세요.',
+      reason: '결제하면 음료마다 스티커가 나와요. 스티커를 보고 만들어요.',
+    }
+  }
+  const held = heldVessel(cup)
+  if (held) {
+    const station = nextVesselStation(cup, held) ?? step.station
+    return {
+      title: `${vesselName(cup, held)}를 내려놓으세요`,
+      action: `${STATIONS[station].name}를 보고 E를 누르세요.`,
+      reason: '용기는 한 번에 하나만 들 수 있어요.',
     }
   }
   if (craft.location === 'hand') {
     return {
-      title: `${STATIONS[source.station].name} 쪽으로 이동하세요`,
+      title: `${STATIONS[nextCupStation(cup)].name} 쪽으로 이동하세요`,
       action: '작업대를 보고 E로 컵을 내려놓으세요.',
-      reason: '컵은 정해진 자리에 자동으로 놓여요. 제조는 카운터 안쪽에서 진행해요.',
+      reason: '컵이 필요 없는 단계는 그 용기로 진행해요. 우유 계량과 스팀은 스팀 완드의 피처로 해요.',
     }
   }
-  if (craft.location !== source.station) {
+  const misplaced = misplacedVessels(cup, step)[0]
+  if (misplaced?.place && misplaced.place !== 'hand') {
     return {
-      title: '다음 작업대로 컵을 옮기세요',
-      action: `${STATIONS[craft.location].name}에서 E로 집고 ${STATIONS[source.station].name}에 E로 놓으세요.`,
-      reason: `다음 단계는 ${step.label}예요.`,
+      title: `${vesselName(cup, misplaced.id)}를 옮기세요`,
+      action: `${STATIONS[misplaced.place].name}에서 E로 집고 ${STATIONS[step.station].name}에 E로 놓으세요.`,
+      reason: `다음 단계는 ${workTitle(step)}예요.`,
     }
   }
-  const ready = readyWork(step, craft.progress)
+  const job = state.jobs.find(
+    (item) => item.cupId === cup.id && item.vessel && stepVessels(step, cupRecipe(cup).vesselId).includes(item.vessel),
+  )
+  if (job) {
+    return {
+      title: `${job.label} 중이에요`,
+      action: '끝나면 이어서 할 수 있어요.',
+      reason: '장비는 시작하면 스스로 멈춰요. 기다리는 동안 다른 단계를 먼저 해도 돼요.',
+    }
+  }
   if (step.kind === 'condition' && step.condition) {
     return {
       title: '제조 상태를 확인하세요',
@@ -59,22 +86,20 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
       title: '깨끗한 작업 용기가 필요해요',
       action: state.tools.washed
         ? '세척대에서 씻은 용기를 집어 도구 선반에 놓으세요.'
-        : '컵은 여기에 두고 세척대에서 작업 용기를 씻으세요.',
+        : '세척대에서 작업 용기를 씻고 도구 선반에 정리하세요.',
       reason: '세척 후 도구 선반에 정리해야 제조에 사용할 수 있어요.',
     }
   }
 
-  const missing = ready ? undefined : missingInput(state, step, craft.progress)
+  const missing = readyWork(step, craft.progress) ? undefined : missingInput(state, step, craft.progress)
   if (missing) {
     return materialTip(state, missing)
   }
 
   return {
-    title: step.label,
-    action: stepAction(craft, step, ready),
-    reason: step.measurement
-      ? `계량 목표: ${step.measurement}. ${step.note || '도구를 놓고 F로 확인하기 전까지는 같은 단계예요.'}`
-      : step.note || step.instruction,
+    title: workTitle(step),
+    action: stepAction(craft, step),
+    reason: `원문: ${step.instruction}${step.note ? ` ${step.note}` : ''}`,
   }
 }
 
@@ -91,26 +116,23 @@ function handoffAction(state: GameState, craft: CraftState) {
   return '손님이 픽업대에 도착하면 F로 전달하세요.'
 }
 
-function stepAction(craft: CraftState, step: WorkStep, ready: boolean) {
-  if (craft.tool && (ready || craft.tool !== step.tool?.id)) {
+function stepAction(craft: CraftState, step: WorkStep) {
+  if (craft.tool && craft.tool !== step.tool?.id) {
     return 'G로 들고 있는 도구를 내려놓으세요.'
   }
-  if (ready) {
-    return 'F로 현재 단계의 완료를 확인하세요.'
-  }
-  if (step.tool && craft.tool !== step.tool.id) {
+  if (step.tool && !craft.tool) {
     return `G로 ${step.tool.name}를 집으세요.`
   }
-
-  if (step.kind === 'machine') {
-    if (step.seconds === null) {
-      return 'Space로 작동을 확인하세요. 목표 횟수를 맞춘 뒤 F로 다음 단계로 넘어가세요.'
-    }
-    return 'Space로 장비를 한 번 작동하세요. 목표 횟수까지 반복한 뒤 F로 완료를 확인하세요.'
+  if (step.choices.some((choice) => !craft.choices[choice.key])) {
+    return step.operation.action === 'serve'
+      ? '리드를 고르고 F로 확인하세요.'
+      : '숫자 키나 버튼으로 장비 설정을 고른 뒤 Space로 시작하세요.'
   }
-
+  if (backgroundWork(step)) {
+    return 'Space로 시작하면 장비가 스스로 멈춰요.'
+  }
   if (continuousWork(step)) {
-    return 'Space나 작업 버튼을 누르고 표시된 목표까지 진행하세요.'
+    return 'Space를 누른 채 진행하고 알맞은 양에서 손을 떼세요. 도구를 내려놓고 F로 확인하면 판정해요.'
   }
-  return 'Space를 한 번씩 눌러 표시된 동작과 횟수를 맞추세요.'
+  return 'Space를 한 번씩 눌러 횟수를 맞추고 F로 확인하세요. 모자라면 이어서 하고 넘치면 다시 만들어요.'
 }

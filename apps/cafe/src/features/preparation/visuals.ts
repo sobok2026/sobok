@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { materialColor } from '../../shared/visuals/material-color'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
 import {
@@ -6,7 +7,6 @@ import {
   createProductionToolVisual,
   createWorkVesselVisual,
   heldTool,
-  materialColor,
   operationColor,
   operationVessel,
   positionProductionTool,

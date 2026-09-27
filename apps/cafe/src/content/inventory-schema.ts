@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import inventoryData from '../../data/shop/inventory.json'
 import stockRuleData from '../../data/shop/stock-rules.json'
+import { catalogIdSchema } from './recipe-schema'
 
 const text = z.string().trim().min(1)
 const positive = z.number().positive()
@@ -11,7 +12,7 @@ const materialQuality = z.strictObject({
   lifetime: z.strictObject({ amount: positive, unit: z.enum(['days', 'hours', 'months']) }),
 })
 
-export const qualitySchema = z.record(text, materialQuality)
+export const qualitySchema = z.record(catalogIdSchema, materialQuality)
 const stockUnit = z.enum(['ml', 'g', 'piece', 'pack', 'scoop', 'tap'])
 const stockSize = z.enum(['single', 'short', 'tall', 'grande', 'venti', 'trenta'])
 const cupStyle = z.enum(['hot-paper', 'iced-plastic', 'hot-mug', 'iced-glass'])
@@ -28,7 +29,7 @@ const geometry = z.strictObject({
 export const shopInventorySchema = z.strictObject({
   note: text,
   materials: z.record(
-    text,
+    catalogIdSchema,
     z.strictObject({
       stockUnit,
       unit: text,
@@ -37,6 +38,7 @@ export const shopInventorySchema = z.strictObject({
       storage: materialQuality.shape.storage.optional(),
       lifetime: materialQuality.shape.lifetime.optional(),
       startingAmount: nonnegative,
+      purchasedPrepared: z.boolean().optional(),
       color: z
         .string()
         .regex(/^#[0-9a-fA-F]{6}$/)
@@ -51,9 +53,9 @@ export const shopStockRulesSchema = z.strictObject({
   rangePolicy: z.literal('minimum'),
   volumeUnits: z.strictObject({ ml: z.literal(1), l: z.literal(1000), oz: positive, tsp: positive }),
   massUnits: z.strictObject({ g: z.literal(1), kg: z.literal(1000), lb: positive }),
-  utilityUnits: z.record(text, stockUnit),
+  utilityUnits: z.record(catalogIdSchema, stockUnit),
   materials: z.record(
-    text,
+    catalogIdSchema,
     z.strictObject({
       millilitersPerStockUnit: positive,
       gramsPerStockUnit: positive,
@@ -61,9 +63,12 @@ export const shopStockRulesSchema = z.strictObject({
       phase: z.enum(['liquid', 'foam', 'solid']),
     }),
   ),
-  tools: z.record(text, z.strictObject({ value: positive, unit: z.enum(['ml', 'g']), bySize: sizeNumbers.nullable() })),
+  tools: z.record(
+    catalogIdSchema,
+    z.strictObject({ value: positive, unit: z.enum(['ml', 'g']), bySize: sizeNumbers.nullable() }),
+  ),
   vessels: z.record(
-    text,
+    catalogIdSchema,
     z.strictObject({
       geometry: z.record(stockSize, geometry),
       cupStyles: z.record(cupStyle, z.record(stockSize, geometry)).nullable(),
@@ -74,20 +79,20 @@ export const shopStockRulesSchema = z.strictObject({
   fractions: z.record(
     text,
     z.discriminatedUnion('kind', [
-      z.strictObject({ kind: z.literal('tool'), toolId: text }),
-      z.strictObject({ kind: z.literal('vessel'), vesselId: text, rimGapMillimeters: nonnegative }),
+      z.strictObject({ kind: z.literal('tool'), toolId: catalogIdSchema }),
+      z.strictObject({ kind: z.literal('vessel'), vesselId: catalogIdSchema, rimGapMillimeters: nonnegative }),
       z.strictObject({ kind: z.literal('target') }),
     ]),
   ),
   espresso: z.record(
     text,
     z.strictObject({
-      beans: z.array(z.strictObject({ materialId: text, share: positive })).min(1),
+      beans: z.array(z.strictObject({ materialId: catalogIdSchema, share: positive })).min(1),
       gramsPerShot: positive,
       millilitersPerShot: positive,
     }),
   ),
-  ice: z.strictObject({ materialId: text, packedVolumeRatio: positive.max(1) }),
+  ice: z.strictObject({ materialId: catalogIdSchema, packedVolumeRatio: positive.max(1) }),
   foamProfiles: z.strictObject({
     steam: z.strictObject({ stockFraction: nonnegative.max(1), volumeMultiplier: positive }),
     charge: z.strictObject({ stockFraction: nonnegative.max(1), volumeMultiplier: positive }),
@@ -97,8 +102,11 @@ export const shopStockRulesSchema = z.strictObject({
       )
       .min(1),
   }),
-  machineVolumeMultipliers: z.record(text, z.record(text, positive)),
-  machineDispenses: z.record(text, z.record(text, z.strictObject({ materialId: text, milliliters: positive }))),
+  machineVolumeMultipliers: z.record(catalogIdSchema, z.record(catalogIdSchema, positive)),
+  machineDispenses: z.record(
+    catalogIdSchema,
+    z.record(catalogIdSchema, z.strictObject({ materialId: catalogIdSchema, milliliters: positive })),
+  ),
   actionUnits: z.strictObject({
     peel: positive,
     cut: positive,
@@ -107,7 +115,7 @@ export const shopStockRulesSchema = z.strictObject({
     attach: positive,
     charge: positive,
   }),
-  preparationOutputs: z.record(text, z.strictObject({ materialId: text, amount: positive, stockUnit })),
+  preparationOutputs: z.record(text, z.strictObject({ materialId: catalogIdSchema, amount: positive, stockUnit })),
 })
 
 export type StockSize = z.infer<typeof stockSize>

@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
-const id = z
+export const catalogIdSchema = z
   .string()
   .min(1)
   .max(160)
-  .regex(/^[A-Za-z0-9가-힣][A-Za-z0-9가-힣._-]*$/)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'ID는 영문 소문자·숫자를 하이픈으로 연결해 작성해주세요.')
 
 const text = z.string().trim().min(1)
 const positive = z.number().positive()
@@ -97,7 +97,7 @@ export const recipeConditionSchema = z.discriminatedUnion('kind', [
 export type RecipeCondition = z.infer<typeof recipeConditionSchema>
 // A list is a conjunction of explicit source conditions, never an evaluated expression.
 const when = z.union([recipeConditionSchema, z.array(recipeConditionSchema).min(1)])
-const target = id
+const target = catalogIdSchema
 const portion = z.enum(['all', 'liquid', 'foam'])
 
 function operation<T extends z.ZodRawShape>(shape: T) {
@@ -107,10 +107,10 @@ function operation<T extends z.ZodRawShape>(shape: T) {
 export const operationSchema = z.discriminatedUnion('action', [
   operation({
     action: z.literal('add'),
-    materialId: id,
+    materialId: catalogIdSchema,
     into: target,
     amount: amountChoice,
-    toolId: id.optional(),
+    toolId: catalogIdSchema.optional(),
     temperature: temperature.optional(),
     portion: portion.optional(),
     placement: text.optional(),
@@ -129,13 +129,13 @@ export const operationSchema = z.discriminatedUnion('action', [
     into: target,
     amount: amountChoice,
     method: z.enum(['regular', 'decaf', 'half-decaf', 'blonde', 'ristretto', 'blonde-ristretto', 'decaf-ristretto']),
-    equipmentId: id.optional(),
-    materialId: id.optional(),
+    equipmentId: catalogIdSchema.optional(),
+    materialId: catalogIdSchema.optional(),
   }),
   operation({
     action: z.literal('grind'),
-    equipmentId: id,
-    materialId: id,
+    equipmentId: catalogIdSchema,
+    materialId: catalogIdSchema,
     into: target,
     amount: amountChoice.optional(),
     setting: text.optional(),
@@ -143,7 +143,7 @@ export const operationSchema = z.discriminatedUnion('action', [
   operation({
     action: z.literal('mix'),
     vessel: target,
-    toolId: id.optional(),
+    toolId: catalogIdSchema.optional(),
     duration: duration.optional(),
     repetitions: repetitions.optional(),
     approximate: z.boolean().optional(),
@@ -163,7 +163,7 @@ export const operationSchema = z.discriminatedUnion('action', [
   }),
   operation({
     action: z.literal('run-machine'),
-    equipmentId: id,
+    equipmentId: catalogIdSchema,
     vessel: target,
     program: z.union([text, z.partialRecord(recipeSizeSchema, text)]),
     cycles: z.union([
@@ -178,45 +178,55 @@ export const operationSchema = z.discriminatedUnion('action', [
     into: target,
     amount: amountChoice,
     portion: portion.optional(),
-    toolId: id.optional(),
+    toolId: catalogIdSchema.optional(),
   }),
   operation({
     action: z.literal('strain'),
     from: target,
     into: target,
-    toolId: id.optional(),
-    toolIds: z.array(id).min(1).optional(),
-    excludeMaterialIds: z.array(id).optional(),
+    toolId: catalogIdSchema.optional(),
+    toolIds: z.array(catalogIdSchema).min(1).optional(),
+    excludeMaterialIds: z.array(catalogIdSchema).optional(),
   }),
   operation({
     action: z.literal('muddle'),
     vessel: target,
-    toolId: id.optional(),
+    toolId: catalogIdSchema.optional(),
     repetitions: repetitions.optional(),
   }),
-  operation({ action: z.literal('squeeze'), materialId: id, into: target, amount: amountChoice.optional() }),
-  operation({ action: z.literal('etch'), vessel: target, toolId: id.optional(), pattern: text.optional() }),
+  operation({
+    action: z.literal('squeeze'),
+    materialId: catalogIdSchema,
+    into: target,
+    amount: amountChoice.optional(),
+  }),
+  operation({
+    action: z.literal('etch'),
+    vessel: target,
+    toolId: catalogIdSchema.optional(),
+    pattern: text.optional(),
+  }),
   operation({
     action: z.literal('charge'),
     vessel: target,
-    equipmentId: id.optional(),
-    gasMaterialId: id.optional(),
+    equipmentId: catalogIdSchema.optional(),
+    gasMaterialId: catalogIdSchema.optional(),
     cartridges: positive.optional(),
     duration: duration.optional(),
   }),
   operation({ action: z.literal('steep'), vessel: target, duration, temperature: temperature.optional() }),
   operation({
     action: z.literal('remove'),
-    itemId: id,
+    itemId: catalogIdSchema,
     from: target,
     drain: duration.optional(),
     dispose: z.boolean().optional(),
   }),
-  operation({ action: z.literal('peel'), materialId: id }),
-  operation({ action: z.literal('cut'), materialId: id, pieces: z.number().int().positive() }),
-  operation({ action: z.literal('arrange'), materialId: id, into: target, pattern: text }),
-  operation({ action: z.literal('place'), itemId: id, into: target }),
-  operation({ action: z.literal('attach'), itemId: id, toId: id }),
+  operation({ action: z.literal('peel'), materialId: catalogIdSchema }),
+  operation({ action: z.literal('cut'), materialId: catalogIdSchema, pieces: z.number().int().positive() }),
+  operation({ action: z.literal('arrange'), materialId: catalogIdSchema, into: target, pattern: text }),
+  operation({ action: z.literal('place'), itemId: catalogIdSchema, into: target }),
+  operation({ action: z.literal('attach'), itemId: catalogIdSchema, toId: catalogIdSchema }),
   operation({ action: z.literal('cover'), vessel: target }),
   operation({ action: z.literal('wash'), vessel: target }),
   operation({ action: z.literal('sanitize'), vessel: target }),
@@ -239,7 +249,7 @@ export const operationSchema = z.discriminatedUnion('action', [
 export type RecipeOperation = z.infer<typeof operationSchema>
 
 const row = z.strictObject({
-  id,
+  id: catalogIdSchema,
   label: text,
   instructions: z.array(text).min(1),
   notes: z.array(text),
@@ -249,13 +259,13 @@ const row = z.strictObject({
 })
 
 export const recipeDocumentSchema = z.strictObject({
-  id,
+  id: catalogIdSchema,
   name: text,
   kind: z.enum(['drink', 'preparation', 'procedure']),
   variants: z
     .array(
       z.strictObject({
-        id,
+        id: catalogIdSchema,
         name: text,
         temperature: z.enum(['hot', 'iced']).nullable(),
         sizes: z.array(recipeSizeSchema),
@@ -263,7 +273,9 @@ export const recipeDocumentSchema = z.strictObject({
         steps: z.array(row).min(1),
         notes: z.array(text),
         review: z.array(text),
-        output: z.strictObject({ materialId: id, amount: amountSchema.nullable(), description: text }).optional(),
+        output: z
+          .strictObject({ materialId: catalogIdSchema, amount: amountSchema.nullable(), description: text })
+          .optional(),
       }),
     )
     .min(1),
@@ -274,11 +286,11 @@ export type RecipeStep = RecipeVariant['steps'][number]
 
 export const equipmentSchema = z.array(
   z.strictObject({
-    id,
+    id: catalogIdSchema,
     name: text,
     kind: z.enum(['pump', 'scoop', 'utensil', 'machine']),
     dose: z.strictObject({ value: positive, unit: z.enum(['ml', 'g', 'oz', 'tsp']) }).nullable(),
-    programs: z.array(z.strictObject({ id, name: text, duration: duration.nullable() })),
+    programs: z.array(z.strictObject({ id: catalogIdSchema, name: text, duration: duration.nullable() })),
     notes: z.array(text),
   }),
 )
@@ -287,11 +299,11 @@ export type Equipment = z.infer<typeof equipmentSchema>[number]
 
 export const materialSchema = z.array(
   z.strictObject({
-    id,
+    id: catalogIdSchema,
     name: text,
     kind: z.enum(['raw', 'prepared', 'utility']),
     stockUnit: z.enum(['ml', 'g', 'pack', 'scoop', 'tap', 'piece']).nullable(),
-    preparationId: id.nullable(),
+    preparationId: catalogIdSchema.nullable(),
     notes: z.array(text),
   }),
 )
@@ -300,7 +312,7 @@ export type Material = z.infer<typeof materialSchema>[number]
 
 export const vesselSchema = z.array(
   z.strictObject({
-    id,
+    id: catalogIdSchema,
     name: text,
     lines: z.array(z.enum(['lower', 'middle', 'upper', 'size', 'max'])),
     marks: z.array(text).optional(),
