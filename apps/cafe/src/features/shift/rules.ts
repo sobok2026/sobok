@@ -2,8 +2,9 @@ import { INGREDIENTS } from '../../content/ingredients'
 import { cupSurfaceIds, STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { cupSurface } from '../cleaning/rules'
-import { batchDestination, batchHome, carriedBatch, isSealed } from '../inventory/batches'
-import { cupCount } from '../inventory/cups'
+import { DRIP_BEANS, dripTemperatures } from '../drip-coffee/rules'
+import { batchHome, carriedBatch, deliveryDestination, isSealed } from '../inventory/batches'
+import { CUP_NAMES, cupCount } from '../inventory/cups'
 import { SUPPLIES } from '../inventory/supplies'
 import { PREPARATIONS } from '../preparation/rules'
 import { CUSTOMER_STATUS } from '../service/customer'
@@ -26,13 +27,24 @@ export function shiftTasks(state: GameState): ShiftTask[] {
   if (state.coldBrew && state.coldBrew.stage !== 'extracting') {
     tasks.push({ place: STATIONS['cold-prep'].name, task: coldBrewTask(state.coldBrew.stage) })
   }
+  for (const temperature of dripTemperatures) {
+    const brew = state.drip[temperature]
+    if (brew && brew.stage !== 'extracting')
+      tasks.push({
+        place: STATIONS.urn.name,
+        task: `${temperature.toUpperCase()} ${DRIP_BEANS[brew.bean]} ${brew.stage === 'ready' && temperature === 'hot' ? '잔량 사용 또는 폐기' : '준비 마무리 또는 폐기'}`,
+      })
+  }
 
   const carried = carriedBatch(state)
   if (carried) {
     tasks.push(
       isSealed(carried)
         ? { place: '들고 있는 원팩', task: `${INGREDIENTS[carried.ingredient].name} 넣기` }
-        : { place: STATIONS[batchDestination(carried)].name, task: `${INGREDIENTS[carried.ingredient].name} 보관` },
+        : {
+            place: STATIONS[deliveryDestination(state, carried)].name,
+            task: `${INGREDIENTS[carried.ingredient].name} 보관`,
+          },
     )
   }
   if (state.washing) {
@@ -54,7 +66,14 @@ export function shiftTasks(state: GameState): ShiftTask[] {
     )
   }
   if (state.supplyDelivery) {
-    tasks.push({ place: STATIONS.condiment.name, task: `${SUPPLIES[state.supplyDelivery.supply].name} 채우기` })
+    tasks.push({ place: STATIONS.supplies.name, task: `${SUPPLIES[state.supplyDelivery.supply].name} 채우기` })
+  }
+  if (state.cupDelivery) {
+    tasks.push({
+      place: STATIONS.cups.name,
+      task: `${CUP_NAMES[state.cupDelivery.kind]} 보충`,
+      count: `${state.cupDelivery.amount}개`,
+    })
   }
 
   for (const batch of state.batches) {
@@ -64,7 +83,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
     }
     if (batch.expiresAt !== null && batch.expiresAt <= state.time) {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 폐기` })
-    } else if (batch.location !== 'bar') {
+    } else if (!batch.labelled) {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 라벨 쓰기` })
     }
   }

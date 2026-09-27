@@ -35,7 +35,12 @@ export default function CleaningHud({
     return null
   }
   const table = isCupSurface(cleaning.station) ? cupSurface(state, cleaning.station) : null
-  const occupied = !!(state.supplyDelivery || craftingHandsBusy(state) || washingHandsBusy(state.washing))
+  const occupied = !!(
+    state.cupDelivery ||
+    state.supplyDelivery ||
+    craftingHandsBusy(state) ||
+    washingHandsBusy(state.washing)
+  )
 
   return (
     <WorkHud aria-label="청소·정리">

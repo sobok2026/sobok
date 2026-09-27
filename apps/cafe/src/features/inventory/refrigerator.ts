@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -7,10 +8,10 @@ import {
   equipmentPanel as panel,
 } from '../../shared/visuals/equipment-geometry'
 
-export function createRefrigerator(scene: THREE.Scene) {
+export function createRefrigerator(scene: THREE.Scene, position: { x: number; z: number } = STATIONS.fridge) {
   const root = new THREE.Group()
   root.name = 'Commercial reach-in refrigerator'
-  root.position.set(5.5, 0, -5.2)
+  root.position.set(position.x, 0, position.z - 0.4)
   scene.add(root)
   const steel = material({ color: '#c1c3c4', metalness: 0.88, roughness: 0.49 })
   const doorSteel = material({ color: '#d0d1d2', metalness: 0.86, roughness: 0.48 })

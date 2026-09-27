@@ -2,6 +2,7 @@ import { CLEANING_SECONDS } from '../features/cleaning/rules'
 import { applyColdBrew } from '../features/cold-brew/actions'
 import { applyCraft } from '../features/crafting/actions'
 import { operationFor } from '../features/crafting/rules'
+import { applyDrip } from '../features/drip-coffee/actions'
 import { applyPreparation } from '../features/preparation/actions'
 import { preparationStep } from '../features/preparation/rules'
 import { WASH_STEPS } from '../features/washing/rules'
@@ -9,7 +10,9 @@ import type { WorkContext } from './work-context'
 
 export function advanceWork(work: WorkContext, dt: number) {
   const s = work.state
-  if (work.input?.kind === 'clean') {
+  if (work.input?.kind === 'drip') {
+    applyDrip(work, Math.min(dt, 0.15))
+  } else if (work.input?.kind === 'clean') {
     const cleaning = s.cleaning
     if (!cleaning || cleaning.id !== work.input.cleaningId || cleaning.stage === 'collect') {
       work.input = null

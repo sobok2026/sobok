@@ -1,6 +1,7 @@
 import { customizationLabels } from '../../content/customizations'
 import { recipeCup, recipeFor } from '../../content/recipes'
 import type { OrderItem, OrderLine } from '../../simulation/state'
+import { DRIP_BEANS, type DripBean } from '../drip-coffee/rules'
 import { emptyCupCounts, isReusableCup, type ReusableCupCounts } from '../inventory/cups'
 
 export const currentTicket = (state: {
@@ -27,8 +28,10 @@ export function pendingStickers(state: {
 
 export const itemPrice = (item: OrderItem) => recipeFor(item.recipe, item.size, item.service, item.customizations).price
 
-export const itemCustomizations = (item: OrderItem) =>
-  customizationLabels(recipeFor(item.recipe, item.size, item.service).steps, item.customizations)
+export const itemCustomizations = (item: OrderItem & { dripBean?: DripBean | null }) => [
+  ...(item.dripBean ? [`원두 · ${DRIP_BEANS[item.dripBean]}`] : []),
+  ...customizationLabels(recipeFor(item.recipe, item.size, item.service).steps, item.customizations),
+]
 
 export const saleTotal = (sale: { lines: Array<OrderItem & { quantity: number }> } | null): number =>
   sale?.lines.reduce((sum, line) => sum + itemPrice(line) * line.quantity, 0) ?? 0

@@ -22,6 +22,132 @@
     "cold-brew-grounds": "ml"
   },
   "materials": {
+    "drip-beans-house-blend": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-pike-place-roast": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-colombia": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-guatemala": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-kenya": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-caffe-verona": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
+    "drip-beans-veranda-blend": {
+      "millilitersPerStockUnit": 2.5,
+      "gramsPerStockUnit": 1,
+      "counts": {
+        "piece": 0.2,
+        "bag": 500,
+        "pack": 500,
+        "tap": 0.1,
+        "turn": 2.0,
+        "drop": 0.02,
+        "cup": 80.0,
+        "cycle": 2.0,
+        "shot": 12.0,
+        "pump": 3.0,
+        "scoop": 2.0
+      },
+      "phase": "solid"
+    },
     "low-fat-milk": {
       "millilitersPerStockUnit": 1,
       "gramsPerStockUnit": 1,

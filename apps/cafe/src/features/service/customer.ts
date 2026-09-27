@@ -36,7 +36,8 @@ export const CUSTOMER_DOOR_X = 5.45
 const CUSTOMER_ENTRANCE: CustomerPoint = [CUSTOMER_DOOR_X, 6.65]
 const ORDER_SPOT: CustomerPoint = [-4.8, 0.45]
 const PICKUP_SPOT: CustomerPoint = [6.1, 0.25]
-const CONDIMENT_SPOT: CustomerPoint = [0, 4.35]
+export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x - 0.95, STATIONS.supplies.z]
+export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x, STATIONS.condiment.z - 0.85]
 // Prototype movement and interaction timings; the 10-second table stay is user-approved.
 const CUSTOMER_SPEED = 1.7
 export const CUSTOMER_SECONDS = { condiment: 1.2, drinking: 10, returning: 1.2 } as const
@@ -196,7 +197,7 @@ export function customerToPickup(customer: Customer) {
 }
 
 export function customerToCondiment(customer: Customer) {
-  customerPath(customer, 'to-condiment', [[PICKUP_SPOT[0], 1.7], [0, 1.7], [...CONDIMENT_SPOT]])
+  customerPath(customer, 'to-condiment', [[PICKUP_SPOT[0], 1.7], [CONDIMENT_SPOT[0], 1.7], [...CONDIMENT_SPOT]])
 }
 
 export function customerToTable(customer: Customer) {
@@ -204,7 +205,7 @@ export function customerToTable(customer: Customer) {
     return
   }
   const seat = customerSeat(customer.visit.table)
-  customerPath(customer, 'to-table', [[0, 1.7], [seat[0] + 1, 1.7], [seat[0] + 1, seat[1]], seat])
+  customerPath(customer, 'to-table', [[CONDIMENT_SPOT[0], 1.7], [seat[0] + 1, 1.7], [seat[0] + 1, seat[1]], seat])
 }
 
 export function customerToReturn(customer: Customer) {
@@ -212,7 +213,12 @@ export function customerToReturn(customer: Customer) {
     return
   }
   const seat = customerSeat(customer.visit.table)
-  customerPath(customer, 'to-return', [[seat[0] + 1, seat[1]], [seat[0] + 1, 1.7], [0, 1.7], [...CONDIMENT_SPOT]])
+  customerPath(customer, 'to-return', [
+    [seat[0] + 1, seat[1]],
+    [seat[0] + 1, 1.7],
+    [RETURN_SPOT[0], 1.7],
+    [...RETURN_SPOT],
+  ])
 }
 
 export function customerLeave(customer: Customer) {

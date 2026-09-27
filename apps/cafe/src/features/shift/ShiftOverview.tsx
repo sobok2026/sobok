@@ -42,7 +42,7 @@ function Tasks({ state }: { state: GameState }) {
   const tasks = [
     ...shiftTasks(state),
     ...(state.phase === 'open' && low.length
-      ? [{ place: STATIONS.condiment.name, task: `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충` }]
+      ? [{ place: STATIONS.supplies.name, task: `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충` }]
       : []),
   ]
 

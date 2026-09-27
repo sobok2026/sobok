@@ -6,6 +6,8 @@ import { RECIPES, type RecipeId, recipeLabel, recipeSizes } from '../../content/
 import { money } from '../../shared/format'
 import type { Action } from '../../simulation/actions'
 import type { GameState, OrderItem, OrderLine } from '../../simulation/state'
+import CowSettings from '../drip-coffee/CowSettings'
+import { dripMenuName } from '../drip-coffee/rules'
 import { SERVICE_NAMES, type ServiceMode } from '../inventory/cups'
 import ShiftControls from '../shift/ShiftControls'
 import ShiftLedger from '../shift/ShiftLedger'
@@ -18,7 +20,7 @@ import { PosMenu, temperatureVariant } from './PosMenu'
 import { TransactionHistory } from './TransactionHistory'
 
 type View = 'order' | 'custom' | 'checkout'
-type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | 'transactions' | null
+type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | 'transactions' | 'management' | null
 
 export default function PosPanel({
   state,
@@ -191,7 +193,7 @@ export default function PosPanel({
                       {DRINK_SIZES[line.size].name.slice(0, 1)}
                     </span>
                     <span className="min-w-0 flex-1 text-sm font-semibold leading-snug">
-                      {RECIPES[line.recipe].name}
+                      {dripMenuName(line.recipe, RECIPES[line.recipe].name)}
                     </span>
                     <span className="text-sm tabular-nums">{line.quantity}</span>
                   </div>
@@ -422,6 +424,7 @@ export default function PosPanel({
                   />
                 ) : (
                   <PosMenu
+                    cow={state.cow}
                     temperature={shownTemperature}
                     size={shownSize}
                     service={shownService}
@@ -477,14 +480,22 @@ export default function PosPanel({
             >
               결제
             </PosButton>
-            <PosButton tone="dark" onClick={() => setDialog('store')}>
-              영업 관리
+            <PosButton tone="dark" onClick={() => setDialog('management')}>
+              관리메뉴
             </PosButton>
             <PosButton tone="dark" onClick={() => setDialog('transactions')}>
               거래 내역
             </PosButton>
           </footer>
         </div>
+        {dialog === 'management' && (
+          <PosDialog title="관리메뉴" onClose={closeDialog} wide>
+            <CowSettings state={state} act={act} />
+            <PosButton tone="dark" className="mt-4 w-full" onClick={() => setDialog('store')}>
+              영업 관리 · 마감
+            </PosButton>
+          </PosDialog>
+        )}
         {dialog === 'request' && (
           <PosDialog title="손님 요청" onClose={closeDialog}>
             {state.customer?.items.map((item, index) => (

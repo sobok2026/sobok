@@ -55,17 +55,7 @@ export type GaugeTick = { at: number; label: string | null; minor?: boolean }
  * nothing changes when the target is reached: the ticks are the lines the vessel really carries and reading them
  * is the player's job.
  */
-export function WorkGauge({
-  label,
-  fill,
-  color,
-  ticks,
-}: {
-  label: string
-  fill: number
-  color: string
-  ticks: GaugeTick[]
-}) {
+export function WorkGauge({ label, fill, ticks }: { label: string; fill: number; ticks: GaugeTick[] }) {
   const level = Math.round(Math.min(1, Math.max(0, fill)) * 1000) / 10
 
   return (
@@ -76,8 +66,8 @@ export function WorkGauge({
       <div className="relative pt-6" aria-hidden="true">
         <div className="relative h-3 overflow-hidden rounded-md bg-control shadow-[inset_0_0_0_1px_var(--color-control-line)]">
           <i
-            className="absolute inset-y-0 left-0 border-r-2 border-ink/45 transition-[width] duration-90 ease-linear motion-reduce:transition-none"
-            style={{ width: `${level}%`, backgroundColor: color }}
+            className="absolute inset-y-0 left-0 bg-brand/55 transition-[width] duration-90 ease-linear motion-reduce:transition-none"
+            style={{ width: `${level}%` }}
           />
         </div>
         {ticks.map((tick) => (

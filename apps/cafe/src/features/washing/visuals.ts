@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import { CUP_DIMENSIONS, createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { reusableCupKinds } from '../inventory/cups'
@@ -51,19 +52,27 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
   const dirtyQueue = Array.from({ length: 4 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(-5.53, 1.117, -5.42 + i * 0.16)
+    value.group.position.set(STATIONS.wash.x - 0.53, 1.117, STATIONS.wash.z - 0.32 + i * 0.16)
     return value
   })
   const washedQueue = Array.from({ length: 6 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(-4.15 + (i % 3) * 0.25, 1.132, -5.32 + Math.floor(i / 3) * 0.29)
+    value.group.position.set(
+      STATIONS.wash.x + 0.85 + (i % 3) * 0.25,
+      1.132,
+      STATIONS.wash.z - 0.22 + Math.floor(i / 3) * 0.29,
+    )
     value.stain.visible = false
     return value
   })
   const cleanQueue = Array.from({ length: 5 }, (_, i) => {
     const value = pitcher(scene)
-    value.group.position.set(-4.12 + (i % 2) * 0.3, DRYING_LEVEL, -5.3 + Math.floor(i / 2) * 0.24)
+    value.group.position.set(
+      STATIONS.rack.x - 0.22 + (i % 2) * 0.3,
+      DRYING_LEVEL,
+      STATIONS.rack.z - 0.2 + Math.floor(i / 2) * 0.24,
+    )
     value.stain.visible = false
     value.show('pitcher')
     return value

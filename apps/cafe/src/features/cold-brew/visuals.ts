@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_COLLECTION_SPOT, createColdBrewTank } from './equipment'
 import { COLD_BREW_BEANS, COLD_BREW_WATER } from './rules'
@@ -25,7 +26,7 @@ export function createColdBrewVisuals(scene: THREE.Scene, camera: THREE.Perspect
   tools.add(jug)
   const streamMaterial = material('#adced2')
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.027, 0.28, 10), streamMaterial)
-  stream.position.set(0.84, 1.7, -5.22)
+  stream.position.set(STATIONS['cold-prep'].x - 0.16, 1.7, STATIONS['cold-prep'].z - 0.12)
   scene.add(stream)
 
   return {

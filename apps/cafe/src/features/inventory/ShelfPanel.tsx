@@ -1,18 +1,27 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import { INGREDIENTS } from '../../content/ingredients'
-import { PanelRow, PanelSection, StatusChip } from '../../shared/ui/PanelControls'
+import { PanelEmpty, PanelRow, PanelSection, RowButton, StatusChip } from '../../shared/ui/PanelControls'
 import { HoldAction } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
-import { batchHome } from './batches'
+import { BAR_BATCH_CAPACITY, barBatchCount, batchHome, batchName } from './batches'
 import { labelText } from './labels'
 
 /** Room-temperature mixes waiting for use; the panel exists to check their dates and clear expired ones. */
-export default function ShelfPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const batches = state.batches.filter((batch) => batch.amount > 0 && batchHome(batch) === 'shelf')
+export default function ShelfPanel({
+  state,
+  act,
+  place,
+}: {
+  state: GameState
+  act: (action: Action) => void
+  place: 'shelf' | 'bar-fridge'
+}) {
+  const batches = state.batches.filter((batch) => batch.amount > 0 && batchHome(batch) === place)
 
   return (
-    <PanelSection title="보관 중인 배합">
+    <PanelSection title={`바 사용 재료 · 품목당 용기 ${BAR_BATCH_CAPACITY}개`}>
+      {!batches.length && <PanelEmpty>백룸에서 개봉·라벨을 마친 재료를 운반해 보충하세요.</PanelEmpty>}
       {batches.map((batch) => {
         const definition = INGREDIENTS[batch.ingredient]
         const expired = batch.expiresAt !== null && batch.expiresAt <= state.time
@@ -20,8 +29,8 @@ export default function ShelfPanel({ state, act }: { state: GameState; act: (act
         return (
           <PanelRow
             key={batch.id}
-            title={definition.name}
-            note={`${formatDecimal(batch.amount)}${definition.unit}`}
+            title={batchName(batch)}
+            note={`${formatDecimal(batch.amount)}${definition.unit} · 용기 ${barBatchCount(state, batch.ingredient)}/${BAR_BATCH_CAPACITY}개`}
             status={
               expired ? (
                 <StatusChip tone="alert">기한 지남</StatusChip>
@@ -33,10 +42,15 @@ export default function ShelfPanel({ state, act }: { state: GameState; act: (act
             {expired && (
               <HoldAction
                 shortcut={false}
-                onConfirm={() => act({ type: 'discard-batch', id: batch.id, station: 'shelf' })}
+                onConfirm={() => act({ type: 'discard-batch', id: batch.id, station: place })}
               >
                 폐기
               </HoldAction>
+            )}
+            {!expired && (
+              <RowButton onClick={() => act({ type: 'take-batch', id: batch.id, station: place })}>
+                백룸으로 집기
+              </RowButton>
             )}
           </PanelRow>
         )

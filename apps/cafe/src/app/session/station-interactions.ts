@@ -11,7 +11,7 @@ import {
   nextStep,
   vesselToPick,
 } from '../../features/crafting/rules'
-import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../../features/inventory/batches'
+import { batchOrigin, carriedBatch, isSealed, isStorageStation } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
 import { currentTicket } from '../../features/service/orders'
 import { washDestination, washQueue } from '../../features/washing/rules'
@@ -27,13 +27,17 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
     if (isSealed(carrying)) {
       return id === 'fridge' || id === 'stock' ? { type: 'shelve-pack', station: id } : null
     }
-    if (id === batchDestination(carrying)) {
+    if (id === batchOrigin(carrying)) return { type: 'return-batch', station: id }
+    if (isStorageStation(id)) {
       return { type: 'store-batch', id: carrying.id, station: id }
     }
-    return id === batchOrigin(carrying) ? { type: 'return-batch', station: id } : null
+    return null
   }
-  if (current.supplyDelivery && (id === 'condiment' || id === 'stock')) {
-    return { type: id === 'condiment' ? 'place-supply' : 'return-supply' }
+  if (current.cupDelivery && (id === 'cups' || id === 'stock')) {
+    return { type: id === 'cups' ? 'place-cups' : 'return-cups' }
+  }
+  if (current.supplyDelivery && (id === 'supplies' || id === 'stock')) {
+    return { type: id === 'supplies' ? 'place-supply' : 'return-supply' }
   }
   if (id === 'wash' && cupCount(current.cleaning?.heldCups)) {
     return { type: 'drop-used-cups' }
@@ -92,7 +96,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
   return stationDefault(current, id)
 }
 
-const panelStations: StationId[] = ['pos', 'cups', 'fridge', 'stock', 'prep', 'cold-prep']
+const panelStations: StationId[] = ['pos', 'cups', 'fridge', 'stock', 'bar-fridge', 'shelf', 'prep', 'cold-prep', 'urn']
 
 function stationDefault(state: GameState, id: StationId): Interaction {
   if (panelStations.includes(id)) {
@@ -103,9 +107,6 @@ function stationDefault(state: GameState, id: StationId): Interaction {
   }
   if (id === 'wash') {
     return washInteraction(state)
-  }
-  if (id === 'shelf') {
-    return state.batches.some((batch) => batch.amount > 0 && batchHome(batch) === 'shelf') ? 'panel' : null
   }
   return null
 }

@@ -1,14 +1,19 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { SUPPLIES, SUPPLY_CAPACITY, supplyIds } from './supplies'
 
 export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+  const display = new THREE.Group()
+  display.position.set(STATIONS.supplies.x, 0, STATIONS.supplies.z)
+  display.rotation.y = -Math.PI / 2
+  scene.add(display)
   const tray = new THREE.MeshStandardMaterial({ color: '#57634c', roughness: 0.8 })
   const supplies = supplyIds.map((id, index) => {
     const x = (index - 1) * 0.56
     const holder = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.06, 0.23), tray)
-    holder.position.set(x, 1.1, 5.42)
-    scene.add(holder)
+    holder.position.set(x, 1.1, 0)
+    display.add(holder)
     const material = new THREE.MeshStandardMaterial({ color: SUPPLIES[id].color, roughness: 0.9 })
     const items = Array.from({ length: 5 }, (_, i) => {
       const mesh = new THREE.Mesh(
@@ -20,12 +25,12 @@ export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.Perspectiv
       mesh.position.set(
         x + (id === 'napkins' ? 0 : (i - 2) * 0.065),
         1.15 + (id === 'straws' ? 0.06 : 0) + (id === 'napkins' ? i * 0.017 : 0),
-        5.42,
+        0,
       )
       if (id === 'sugar') {
         mesh.rotation.z = 0.25
       }
-      scene.add(mesh)
+      display.add(mesh)
       return mesh
     })
     return { id, items }

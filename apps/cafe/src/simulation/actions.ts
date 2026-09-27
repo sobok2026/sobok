@@ -1,11 +1,21 @@
 import type { IngredientId } from '../content/ingredients'
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
+import type { DripBean, DripTemperature } from '../features/drip-coffee/rules'
 import type { CupKind, DisposableCupKind } from '../features/inventory/cups'
 import type { SupplyId } from '../features/inventory/supplies'
 import type { PreparationId } from '../features/preparation/rules'
 import type { WashItem } from '../features/washing/rules'
 import type { OrderItem } from './state'
+
+export type DripAction =
+  | { type: 'set-cow'; hot: DripBean; iced: DripBean }
+  | { type: 'drip-prepare'; temperature: DripTemperature; bean: DripBean }
+  | {
+      type: 'drip-filter' | 'drip-tool' | 'drip-use' | 'drip-confirm' | 'drip-brew' | 'drip-mix' | 'drip-discard'
+      temperature: DripTemperature
+    }
+  | { type: 'drip-stop' }
 
 export type PosAction =
   | { type: 'pos-add'; item: OrderItem }
@@ -27,6 +37,7 @@ export type ReceiptAction =
   | { type: 'pos-print-receipt'; transactionId: string }
 
 export type Action =
+  | DripAction
   | PosAction
   | ReceiptAction
   | { type: 'start-preparation'; recipe: PreparationId }
@@ -42,7 +53,9 @@ export type Action =
   | { type: 'wash'; item: WashItem }
   | { type: 'take-washed'; item: WashItem }
   | { type: 'store-washed'; station: StationId }
-  | { type: 'cups'; kind: DisposableCupKind }
+  | { type: 'take-cups'; kind: DisposableCupKind }
+  | { type: 'place-cups' }
+  | { type: 'return-cups' }
   | { type: 'buy-cups'; kind: DisposableCupKind }
   | { type: 'start-cleaning'; station: CleaningStation }
   | { type: 'take-supply'; supply: SupplyId }

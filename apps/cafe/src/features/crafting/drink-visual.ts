@@ -315,7 +315,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
 
   const label = blender?.label ?? box(root, radius * 0.85, height * 0.2, 0.005, cream, 0, height * 0.45, radius)
   const bottom = blender ? 0.032 : 0.007
-  const etched = standard('#3b4a43')
+  const etched = standard('#76817b')
   const ticks: THREE.Mesh[] = []
   let etchedFills = ''
 
@@ -333,7 +333,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
     for (const fill of fills) {
       const wall = radius * (0.8 + 0.2 * fill) + 0.001
       for (const side of [1, -1]) {
-        const tick = box(root, 0.04, 0.003, 0.002, etched, 0, bottom + fill * (height - 0.04), side * wall)
+        const tick = box(root, 0.03, 0.0016, 0.001, etched, 0, bottom + fill * (height - 0.04), side * wall)
         ticks.push(tick)
       }
     }

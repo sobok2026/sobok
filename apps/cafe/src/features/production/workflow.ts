@@ -12,11 +12,14 @@ import {
 import type { RecipeAmount } from '../../content/recipe-schema'
 import type { StationId } from '../../content/stations'
 import type { StockContext, StockNextAdd } from '../../content/stock-amounts'
+import { dripBeanSchema } from '../drip-coffee/rules'
+import type { StockArea } from '../inventory/inventory'
 import { workStepLabels } from './step-labels'
 
 export const productionQuantity = z.number().min(0).max(100000000)
 
 export const productionStateSchema = z.object({
+  dripBean: dripBeanSchema.nullable(),
   cursor: z.number().int().min(0),
   decisions: z.record(z.string(), z.boolean()),
   progress: productionQuantity,
@@ -61,6 +64,7 @@ export type StepChoice = {
 }
 
 export type WorkStep = PlannedStep & {
+  stockArea: StockArea
   stockContext: StockContext
   nextStockAdd: StockNextAdd | null
   nextStockPortion?: number
@@ -87,6 +91,7 @@ export const PRODUCTION_EPSILON = 1e-9
 
 export function createProductionState(): ProductionState {
   return {
+    dripBean: null,
     cursor: 0,
     decisions: {},
     progress: 0,
@@ -287,6 +292,7 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
 }
 
 function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): ProductionTool | null {
+  if (operation.action === 'add' && operation.materialId === 'todays-coffee') return null
   if ('toolIds' in operation && operation.toolIds?.length) {
     return {
       id: `equipment-set:${operation.toolIds.join('|')}`,
@@ -336,7 +342,7 @@ function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
     return 'pickup'
   }
   if (operation.action === 'run-machine') {
-    return operation.equipmentId === 'hot-water-dispenser' ? 'water' : 'prep'
+    return operation.equipmentId === 'hot-water-dispenser' ? 'water' : 'blender'
   }
 
   if (operation.action === 'add') {
@@ -355,6 +361,7 @@ function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
     if (operation.materialId === 'cold-brew') {
       return 'brew'
     }
+    if (operation.materialId === 'todays-coffee') return 'urn'
     if (operation.amount.kind === 'count' && operation.amount.unit === 'pump') {
       return 'sauce'
     }
@@ -480,6 +487,7 @@ export function compileWorkflow(
       ...control,
       label: labels[index],
       stockContext,
+      stockArea: owner === 'prep' ? 'backroom' : 'bar',
       nextStockAdd,
       nextStockPortion: nextStockStep?.portion,
       tool: toolFor(catalog, operation),

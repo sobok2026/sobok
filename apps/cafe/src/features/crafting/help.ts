@@ -3,7 +3,7 @@ import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { CraftState, GameState } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
 import { workTitle } from '../production/presentation'
-import { backgroundWork, continuousWork, missingInput, readyWork } from '../production/runtime'
+import { backgroundWork, continuousWork, missingInput, readyWork, requiredInput } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
 import {
   cupRecipe,
@@ -91,9 +91,11 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
     }
   }
 
-  const missing = readyWork(step, craft.progress) ? undefined : missingInput(state, step, craft.progress)
+  const missing = readyWork(step, craft.progress)
+    ? undefined
+    : missingInput(state, step, craft.progress, craft.dripBean)
   if (missing) {
-    return materialTip(state, missing)
+    return materialTip(state, missing, 'bar', requiredInput(step, missing, craft.progress))
   }
 
   return {

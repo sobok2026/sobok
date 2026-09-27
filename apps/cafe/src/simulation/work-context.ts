@@ -1,8 +1,10 @@
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
+import type { DripTemperature } from '../features/drip-coffee/rules'
 import type { GameState } from './state'
 
 export type ActiveInput =
+  | { kind: 'drip'; preparationId: string; temperature: DripTemperature; stage: 'beans' | 'ice'; station: 'urn' }
   | { kind: 'drink'; cupId: string; step: number; station: StationId; operation: string }
   | { kind: 'prep'; preparationId: string; step: number; station: 'prep' }
   | { kind: 'cold'; preparationId: string; step: number; station: 'cold-prep' }

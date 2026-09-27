@@ -1,0 +1,21 @@
+{
+  "note": "2026-09-27 사용자 승인 게임 규칙. BUNN 공칭 작은 배치를 1,900ml로 단순화하고 일반 추출 비율로 원두량을 계산했다. HOT·ICED 추출 5분, HOT 보온 1시간. 실제 매장 배치 레시피·수율·원가는 아니다.",
+  "brewSeconds": 300,
+  "waterMilliliters": 1900,
+  "hotBeansGrams": 106,
+  "icedBeansGrams": 211,
+  "icedIceGrams": 1900,
+  "beans": {
+    "house-blend": "하우스 블렌드",
+    "pike-place-roast": "파이크 플레이스 로스트",
+    "colombia": "콜롬비아",
+    "guatemala": "과테말라",
+    "kenya": "케냐",
+    "caffe-verona": "카페 베로나",
+    "veranda-blend": "베란다 블렌드"
+  },
+  "defaultCow": {
+    "hot": "house-blend",
+    "iced": "pike-place-roast"
+  }
+}

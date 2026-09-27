@@ -12,12 +12,13 @@ export const craftStations: StationId[] = [
   'espresso',
   'steam',
   'brew',
+  'urn',
   'water',
   'ice',
   'sauce',
   'mix',
   'topping',
-  'prep',
+  'blender',
   'pickup',
 ]
 

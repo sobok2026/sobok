@@ -2,8 +2,8 @@ import { INGREDIENTS } from '../../content/ingredients'
 import { isCupSurface, STATIONS, type StationId } from '../../content/stations'
 import { cupSurface } from '../../features/cleaning/rules'
 import { craftStations, craftWorkStation, heldVessel, vesselName } from '../../features/crafting/rules'
-import { batchDestination, carriedBatch, isSealed } from '../../features/inventory/batches'
-import { cupCount } from '../../features/inventory/cups'
+import { carriedBatch, deliveryDestination, isSealed } from '../../features/inventory/batches'
+import { CUP_NAMES, cupCount } from '../../features/inventory/cups'
 import { SUPPLIES, supplyIds } from '../../features/inventory/supplies'
 import { currentTicket, pendingStickers } from '../../features/service/orders'
 import { WASH_NAMES } from '../../features/washing/rules'
@@ -66,6 +66,10 @@ function actionPrompt(state: GameState, action: Action, target: StationId) {
       return { verb: '보관', object: `${heldName} 원팩` }
     case 'place-supply':
       return { verb: '보충', object: SUPPLIES[state.supplyDelivery!.supply].name }
+    case 'place-cups':
+      return { verb: '컵 보충', object: `${CUP_NAMES[state.cupDelivery!.kind]} ${state.cupDelivery!.amount}개` }
+    case 'return-cups':
+      return { verb: '컵 묶음 내려놓기', object: `${state.cupDelivery!.amount}개` }
     case 'return-supply':
       return { verb: '보충품 내려놓기', object: SUPPLIES[state.supplyDelivery!.supply].name }
     case 'take-batch':
@@ -94,10 +98,12 @@ function cleaningNote(state: GameState, target: StationId) {
 
 function stationStatus(state: GameState, target: StationId) {
   const held = carriedBatch(state)
+  if (state.cupDelivery) return '컵 묶음은 바 컵 보관대나 백룸 창고에 내려놓아요'
+  if (state.supplyDelivery) return '소모품은 컨디먼트 바에 보충해요'
   if (held) {
     return isSealed(held)
       ? '원팩은 냉장고나 창고에 보관해요'
-      : `용기는 ${STATIONS[batchDestination(held)].name}에 보관해요`
+      : `용기는 ${STATIONS[deliveryDestination(state, held)].name}에 보관해요`
   }
   if (target === 'printer') {
     return printerStatus(state)
@@ -115,7 +121,7 @@ function stationStatus(state: GameState, target: StationId) {
     return '씻을 용기가 없어요'
   }
   const low = supplyIds.filter((id) => state.supplies[id].bar <= 5)
-  if (target === 'condiment' && low.length) {
+  if (target === 'supplies' && low.length) {
     return `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충 필요`
   }
   return '정리할 것이 없어요'

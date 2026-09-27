@@ -3,11 +3,20 @@ import { customizationSchema } from '../content/customizations'
 import { drinkSizeIds } from '../content/drink-sizes'
 import { ingredientIds } from '../content/ingredients'
 import { recipeCup, recipeFor, recipeIds } from '../content/recipes'
-import { isCupSurface, stationIds, tableIds } from '../content/stations'
+import { isCupSurface, SHOP_BOUNDS, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/cold-brew/rules'
-import { isSealed, packStorage } from '../features/inventory/batches'
 import {
+  DRIP,
+  dripBeanSchema,
+  dripDose,
+  dripIngredient,
+  dripMenuTemperature,
+  dripTemperatures,
+} from '../features/drip-coffee/rules'
+import { BAR_BATCH_CAPACITY, isSealed, packStorage } from '../features/inventory/batches'
+import {
+  CUP_SUPPLY,
   cupCount,
   cupKinds,
   cupService,
@@ -46,10 +55,16 @@ const orderItemSchema = z.object({
 
 const requestedItemSchema = orderItemSchema.extend({ quantity: z.number().int().min(1).max(99) })
 
-const orderLineSchema = requestedItemSchema.extend({
-  id: z.string().min(1).max(100),
-  served: z.number().int().min(0).max(99),
-})
+const orderLineSchema = requestedItemSchema
+  .extend({
+    id: z.string().min(1).max(100),
+    served: z.number().int().min(0).max(99),
+    dripBean: dripBeanSchema.nullable(),
+  })
+  .refine(
+    (line) => !!dripMenuTemperature(line.recipe) === (line.dripBean !== null),
+    '드립 주문의 원두가 없거나 메뉴와 맞지 않아요.',
+  )
 
 const paymentSchema = z.object({
   id: z.string().min(1).max(100),
@@ -221,15 +236,17 @@ const batchSchema = z.object({
   id: z.string().max(100),
   ingredient: z.enum(ingredientIds),
   amount: quantity,
-  location: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'hand']),
+  location: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn', 'hand']),
+  carryFrom: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn']).nullable(),
   openedAt: timestamp.nullable(),
   expiresAt: timestamp.nullable(),
   labelled: z.boolean(),
+  dripBean: dripBeanSchema.nullable(),
 })
 
 const jobSchema = z.object({
   id: z.string().max(100),
-  kind: z.enum(['production', 'cold-brew']),
+  kind: z.enum(['production', 'cold-brew', 'drip-coffee']),
   station: z.enum(stationIds),
   label: z.string().max(200),
   startedAt: timestamp,
@@ -309,6 +326,19 @@ const coldBrewSchema = z
     '추출 완료 시각이 없어요.',
   )
 
+const dripBrewSchema = z.object({
+  id: z.string().min(1).max(100),
+  bean: dripBeanSchema,
+  stage: z.enum(['filter', 'beans', 'loaded', 'extracting', 'ice', 'mix', 'ready']),
+  beans: quantity,
+  ice: quantity,
+  tool: z.boolean(),
+  ingredientExpiresAt: timestamp.nullable(),
+  completedAt: timestamp.nullable(),
+  batchId: z.string().max(100).nullable(),
+  fault: z.string().max(300).nullable(),
+})
+
 const washingSchema = z
   .object({
     id: z.string().max(100),
@@ -339,7 +369,7 @@ const cleaningSchema = z
   )
   .refine(
     (cleaning) => isCupSurface(cleaning.station) || (cupCount(cleaning.heldCups) === 0 && cleaning.stage !== 'collect'),
-    '테이블·컨디먼트 바에서만 컵을 회수할 수 있어요.',
+    '테이블·컵 반납대에서만 컵을 회수할 수 있어요.',
   )
   .refine(
     (cleaning) => cleaning.progress <= (cleaning.stage === 'collect' ? 0 : CLEANING_SECONDS[cleaning.stage]),
@@ -363,6 +393,8 @@ export const stateSchema = z
       ),
     preparation: preparationSchema.nullable(),
     coldBrew: coldBrewSchema.nullable(),
+    cow: z.object({ hot: dripBeanSchema, iced: dripBeanSchema }),
+    drip: z.object({ hot: dripBrewSchema.nullable(), iced: dripBrewSchema.nullable() }),
     washing: washingSchema.nullable(),
     cleaning: cleaningSchema.nullable(),
     condiment: z.object({ cups: reusableCounts, dirty: z.boolean() }),
@@ -372,6 +404,9 @@ export const stateSchema = z
     ),
     supplyDelivery: z
       .object({ supply: z.enum(supplyIds), amount: z.number().int().min(1).max(SUPPLY_CAPACITY) })
+      .nullable(),
+    cupDelivery: z
+      .object({ kind: z.enum(disposableCupKinds), amount: z.number().int().min(1).max(CUP_SUPPLY.refill) })
       .nullable(),
     cup: z
       .object({
@@ -409,7 +444,12 @@ export const stateSchema = z
         z.object({ id: z.string().max(100), text: z.string().max(400), tone: z.enum(['info', 'success', 'error']) }),
       )
       .max(8),
-    position: z.tuple([z.number().min(-7).max(7), z.number().min(-6).max(6), z.number(), z.number()]),
+    position: z.tuple([
+      z.number().min(SHOP_BOUNDS.minX).max(SHOP_BOUNDS.maxX),
+      z.number().min(SHOP_BOUNDS.minZ).max(SHOP_BOUNDS.maxZ),
+      z.number(),
+      z.number(),
+    ]),
   })
   .refine((state) => {
     if (!state.cup) {
@@ -423,6 +463,7 @@ export const stateSchema = z
       state.cup.recipe === ticket.recipe &&
       JSON.stringify(state.cup.craft.customizations) === JSON.stringify(ticket.customizations) &&
       state.cup.craft.size === ticket.size &&
+      state.cup.craft.dripBean === ticket.dripBean &&
       state.cup.craft.kind === recipeCup(ticket.recipe, ticket.size, ticket.service)
     )
   }, '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.')
@@ -459,6 +500,16 @@ export const stateSchema = z
     (state) => !state.preparation || state.cup?.craft.location !== 'prep',
     '준비대에는 음료와 부재료 작업을 동시에 놓을 수 없어요.',
   )
+  .refine((state) => {
+    const counts = new Map<string, number>()
+    for (const batch of state.batches) {
+      if (batch.location !== 'bar' || batch.amount <= 0) continue
+      const count = (counts.get(batch.ingredient) ?? 0) + 1
+      if (count > BAR_BATCH_CAPACITY) return false
+      counts.set(batch.ingredient, count)
+    }
+    return true
+  }, `바에는 재료 품목별로 ${BAR_BATCH_CAPACITY}용기까지 보관할 수 있어요.`)
   .refine(
     (state) => state.batches.filter((batch) => batch.location === 'hand').length <= 1,
     '배합 용기는 한 번에 하나만 운반할 수 있어요.',
@@ -468,11 +519,13 @@ export const stateSchema = z
       !state.batches.some((batch) => batch.location === 'hand') ||
       !(
         state.supplyDelivery ||
+        state.cupDelivery ||
         state.cup?.craft.location === 'hand' ||
         Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
         state.cup?.craft.tool ||
         state.preparation?.tool ||
         state.coldBrew?.tool ||
+        dripTemperatures.some((temperature) => state.drip[temperature]?.tool) ||
         state.washing?.stage === 'carrying' ||
         state.washing?.spongeHeld ||
         cupCount(state.cleaning?.heldCups) ||
@@ -490,7 +543,12 @@ export const stateSchema = z
   .refine(
     (state) =>
       state.batches.every((batch) => {
-        if (isSealed(batch) || !['prep', 'cold-prep', 'hand'].includes(batch.location)) {
+        const atPreparation =
+          batch.location === 'prep' ||
+          batch.location === 'cold-prep' ||
+          (batch.location === 'hand' &&
+            (!batch.carryFrom || batch.carryFrom === 'prep' || batch.carryFrom === 'cold-prep'))
+        if (isSealed(batch) || !atPreparation) {
           return true
         }
 
@@ -513,10 +571,100 @@ export const stateSchema = z
   }, '추출 작업과 콜드 브루 준비 상태가 맞지 않아요.')
   .refine(
     (state) =>
+      !state.cupDelivery ||
+      !(
+        state.supplyDelivery ||
+        state.batches.some((batch) => batch.location === 'hand') ||
+        state.cup?.craft.location === 'hand' ||
+        Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
+        state.cup?.craft.tool ||
+        state.preparation?.tool ||
+        state.coldBrew?.tool ||
+        dripTemperatures.some((temperature) => state.drip[temperature]?.tool) ||
+        state.washing?.stage === 'carrying' ||
+        state.washing?.spongeHeld ||
+        cupCount(state.cleaning?.heldCups) ||
+        state.cleaning?.clothHeld
+      ),
+    '보충할 컵 묶음과 다른 물건을 동시에 들 수 없어요.',
+  )
+  .refine(
+    (state) =>
       state.coldBrew?.stage !== 'ready' ||
       state.batches.some((batch) => batch.id === state.coldBrew?.batchId && batch.ingredient === 'cold-brew'),
     '회수한 콜드 브루 용기가 없어요.',
   )
+  .superRefine((state, context) => {
+    const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+    const owners = dripTemperatures.flatMap((temperature) => {
+      const brew = state.drip[temperature]
+      return brew ? [{ temperature, brew }] : []
+    })
+    const tools = owners.filter(({ brew }) => brew.tool)
+    if (
+      tools.length > 1 ||
+      (tools.length &&
+        (state.supplyDelivery ||
+          state.cupDelivery ||
+          state.cup?.craft.location === 'hand' ||
+          state.cup?.craft.tool ||
+          Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
+          state.preparation?.tool ||
+          state.coldBrew?.tool ||
+          state.washing?.spongeHeld ||
+          state.washing?.stage === 'carrying' ||
+          state.cleaning?.clothHeld ||
+          cupCount(state.cleaning?.heldCups)))
+    )
+      invalid('URN 도구와 다른 물건을 동시에 들 수 없어요.')
+
+    for (const { temperature, brew } of owners) {
+      const jobs = state.jobs.filter((job) => job.kind === 'drip-coffee' && job.preparationId === brew.id)
+      if (brew.stage === 'extracting' && !brew.fault) {
+        if (jobs.length !== 1 || jobs[0].station !== 'urn' || jobs[0].endsAt - jobs[0].startedAt !== DRIP.brewSeconds) {
+          invalid('URN 추출 작업의 시간과 상태가 맞지 않아요.')
+        }
+      } else if (jobs.length) invalid('추출 중이 아닌 URN에 진행 작업이 남아 있어요.')
+      if (brew.tool && (!['beans', 'ice'].includes(brew.stage) || brew.fault))
+        invalid('URN 계량 도구 상태가 맞지 않아요.')
+      if (brew.beans > dripDose(temperature) * 1.5 + 1e-9 || brew.ice > DRIP.icedIceGrams * 1.5 + 1e-9)
+        invalid('URN 계량 범위를 벗어났어요.')
+      if (temperature === 'hot' && (brew.ice > 0 || brew.stage === 'ice' || brew.stage === 'mix'))
+        invalid('HOT URN에 얼음 작업이 포함되어 있어요.')
+      if (['ice', 'mix', 'ready'].includes(brew.stage) !== (brew.completedAt !== null))
+        invalid('URN 추출 완료 시각이 맞지 않아요.')
+      const batch = state.batches.find((batch) => batch.id === brew.batchId)
+      if (brew.stage === 'ready') {
+        if (
+          !batch ||
+          batch.ingredient !== dripIngredient(temperature) ||
+          batch.dripBean !== brew.bean ||
+          batch.openedAt !== brew.completedAt ||
+          !(
+            batch.location === 'urn' ||
+            (temperature === 'iced' && batch.location === 'hand' && batch.carryFrom === 'urn')
+          )
+        )
+          invalid('URN과 완성 배치가 연결되지 않았어요.')
+      } else if (brew.batchId !== null) invalid('완성되지 않은 URN에 배치가 연결되어 있어요.')
+    }
+    if (
+      state.jobs.some((job) => job.kind === 'drip-coffee' && !owners.some(({ brew }) => brew.id === job.preparationId))
+    )
+      invalid('URN 작업의 소유자가 없어요.')
+    if (
+      state.batches.some((batch) => {
+        if ((batch.ingredient === 'todays-coffee' || batch.ingredient === 'iced-coffee') !== (batch.dripBean !== null))
+          return true
+        if (batch.ingredient === 'todays-coffee' && batch.location !== 'urn') return true
+        return (
+          (batch.location === 'urn' || batch.carryFrom === 'urn') &&
+          !owners.some(({ brew }) => brew.batchId === batch.id)
+        )
+      })
+    )
+      invalid('드립 배치의 원두 또는 보관 장소가 맞지 않아요.')
+  })
   .refine(
     (state) =>
       reusableCupKinds.every((kind) => {
@@ -547,6 +695,7 @@ export type Job = z.infer<typeof jobSchema>
 export type CraftState = z.infer<typeof craftSchema>
 export type Preparation = z.infer<typeof preparationSchema>
 export type ColdBrew = z.infer<typeof coldBrewSchema>
+export type DripBrew = z.infer<typeof dripBrewSchema>
 export type Washing = z.infer<typeof washingSchema>
 export type Cleaning = z.infer<typeof cleaningSchema>
 export type Customer = z.infer<typeof customerSchema>

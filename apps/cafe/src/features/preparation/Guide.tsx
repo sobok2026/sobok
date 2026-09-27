@@ -2,6 +2,7 @@ import { recipeCatalog } from '../../content/catalog'
 import { batchDate } from '../../shared/format'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
+import { BAR_BATCH_CAPACITY } from '../inventory/batches'
 import { operationDetails } from '../production/presentation'
 import { PREPARATIONS, type PreparationDefinition } from './rules'
 
@@ -73,8 +74,12 @@ export function PreparationGuide() {
         계량값과 제조 순서에 따라 준비하고 단계마다 도구를 내려놓은 뒤 F로 확인하세요.
       </p>
       <p className="mt-2 text-muted">
-        창고에서 입고한 원팩은 직접 들고 보관합니다. 냉장 보관 재료는 냉장고에, 실온 보관 재료는 창고 선반에 넣으세요.
-        보관한 곳에서 원팩을 열고 라벨을 쓰면 사용할 수 있습니다.
+        백룸 창고에서 입고한 원팩은 직접 들고 보관합니다. 냉장 재료는 백룸 냉장고에, 실온 재료는 창고 선반에 넣으세요.
+        그곳에서 개봉하고 라벨을 쓰면 백룸 준비에 사용할 수 있습니다. 주문 제조용 재료는 용기째 집어 바까지 운반하세요.
+      </p>
+      <p className="mt-2 text-muted">
+        바 냉장고와 실온 선반에는 재료 품목별로 용기 {BAR_BATCH_CAPACITY}개까지 둘 수 있습니다. 가득 찼으면 바의 용기를
+        백룸으로 옮겨 자리를 만드세요. 이동해도 잔량·라벨·기한은 유지됩니다.
       </p>
       <p className="mt-2 text-muted">
         라벨의 기한은 직접 계산해 적습니다. 일·개월 기한은 시작한 날을 첫날로 세어 날짜만, 시간 기한은 시작 시각부터
@@ -82,8 +87,8 @@ export function PreparationGuide() {
         있습니다.
       </p>
       <p className="mt-2 text-muted">
-        완성한 배합은 라벨을 쓴 뒤 E로 용기를 집어 안내된 냉장고 또는 실온 선반에 보관해야 사용할 수 있습니다. 배합의
-        기한은 넣은 원재료 중 가장 이른 기한을 넘길 수 없습니다.
+        완성한 배합은 라벨을 쓴 뒤 E로 용기를 집어 바 냉장고 또는 실온 선반에 보충합니다. 예비 배치는 백룸에 보관합니다.
+        배합의 기한은 넣은 원재료 중 가장 이른 기한을 넘길 수 없습니다.
       </p>
       <p className="mt-2 text-muted">
         콜드 브루는 별도 추출대에서 원두·물을 계량하고 {COLD_BREW_HOURS}시간 추출합니다. 다음 날로 넘어가도 추출이

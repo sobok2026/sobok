@@ -1,6 +1,7 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import { useState } from 'react'
 import { recipeCup } from '../../content/recipes'
+import { STATIONS } from '../../content/stations'
 import { josa, money } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import {
@@ -17,9 +18,20 @@ import { HoldAction } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import type { Objective, Subject } from '../../simulation/guidance'
 import type { Batch, GameState } from '../../simulation/state'
+import { isDripIngredient } from '../drip-coffee/rules'
 import { currentTicket } from '../service/orders'
-import { batchHome, isSealed, materialHome } from './batches'
+import {
+  BAR_BATCH_CAPACITY,
+  barBatchCount,
+  batchHome,
+  batchName,
+  isSealed,
+  materialHome,
+  materialSource,
+  packStorage,
+} from './batches'
 import { CUP_NAMES, CUP_SUPPLY, disposableCupKinds } from './cups'
+import type { StockArea } from './inventory'
 import LabelWriter from './LabelWriter'
 import { labelText } from './labels'
 import { inventorySummary } from './summary'
@@ -33,6 +45,7 @@ type MaterialTask =
   | { kind: 'discard'; batch: Batch }
   | { kind: 'label'; batch: Batch }
   | { kind: 'open'; batch: Batch }
+  | { kind: 'move'; batch: Batch }
   | { kind: 'buy' }
 
 const EPSILON = 0.0001
@@ -56,7 +69,7 @@ export default function StoragePanel({
   const all = inventorySummary(state)
   const writing = state.batches.find((batch) => batch.id === labelling && !batch.labelled && batch.amount > 0)
   const focus = writing?.ingredient ?? promoted(state, all, place, subject)
-  const items = all.filter((item) => materialHome(item.id) === place)
+  const items = all.filter((item) => packStorage(item.id) === place)
   const attention = items.filter((item) => item.shortage > EPSILON || waiting(state, item, place)).length
 
   return (
@@ -99,10 +112,16 @@ function promoted(state: GameState, all: Item[], place: Place, subject: Subject 
   }
   const item = all.find((entry) => entry.id === subject.ingredient)
 
-  return item && materialTask(state, item, place) ? item.id : undefined
+  return item && materialTask(state, item, place, subject.area, subject.amount) ? item.id : undefined
 }
 
-function materialTask(state: GameState, item: Item, place: Place): MaterialTask | null {
+function materialTask(
+  state: GameState,
+  item: Item,
+  place: Place,
+  area: StockArea = 'bar',
+  amount = 0,
+): MaterialTask | null {
   const expired = expiredHere(state, item, place)
   if (expired) {
     return { kind: 'discard', batch: expired }
@@ -111,6 +130,14 @@ function materialTask(state: GameState, item: Item, place: Place): MaterialTask 
   if (unlabelled) {
     return { kind: 'label', batch: unlabelled }
   }
+  const ready = materialSource(
+    state,
+    item.id,
+    area,
+    amount,
+    state.cup?.craft.dripBean ?? currentTicket(state)?.dripBean ?? null,
+  )
+  if (ready?.labelled && batchHome(ready) === place && area === 'bar') return { kind: 'move', batch: ready }
   const sealed = item.sealed.find((batch) => batch.location === place)
   if (sealed) {
     return { kind: 'open', batch: sealed }
@@ -139,12 +166,28 @@ function StorageNow({
   }
   const item = all.find((entry) => entry.id === subject.ingredient)
 
-  return item ? <MaterialNow state={state} act={act} item={item} place={place} /> : null
+  return item ? (
+    <MaterialNow state={state} act={act} item={item} place={place} area={subject.area} amount={subject.amount} />
+  ) : null
 }
 
-function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; item: Item; place: Place }) {
+function MaterialNow({
+  state,
+  act,
+  item,
+  place,
+  area,
+  amount,
+}: {
+  state: GameState
+  act: Act
+  item: Item
+  place: Place
+  area?: StockArea
+  amount?: number
+}) {
   const name = item.definition.name
-  const task = materialTask(state, item, place)
+  const task = materialTask(state, item, place, area, amount)
 
   if (!task) {
     return null
@@ -174,6 +217,18 @@ function MaterialNow({ state, act, item, place }: { state: GameState; act: Act; 
         title={item.shortage > EPSILON ? `${josa(name, '이', '가')} 부족해요` : `${name} 원팩을 열어야 해요`}
       >
         <Button onClick={() => act({ type: 'open-batch', id: task.batch.id })}>원팩 개봉</Button>
+      </PanelNow>
+    )
+  }
+  if (task.kind === 'move') {
+    return (
+      <PanelNow
+        title={`${batchName(task.batch)} 바에 보충`}
+        detail={`바 용기 ${barBatchCount(state, item.id)}/${BAR_BATCH_CAPACITY}개`}
+      >
+        <Button onClick={() => act({ type: 'take-batch', id: task.batch.id, station: place })}>
+          용기 집기 → {STATIONS[materialHome(item.id)].name}
+        </Button>
       </PanelNow>
     )
   }
@@ -253,7 +308,7 @@ function Materials({
   const [query, setQuery] = useState('')
   const needle = searchName(query)
   const buying = place === 'stock'
-  const searchable = buying ? all.filter((item) => !item.definition.prepared) : items
+  const searchable = buying ? all.filter((item) => !item.definition.prepared || packStorage(item.id) === place) : items
   const matches = searchable
     .filter((item) => item.id !== focus && searchName(item.definition.name).includes(needle))
     .slice(0, 30)
@@ -277,7 +332,7 @@ function Materials({
 
   return (
     <>
-      <PanelSearch label={buying ? '재료 찾아 입고' : '냉장 재료 찾기'} value={query} onChange={setQuery} />
+      <PanelSearch label={buying ? '재료·배치 찾기' : '냉장 재료 찾기'} value={query} onChange={setQuery} />
       {needle ? (
         <PanelSection title={`검색 결과 ${matches.length}개`}>
           {matches.length ? matches.map((item) => row(item, buying)) : <PanelEmpty>찾는 재료가 없어요.</PanelEmpty>}
@@ -316,16 +371,50 @@ function MaterialRow({
   purchase: boolean
   onLabel: (batchId: string) => void
 }) {
+  if (isDripIngredient(item.id)) {
+    const batches = item.batches.filter((batch) => batch.location === place)
+    if (!batches.length) return <PanelEmpty>{item.definition.name} · URN에서 추출해 준비하세요.</PanelEmpty>
+
+    return (
+      <>
+        {batches.map((batch) => {
+          const expired = batch.expiresAt !== null && batch.expiresAt <= state.time
+          return (
+            <PanelRow
+              key={batch.id}
+              title={batchName(batch)}
+              note={`${formatDecimal(batch.amount)}ml · ${labelText(batch)}`}
+            >
+              {expired && (
+                <HoldAction
+                  shortcut={false}
+                  onConfirm={() => act({ type: 'discard-batch', id: batch.id, station: place })}
+                >
+                  기한 지난 배치 폐기
+                </HoldAction>
+              )}
+              {!expired && (
+                <RowButton onClick={() => act({ type: 'take-batch', id: batch.id, station: place })}>
+                  용기 집기
+                </RowButton>
+              )}
+            </PanelRow>
+          )
+        })}
+      </>
+    )
+  }
   const expired = expiredHere(state, item, place)
   const unlabelled = unlabelledHere(item, place)
   const sealedHere = item.sealed.filter((batch) => batch.location === place)
-  const short = item.shortage > EPSILON
+  const ready = readyHere(state, item, place)
+  const stored = item.batches.filter((batch) => batch.location === place).reduce((sum, batch) => sum + batch.amount, 0)
   const canBuy = !item.definition.prepared && item.sealed.length < 3 && state.cash >= item.definition.price
 
   return (
     <PanelRow
       title={item.definition.name}
-      note={`${formatDecimal(item.amount)}${item.definition.unit}`}
+      note={`바 ${formatDecimal(item.amount)} · 백룸 ${formatDecimal(stored)}${item.definition.unit}`}
       status={<MaterialStatus state={state} item={item} place={place} purchase={purchase} />}
     >
       {expired && (
@@ -334,7 +423,10 @@ function MaterialRow({
         </HoldAction>
       )}
       {!expired && unlabelled && <RowButton onClick={() => onLabel(unlabelled.id)}>라벨 쓰기</RowButton>}
-      {!expired && !unlabelled && sealedHere.length > 0 && short && !purchase && (
+      {!expired && !unlabelled && ready && (
+        <RowButton onClick={() => act({ type: 'take-batch', id: ready.id, station: place })}>용기 집기</RowButton>
+      )}
+      {!expired && !unlabelled && !ready && sealedHere.length > 0 && (
         <RowButton onClick={() => act({ type: 'open-batch', id: sealedHere[0].id })}>개봉</RowButton>
       )}
       {purchase && canBuy && (
@@ -367,7 +459,7 @@ function MaterialStatus({
     return <StatusChip tone="alert">부족</StatusChip>
   }
   const inUse = item.batches
-    .filter((batch) => batch.location === 'bar' && batch.labelled && (batch.expiresAt ?? Infinity) > state.time)
+    .filter((batch) => batch.location === place && batch.labelled && (batch.expiresAt ?? Infinity) > state.time)
     .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))[0]
   if (!purchase && inUse?.expiresAt) {
     return <StatusChip tone="label">{labelText(inUse)}</StatusChip>
@@ -397,6 +489,11 @@ function CupStock({ state, act }: { state: GameState; act: Act }) {
             note={`진열 ${stock.bar}개 · 후방 ${stock.reserve}개`}
             alert={!stock.reserve}
           >
+            {stock.reserve > 0 && stock.bar < CUP_SUPPLY.barCapacity && !state.cupDelivery && (
+              <RowButton onClick={() => act({ type: 'take-cups', kind })}>
+                {Math.min(CUP_SUPPLY.refill, stock.reserve, CUP_SUPPLY.barCapacity - stock.bar)}개 집기
+              </RowButton>
+            )}
             {stock.reserve < CUP_SUPPLY.reserveLimit && state.cash >= CUP_SUPPLY.price && (
               <RowButton onClick={() => act({ type: 'buy-cups', kind })}>
                 {CUP_SUPPLY.pack}개 입고 {money(CUP_SUPPLY.price)}
@@ -454,5 +551,15 @@ function unlabelledHere(item: Item, place: Place) {
 }
 
 function waiting(state: GameState, item: Item, place: Place) {
-  return !!expiredHere(state, item, place) || !!unlabelledHere(item, place)
+  return !!expiredHere(state, item, place) || !!unlabelledHere(item, place) || !!readyHere(state, item, place)
+}
+
+function readyHere(state: GameState, item: Item, place: Place) {
+  return item.batches.find(
+    (batch) =>
+      batch.location === place &&
+      batch.labelled &&
+      !isSealed(batch) &&
+      (batch.expiresAt === null || batch.expiresAt > state.time),
+  )
 }

@@ -1,6 +1,25 @@
+import { z } from 'zod'
+import storageData from '../../../data/shop/storage.json'
 import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
+import type { StationId } from '../../content/stations'
 import type { Batch, GameState } from '../../simulation/state'
+import { DRIP_BEANS, type DripBean, isDripIngredient } from '../drip-coffee/rules'
+import { available, type StockArea } from './inventory'
+
+export const batchName = (batch: Batch) =>
+  batch.dripBean
+    ? `${INGREDIENTS[batch.ingredient].name} · ${DRIP_BEANS[batch.dripBean]}`
+    : INGREDIENTS[batch.ingredient].name
+
+export const storageStations = ['fridge', 'stock', 'bar-fridge', 'shelf'] as const
+export type StorageStation = (typeof storageStations)[number]
+export const BAR_BATCH_CAPACITY = z.number().int().positive().parse(storageData.barContainersPerMaterial)
+export const barBatchCount = (state: GameState, ingredient: IngredientId): number =>
+  state.batches.filter((batch) => batch.ingredient === ingredient && batch.location === 'bar' && batch.amount > 0)
+    .length
+export const isStorageStation = (station: StationId): station is StorageStation =>
+  storageStations.some((id) => id === station)
 
 export const carriedBatch = (state: GameState) => state.batches.find((batch) => batch.location === 'hand')
 
@@ -11,18 +30,68 @@ export const isSealed = (batch: Batch) => batch.openedAt === null
 export const packStorage = (ingredient: IngredientId) =>
   INGREDIENTS[ingredient].storage === 'fridge' ? ('fridge' as const) : ('stock' as const)
 
-export const batchOrigin = (batch: Batch) =>
-  batch.ingredient === 'cold-brew' ? ('cold-prep' as const) : ('prep' as const)
+export function batchOrigin(batch: Batch): StationId {
+  if (batch.carryFrom === 'bar') return materialHome(batch.ingredient)
+  if (batch.carryFrom) return batch.carryFrom
+  return batch.ingredient === 'cold-brew' ? 'cold-prep' : 'prep'
+}
 
 export const batchDestination = (batch: Batch) =>
-  INGREDIENTS[batch.ingredient].storage === 'fridge' ? ('fridge' as const) : ('shelf' as const)
+  batch.carryFrom === 'bar' ? packStorage(batch.ingredient) : materialHome(batch.ingredient)
+
+export function deliveryDestination(state: GameState, batch: Batch) {
+  const destination = batchDestination(batch)
+  return destination === materialHome(batch.ingredient) && barBatchCount(state, batch.ingredient) >= BAR_BATCH_CAPACITY
+    ? packStorage(batch.ingredient)
+    : destination
+}
 
 /** Where an ingredient is kept once it is ready: chilled goods in the fridge, room-temperature mixes on the shelf. */
 export function materialHome(ingredient: IngredientId) {
+  if (ingredient === 'todays-coffee') return 'urn' as const
   if (INGREDIENTS[ingredient].storage === 'fridge') {
-    return 'fridge' as const
+    return 'bar-fridge' as const
   }
-  return INGREDIENTS[ingredient].prepared ? ('shelf' as const) : ('stock' as const)
+  return 'shelf' as const
+}
+
+export function materialSource(
+  state: GameState,
+  ingredient: IngredientId,
+  area: StockArea = 'bar',
+  needed = 0,
+  dripBean: DripBean | null = null,
+) {
+  const batches = state.batches.filter(
+    (batch) =>
+      batch.ingredient === ingredient &&
+      batch.amount > 0 &&
+      batch.location !== 'hand' &&
+      (!isDripIngredient(ingredient) || dripBean === null || batch.dripBean === dripBean) &&
+      (batch.expiresAt === null || batch.expiresAt > state.time),
+  )
+  const outside = (batch: Batch) =>
+    area === 'bar'
+      ? batch.location !== 'bar'
+      : batch.location === 'bar' || batch.location === 'prep' || batch.location === 'cold-prep'
+
+  if (area === 'backroom') {
+    const local = batches.filter((batch) => batch.location === 'fridge' || batch.location === 'stock')
+    const unopened = local.find((batch) => !batch.labelled && !isSealed(batch)) ?? local.find(isSealed)
+    if (unopened) return unopened
+  }
+
+  const remaining = Math.max(0, needed - available(state, ingredient, undefined, area, dripBean))
+  const lastBarSlot = area === 'bar' && barBatchCount(state, ingredient) === BAR_BATCH_CAPACITY - 1
+  const ready = batches
+    .filter((batch) => !isSealed(batch) && batch.labelled && outside(batch))
+    .sort((a, b) => b.amount - a.amount)
+
+  return (
+    ready.find((batch) => !lastBarSlot || batch.amount >= remaining) ??
+    batches.find((batch) => !isSealed(batch) && !batch.labelled) ??
+    batches.find(isSealed)
+  )
 }
 
 /** The station that shows a batch and where it can be discarded, or null while it is carried. */

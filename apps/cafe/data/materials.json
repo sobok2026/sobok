@@ -2266,5 +2266,61 @@
     "stockUnit": null,
     "preparationId": null,
     "notes": ["침출 후 남은 커피박이다. 원본은 무게와 수분 함량을 제시하지 않는다."]
+  },
+  {
+    "id": "drip-beans-house-blend",
+    "kind": "raw",
+    "name": "하우스 블렌드 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-pike-place-roast",
+    "kind": "raw",
+    "name": "파이크 플레이스 로스트 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-colombia",
+    "kind": "raw",
+    "name": "콜롬비아 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-guatemala",
+    "kind": "raw",
+    "name": "과테말라 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-kenya",
+    "kind": "raw",
+    "name": "케냐 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-caffe-verona",
+    "kind": "raw",
+    "name": "카페 베로나 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "drip-beans-veranda-blend",
+    "kind": "raw",
+    "name": "베란다 블렌드 원두",
+    "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
+    "preparationId": null,
+    "stockUnit": "g"
   }
 ]

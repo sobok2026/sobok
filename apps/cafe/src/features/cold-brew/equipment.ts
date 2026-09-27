@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
@@ -11,12 +12,16 @@ import {
 } from '../../shared/visuals/equipment-geometry'
 
 export const COLD_BREW_OUTLET: [number, number, number] = [0, 1.555, -1.33]
-export const COLD_BREW_COLLECTION_SPOT: [number, number, number] = [0.84, 1.1, -5.006]
+export const COLD_BREW_COLLECTION_SPOT: [number, number, number] = [
+  STATIONS['cold-prep'].x - 0.16,
+  1.1,
+  STATIONS['cold-prep'].z + 0.094,
+]
 
 export function createColdBrewTank(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Toddy inspired commercial cold brewer'
-  root.position.set(0.84, 1.1, -5.22)
+  root.position.set(STATIONS['cold-prep'].x - 0.16, 1.1, STATIONS['cold-prep'].z - 0.12)
   scene.add(root)
   const plastic = material({ color: '#edece5', roughness: 0.46 })
   const rim = material({ color: '#dadbd5', roughness: 0.38 })

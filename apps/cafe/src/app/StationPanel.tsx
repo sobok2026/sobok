@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { lazy, Suspense } from 'react'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import ColdBrewPanel from '../features/cold-brew/ColdBrewPanel'
@@ -6,11 +7,13 @@ import CupRack from '../features/inventory/CupRack'
 import ShelfPanel from '../features/inventory/ShelfPanel'
 import StoragePanel from '../features/inventory/StoragePanel'
 import PreparationPanel from '../features/preparation/PreparationPanel'
-import PosPanel from '../features/service/PosPanel'
 import WashingPanel from '../features/washing/WashingPanel'
 import type { Action } from '../simulation/actions'
 import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
+
+const PosPanel = lazy(() => import('../features/service/PosPanel'))
+const DripPanel = lazy(() => import('../features/drip-coffee/DripPanel'))
 
 /**
  * A station panel opens only where there is a choice to make. It sizes to its content and keeps the one current
@@ -32,13 +35,21 @@ export default function StationPanel({
   }
   if (panel === 'pos') {
     return (
-      <PosPanel
-        key={state.customer?.id ?? 'empty-pos'}
-        state={state}
-        act={act}
-        onClose={() => closePanel()}
-        onEscape={() => closePanel(false)}
-      />
+      <Suspense
+        fallback={
+          <p className="absolute top-6 left-6 rounded-xl bg-surface p-5" role="status">
+            POS를 불러오고 있어요.
+          </p>
+        }
+      >
+        <PosPanel
+          key={state.customer?.id ?? 'empty-pos'}
+          state={state}
+          act={act}
+          onClose={() => closePanel()}
+          onEscape={() => closePanel(false)}
+        />
+      </Suspense>
     )
   }
   const goal = objective(state)
@@ -73,8 +84,13 @@ export default function StationPanel({
         {panel === 'stock' && <StoragePanel key="stock" state={state} act={act} goal={goal} place="stock" />}
         {panel === 'prep' && <PreparationPanel state={state} act={act} goal={goal} />}
         {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}
+        {panel === 'urn' && (
+          <Suspense fallback={<p role="status">URN 작업을 불러오고 있어요.</p>}>
+            <DripPanel state={state} act={act} />
+          </Suspense>
+        )}
         {panel === 'wash' && <WashingPanel state={state} act={act} />}
-        {panel === 'shelf' && <ShelfPanel state={state} act={act} />}
+        {(panel === 'shelf' || panel === 'bar-fridge') && <ShelfPanel state={state} act={act} place={panel} />}
       </section>
     </div>
   )

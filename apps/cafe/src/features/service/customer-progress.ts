@@ -128,7 +128,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
     }
   } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
     customerSurface(s, 'condiment', customerCupCounts(s), customer.visit.dirtyReturn)
-    say(s, '손님이 컨디먼트 바에 컵을 반납했어요.')
+    say(s, '손님이 컵 반납대에 컵을 반납했어요.')
     customerLeave(customer)
   }
 }

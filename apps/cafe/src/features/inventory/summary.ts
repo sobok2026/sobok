@@ -1,11 +1,12 @@
 import { type Costs, INGREDIENTS, type IngredientId, ingredientIds } from '../../content/ingredients'
 import { recipeFor } from '../../content/recipes'
 import type { GameState } from '../../simulation/state'
+import { dripBeanIngredient, dripDose, dripMenuTemperature, dripTemperatures } from '../drip-coffee/rules'
 import { PREPARATIONS, preparationForMaterial } from '../preparation/rules'
 import type { ProductionState, WorkStep } from '../production/workflow'
 import { currentTicket } from '../service/orders'
 import { cupService } from './cups'
-import { available } from './inventory'
+import { available, type StockArea } from './inventory'
 
 export function inventorySummary(state: GameState) {
   const items = ingredientIds.map((id) => {
@@ -13,7 +14,12 @@ export function inventorySummary(state: GameState) {
     const expired = batches.filter((batch) => batch.expiresAt !== null && batch.expiresAt <= state.time)
     const sealed = batches.filter((batch) => batch.openedAt === null && !expired.includes(batch))
     const pending = batches.filter(
-      (batch) => !expired.includes(batch) && !sealed.includes(batch) && (!batch.labelled || batch.location !== 'bar'),
+      (batch) =>
+        !expired.includes(batch) &&
+        !sealed.includes(batch) &&
+        (!batch.labelled ||
+          ['prep', 'cold-prep', 'hand'].includes(batch.location) ||
+          (batch.location === 'urn' && id === 'iced-coffee')),
     )
     const sum = (values: typeof batches) => values.reduce((amount, batch) => amount + batch.amount, 0)
 
@@ -23,15 +29,18 @@ export function inventorySummary(state: GameState) {
       batches,
       sealed,
       amount: available(state, id),
+      reserve: available(state, id, undefined, 'backroom'),
       pending: sum(pending),
       expired: sum(expired),
       unopened: sum(sealed),
     }
   })
   const required: Costs = {}
+  const byArea: Record<StockArea, Costs> = { bar: {}, backroom: {} }
 
-  const add = (id: IngredientId, amount: number) => {
+  const add = (id: IngredientId, amount: number, area: StockArea) => {
     required[id] = (required[id] ?? 0) + Math.max(0, amount)
+    byArea[area][id] = (byArea[area][id] ?? 0) + Math.max(0, amount)
   }
 
   const addPlan = (steps: WorkStep[], session: ProductionState | null, batches = 1) => {
@@ -42,7 +51,7 @@ export function inventorySummary(state: GameState) {
       }
       const progress = session && index === session.cursor ? (session.resumeProgress ?? session.progress) : 0
       const remaining = Math.max(0, 1 - progress / step.target)
-      for (const [id, amount] of Object.entries(step.costs)) add(id, amount * remaining * batches)
+      for (const [id, amount] of Object.entries(step.costs)) add(id, amount * remaining * batches, step.stockArea)
     }
   }
 
@@ -65,6 +74,17 @@ export function inventorySummary(state: GameState) {
     addPlan(PREPARATIONS[prep.recipe].steps, prep)
   }
   const plannedBatches: Record<string, number> = {}
+  for (const temperature of dripTemperatures) {
+    const brew = state.drip[temperature]
+    if (brew && ['filter', 'beans'].includes(brew.stage) && !brew.fault) {
+      add(dripBeanIngredient(brew.bean), Math.max(0, dripDose(temperature) - brew.beans), 'bar')
+    }
+  }
+  const dripTemperature = recipe ? dripMenuTemperature(recipe) : null
+  if (dripTemperature && !state.drip[dripTemperature]) {
+    const bean = state.cup?.craft.dripBean ?? ticket?.dripBean ?? state.cow[dripTemperature]
+    add(dripBeanIngredient(bean), dripDose(dripTemperature), 'bar')
+  }
   const queue = Object.keys(required)
 
   for (let index = 0; index < queue.length; index++) {
@@ -75,7 +95,7 @@ export function inventorySummary(state: GameState) {
     }
     const stock = items.find((item) => item.id === id)!
     const preparing = activeOutput?.materialId === id ? activeOutput.amount : 0
-    const shortage = Math.max(0, required[id] - stock.amount - stock.pending - preparing)
+    const shortage = Math.max(0, required[id] - stock.amount - stock.reserve - stock.pending - preparing)
     const batches = Math.ceil(shortage / definition.output.amount)
     const extra = batches - (plannedBatches[id] ?? 0)
     if (extra <= 0) {
@@ -89,7 +109,9 @@ export function inventorySummary(state: GameState) {
   return items
     .map((item) => {
       const needed = required[item.id] ?? 0
-      const shortage = Math.max(0, needed - item.amount)
+      const shortage =
+        Math.max(0, (byArea.bar[item.id] ?? 0) - item.amount) +
+        Math.max(0, (byArea.backroom[item.id] ?? 0) - item.reserve)
 
       return {
         ...item,

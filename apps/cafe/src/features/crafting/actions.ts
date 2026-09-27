@@ -96,7 +96,7 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
       id: uid(),
       recipe: ticket.recipe,
       orderLineId: ticket.id,
-      craft: createCraft(kind, ticket.size, ticket.customizations),
+      craft: { ...createCraft(kind, ticket.size, ticket.customizations), dripBean: ticket.dripBean },
     }
     say(s, `${josa(CUP_NAMES[kind], '을', '를')} 집었어요.`)
     return

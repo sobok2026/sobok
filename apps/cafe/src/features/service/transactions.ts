@@ -1,6 +1,7 @@
 import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES } from '../../content/recipes'
 import type { GameState, Sale, Transaction } from '../../simulation/state'
+import { dripMenuName } from '../drip-coffee/rules'
 import { SERVICE_NAMES } from '../inventory/cups'
 import { itemCustomizations, itemPrice } from './orders'
 
@@ -33,7 +34,7 @@ export function recordTransaction(state: GameState, sale: Sale) {
     paidAt: sale.paidAt,
     lines: sale.lines.map((line) => ({
       id: line.id,
-      name: RECIPES[line.recipe].name,
+      name: dripMenuName(line.recipe, RECIPES[line.recipe].name),
       specification: `${RECIPES[line.recipe].temperature.toUpperCase()} · ${DRINK_SIZES[line.size].name} · ${SERVICE_NAMES[line.service]}`,
       customizations: itemCustomizations(line),
       quantity: line.quantity,

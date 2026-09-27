@@ -229,11 +229,13 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     if (action.type === 'take-supply' && current.supplyDelivery) {
       closePanel()
     }
+    if (action.type === 'take-cups' && current.cupDelivery) closePanel()
     if ((action.type === 'take-batch' || action.type === 'buy') && carriedBatch(current)) {
       closePanel()
     }
     if (action.type === 'return-batch' && !carriedBatch(current)) {
-      beginWork()
+      if (action.station === 'prep' || action.station === 'cold-prep') beginWork()
+      else closePanel()
     }
     if ((action.type === 'start-cold-brew' || action.type === 'collect-cold-brew') && current.coldBrew) {
       beginWork()
@@ -273,7 +275,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         (previous.coldBrew && !current.coldBrew) ||
         (previous.washing && !current.washing) ||
         (previous.cleaning && !current.cleaning) ||
-        (previous.supplyDelivery && !current.supplyDelivery))
+        (previous.supplyDelivery && !current.supplyDelivery) ||
+        (previous.cupDelivery && !current.cupDelivery) ||
+        (carriedBatch(previous) && !carriedBatch(current)))
     ) {
       scene.current?.lock()
     }

@@ -1,5 +1,6 @@
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition } from '../content/stations'
+import { defaultCow } from '../features/drip-coffee/rules'
 import { packStorage } from '../features/inventory/batches'
 import {
   CUP_SUPPLY,
@@ -30,6 +31,8 @@ export function initialState(): GameState {
     cup: null,
     preparation: null,
     coldBrew: null,
+    cow: defaultCow(),
+    drip: { hot: null, iced: null },
     washing: null,
     cleaning: null,
     batches: ingredientIds.flatMap((ingredient) => [
@@ -56,6 +59,7 @@ export function initialState(): GameState {
       sugar: { bar: SUPPLY_CAPACITY, stock: SUPPLY_PACK },
     },
     supplyDelivery: null,
+    cupDelivery: null,
     dirtyBar: 0,
     trash: 0,
     totals: emptyTotals(50000),

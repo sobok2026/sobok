@@ -48,6 +48,13 @@
       "unit": "days"
     }
   },
+  "todays-coffee": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 1,
+      "unit": "hours"
+    }
+  },
   "classic": {
     "storage": "room",
     "lifetime": {

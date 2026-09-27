@@ -3,8 +3,9 @@ import { cleaningTip } from '../../features/cleaning/help'
 import { coldBrewTip } from '../../features/cold-brew/help'
 import { craftTip } from '../../features/crafting/help'
 import { nextStep } from '../../features/crafting/rules'
-import { batchDestination, batchOrigin, carriedBatch } from '../../features/inventory/batches'
-import { cupCount } from '../../features/inventory/cups'
+import { dripHandsBusy } from '../../features/drip-coffee/rules'
+import { batchOrigin, carriedBatch, deliveryDestination } from '../../features/inventory/batches'
+import { CUP_NAMES, cupCount } from '../../features/inventory/cups'
 import { preparationTip } from '../../features/preparation/help'
 import { currentTicket } from '../../features/service/orders'
 import { closingTasks } from '../../features/shift/rules'
@@ -30,8 +31,16 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       title: expired ? '기한이 지난 용기예요' : '배합 용기를 보관하세요',
       action: expired
         ? `${STATIONS[batchOrigin(carrying)].name}에 E로 내려놓고 폐기하세요.`
-        : `${STATIONS[batchDestination(carrying)].name}까지 운반해 E로 보관하세요.`,
+        : `${STATIONS[deliveryDestination(state, carrying)].name}까지 운반해 E로 보관하세요.`,
       reason: `다시 놓으려면 ${toward(STATIONS[batchOrigin(carrying)].name)} 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
+    }
+  }
+
+  if (state.cupDelivery) {
+    return {
+      title: `${CUP_NAMES[state.cupDelivery.kind]} ${state.cupDelivery.amount}개 운반 중`,
+      action: '바 컵 보관대에서 E로 보충하세요.',
+      reason: '백룸 창고에서 E로 다시 내려놓을 수 있어요.',
     }
   }
 
@@ -40,6 +49,15 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       title: '콜드 브루 한 배치를 준비하세요',
       action: '원두 한 배치 준비 버튼을 누르면 직접 계량을 시작해요.',
       reason: '원두와 물을 계량하고 추출이 끝나면 회수·라벨 쓰기·냉장 보관을 마쳐주세요.',
+    }
+  }
+  if (panel === 'urn' || dripHandsBusy(state)) {
+    return {
+      title: 'URN Digital 드립 추출',
+      action:
+        'HOT·ICED와 원두를 선택하고 필터·원두 계량·추출을 진행하세요. 패널의 제조 기준에서 수량을 확인할 수 있어요.',
+      reason:
+        '추출은 5분 동안 자동으로 진행돼요. HOT은 완료부터 1시간 보온하고, ICED는 얼음 혼합·라벨·냉장 보관을 마쳐요.',
     }
   }
   if (state.supplyDelivery) {

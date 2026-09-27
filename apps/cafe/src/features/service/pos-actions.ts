@@ -3,6 +3,7 @@ import { uid } from '../../shared/id'
 import type { PosAction } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
+import { dripMenuTemperature } from '../drip-coffee/rules'
 import { customerToPickup } from './customer'
 import { itemPrice, orderMatchesRequest, salePaid, saleTotal } from './orders'
 import { recordTransaction } from './transactions'
@@ -119,11 +120,15 @@ export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
     return
   }
 
+  const temperature = dripMenuTemperature(action.item.recipe)
+  const previousLine = action.type === 'pos-update' ? s.sale?.lines.find((line) => line.id === action.id) : null
+  const dripBean = temperature ? s.cow[temperature] : null
   const item = {
     recipe: action.item.recipe,
     service: action.item.service,
     size: action.item.size,
     customizations: parsed.data,
+    dripBean: previousLine?.recipe === action.item.recipe ? previousLine.dripBean : dripBean,
   }
 
   try {

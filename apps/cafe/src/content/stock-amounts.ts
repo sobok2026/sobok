@@ -278,8 +278,13 @@ export function vesselProfile(
   const marks: VesselMark[] = []
   const cup = !!model.cupStyles
 
+  // A pitcher etched with size lines carries only those; its other game lines are not on the steel.
+  const etched = !cup && 'size' in model.lines
   if (!cup || printedCupStyles.includes(context.cupStyle)) {
     for (const [line, volumes] of Object.entries(model.lines)) {
+      if (etched && line !== 'size') {
+        continue
+      }
       if (line === 'size' && !cup) {
         for (const [key, label] of Object.entries(sizeMarkLabels)) {
           const volume = volumes[key as keyof typeof sizeMarkLabels]

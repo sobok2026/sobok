@@ -1,7 +1,10 @@
 import * as THREE from 'three'
 import { INGREDIENTS } from '../../content/ingredients'
+import { createCupBody } from '../../shared/visuals/cup-visual'
+import { materialColor } from '../../shared/visuals/material-color'
 import type { GameState } from '../../simulation/state'
 import { carriedBatch, isSealed } from './batches'
+import { CUP_SUPPLY, type DisposableCupKind } from './cups'
 
 const BATCH_COLORS: Partial<Record<string, string>> = {
   foam: '#eee0bf',
@@ -13,6 +16,10 @@ const BATCH_COLORS: Partial<Record<string, string>> = {
 const BATCH_SCALES: Partial<Record<string, number>> = { 'cold-brew': 1.15, mocha: 1 }
 
 export function createBatchVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+  const bundles = new Map<DisposableCupKind, ReturnType<typeof createCupBody>[]>()
+  const cupBundle = new THREE.Group()
+  cupBundle.position.set(0.24, -0.36, -0.7)
+  camera.add(cupBundle)
   const vessel = new THREE.Group()
   vessel.position.set(0.25, -0.36, -0.7)
   camera.add(vessel)
@@ -75,11 +82,31 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
     update(state: GameState) {
       const held = carriedBatch(state)
       const sealed = !!held && isSealed(held)
-      vessel.visible = !!held && !sealed
-      pack.visible = sealed
+      const rawPack = !!held && !INGREDIENTS[held.ingredient].prepared
+      vessel.visible = !!held && !sealed && !rawPack
+      pack.visible = sealed || rawPack
+      for (const cups of bundles.values()) for (const cup of cups) cup.root.visible = false
+      cupBundle.visible = !!state.cupDelivery
+
+      if (state.cupDelivery) {
+        const { kind, amount } = state.cupDelivery
+        let cups = bundles.get(kind)
+        if (!cups) {
+          cups = Array.from({ length: CUP_SUPPLY.refill }, (_, index) => {
+            const cup = createCupBody(cupBundle, kind)
+            cup.root.scale.setScalar(0.52)
+            cup.root.position.y = index * 0.035
+            return cup
+          })
+          bundles.set(kind, cups)
+        }
+        cups.forEach((cup, index) => {
+          cup.root.visible = index < amount
+        })
+      }
 
       if (held && !sealed) {
-        drinkMaterial.color.set(BATCH_COLORS[held.ingredient] ?? '#3e2c20')
+        drinkMaterial.color.set(BATCH_COLORS[held.ingredient] ?? materialColor(held.ingredient))
         handle.visible = held.ingredient !== 'hojicha' && held.ingredient !== 'matcha'
         const height = Math.max(0.012, 0.29 * Math.min(1, held.amount / INGREDIENTS[held.ingredient].pack))
         liquid.scale.y = height

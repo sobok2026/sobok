@@ -3,7 +3,7 @@ import { cupHandsBusy } from '../../simulation/hands'
 import type { GameState, Preparation } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
 import { operationDetails, workUseLabel } from '../production/presentation'
-import { continuousWork, missingInput, readyWork } from '../production/runtime'
+import { continuousWork, missingInput, readyWork, requiredInput } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
 import { PREPARATIONS, preparationStep } from './rules'
 
@@ -58,7 +58,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
   }
   const missing = missingInput(state, step, prep.progress)
   if (missing) {
-    return materialTip(state, missing)
+    return materialTip(state, missing, 'backroom', requiredInput(step, missing, prep.progress))
   }
   if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean) {
     return {

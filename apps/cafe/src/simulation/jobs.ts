@@ -1,3 +1,4 @@
+import { finishDripJob, settleDrip } from '../features/drip-coffee/actions'
 import { finishPreparation } from '../features/preparation/actions'
 import { say } from './feedback'
 import type { WorkContext } from './work-context'
@@ -8,7 +9,9 @@ export function completeJobs(work: WorkContext) {
   s.jobs = s.jobs.filter((job) => job.endsAt > s.time)
 
   for (const job of finished) {
-    if (job.kind === 'cold-brew') {
+    if (job.kind === 'drip-coffee') {
+      finishDripJob(s, job)
+    } else if (job.kind === 'cold-brew') {
       const brew = s.coldBrew
       if (brew && brew.id === job.preparationId && brew.stage === 'extracting') {
         brew.stage = 'finished'
@@ -24,4 +27,5 @@ export function completeJobs(work: WorkContext) {
       say(s, `${job.label} 완료.`, 'success')
     }
   }
+  settleDrip(s)
 }

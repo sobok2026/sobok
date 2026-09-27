@@ -6,6 +6,7 @@ import { josa } from '../../shared/format'
 import { say, startJob } from '../../simulation/feedback'
 import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
+import type { DripBean } from '../drip-coffee/rules'
 import { addAmounts, available, batchIdsFor, consume } from '../inventory/inventory'
 import { observationStep } from './conditions'
 import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workflow'
@@ -95,12 +96,22 @@ export function advanceStep(session: ProductionState) {
   session.choices = {}
 }
 
-export function missingInput(state: GameState, step: WorkStep, progress: number): IngredientId | undefined {
+export function requiredInput(step: WorkStep, ingredient: IngredientId, progress: number) {
   const remaining = step.inputRequirements ? 1 : Math.max(0, 1 - progress / step.target)
+  return ((step.inputRequirements ?? step.costs)[ingredient] ?? 0) * remaining
+}
 
-  return Object.entries(step.inputRequirements ?? step.costs).find(
-    ([id, amount]) => available(state, id) + PRODUCTION_EPSILON < (amount ?? 0) * remaining,
-  )?.[0]
+export function missingInput(
+  state: GameState,
+  step: WorkStep,
+  progress: number,
+  dripBean: DripBean | null = null,
+): IngredientId | undefined {
+  return Object.keys(step.inputRequirements ?? step.costs).find(
+    (id) =>
+      available(state, id, undefined, step.stockArea, dripBean) + PRODUCTION_EPSILON <
+      requiredInput(step, id, progress),
+  )
 }
 
 export const workIsBusy = (work: WorkContext, owner: WorkOwner) =>
@@ -206,7 +217,8 @@ function mixedInputReady(work: WorkContext, session: ProductionState, step: Work
   const selected = session.mixedInputs[id]
   if (
     remaining <= PRODUCTION_EPSILON ||
-    (selected?.length && available(work.state, id, selected) + PRODUCTION_EPSILON >= remaining)
+    (selected?.length &&
+      available(work.state, id, selected, step.stockArea, session.dripBean) + PRODUCTION_EPSILON >= remaining)
   ) {
     return true
   }
@@ -239,16 +251,22 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     const id = step.mixesMaterialId
     const needed = step.inputRequirements?.[id] ?? 0
 
-    if (available(work.state, id) + PRODUCTION_EPSILON < needed || needed <= 0) {
+    if (
+      available(work.state, id, undefined, step.stockArea, session.dripBean) + PRODUCTION_EPSILON < needed ||
+      needed <= 0
+    ) {
       say(work.state, `${INGREDIENTS[id].name}를 먼저 준비해주세요.`, 'error')
       return
     }
 
     if (session.progress <= PRODUCTION_EPSILON) {
-      session.mixedInputs[id] = batchIdsFor(work.state, id, needed)
+      session.mixedInputs[id] = batchIdsFor(work.state, id, needed, step.stockArea, session.dripBean)
     }
 
-    if (available(work.state, id, session.mixedInputs[id]) + PRODUCTION_EPSILON < needed) {
+    if (
+      available(work.state, id, session.mixedInputs[id], step.stockArea, session.dripBean) + PRODUCTION_EPSILON <
+      needed
+    ) {
       session.progress = 0
       delete session.mixedInputs[id]
       say(work.state, '혼합할 배치를 다시 선택해주세요.', 'error')
@@ -281,6 +299,8 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     work.state,
     costs,
     step.requiresMixedMaterialId ? session.mixedInputs[step.requiresMixedMaterialId] : undefined,
+    step.stockArea,
+    session.dripBean,
   )
 
   if (!result) {
@@ -329,7 +349,7 @@ export function beginProduction(
     return false
   }
 
-  if (work.state.jobs.some((job) => job.station === step.station)) {
+  if (work.state.jobs.some((job) => job.station === step.station && job.kind !== 'drip-coffee')) {
     say(work.state, '장비를 사용 중이에요.', 'error')
     return false
   }
@@ -416,7 +436,7 @@ export function confirmProduction(
     const id = step.mixesMaterialId
 
     if (
-      available(work.state, id, session.mixedInputs[id] ?? []) + PRODUCTION_EPSILON <
+      available(work.state, id, session.mixedInputs[id] ?? [], step.stockArea, session.dripBean) + PRODUCTION_EPSILON <
       (step.inputRequirements?.[id] ?? 0)
     ) {
       session.progress = 0

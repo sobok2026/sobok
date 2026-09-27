@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import type { StationId } from '../content/stations'
+import { SHOP_BOUNDS, type StationId, staffStartPosition } from '../content/stations'
 import { craftWorkStation } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
@@ -19,9 +19,10 @@ export function createPlayerControls(
   let using = false
   let pressedStation: StationId | null = null
   const collides = (x: number, z: number) =>
-    Math.abs(x) > 6.55 ||
-    z < -5.55 ||
-    z > 5.45 ||
+    x < SHOP_BOUNDS.minX + 0.45 ||
+    x > SHOP_BOUNDS.maxX - 0.45 ||
+    z < SHOP_BOUNDS.minZ + 0.45 ||
+    z > SHOP_BOUNDS.maxZ - 0.55 ||
     obstacles.some((o) => Math.abs(x - o.x) < o.width / 2 + 0.22 && Math.abs(z - o.z) < o.depth / 2 + 0.22)
 
   function keydown(event: KeyboardEvent) {
@@ -191,7 +192,11 @@ export function createPlayerControls(
       return
     }
 
-    if (options.getState().supplyDelivery && (hovered === 'condiment' || hovered === 'stock')) {
+    if (options.getState().cupDelivery && (hovered === 'cups' || hovered === 'stock')) {
+      options.onInteract(hovered)
+      return
+    }
+    if (options.getState().supplyDelivery && (hovered === 'supplies' || hovered === 'stock')) {
       options.onInteract(hovered)
       return
     }
@@ -260,6 +265,10 @@ export function createPlayerControls(
     unlockForCraft,
     update(dt: number) {
       if (options.canMove()) {
+        if (collides(camera.position.x, camera.position.z)) {
+          const [x, z] = staffStartPosition()
+          camera.position.set(x, camera.position.y, z)
+        }
         camera.rotation.y += ((keys.has('ArrowLeft') ? 1 : 0) - (keys.has('ArrowRight') ? 1 : 0)) * dt * 1.4
         camera.rotation.x = THREE.MathUtils.clamp(
           camera.rotation.x + ((keys.has('ArrowUp') ? 1 : 0) - (keys.has('ArrowDown') ? 1 : 0)) * dt,

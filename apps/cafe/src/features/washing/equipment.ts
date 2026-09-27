@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBasin as basin,
@@ -10,11 +11,14 @@ import {
   equipmentTube as tube,
 } from '../../shared/visuals/equipment-geometry'
 
-export const WASH_OUTLET: [number, number, number] = [-5, 1.6, -5.05]
-export const WASHING_SPOT: [number, number, number] = [-5, 1.033, -5.05]
+export const WASH_OUTLET: [number, number, number] = [STATIONS.wash.x, 1.6, STATIONS.wash.z + 0.05]
+export const WASHING_SPOT: [number, number, number] = [STATIONS.wash.x, 1.033, STATIONS.wash.z + 0.05]
 export const DRYING_LEVEL = 1.43
 
-export function createWashingEquipment(scene: THREE.Scene) {
+export function createWashingEquipment(parent: THREE.Scene) {
+  const scene = new THREE.Group()
+  scene.position.set(STATIONS.wash.x + 5, 0, STATIONS.wash.z + 5.1)
+  parent.add(scene)
   const steel = material({ color: '#b9c7cd', metalness: 0.93, roughness: 0.27 })
   const chrome = material({ color: '#e0e6e9', metalness: 1, roughness: 0.14 })
   const black = material({ color: '#223036', roughness: 0.76 })

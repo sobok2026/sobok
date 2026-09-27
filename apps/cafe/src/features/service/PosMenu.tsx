@@ -3,6 +3,8 @@ import { useMemo, useState } from 'react'
 import menuLayout from '../../../data/shop/pos-menu.json'
 import type { DrinkSize } from '../../content/drink-sizes'
 import { RECIPES, type RecipeId, recipeIds, recipeSizes } from '../../content/recipes'
+import type { GameState } from '../../simulation/state'
+import { DRIP_BEANS, dripMenuName, dripMenuTemperature } from '../drip-coffee/rules'
 import type { ServiceMode } from '../inventory/cups'
 import { PosButton } from './PosControls'
 
@@ -25,12 +27,14 @@ export function temperatureVariant(id: RecipeId, temperature: 'hot' | 'iced') {
 }
 
 export function PosMenu({
+  cow,
   temperature,
   size,
   service,
   disabled,
   onAdd,
 }: {
+  cow: GameState['cow']
   temperature: 'hot' | 'iced'
   size: DrinkSize
   service: ServiceMode
@@ -57,9 +61,11 @@ export function PosMenu({
           RECIPES[id].temperature === temperature &&
           (category === 'all' ||
             (category === 'favorites' ? favorites.includes(id) : layout[id]?.category === category)) &&
-          RECIPES[id].name.replace(/\s/g, '').includes(query.replace(/\s/g, '')),
+          `${RECIPES[id].name} ${dripMenuName(id, '')} ${dripMenuTemperature(id) ? DRIP_BEANS[cow[dripMenuTemperature(id)!]] : ''}`
+            .replace(/\s/g, '')
+            .includes(query.replace(/\s/g, '')),
       ),
-    [temperature, category, query, favorites],
+    [temperature, category, query, favorites, cow],
   )
 
   const pageCount = Math.max(1, Math.ceil(menus.length / 25))
@@ -124,6 +130,8 @@ export function PosMenu({
       <fieldset className="grid min-h-0 flex-1 grid-cols-5 grid-rows-5 gap-1.5" aria-label="상품 목록">
         {shown.map((id) => {
           const menu = RECIPES[id]
+          const name = dripMenuName(id, menu.name)
+          const dripTemperature = dripMenuTemperature(id)
           const otherService = service === 'dine-in' ? 'takeout' : 'dine-in'
           const services = recipeSizes(id, service).length ? service : otherService
           const sizes = recipeSizes(id, services)
@@ -139,9 +147,12 @@ export function PosMenu({
                   'flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm leading-snug',
                   'disabled:opacity-60',
                 )}
-                aria-label={`${menu.name} ${temperature === 'hot' ? 'HOT' : 'ICED'} 담기`}
+                aria-label={`${name} ${temperature === 'hot' ? 'HOT' : 'ICED'} 담기`}
               >
-                <span className="line-clamp-3 pr-3 font-semibold">{menu.name}</span>
+                <span className="line-clamp-3 pr-3 font-semibold">{name}</span>
+                {dripTemperature && (
+                  <span className="line-clamp-2 text-xs text-pos-panel">{DRIP_BEANS[cow[dripTemperature]]}</span>
+                )}
                 <span className="ml-auto text-right text-xs tabular-nums">
                   {chosenSize !== size && (
                     <span className="mr-1 text-pos-panel">{chosenSize === 'single' ? '단일' : chosenSize}</span>

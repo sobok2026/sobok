@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import { materialColor } from '../../shared/visuals/material-color'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
@@ -13,7 +14,7 @@ import {
   projectVessel,
   workVesselShape,
 } from '../crafting/drink-visual'
-import { BLENDER_JAR_SPOT } from './blender'
+import { PREP_BLENDER_JAR_SPOT } from './blender'
 import { PREPARATIONS, preparationStep } from './rules'
 
 export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -96,7 +97,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         const atBlender = id === vesselId && step?.equipmentId === 'blender' && shape === 'blender'
         const blending = atBlender && (!!job || pulse > 0)
         if (atBlender) {
-          model.root.position.fromArray(BLENDER_JAR_SPOT)
+          model.root.position.fromArray(PREP_BLENDER_JAR_SPOT)
         }
         model.root.rotation.z = blending ? Math.sin(now / 25) * 0.007 : 0
         positions.set(id, model.root.position)
@@ -154,4 +155,4 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   }
 }
 
-export const PREP_SPOT: [number, number, number] = [-2.3, 1.105, -4.95]
+export const PREP_SPOT: [number, number, number] = [STATIONS.prep.x + 0.4, 1.105, STATIONS.prep.z + 0.15]

@@ -1,5 +1,6 @@
 import { STATIONS } from '../content/stations'
 import { cleaningHandsBusy } from '../features/cleaning/rules'
+import { dripHandsBusy } from '../features/drip-coffee/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import { washingHandsBusy } from '../features/washing/rules'
@@ -12,7 +13,42 @@ export function canDispatch(work: WorkContext, action: Action) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
 
-  if (action.type === 'pos-cash-receipt' || action.type === 'pos-print-receipt') return true
+  if (
+    action.type === 'pos-cash-receipt' ||
+    action.type === 'pos-print-receipt' ||
+    action.type === 'set-cow' ||
+    action.type === 'drip-stop'
+  )
+    return true
+
+  if (
+    dripHandsBusy(s) &&
+    !action.type.startsWith('drip-') &&
+    !action.type.startsWith('pos-') &&
+    action.type !== 'close'
+  ) {
+    fail('URN에서 계량 도구를 먼저 내려놓아주세요.')
+    return false
+  }
+
+  if (
+    s.cupDelivery &&
+    ![
+      'place-cups',
+      'return-cups',
+      'pos-add',
+      'pos-update',
+      'pos-remove',
+      'pos-split',
+      'pos-clear',
+      'pos-pay',
+      'pos-void',
+      'close',
+    ].includes(action.type)
+  ) {
+    fail('들고 있는 컵 묶음을 바 컵 보관대에 보충하거나 백룸 창고에 돌려놓아주세요.')
+    return false
+  }
 
   if (
     carriedBatch(s) &&
@@ -125,11 +161,19 @@ export function canDispatch(work: WorkContext, action: Action) {
       'prep-use',
       'prep-confirm',
       'take-batch',
+      'take-cups',
       'start-cold-brew',
       'cold-tool',
       'cold-use',
       'cold-confirm',
       'collect-cold-brew',
+      'drip-prepare',
+      'drip-filter',
+      'drip-tool',
+      'drip-use',
+      'drip-confirm',
+      'drip-brew',
+      'drip-mix',
     ].includes(action.type)
   ) {
     fail(

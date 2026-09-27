@@ -12,7 +12,6 @@ import {
   WorkHeader,
   WorkNote,
 } from '../../shared/ui/WorkControls'
-import { materialColor } from '../../shared/visuals/material-color'
 import { workReading, workTitle, workUseLabel } from './presentation'
 import { continuousWork } from './runtime'
 import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workflow'
@@ -64,9 +63,7 @@ function heightGauge(session: ProductionState, step: WorkStep) {
       })
     }
   }
-  const color = 'materialId' in operation && operation.materialId ? materialColor(operation.materialId) : '#dfc29b'
-
-  return { fill: liquidFill(session, step, operation.into), ticks, color }
+  return { fill: liquidFill(session, step, operation.into), ticks }
 }
 
 export function ProductionControls({
@@ -133,7 +130,7 @@ export function ProductionControls({
           onPick={onChoose}
         />
       )}
-      {!halted && gauge && <WorkGauge label="수위" fill={gauge.fill} color={gauge.color} ticks={gauge.ticks} />}
+      {!halted && gauge && <WorkGauge label="수위" fill={gauge.fill} ticks={gauge.ticks} />}
       <WorkActions>
         {showTool && (
           <WorkButton shortcut="G" primary={needsTool || !rightTool} onUse={onTool}>

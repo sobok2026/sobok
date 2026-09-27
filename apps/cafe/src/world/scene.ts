@@ -69,10 +69,11 @@ function pickWidth(id: StationId) {
 
 // The storeroom shelf runs along the side wall, so its pick volume is long in depth rather than width.
 function pickDepth(id: StationId) {
-  return id === 'stock' ? 1.6 : 0.8
+  return id === 'stock' || id === 'supplies' ? 1.6 : 0.8
 }
 
 function pickHeight(id: StationId) {
+  if (id === 'urn') return 1.5
   if (id === 'espresso' || id === 'water') {
     return 1.12
   }
@@ -80,6 +81,7 @@ function pickHeight(id: StationId) {
 }
 
 function markerHeight(id: StationId) {
+  if (id === 'urn') return 2.45
   if (id === 'espresso' || id === 'water') {
     return 1.9
   }
@@ -164,7 +166,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const fillLight = new THREE.DirectionalLight('#dce9e3', 0.9)
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
-  const { obstacles, blender, register, syrupStation, cupStacks } = createShopInterior(scene)
+  const { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn } =
+    createShopInterior(scene)
   const stickerPrinter = createStickerPrinter(scene)
   customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
@@ -172,11 +175,12 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(pickWidth(id), pickHeight(id), pickDepth(id)), pickMaterial)
-    mesh.position.set(station.x, 1.2, station.z)
+    mesh.position.set(station.x, id === 'urn' ? 1.65 : 1.2, station.z)
     mesh.userData.station = id
     scene.add(mesh)
     return mesh
   })
+  const pickObjects = [...targets, ...occluders]
   // The objective marker points down at the station and stays readable through equipment, like a waypoint.
   const guideMarker = new THREE.Mesh(
     new THREE.ConeGeometry(0.1, 0.2, 4),
@@ -294,8 +298,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     controls.update(dt)
     camera.updateMatrixWorld()
     raycaster.setFromCamera(new THREE.Vector2(0, 0), camera)
-    const found = options.canMove() ? raycaster.intersectObjects(targets, false)[0] : undefined
-    const pointed = found ? (found.object.userData.station as StationId) : null
+    const found = options.canMove() ? raycaster.intersectObjects(pickObjects, false)[0] : undefined
+    const pointed = (found?.object.userData.station as StationId | undefined) ?? null
     const blocked = pointed !== null && !canAccessStation(pointed, camera.position.z)
     const target = blocked ? null : pointed
     controls.setTarget(target)
@@ -352,6 +356,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     batchVisuals.update(state)
     coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     blender.update(state)
+    prepBlender.update(state)
+    digitalUrn.update(state)
     register.update(state)
     stickerPrinter.update(state)
     syrupStation.update(state)

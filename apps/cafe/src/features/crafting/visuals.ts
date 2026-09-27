@@ -8,6 +8,7 @@ import { cupFillY } from '../../shared/visuals/cup-visual'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_OUTLET } from '../cold-brew/equipment'
+import { URN_HOT_OUTLET } from '../drip-coffee/equipment'
 import { SERVICE_NAMES } from '../inventory/cups'
 import { BLENDER_JAR_SPOT } from '../preparation/blender'
 import { itemCustomizations } from '../service/orders'
@@ -35,7 +36,7 @@ function vesselSpot(station: StationId, shape: 'pitcher' | 'shot' | 'blender', i
   if (station === 'espresso' && shape === 'shot') {
     return new THREE.Vector3(ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2])
   }
-  if (station === 'prep' && shape === 'blender') {
+  if (station === 'blender' && shape === 'blender') {
     return new THREE.Vector3(...BLENDER_JAR_SPOT)
   }
   const [x, y, z] = cupSpot(station)
@@ -129,7 +130,8 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
             : []
         const blending = jobs.some((job) => job.vessel === id && job.equipmentId === 'blender')
         const options = {
-          lidded: (place === 'prep' && shape === 'blender') || (currentVessel === id && operation?.action === 'cover'),
+          lidded:
+            (place === 'blender' && shape === 'blender') || (currentVessel === id && operation?.action === 'cover'),
           stirring:
             blending || (active && currentVessel === id && (step?.kind === 'mix' || operation?.action === 'shake')),
           marks,
@@ -226,6 +228,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         if (station === 'brew' && !step?.tool) {
           start.fromArray(COLD_BREW_OUTLET)
         }
+        if (station === 'urn' && !step?.tool) start.fromArray(URN_HOT_OUTLET)
         if (pump) {
           pump.outlet.getWorldPosition(start)
         }
@@ -248,6 +251,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 }
 
 export function cupSpot(station: StationId): [number, number, number] {
+  if (station === 'urn') return [URN_HOT_OUTLET[0], 1.099, URN_HOT_OUTLET[2]]
   if (station === 'pickup') {
     return [6.1, 1.1, -1.48]
   }
@@ -263,8 +267,8 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'water') {
     return [WATER_OUTLET[0], 1.071, WATER_OUTLET[2]]
   }
-  if (station === 'prep') {
-    return [-1.95, 1.105, -4.95]
+  if (station === 'prep' || station === 'blender') {
+    return [STATIONS[station].x + 0.75, 1.105, STATIONS[station].z + 0.15]
   }
   return [STATIONS[station].x, 1.075, staffFacingZ(-0.62)]
 }

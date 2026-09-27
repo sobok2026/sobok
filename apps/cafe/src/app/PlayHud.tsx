@@ -52,18 +52,19 @@ export default function PlayHud({
 }) {
   const goal = objective(state)
   const heldBatch = carriedBatch(state)
+  const carrying = !!heldBatch || !!state.cupDelivery || !!state.supplyDelivery
   const lastMessage = state.messages.at(-1)
 
-  const showPreparation = !heldBatch && !!state.preparation && target === 'prep'
-  const showColdBrew = !heldBatch && !!state.coldBrew && target === 'cold-prep'
+  const showPreparation = !carrying && !!state.preparation && target === 'prep'
+  const showColdBrew = !carrying && !!state.coldBrew && target === 'cold-prep'
   const showWashing =
-    !heldBatch &&
+    !carrying &&
     !cupCount(state.cleaning?.heldCups) &&
     !!state.washing &&
     (target === 'wash' || (target === washDestination(state.washing.item) && state.washing.stage === 'carrying'))
-  const showCrafting = !heldBatch && craftingAt(state, target)
+  const showCrafting = !carrying && craftingAt(state, target)
   const showCleaning =
-    !heldBatch &&
+    !carrying &&
     !!state.cleaning &&
     (target === state.cleaning.station || (target === 'wash' && cupCount(state.cleaning.heldCups) > 0))
   const focusedWork = !panel && (showPreparation || showColdBrew || showWashing || showCrafting || showCleaning)

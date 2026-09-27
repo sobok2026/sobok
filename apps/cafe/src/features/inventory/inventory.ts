@@ -3,6 +3,9 @@ import { expiryAt } from '../../content/lifetime'
 import { uid } from '../../shared/id'
 import { say } from '../../simulation/feedback'
 import type { Batch, GameState } from '../../simulation/state'
+import { type DripBean, isDripIngredient } from '../drip-coffee/rules'
+
+export type StockArea = 'bar' | 'backroom'
 
 export function addAmounts(target: Costs, amounts: Costs) {
   for (const id of ingredientIds) {
@@ -25,35 +28,66 @@ export function newBatch(
     ingredient,
     amount,
     location,
+    carryFrom: null,
     openedAt: sealed ? null : now,
     expiresAt: sealed ? null : expiryAt(now, INGREDIENTS[ingredient].lifetime),
     labelled: location === 'bar',
+    dripBean: null,
   }
 }
 
-function usableBatch(batch: Batch, ingredient: IngredientId, time: number) {
+function usableBatch(batch: Batch, ingredient: IngredientId, time: number, area: StockArea) {
+  const inArea =
+    area === 'bar'
+      ? batch.location === 'bar' || (batch.location === 'urn' && ingredient === 'todays-coffee')
+      : batch.location === 'fridge' || batch.location === 'stock'
+
   return (
     batch.ingredient === ingredient &&
-    batch.location === 'bar' &&
+    inArea &&
+    batch.openedAt !== null &&
     batch.labelled &&
     (batch.expiresAt === null || batch.expiresAt > time)
   )
 }
 
-function usableBatches(state: GameState, ingredient: IngredientId, batchIds?: readonly string[]) {
+function usableBatches(
+  state: GameState,
+  ingredient: IngredientId,
+  batchIds: readonly string[] | undefined,
+  area: StockArea,
+  dripBean: DripBean | null = null,
+) {
   return state.batches.filter(
-    (batch) => usableBatch(batch, ingredient, state.time) && (!batchIds || batchIds.includes(batch.id)),
+    (batch) =>
+      usableBatch(batch, ingredient, state.time, area) &&
+      (!batchIds || batchIds.includes(batch.id)) &&
+      (!isDripIngredient(ingredient) || dripBean === null || batch.dripBean === dripBean),
   )
 }
 
-export function available(state: GameState, ingredient: IngredientId, batchIds?: readonly string[]) {
-  return usableBatches(state, ingredient, batchIds).reduce((sum, batch) => sum + batch.amount, 0)
+export function available(
+  state: GameState,
+  ingredient: IngredientId,
+  batchIds?: readonly string[],
+  area: StockArea = 'bar',
+  dripBean: DripBean | null = null,
+) {
+  return usableBatches(state, ingredient, batchIds, area, dripBean).reduce((sum, batch) => sum + batch.amount, 0)
 }
 
-export function batchIdsFor(state: GameState, ingredient: IngredientId, amount: number): string[] {
+export function batchIdsFor(
+  state: GameState,
+  ingredient: IngredientId,
+  amount: number,
+  area: StockArea = 'bar',
+  dripBean: DripBean | null = null,
+): string[] {
   const ids: string[] = []
   let remaining = amount
-  const batches = usableBatches(state, ingredient).sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
+  const batches = usableBatches(state, ingredient, undefined, area, dripBean).sort(
+    (a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity),
+  )
 
   for (const batch of batches) {
     if (remaining <= 1e-9) {
@@ -73,11 +107,14 @@ export function consume(
   state: GameState,
   costs: Costs,
   batchIds?: readonly string[],
+  area: StockArea = 'bar',
+  dripBean: DripBean | null = null,
 ): { earliestExpiry: number | null } | null {
   for (const [key, amount] of Object.entries(costs)) {
     const ingredient = key as IngredientId
-    if (available(state, ingredient, batchIds) + (batchIds ? 1e-9 : 0.0001) < amount) {
-      say(state, `${INGREDIENTS[ingredient].name}가 부족해요. 준비대 또는 창고에서 보충해주세요.`, 'error')
+    if (available(state, ingredient, batchIds, area, dripBean) + (batchIds ? 1e-9 : 0.0001) < amount) {
+      const place = area === 'bar' ? '바' : '백룸'
+      say(state, `${place}에 사용할 ${INGREDIENTS[ingredient].name}가 부족해요. 재고를 확인하고 보충해주세요.`, 'error')
       return null
     }
   }
@@ -86,7 +123,7 @@ export function consume(
 
   for (const [key, amount] of Object.entries(costs)) {
     let remaining = amount
-    const batches = usableBatches(state, key as IngredientId, batchIds).sort(
+    const batches = usableBatches(state, key as IngredientId, batchIds, area, dripBean).sort(
       (a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity),
     )
 

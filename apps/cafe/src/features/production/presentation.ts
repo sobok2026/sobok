@@ -252,7 +252,9 @@ export function workReading(step: WorkStep, progress: number): string | null {
   if (step.kind === 'pour' && amount && (amount.kind === 'amount' || amount.kind === 'amount-range')) {
     return `${formatDecimal(progress)}${amount.unit}`
   }
-  return null
+  // A drizzle counts the turns of the hand, not the height in the cup.
+  const turns = amount && countUnit(amount)
+  return step.kind === 'pour' && turns ? `${formatDecimal(progress)}${turns}` : null
 }
 
 const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {
@@ -308,7 +310,13 @@ export function workUseLabel(step: WorkStep): string {
     return '작동'
   }
 
-  const action = actionLabels[step.operation.action] ?? '진행'
+  const operation = step.operation
+  const unit =
+    operation.action === 'add' && (operation.amount.kind === 'count' || operation.amount.kind === 'count-range')
+      ? operation.amount.unit
+      : null
+  const liquid = operation.action === 'add' && !unit && operation.materialId !== 'ice'
+  const action = (unit && addVerbs[unit]) ?? (liquid ? '붓기' : actionLabels[operation.action]) ?? '진행'
   return continuousWork(step) ? `누르고 ${action}` : `${action}${step.kind === 'confirm' ? ' 완료' : ''}`
 }
 

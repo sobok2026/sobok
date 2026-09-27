@@ -13,13 +13,25 @@ import {
   stepVessels,
   vesselName,
 } from '../features/crafting/rules'
-import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../features/inventory/batches'
-import { cupCount } from '../features/inventory/cups'
+import { dripHandsBusy, isDripIngredient } from '../features/drip-coffee/rules'
+import {
+  BAR_BATCH_CAPACITY,
+  barBatchCount,
+  batchHome,
+  batchOrigin,
+  carriedBatch,
+  deliveryDestination,
+  isSealed,
+  materialHome,
+  materialSource,
+} from '../features/inventory/batches'
+import { CUP_NAMES, cupCount } from '../features/inventory/cups'
 import { materialTip } from '../features/inventory/help'
+import type { StockArea } from '../features/inventory/inventory'
 import { SUPPLIES, type SupplyId, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationForMaterial, preparationStep } from '../features/preparation/rules'
 import { workTitle } from '../features/production/presentation'
-import { missingInput, readyWork } from '../features/production/runtime'
+import { missingInput, readyWork, requiredInput } from '../features/production/runtime'
 import type { WorkStep } from '../features/production/workflow'
 import { currentTicket } from '../features/service/orders'
 import { WASH_NAMES, washDestination, washItems, washStock } from '../features/washing/rules'
@@ -27,7 +39,7 @@ import { cupHandsBusy } from './hands'
 import type { Cleaning, CraftState, GameState, Preparation } from './state'
 
 /** What an objective is about, so the panel at that station can offer the exact action. */
-export type Subject = { ingredient: IngredientId } | { supply: SupplyId }
+export type Subject = { ingredient: IngredientId; area?: StockArea; amount?: number } | { supply: SupplyId }
 
 /**
  * Why the next task cannot start yet. A fault is a mistake to undo and reads as an error. Anything else is work
@@ -51,53 +63,24 @@ const at = (station: StationId, task: string): Objective => ({ station, particle
 const to = (station: StationId, task: string): Objective => ({ station, particle: '에', task })
 const blocked = (blocker: Blocker): Objective => ({ station: blocker.station, particle: '에서', task: '', blocker })
 
-function materialStation(state: GameState, ingredient: IngredientId): StationId {
-  const pending = state.batches.find(
-    (batch) =>
-      batch.ingredient === ingredient &&
-      batch.amount > 0 &&
-      batch.openedAt !== null &&
-      batch.location !== 'bar' &&
-      (batch.expiresAt === null || batch.expiresAt > state.time),
-  )
-  if (pending?.location === 'hand') {
-    return batchDestination(pending)
-  }
-  if (pending) {
-    return batchHome(pending) ?? 'stock'
-  }
-  if (preparationForMaterial(ingredient)) {
-    return state.tools.clean ? 'prep' : 'wash'
-  }
-  if (ingredient === 'cold-brew') {
-    return 'cold-prep'
-  }
-  const sealed = state.batches.find((batch) => batch.ingredient === ingredient && isSealed(batch))
-
-  return sealed && sealed.location !== 'hand' ? (batchHome(sealed) ?? 'stock') : 'stock'
+function materialStation(state: GameState, ingredient: IngredientId, area: StockArea, amount: number): StationId {
+  if (ingredient === 'todays-coffee') return 'urn'
+  if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) return materialHome(ingredient)
+  const source = materialSource(state, ingredient, area, amount, state.cup?.craft.dripBean ?? null)
+  if (source) return batchHome(source) ?? 'stock'
+  if (isDripIngredient(ingredient)) return 'urn'
+  if (preparationForMaterial(ingredient)) return state.tools.clean ? 'prep' : 'wash'
+  return ingredient === 'cold-brew' ? 'cold-prep' : 'stock'
 }
 
-function shortageReason(state: GameState, ingredient: IngredientId) {
-  const name = INGREDIENTS[ingredient].name
-  const usable = state.batches.filter(
-    (batch) =>
-      batch.ingredient === ingredient &&
-      batch.amount > 0 &&
-      batch.openedAt !== null &&
-      (batch.expiresAt === null || batch.expiresAt > state.time),
-  )
-  if (usable.some((batch) => batch.location !== 'bar')) {
-    return `${name} 사용 준비 전`
-  }
-  return usable.length ? `${name} 부족` : `${name} 없음`
-}
+function materialBlocker(state: GameState, ingredient: IngredientId, area: StockArea = 'bar', amount = 0): Blocker {
+  const place = area === 'bar' ? '바' : '백룸'
 
-function materialBlocker(state: GameState, ingredient: IngredientId): Blocker {
   return {
-    station: materialStation(state, ingredient),
-    reason: shortageReason(state, ingredient),
-    fix: materialTip(state, ingredient).action,
-    subject: { ingredient },
+    station: materialStation(state, ingredient, area, amount),
+    reason: `${place}에 ${INGREDIENTS[ingredient].name} 보충 필요`,
+    fix: materialTip(state, ingredient, area, amount).action,
+    subject: { ingredient, area, amount },
   }
 }
 
@@ -118,15 +101,15 @@ export function craftBlocker(state: GameState, craft: CraftState, step: WorkStep
   if (readyWork(step, craft.progress)) {
     return null
   }
-  const missing = missingInput(state, step, craft.progress)
+  const missing = missingInput(state, step, craft.progress, craft.dripBean)
 
-  return missing ? materialBlocker(state, missing) : null
+  return missing ? materialBlocker(state, missing, 'bar', requiredInput(step, missing, craft.progress)) : null
 }
 
 export function preparationBlocker(state: GameState, prep: Preparation, step: WorkStep): Blocker | null {
   const missing = missingInput(state, step, prep.progress)
   if (missing) {
-    return materialBlocker(state, missing)
+    return materialBlocker(state, missing, 'backroom', requiredInput(step, missing, prep.progress))
   }
   if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean) {
     return toolBlocker(state)
@@ -283,7 +266,7 @@ function closingObjective(state: GameState): Objective | null {
   if (expiredHome) {
     return at(expiredHome, `${INGREDIENTS[expired.ingredient].name} 폐기`)
   }
-  const unlabelled = state.batches.find((b) => b.amount > 0 && !isSealed(b) && b.location !== 'bar')
+  const unlabelled = state.batches.find((b) => b.amount > 0 && !isSealed(b) && !b.labelled)
   const unlabelledHome = unlabelled && batchHome(unlabelled)
   if (unlabelledHome) {
     return at(unlabelledHome, `${INGREDIENTS[unlabelled.ingredient].name} 라벨 쓰기`)
@@ -300,10 +283,13 @@ function plannedObjective(state: GameState): Objective {
   if (carrying) {
     return carrying.expiresAt !== null && carrying.expiresAt <= state.time
       ? to(batchOrigin(carrying), '용기 내려놓고 폐기')
-      : to(batchDestination(carrying), `${INGREDIENTS[carrying.ingredient].name} 보관`)
+      : to(deliveryDestination(state, carrying), `${INGREDIENTS[carrying.ingredient].name} 보관`)
+  }
+  if (state.cupDelivery) {
+    return to('cups', `${CUP_NAMES[state.cupDelivery.kind]} ${state.cupDelivery.amount}개 보충`)
   }
   if (state.supplyDelivery) {
-    return to('condiment', `${SUPPLIES[state.supplyDelivery.supply].name} 보충`)
+    return to('supplies', `${SUPPLIES[state.supplyDelivery.supply].name} 보충`)
   }
   if (cleaningHandsBusy(state.cleaning)) {
     return cleaningObjective(state.cleaning!)
@@ -354,6 +340,7 @@ function plannedObjective(state: GameState): Objective {
 }
 
 export function objective(state: GameState): Objective {
+  if (dripHandsBusy(state)) return at('urn', '계량 마치고 도구 내려놓기')
   const planned = plannedObjective(state)
   const needsFreeHands: StationId[] = ['prep', 'cold-prep', 'wash', 'rack']
   const cup = state.cup

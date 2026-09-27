@@ -1,3 +1,4 @@
+import { isDripIngredient } from '../features/drip-coffee/rules'
 import { gameToppingAmount } from './customization-options'
 import { INGREDIENTS } from './ingredients'
 import { type RecipeCatalog, recipeVariant } from './recipe-catalog'
@@ -119,6 +120,8 @@ export function preparationVariant(
 export function requirePreparationRoutes(catalog: RecipeCatalog, plan: PlannedStep[], path = new Set<string>()) {
   for (const step of plan) {
     const materialId = operationMaterialId(step.operation)
+    // URN batches are produced by the dedicated timed brewer, not at the preparation bench.
+    if (materialId && isDripIngredient(materialId)) continue
     if (!materialId || catalog.materials.get(materialId)?.kind !== 'prepared' || !INGREDIENTS[materialId]?.prepared) {
       continue
     }

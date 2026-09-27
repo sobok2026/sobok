@@ -1,4 +1,7 @@
 export const BAR_CENTER_Z = -1.05
+export const SHOP_BOUNDS = { minX: -7, maxX: 7, minZ: -10, maxZ: 6 } as const
+export const BACKROOM_FRONT_Z = -5.85
+export const BACKROOM_DOOR = { x: -5.8, width: 1.4 } as const
 const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
 // Reflect the original customer-facing fixtures toward the employee aisle.
@@ -11,23 +14,28 @@ export const STATIONS = {
   espresso: { name: '에스프레소 머신', x: -2.27, z: -1.4 },
   steam: { name: '스팀 완드', x: -2.94, z: -1.4 },
   brew: { name: '콜드 브루 탭', x: 0, z: -1.4 },
+  urn: { name: 'URN Digital', x: -1.1, z: -1.4 },
   water: { name: '워터 스테이션', x: 1.1, z: -1.4 },
   ice: { name: '아이스 빈', x: 2.1, z: -1.4 },
   sauce: { name: '소스 펌프', x: 3.1, z: -1.4 },
   mix: { name: '혼합 작업대', x: 4.1, z: -1.4 },
   topping: { name: '토핑 스테이션', x: 5.1, z: -1.4 },
   pickup: { name: '픽업대', x: 6.1, z: -1.4 },
-  prep: { name: '준비대', x: -2.7, z: -5.1 },
-  fridge: { name: '냉장고', x: 5.5, z: -4.8 },
-  stock: { name: '창고', x: 6.3, z: -3.3 },
-  shelf: { name: '실온 선반', x: 3, z: -4.8 },
-  'cold-prep': { name: '콜드 브루 추출대', x: 1, z: -5.1 },
-  wash: { name: '세척대', x: -5.0, z: -5.1 },
+  blender: { name: '바 블렌더', x: -2.7, z: -5.1 },
+  prep: { name: '백룸 준비대', x: -2.7, z: -9.1 },
+  fridge: { name: '백룸 냉장고', x: 5.5, z: -8.8 },
+  'bar-fridge': { name: '바 냉장고', x: 5.5, z: -4.8 },
+  stock: { name: '백룸 창고', x: 6.3, z: -7.3 },
+  shelf: { name: '바 실온 선반', x: 3, z: -4.8 },
+  'cold-prep': { name: '백룸 콜드 브루 추출대', x: 1, z: -9.1 },
+  wash: { name: '백룸 세척대', x: -5.0, z: -9.1 },
   rack: { name: '도구 선반', x: -3.9, z: -5.1 },
   table: { name: '고객 테이블 1', x: 3.2, z: 3.7 },
   'table-left': { name: '고객 테이블 2', x: -2.2, z: 3.7 },
-  condiment: { name: '컨디먼트 바', x: 0, z: 5.1 },
-  trash: { name: '분리수거함', x: -5.4, z: 5.1 },
+  // Returned cups and cleaning share this surface; condiment supplies have their own station.
+  condiment: { name: '컵 반납대', x: -5.6, z: 2.5 },
+  supplies: { name: '컨디먼트 바', x: 6.25, z: 3.0 },
+  trash: { name: '분리수거함', x: -5.6, z: 4.2 },
 } as const
 
 export type StationId = keyof typeof STATIONS
@@ -40,7 +48,7 @@ export type CupSurfaceId = (typeof cupSurfaceIds)[number]
 export const isCupSurface = (station: StationId): station is CupSurfaceId => isTable(station) || station === 'condiment'
 
 export function canAccessStation(station: StationId, playerZ: number) {
-  return isCupSurface(station) || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
+  return isCupSurface(station) || station === 'supplies' || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
 }
 
 /** A place name followed by 로 or 으로, chosen by its final consonant (ㄹ and vowels take 로). */

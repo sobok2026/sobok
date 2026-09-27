@@ -12,7 +12,7 @@ import {
 } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import type { Batch } from '../../simulation/state'
-import { batchDestination } from './batches'
+import { batchDestination, batchName } from './batches'
 import LabelWriter from './LabelWriter'
 import { labelText } from './labels'
 
@@ -40,7 +40,7 @@ export default function BatchWork({
   if (batch.expiresAt !== null && batch.expiresAt <= time) {
     return (
       <>
-        <WorkHeader title={`${definition.name} 기한 만료`} />
+        <WorkHeader title={`${batchName(batch)} 기한 만료`} />
         <WorkBlocker reason="사용할 수 없어요" fix="라벨을 쓰거나 보관해도 만료 시각은 늘어나지 않아요." />
         {discard}
       </>
@@ -51,6 +51,7 @@ export default function BatchWork({
     return (
       <>
         <WorkHeader title="라벨 쓰기" value={`${formatDecimal(batch.amount)}${definition.unit}`} />
+        <WorkNote>{batchName(batch)}</WorkNote>
         <LabelWriter
           key={batch.id}
           batch={batch}
@@ -64,7 +65,7 @@ export default function BatchWork({
 
   return (
     <>
-      <WorkHeader title={`${definition.name} 보관`} value={`${formatDecimal(batch.amount)}${definition.unit}`} />
+      <WorkHeader title={`${batchName(batch)} 보관`} value={`${formatDecimal(batch.amount)}${definition.unit}`} />
       <WorkNote>라벨 {labelText(batch)}</WorkNote>
       <WorkActions>
         <WorkButton shortcut="E" primary onUse={() => act({ type: 'take-batch', id: batch.id, station })}>

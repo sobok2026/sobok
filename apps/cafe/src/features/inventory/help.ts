@@ -1,39 +1,79 @@
-import { INGREDIENTS, type Ingredient, type IngredientId } from '../../content/ingredients'
+import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import { STATIONS, toward } from '../../content/stations'
 import { josa } from '../../shared/format'
 import type { WorkTip as Tip } from '../../shared/work-tip'
-import type { Batch, GameState } from '../../simulation/state'
+import type { GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
+import { DRIP_BEANS, isDripIngredient } from '../drip-coffee/rules'
 import { preparationForMaterial } from '../preparation/rules'
-import { batchDestination, batchHome, batchOrigin, isSealed } from './batches'
+import {
+  BAR_BATCH_CAPACITY,
+  barBatchCount,
+  batchHome,
+  deliveryDestination,
+  isSealed,
+  materialHome,
+  materialSource,
+  packStorage,
+} from './batches'
 import { CUP_NAMES, type CupKind, isReusableCup } from './cups'
+import type { StockArea } from './inventory'
 
-export function materialTip(state: GameState, ingredient: IngredientId): Tip {
+export function materialTip(state: GameState, ingredient: IngredientId, area: StockArea = 'bar', needed = 0): Tip {
   const definition = INGREDIENTS[ingredient]
-  const pending = state.batches.find(
-    (batch) =>
-      batch.ingredient === ingredient &&
-      batch.amount > 0 &&
-      batch.openedAt !== null &&
-      batch.location !== 'bar' &&
-      (batch.expiresAt === null || batch.expiresAt > state.time),
-  )
-  if (pending) {
+  if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) {
     return {
-      title: `${definition.name} 사용 준비`,
-      action: pendingAction(definition, pending),
-      reason: definition.prepared
-        ? '만든 배합은 라벨을 쓰고 보관해야 사용할 수 있어요.'
-        : '개봉한 원팩은 라벨을 써서 붙여야 사용할 수 있어요.',
+      title: `${definition.name} 보충 자리 확보`,
+      action: `${STATIONS[materialHome(ingredient)].name}에서 용기 하나를 집어 백룸에 옮긴 뒤 보충하세요.`,
+      reason: `바에는 품목별 ${BAR_BATCH_CAPACITY}용기까지 둘 수 있어요. 잔량과 라벨은 이동해도 유지돼요.`,
+    }
+  }
+  const bean = state.cup?.craft.dripBean ?? null
+  const source = materialSource(state, ingredient, area, needed, bean)
+  const home = source && batchHome(source)
+
+  if (isDripIngredient(ingredient) && (ingredient === 'todays-coffee' || !source)) {
+    const name = bean ? DRIP_BEANS[bean] : 'COW에 설정한 원두'
+    return {
+      title: `${definition.name} 추출 준비`,
+      action: `컵을 다른 작업대에 내려놓고 URN Digital에서 ${name}로 배치를 준비하세요.`,
+      reason:
+        ingredient === 'todays-coffee'
+          ? '5분 추출 후 URN에서 1시간 보온해요. 다른 원두나 기한이 지난 배치는 사용할 수 없어요.'
+          : '5분 추출 후 얼음 혼합·라벨을 마치고 바 냉장고에 보관해야 사용할 수 있어요.',
+    }
+  }
+  if (source && home) {
+    if (isSealed(source)) {
+      return {
+        title: `${definition.name} 개봉 준비`,
+        action: `${STATIONS[home].name}에서 원팩을 개봉하고 라벨을 쓰세요.`,
+        reason: '백룸에서 개봉·라벨을 마친 뒤 바에 운반하거나 배치 준비에 사용해요.',
+      }
+    }
+    if (!source.labelled) {
+      return {
+        title: `${definition.name} 라벨 쓰기`,
+        action: `${STATIONS[home].name}에서 기한을 계산해 라벨을 쓰세요.`,
+        reason: '개봉·제조 시각을 기준으로 기한을 적어요.',
+      }
+    }
+    const destination = area === 'backroom' ? packStorage(ingredient) : deliveryDestination(state, source)
+
+    return {
+      title: `${definition.name} 운반`,
+      action: `${STATIONS[home].name}에서 용기를 집어 ${toward(STATIONS[destination].name)} 옮기세요.`,
+      reason:
+        area === 'bar' ? '바에 내려놓은 재료를 음료 제조에 사용해요.' : '백룸 준비는 백룸에 보관한 원재료를 사용해요.',
     }
   }
   if (preparationForMaterial(ingredient)) {
     return {
       title: `${definition.name} 준비가 필요해요`,
       action: state.tools.clean
-        ? `준비대에서 ${definition.name} 제조를 선택하세요.`
-        : '세척대에서 피처를 씻고 옆 도구 선반에 먼저 정리하세요.',
-      reason: '준비 배합은 완성한 뒤 라벨을 쓰고 보관해야 음료에 넣을 수 있어요.',
+        ? `백룸 준비대에서 ${definition.name} 제조를 선택하세요.`
+        : '백룸 세척대에서 피처를 씻고 바 도구 선반에 정리하세요.',
+      reason: '완성한 배치는 라벨을 쓰고 알맞은 위치로 운반해 보관해요.',
     }
   }
   if (ingredient === 'cold-brew') {
@@ -41,39 +81,17 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       title: '추출액을 준비하세요',
       action:
         state.coldBrew?.stage === 'finished'
-          ? '추출대에서 E로 추출액을 용기에 회수하세요.'
-          : '콜드 브루 추출대에서 원두·물을 계량해 추출하세요. 추출 중이면 완료를 기다려주세요.',
+          ? '백룸 추출대에서 E로 추출액을 회수하세요.'
+          : '백룸 콜드 브루 추출대에서 계량해 추출하세요. 추출 중이면 완료를 기다려주세요.',
       reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
-    }
-  }
-  const sealed = state.batches.find(
-    (batch) => batch.ingredient === ingredient && isSealed(batch) && batch.location !== 'hand',
-  )
-  const home = sealed && batchHome(sealed)
-  if (home) {
-    return {
-      title: `${definition.name} 보충이 필요해요`,
-      action: `${STATIONS[home].name}에서 미개봉 원팩을 여세요.`,
-      reason: '개봉한 뒤 라벨을 써서 붙이면 사용할 수 있어요.',
     }
   }
 
   return {
-    title: `${definition.name} 보충이 필요해요`,
-    action: '창고에서 원팩을 입고하세요.',
+    title: `${definition.name} 입고가 필요해요`,
+    action: '백룸 창고에서 원팩을 입고하세요.',
     reason: '입고한 원팩은 보관 방식에 맞는 곳에 넣어야 해요.',
   }
-}
-
-function pendingAction(definition: Ingredient, batch: Batch) {
-  if (definition.prepared) {
-    if (batch.labelled) {
-      return `E로 용기를 집어 ${toward(STATIONS[batchDestination(batch)].name)} 운반하세요.`
-    }
-    return `${STATIONS[batchOrigin(batch)].name}에서 기한을 계산해 라벨을 쓰세요.`
-  }
-
-  return `${STATIONS[batchHome(batch) ?? 'stock'].name}에서 기한을 계산해 라벨을 쓰세요.`
 }
 
 export function cupRestockAction(state: GameState, kind: CupKind) {
@@ -89,7 +107,7 @@ export function cupRestockAction(state: GameState, kind: CupKind) {
   }
 
   if (state.disposableCups[kind].reserve) {
-    return '컵 보관대에서 빈 칸을 눌러 보충하세요.'
+    return '백룸 창고에서 같은 종류·사이즈의 컵 묶음을 집어 바 컵 보관대에 옮기세요.'
   }
   return '창고에서 해당 컵을 입고하고 보관대를 보충하세요.'
 }

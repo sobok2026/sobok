@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { recipeCatalog } from '../../content/catalog'
 import { recipeFor } from '../../content/recipes'
+import { STATIONS } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
@@ -15,7 +16,13 @@ import { operationFor } from '../crafting/rules'
 import { cupService } from '../inventory/cups'
 import { PREPARATIONS, preparationStep } from './rules'
 
-export const BLENDER_JAR_SPOT: [number, number, number] = [-2.9, 1.355, -5.12]
+const blenderSpot = (station: 'blender' | 'prep'): [number, number, number] => [
+  STATIONS[station].x - 0.2,
+  1.355,
+  STATIONS[station].z - 0.02,
+]
+export const BLENDER_JAR_SPOT = blenderSpot('blender')
+export const PREP_BLENDER_JAR_SPOT = blenderSpot('prep')
 
 export function createBlenderJar() {
   const root = new THREE.Group()
@@ -125,10 +132,10 @@ export function createBlenderJar() {
   return { root, lid, liquid, liquidMaterial, label, swirl }
 }
 
-export function createBlender(scene: THREE.Scene) {
+export function createBlender(scene: THREE.Scene, station: 'blender' | 'prep') {
   const root = new THREE.Group()
   root.name = 'Quiet One inspired enclosed blender'
-  root.position.set(-2.9, 1.095, -5.12)
+  root.position.set(STATIONS[station].x - 0.2, 1.095, STATIONS[station].z - 0.02)
   scene.add(root)
   const black = material({ color: '#24292c', roughness: 0.54, metalness: 0.08 })
   const rubber = material({ color: '#101416', roughness: 0.86 })
@@ -243,9 +250,11 @@ export function createBlender(scene: THREE.Scene) {
 
   return {
     update(state: GameState) {
-      const prep = state.preparation
-      const cup = state.cup
-      const job = state.jobs.find((item) => item.kind === 'production' && item.equipmentId === 'blender')
+      const prep = station === 'prep' ? state.preparation : null
+      const cup = station === 'blender' ? state.cup : null
+      const job = state.jobs.find(
+        (item) => item.kind === 'production' && item.equipmentId === 'blender' && item.station === station,
+      )
       const step = blenderStep(job, prep, cup)
       const program =
         step?.operation.action === 'run-machine' && step.operation.equipmentId === 'blender'
@@ -282,10 +291,12 @@ function blenderStep(job: Job | undefined, prep: GameState['preparation'], cup: 
   const prepStep = prep ? preparationStep(prep) : undefined
   const drinkStep = cup ? operationFor(cup.recipe, cup.craft) : null
   if (job?.preparationId && job.preparationId === prep?.id) {
-    return prepStep
+    return PREPARATIONS[prep.recipe].steps[job.stepIndex ?? prep.cursor]
   }
   if (job?.cupId && job.cupId === cup?.id) {
-    return drinkStep
+    return recipeFor(cup.recipe, cup.craft.size, cupService(cup.craft.kind), cup.craft.customizations).steps[
+      job.stepIndex ?? cup.craft.cursor
+    ]
   }
   if (prepStep?.equipmentId === 'blender') {
     return prepStep

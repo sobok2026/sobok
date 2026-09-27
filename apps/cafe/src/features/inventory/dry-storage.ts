@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STATIONS } from '../../content/stations'
 import {
   equipmentBox as box,
   equipmentMaterial as material,
@@ -12,7 +13,7 @@ import {
 export function createDryStorage(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Dry storage shelving'
-  root.position.set(6.34, 0, -3.3)
+  root.position.set(STATIONS.stock.x + 0.04, 0, STATIONS.stock.z)
   root.rotation.y = -Math.PI / 2
   scene.add(root)
   const chrome = material({ color: '#b9bcbd', metalness: 0.82, roughness: 0.42 })

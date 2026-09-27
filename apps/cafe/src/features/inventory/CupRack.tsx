@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES, recipeCup } from '../../content/recipes'
 import { josa } from '../../shared/format'
@@ -65,7 +65,7 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
   const choose = (kind: CupKind) => {
     if (!ticket || !picking) {
       if (!isReusableCup(kind)) {
-        act({ type: 'cups', kind })
+        setVerdict({ kind, wrong: [], attempt: (verdict?.attempt ?? 0) + 1 })
       }
       return
     }
@@ -100,12 +100,10 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
                 <CupTile
                   key={kind}
                   state={state}
-                  act={act}
                   kind={kind}
                   picking={picking}
                   verdict={verdict?.kind === kind ? verdict : null}
                   onChoose={choose}
-                  onRestocked={() => setVerdict(null)}
                 />
               ))}
             </div>
@@ -186,20 +184,16 @@ function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] })
  */
 function CupTile({
   state,
-  act,
   kind,
   picking,
   verdict,
   onChoose,
-  onRestocked,
 }: {
   state: GameState
-  act: Act
   kind: CupKind
   picking: boolean
   verdict: Verdict | null
   onChoose: (kind: CupKind) => void
-  onRestocked: () => void
 }) {
   const count = cleanCupCount(state, kind)
   const restockable = !picking && !isReusableCup(kind) && !count && state.disposableCups[kind].reserve > 0
@@ -220,7 +214,7 @@ function CupTile({
           )}
           data-tone={countTone(count, restockable)}
         >
-          {restockable ? '보충' : `${count}개`}
+          {restockable ? '보충 안내' : `${count}개`}
         </span>
       )}
     </>
@@ -243,7 +237,7 @@ function CupTile({
           )}
           data-verdict={verdictState(verdict)}
           data-restock={restockable}
-          aria-label={restockable ? `${CUP_NAMES[kind]} 보충` : CUP_NAMES[kind]}
+          aria-label={restockable ? `${CUP_NAMES[kind]} 보충 안내` : CUP_NAMES[kind]}
           onClick={() => onChoose(kind)}
         >
           {content}
@@ -253,7 +247,7 @@ function CupTile({
           {content}
         </div>
       )}
-      {verdict && <Bubble state={state} act={act} verdict={verdict} onRestocked={onRestocked} />}
+      {verdict && <Bubble state={state} verdict={verdict} />}
     </div>
   )
 }
@@ -274,17 +268,7 @@ function countTone(count: number, restockable: boolean) {
 }
 
 /** The verdict sits over the tile that was pressed, so the eye moves only between the tile and the ticket. */
-function Bubble({
-  state,
-  act,
-  verdict,
-  onRestocked,
-}: {
-  state: GameState
-  act: Act
-  verdict: Verdict
-  onRestocked: () => void
-}) {
+function Bubble({ state, verdict }: { state: GameState; verdict: Verdict }) {
   const { kind, wrong } = verdict
 
   return (
@@ -300,51 +284,17 @@ function Bubble({
       {wrong.length > 0 ? (
         <b className="font-semibold">{mismatchTitle(wrong)}</b>
       ) : (
-        <EmptyCup state={state} act={act} kind={kind} onRestocked={onRestocked} />
+        <EmptyCup state={state} kind={kind} />
       )}
     </div>
   )
 }
 
-function EmptyCup({
-  state,
-  act,
-  kind,
-  onRestocked,
-}: {
-  state: GameState
-  act: Act
-  kind: CupKind
-  onRestocked: () => void
-}) {
-  const note = (text: ReactNode) => <span className="text-white/75">{text}</span>
-
-  if (isReusableCup(kind)) {
-    return (
-      <>
-        <b className="font-semibold">비었어요</b>
-        {note(cupRestockAction(state, kind))}
-      </>
-    )
-  }
-  const reserve = state.disposableCups[kind].reserve
-
+function EmptyCup({ state, kind }: { state: GameState; kind: CupKind }) {
   return (
     <>
       <b className="font-semibold">비었어요</b>
-      {note(reserve ? `후방에 ${reserve}개 있어요.` : '후방 재고도 없어요. 창고에서 입고해주세요.')}
-      {reserve > 0 && (
-        <button
-          type="button"
-          className="justify-self-start rounded-md bg-surface px-2.5 py-1 font-semibold text-ink"
-          onClick={() => {
-            act({ type: 'cups', kind })
-            onRestocked()
-          }}
-        >
-          보충
-        </button>
-      )}
+      <span className="text-white/75">{cupRestockAction(state, kind)}</span>
     </>
   )
 }

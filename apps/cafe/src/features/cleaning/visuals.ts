@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { cupSurfaceIds } from '../../content/stations'
+import { cupSurfaceIds, STATIONS } from '../../content/stations'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { cupCount, type ReusableCupCounts, reusableCupKinds } from '../inventory/cups'
@@ -89,11 +89,11 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     new THREE.SphereGeometry(0.2, 16, 12),
     new THREE.MeshStandardMaterial({ color: '#596c5b', roughness: 0.9 }),
   )
-  bag.position.set(-5.4, 0.98, 5.1)
+  bag.position.set(STATIONS.trash.x, 0.98, STATIONS.trash.z)
   scene.add(bag)
   const waste = Array.from({ length: 5 }, (_, i) => {
     const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.065, 0), paper)
-    mesh.position.set(-5.56 + (i % 3) * 0.15, 0.9 + Math.floor(i / 3) * 0.1, 5.08)
+    mesh.position.set(STATIONS.trash.x - 0.16 + (i % 3) * 0.15, 0.9 + Math.floor(i / 3) * 0.1, STATIONS.trash.z - 0.02)
     scene.add(mesh)
     return mesh
   })
@@ -145,14 +145,15 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
 }
 
 export function cleaningSpot(station: CleaningStation): [number, number, number] {
+  const { x, z } = STATIONS[station]
   if (station === 'condiment') {
-    return [0, 1.085, 4.95]
+    return [x, 1.085, z - 0.15]
   }
   if (station === 'mix') {
-    return [4.1, 1.09, -1.48]
+    return [x, 1.09, z - 0.08]
   }
   if (station === 'trash') {
-    return [-5.4, 0.87, 5.1]
+    return [x, 0.87, z]
   }
-  return [station === 'table' ? 3.2 : -2.2, 0.85, 3.7]
+  return [x, 0.85, z]
 }

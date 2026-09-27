@@ -1,6 +1,104 @@
 {
   "note": "게임 재고 운영값이다. 입고 규격·가격·초기 양·표현색을 포함하며 실제 매장 규격을 의미하지 않는다. quality.json에 확인된 보관·기한 기준이 있는 재료는 이 파일에 해당 값을 중복 선언하지 않는다. 그 외 재료의 보관 장소와 기한은 게임 운영값으로 이 파일에 모두 명시한다. utility는 이 목록에 없고 재고를 소비하지 않는다. prepared 및 생산 연결 여부는 원문 materials.json만 따른다.",
   "materials": {
+    "drip-beans-house-blend": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-pike-place-roast": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-colombia": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-guatemala": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-kenya": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-caffe-verona": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
+    "drip-beans-veranda-blend": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee",
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      }
+    },
     "low-fat-milk": {
       "stockUnit": "ml",
       "unit": "ml",
@@ -3644,11 +3742,6 @@
       "unit": "ml",
       "pack": 1000,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#705040",
       "visualGroup": "coffee"

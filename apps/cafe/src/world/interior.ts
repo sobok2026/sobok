@@ -1,9 +1,11 @@
 import * as THREE from 'three'
 import { recipeSizeSchema } from '../content/recipe-schema'
-import { BAR_CENTER_Z, staffFacingZ } from '../content/stations'
+import { BACKROOM_DOOR, BACKROOM_FRONT_Z, BAR_CENTER_Z, STATIONS, staffFacingZ } from '../content/stations'
 import { createColdBrewDispenser } from '../features/cold-brew/equipment'
 import { createEspressoMachine } from '../features/crafting/espresso-machine'
 import { createIceBin, createSyrupStation, createWaterStation } from '../features/crafting/station-equipment'
+import { createDigitalUrn } from '../features/drip-coffee/equipment'
+import { BAR_BATCH_CAPACITY } from '../features/inventory/batches'
 import { cupKinds, cupRow, cupRows, cupSize, rowCupKinds } from '../features/inventory/cups'
 import { createDryStorage } from '../features/inventory/dry-storage'
 import { createRefrigerator } from '../features/inventory/refrigerator'
@@ -33,6 +35,7 @@ export function createShopInterior(scene: THREE.Scene) {
   }
 
   const obstacles: Obstacle[] = []
+  const occluders: THREE.Object3D[] = []
 
   function box(
     x: number,
@@ -118,9 +121,9 @@ export function createShopInterior(scene: THREE.Scene) {
   }
 
   // Warm wooden floor and a cream envelope; the front glazing opens toward a small street.
-  box(0, -0.08, 0, 14, 0.15, 12, '#ad9174')
+  box(0, -0.08, -2, 14, 0.15, 16, '#ad9174')
   const floorSeams: [number, number, number, number, number, number][] = []
-  for (let x = -6.75; x < 7; x += 0.5) floorSeams.push([x, 0.003, 0, 0.012, 0.008, 12])
+  for (let x = -6.75; x < 7; x += 0.5) floorSeams.push([x, 0.003, -2, 0.012, 0.008, 16])
   repeatedBoxes(floorSeams, '#967b61')
   // The tiled employee aisle stays behind the counter; the timber floor belongs to the seating area.
   box(0, 0.014, -3.82, 13.45, 0.02, 4.05, '#b6bcb1')
@@ -128,10 +131,37 @@ export function createShopInterior(scene: THREE.Scene) {
   for (let x = -6.5; x < 6.8; x += 0.65) tileSeams.push([x, 0.026, -3.82, 0.012, 0.004, 4.05])
   for (let z = -5.7; z < -1.8; z += 0.65) tileSeams.push([0, 0.027, z, 13.4, 0.004, 0.012])
   repeatedBoxes(tileSeams, '#9fa89c')
+  box(0, 0.014, -7.87, 13.45, 0.02, 3.96, '#c4cbc5')
+  const backroomSeams: [number, number, number, number, number, number][] = []
+  for (let x = -6.5; x < 6.8; x += 0.65) backroomSeams.push([x, 0.027, -7.87, 0.012, 0.004, 3.96])
+  for (let z = -9.7; z < -5.9; z += 0.65) backroomSeams.push([0, 0.027, z, 13.4, 0.004, 0.012])
+  repeatedBoxes(backroomSeams, '#aab5ab')
   box(0, 0.037, -2.24, 10.9, 0.02, 0.65, '#4c6156')
-  box(0, 1.8, -5.85, 14, 3.6, 0.18, '#eee7d7')
-  box(-6.85, 1.8, 0, 0.18, 3.6, 12, '#e8e0ce')
-  box(6.85, 1.8, -3.0, 0.18, 3.6, 5.8, '#e8e0ce')
+  box(0, 1.8, -9.85, 14, 3.6, 0.18, '#e7e9df')
+  box(-6.85, 1.8, -2, 0.18, 3.6, 16, '#e8e0ce')
+  box(6.85, 1.8, -5.0, 0.18, 3.6, 9.8, '#e8e0ce')
+  const doorLeft = BACKROOM_DOOR.x - BACKROOM_DOOR.width / 2
+  const doorRight = BACKROOM_DOOR.x + BACKROOM_DOOR.width / 2
+
+  for (const [left, right] of [
+    [-6.85, doorLeft],
+    [doorRight, 6.85],
+  ]) {
+    const x = (left + right) / 2
+    const width = right - left
+    occluders.push(box(x, 1.8, BACKROOM_FRONT_Z, width, 3.6, 0.18, '#e2e5d9'))
+    obstacles.push({ x, z: BACKROOM_FRONT_Z, width, depth: 0.18 })
+  }
+
+  occluders.push(box(BACKROOM_DOOR.x, 3.05, BACKROOM_FRONT_Z, BACKROOM_DOOR.width, 1.1, 0.18, '#e2e5d9'))
+  for (const x of [doorLeft, doorRight]) box(x, 1.25, BACKROOM_FRONT_Z, 0.055, 2.5, 0.22, '#607365')
+  const backroomSign = sign('BACKROOM · 백룸', 1.3, 0.24)
+  backroomSign.position.set(BACKROOM_DOOR.x, 2.72, BACKROOM_FRONT_Z + 0.1)
+  scene.add(backroomSign)
+  const barSign = sign('BAR · 제조 공간', 1.3, 0.24)
+  barSign.position.set(BACKROOM_DOOR.x, 2.72, BACKROOM_FRONT_Z - 0.1)
+  barSign.rotation.y = Math.PI
+  scene.add(barSign)
   box(-1.125, 0.25, 5.8, 11.75, 0.5, 0.16, '#244c3e')
   box(6.575, 0.25, 5.8, 0.85, 0.5, 0.16, '#244c3e')
   for (const x of [CUSTOMER_DOOR_X - 0.72, CUSTOMER_DOOR_X + 0.72]) box(x, 1.75, 5.8, 0.06, 3.5, 0.12, '#244c3e')
@@ -182,13 +212,31 @@ export function createShopInterior(scene: THREE.Scene) {
   floorSign.position.set(-6.3, 2.08, BAR_CENTER_Z - 0.045)
   floorSign.rotation.y = Math.PI
   scene.add(floorSign)
-  box(-2.9, 0.5, -5.2, 5.5, 1, 0.9, '#e1d5bb')
+  box(-2.9, 0.5, -9.2, 5.5, 1, 0.9, '#d1d9cf')
   // Leave a real opening in the worktop for the recessed washing basin.
-  box(-5.56, 1.05, -5.2, 0.28, 0.09, 1.0, '#c8bda5')
-  box(-2.34, 1.05, -5.2, 4.48, 0.09, 1.0, '#c8bda5')
-  box(-5, 1.05, -5.56, 0.84, 0.09, 0.28, '#c8bda5')
-  box(-5, 1.05, -4.74, 0.84, 0.09, 0.08, '#c8bda5')
-  obstacles.push({ x: -2.9, z: -5.2, width: 5.6, depth: 1 })
+  box(-5.56, 1.05, -9.2, 0.28, 0.09, 1.0, '#b9c4bb')
+  box(-2.34, 1.05, -9.2, 4.48, 0.09, 1.0, '#b9c4bb')
+  box(-5, 1.05, -9.56, 0.84, 0.09, 0.28, '#b9c4bb')
+  box(-5, 1.05, -8.74, 0.84, 0.09, 0.08, '#b9c4bb')
+  obstacles.push({ x: -2.9, z: -9.2, width: 5.6, depth: 1 })
+  // The bar keeps its own blender and clean tools, beside the working ingredient storage.
+  box(-2.5, 0.5, -5.2, 4.7, 1, 0.9, '#e1d5bb')
+  box(-2.5, 1.05, -5.2, 4.8, 0.09, 1, '#c8bda5')
+  obstacles.push({ x: -2.5, z: -5.2, width: 4.8, depth: 1 })
+  box(STATIONS.rack.x, 1.4, STATIONS.rack.z, 0.95, 0.04, 0.72, '#adb9ac')
+  for (const x of [STATIONS.rack.x - 0.42, STATIONS.rack.x + 0.42]) {
+    box(x, 1.24, STATIONS.rack.z - 0.3, 0.04, 0.32, 0.04, '#adb9ac')
+  }
+  for (const [label, x] of [
+    ['세척 · 건조', -4.5],
+    ['배치 준비', -2.2],
+    ['장시간 추출', 1],
+    ['예비 재고', 5.1],
+  ] as const) {
+    const marker = sign(label, 1.5, 0.28, '#e7e9df', '#345747')
+    marker.position.set(x, 2.6, -9.73)
+    scene.add(marker)
+  }
   const mainSign = sign('소복다방\nCOFFEE & COMPANY', 3.9, 1.2)
   mainSign.position.set(0, 2.65, -5.72)
   scene.add(mainSign)
@@ -199,7 +247,7 @@ export function createShopInterior(scene: THREE.Scene) {
     '#ece1ca',
     '#344e3d',
   )
-  menuSign.position.set(-4.6, 2.45, -5.71)
+  menuSign.position.set(-3.6, 2.45, -5.71)
   scene.add(menuSign)
   box(3.0, 2.1, -5.4, 1.9, 0.08, 0.65, '#806749')
 
@@ -249,6 +297,7 @@ export function createShopInterior(scene: THREE.Scene) {
     }
   })
   createEspressoMachine(scene)
+  const digitalUrn = createDigitalUrn(scene)
   const milkCarton = box(-3.23, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
   createColdBrewDispenser(scene)
@@ -266,38 +315,50 @@ export function createShopInterior(scene: THREE.Scene) {
   const pickupSign = sign('PICK UP', 0.7, 0.2, '#e0d4b9', '#254c3d')
   pickupSign.position.set(6.1, 0.75, -0.438)
   scene.add(pickupSign)
-  const blender = createBlender(scene)
+  const blender = createBlender(scene, 'blender')
+  const prepBlender = createBlender(scene, 'prep')
   createRefrigerator(scene)
-  obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
+  createRefrigerator(scene, STATIONS['bar-fridge'])
+  for (const station of [STATIONS.fridge, STATIONS['bar-fridge']]) {
+    obstacles.push({ x: station.x, z: station.z - 0.4, width: 1.4, depth: 1.1 })
+  }
   createDryStorage(scene)
-  obstacles.push({ x: 6.34, z: -3.3, width: 0.5, depth: 1.7 })
-  const storageSign = sign('창고', 0.62, 0.24, '#eee5d1', '#344e3d')
-  storageSign.position.set(6.75, 2.15, -3.3)
+  obstacles.push({ x: 6.34, z: STATIONS.stock.z, width: 0.5, depth: 1.7 })
+  const storageSign = sign('백룸 창고', 0.95, 0.24, '#eee5d1', '#344e3d')
+  storageSign.position.set(6.75, 2.15, STATIONS.stock.z)
   storageSign.rotation.y = -Math.PI / 2
   scene.add(storageSign)
   box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
   box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
   obstacles.push({ x: 3, z: -5.2, width: 2, depth: 0.95 })
-  const shelfSign = sign('실온 선반', 1.25, 0.28, '#eee5d1', '#344e3d')
+  const shelfSign = sign(`바 실온 재료 · 품목별 ${BAR_BATCH_CAPACITY}개`, 2, 0.28, '#eee5d1', '#344e3d')
   shelfSign.position.set(3, 1.6, -5.7)
   scene.add(shelfSign)
-  box(1, 0.5, -5.2, 1.55, 1, 0.85, '#a38b70')
-  box(1, 1.05, -5.2, 1.65, 0.09, 0.95, '#d3c3a5')
-  obstacles.push({ x: 1, z: -5.2, width: 1.65, depth: 0.95 })
+  box(1, 0.5, -9.2, 1.55, 1, 0.85, '#a3b1a5')
+  box(1, 1.05, -9.2, 1.65, 0.09, 0.95, '#c4cec3')
+  obstacles.push({ x: 1, z: -9.2, width: 1.65, depth: 0.95 })
   const extractionSign = sign('콜드 브루 추출대', 1.4, 0.3, '#eee5d1', '#344e3d')
-  extractionSign.position.set(1, 2.2, -5.7)
+  extractionSign.position.set(1, 2.2, -9.7)
   scene.add(extractionSign)
   createWashingEquipment(scene)
-  box(-5.4, 0.38, 5.1, 0.58, 0.76, 0.58, '#3c5e4a')
-  box(-5.4, 0.8, 5.1, 0.65, 0.07, 0.65, '#263f31')
-  box(0, 0.49, 5.15, 1.85, 0.98, 0.8, '#946e4c')
-  box(0, 1.03, 5.15, 1.95, 0.08, 0.9, '#ddd1b9')
-  box(0, 1.074, 4.95, 1.38, 0.014, 0.33, '#b7b299')
-  obstacles.push({ x: 0, z: 5.15, width: 1.95, depth: 0.9 })
-  const condimentSign = sign('CONDIMENT BAR\n냅킨 · 빨대 · 설탕 / 컵 반납', 1.8, 0.36, '#eee5d1', '#344e3d')
-  condimentSign.position.set(0, 1.55, 5.62)
+  box(STATIONS.trash.x, 0.38, STATIONS.trash.z, 0.58, 0.76, 0.58, '#3c5e4a')
+  box(STATIONS.trash.x, 0.8, STATIONS.trash.z, 0.65, 0.07, 0.65, '#263f31')
+  obstacles.push({ ...STATIONS.trash, width: 0.65, depth: 0.65 })
+  box(STATIONS.condiment.x, 0.49, STATIONS.condiment.z, 1.85, 0.98, 0.8, '#946e4c')
+  box(STATIONS.condiment.x, 1.03, STATIONS.condiment.z, 1.95, 0.08, 0.9, '#ddd1b9')
+  box(STATIONS.condiment.x, 1.074, STATIONS.condiment.z - 0.15, 1.38, 0.014, 0.33, '#b7b299')
+  obstacles.push({ ...STATIONS.condiment, width: 1.95, depth: 0.9 })
+  const condimentSign = sign('RETURN\n사용한 컵 반납', 1.8, 0.36, '#eee5d1', '#344e3d')
+  condimentSign.position.set(STATIONS.condiment.x, 1.55, STATIONS.condiment.z + 0.42)
   condimentSign.rotation.y = Math.PI
   scene.add(condimentSign)
+  box(STATIONS.supplies.x, 0.49, STATIONS.supplies.z, 0.8, 0.98, 1.85, '#946e4c')
+  box(STATIONS.supplies.x, 1.03, STATIONS.supplies.z, 0.9, 0.08, 1.95, '#ddd1b9')
+  obstacles.push({ ...STATIONS.supplies, width: 0.9, depth: 1.95 })
+  const supplySign = sign('CONDIMENT BAR\n냅킨 · 빨대 · 설탕', 1.8, 0.36, '#eee5d1', '#344e3d')
+  supplySign.position.set(STATIONS.supplies.x + 0.4, 1.55, STATIONS.supplies.z)
+  supplySign.rotation.y = -Math.PI / 2
+  scene.add(supplySign)
 
   // Two quiet seating areas.
   for (const x of [3.2, -2.2]) {
@@ -311,5 +372,5 @@ export function createShopInterior(scene: THREE.Scene) {
     }
   }
 
-  return { obstacles, blender, register, syrupStation, cupStacks }
+  return { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn }
 }
