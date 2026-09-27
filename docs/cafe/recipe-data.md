@@ -83,6 +83,16 @@
 
 `cold-brew-batch`는 제공 자료의 5lb·물 14L·20시간이며 완성량 3L는 게임 재고량이다. 별도 `cold-brew-toddy`의 3lb·물 5L 후 4L·20시간·완성 원액 6L를 다른 배합에 대입하지 않는다.
 
+## 제공 용기와 컵
+
+제조법의 제공 용기가 컵 보관대의 컵을 정한다. `serving-cup`은 온도·이용 방식·사이즈에 맞는 표준 컵이 되고 전용 용기는 같은 ID의 전용 잔이 된다. 에스프레소 포장의 `short-paper-cup`은 HOT 종이컵 Short 재고를 쓴다. 표준 컵에 없는 규격이나 이용 방식은 판매에서 제외한다. 컵 종류와 규격은 [매장·포장 컵](./design.md#매장포장-컵)을 따른다.
+
+2026-09-27 사용자 결정으로 원문에 없는 제공 용기를 게임 설정으로 정했다. 칵테일은 원문이 `전용 잔`으로만 적으며 모두 매장에서만 판매한다.
+
+- 마티니·시트러스 콜드브루 마티니·에스프레소 마티니·라떼 위스키 마티니는 `martini-glass`, 딸기 레몬 보드카 블렌디드는 `tulip-glass`다. 장충라운지R점 사진([신세계그룹 뉴스룸](https://www.shinsegaegroupnewsroom.com/go-hyeongjang-estate-starbucks-lounge/), [덴 매거진](https://www.theden.co.kr/news/articleView.html?idxno=2958), [아주경제](https://www.ajunews.com/view/20240911202804145))에서 잔 모양을 확인했다.
+- 사진으로 확인하지 못한 아페롤 스프릿츠·오미자 유스베리 모히토와 기존 `cocktail-glass` 음료는 `cocktail-glass`로 두고 하이볼 모양으로 그린다.
+- 스타벅스 더블 샷 원문은 7oz 컵과 전용 리드만 적는다. 포장은 `double-shot-cup`, 매장은 `double-shot-glass`로 나누고 리드는 포장에만 덮는다.
+
 ## 월간 갱신
 
 1. 바뀐 원문을 대조해 제조 구분·수량·순서·조건을 해당 JSON에서 수정한다.
