@@ -147,7 +147,7 @@
             {
               "action": "transfer",
               "from": "blender-pitcher",
-              "into": "serving-cup",
+              "into": "tulip-glass",
               "amount": {
                 "kind": "all"
               }
@@ -163,7 +163,7 @@
             {
               "action": "add",
               "materialId": "동결건조-딸기-그릿",
-              "into": "serving-cup",
+              "into": "tulip-glass",
               "amount": {
                 "kind": "count",
                 "value": 1,

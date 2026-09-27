@@ -3,6 +3,10 @@
   { "vesselId": "demitasse", "services": ["dine-in"] },
   { "vesselId": "short-paper-cup", "services": ["takeout"] },
   { "vesselId": "vin-chaud-glass", "services": ["dine-in"] },
+  { "vesselId": "martini-glass", "services": ["dine-in"] },
+  { "vesselId": "tulip-glass", "services": ["dine-in"] },
   { "vesselId": "cocktail-glass", "services": ["dine-in"] },
-  { "vesselId": "white-wine-glass", "services": ["dine-in"] }
+  { "vesselId": "white-wine-glass", "services": ["dine-in"] },
+  { "vesselId": "double-shot-glass", "services": ["dine-in"] },
+  { "vesselId": "double-shot-cup", "services": ["takeout"] }
 ]

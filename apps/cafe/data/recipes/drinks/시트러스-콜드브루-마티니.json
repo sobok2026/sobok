@@ -129,7 +129,7 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "toolIds": ["strainer", "fine-strainer"],
               "excludeMaterialIds": ["ice"]
             }
@@ -144,7 +144,7 @@
             {
               "action": "add",
               "materialId": "하프-오렌지-슬라이스",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "amount": {
                 "kind": "count",
                 "value": 1,

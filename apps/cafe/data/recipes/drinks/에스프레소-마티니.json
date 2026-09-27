@@ -109,7 +109,7 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "toolIds": ["strainer", "fine-strainer"],
               "excludeMaterialIds": ["ice"]
             }
@@ -124,7 +124,7 @@
             {
               "action": "add",
               "materialId": "리저브-초코-파우더",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "amount": {
                 "kind": "unspecified",
                 "description": "원본에 정량 미기재"

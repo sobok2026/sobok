@@ -1,5 +1,6 @@
 import { INGREDIENTS, type Ingredient, type IngredientId } from '../../content/ingredients'
 import { STATIONS, toward } from '../../content/stations'
+import { josa } from '../../shared/format'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { Batch, GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
@@ -79,10 +80,10 @@ export function cupRestockAction(state: GameState, kind: CupKind) {
   if (isReusableCup(kind)) {
     const cups = state.reusableCups[kind]
     if (cups.washed > 0) {
-      return `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
+      return `세척대에서 씻은 ${josa(CUP_NAMES[kind], '을', '를')} 집어 컵 보관대에 놓으세요.`
     }
     if (cups.dirty > 0) {
-      return `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
+      return `세척대에서 ${josa(CUP_NAMES[kind], '을', '를')} 씻고 컵 보관대에 놓으세요.`
     }
     return '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
   }

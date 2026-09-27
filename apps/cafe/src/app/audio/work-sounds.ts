@@ -1,7 +1,7 @@
 import { recipeFor } from '../../content/recipes'
 import { STATIONS } from '../../content/stations'
 import { operationFor } from '../../features/crafting/rules'
-import { cupService, cupSize } from '../../features/inventory/cups'
+import { cupService } from '../../features/inventory/cups'
 import { preparationStep } from '../../features/preparation/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
@@ -311,7 +311,7 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     current.cup.craft.cursor ===
       recipeFor(
         current.cup.recipe,
-        cupSize(current.cup.craft.kind),
+        current.cup.craft.size,
         cupService(current.cup.craft.kind),
         current.cup.craft.customizations,
       ).steps.length

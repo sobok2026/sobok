@@ -1,10 +1,11 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
+import { recipeCup } from '../../content/recipes'
 import { isCupSurface, type StationId } from '../../content/stations'
 import { needsCleaning } from '../../features/cleaning/rules'
 import { craftStations, nextStep } from '../../features/crafting/rules'
 import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../../features/inventory/batches'
-import { cupCount, cupKindFor } from '../../features/inventory/cups'
+import { cupCount } from '../../features/inventory/cups'
 import { currentTicket } from '../../features/service/orders'
 import { washDestination, washQueue } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
@@ -93,7 +94,7 @@ function stationDefault(state: GameState, id: StationId): Interaction {
 /** One thing to wash or collect starts at once; a choice between vessels opens the sink panel. */
 function washInteraction(state: GameState): Interaction {
   const ticket = currentTicket(state)
-  const queue = washQueue(state, ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null)
+  const queue = washQueue(state, ticket ? recipeCup(ticket.recipe, ticket.size, ticket.service) : null)
   const actions = queue.flatMap(({ dirtyItem, washedItem }): Action[] => [
     ...(dirtyItem ? [{ type: 'wash' as const, item: dirtyItem }] : []),
     ...(washedItem ? [{ type: 'take-washed' as const, item: washedItem }] : []),

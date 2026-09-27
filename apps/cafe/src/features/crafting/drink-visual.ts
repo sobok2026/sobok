@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { INGREDIENTS, type Ingredient } from '../../content/ingredients'
 import type { ResolvedOperation } from '../../content/recipe-plan'
-import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius, cupScale } from '../../shared/visuals/cup-visual'
+import { cupScale } from '../../shared/visuals/cup-profiles'
+import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius } from '../../shared/visuals/cup-visual'
 import { createIceScoop, type IceScoopSize } from '../../shared/visuals/ice-scoop'
 import { workBox as box, workCylinder as cylinder, workMaterial as standard } from '../../shared/visuals/work-geometry'
 import type { CupKind } from '../inventory/cups'
@@ -187,14 +188,12 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       target.scale.setScalar(cupRadius(view.kind, target.position.y) + 0.005)
     }
 
-    let height = 0.008
+    const { floor, height: rim } = CUP_DIMENSIONS[view.kind]
+    let height = floor + 0.008
 
     layers.forEach((layer, index) => {
       const band = view.vessel.layers[index]
-      const value = Math.min(
-        (band?.fill ?? 0) * (CUP_DIMENSIONS[view.kind].height - 0.02),
-        Math.max(0, CUP_DIMENSIONS[view.kind].height - 0.008 - height),
-      )
+      const value = Math.min((band?.fill ?? 0) * (rim - floor - 0.02), Math.max(0, rim - 0.008 - height))
       layer.mesh.visible = value > 0.0001
       if (band) {
         ;(layer.mesh.material as THREE.MeshStandardMaterial).color.set(band.color)

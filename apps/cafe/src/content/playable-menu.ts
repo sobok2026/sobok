@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import servingVesselData from '../../data/shop/serving-vessels.json'
-import type { ServiceMode } from '../features/inventory/cups'
+import { type CupKind, type ServiceMode, servingCup, servingLine } from '../features/inventory/cups'
 import { compileWorkflow, type WorkStep } from '../features/production/workflow'
 import { type DrinkSize, drinkSizeIds } from './drink-sizes'
 import { productionPlan, requirePreparationRoutes } from './production-plans'
@@ -14,6 +14,7 @@ export type SizedRecipe = {
   price: number
   plans: Partial<Record<ServiceMode, WorkStep[]>>
   vessels: Partial<Record<ServiceMode, string>>
+  cups: Partial<Record<ServiceMode, CupKind>>
 }
 
 export type Recipe = {
@@ -48,11 +49,6 @@ const servingVessels = z
   )
   .parse(servingVesselData)
 
-const CUP_STYLES = {
-  hot: { 'dine-in': 'hot-mug', takeout: 'hot-paper' },
-  iced: { 'dine-in': 'iced-glass', takeout: 'iced-plastic' },
-} as const
-
 export function buildMenu(catalog: RecipeCatalog, input: unknown) {
   for (const entry of servingVessels)
     if (!catalog.vessels.has(entry.vesselId)) {
@@ -79,6 +75,7 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
     if (!variant.temperature) {
       reasons.add('음료 제공 형태 확인이 필요합니다.')
     }
+    const temperature = variant.temperature === 'hot' ? 'hot' : 'iced'
 
     for (const [sizeKey, price] of Object.entries(entry.prices)) {
       const size = sizeKey as DrinkSize
@@ -91,11 +88,9 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
       const sourceSize = size === 'single' ? variant.sizes.at(0) : size
       const plans: SizedRecipe['plans'] = {}
       const vessels: SizedRecipe['vessels'] = {}
+      const cups: SizedRecipe['cups'] = {}
 
       for (const service of ['dine-in', 'takeout'] as const) {
-        if (size === 'trenta' && service === 'dine-in') {
-          continue
-        }
         try {
           const plan = productionPlan(variant, {
             size: sourceSize,
@@ -126,23 +121,24 @@ export function buildMenu(catalog: RecipeCatalog, input: unknown) {
           if (!servingVessels.find((entry) => entry.vesselId === vesselId)?.services.includes(service)) {
             throw new Error('원문의 제공 용기를 이 이용 방식으로 사용할 수 없습니다.')
           }
-          const cupStyle = CUP_STYLES[variant.temperature === 'hot' ? 'hot' : 'iced'][service]
+          const cup = servingCup(vesselId, temperature, service, sourceSize)
           const stockContext = {
             size: sourceSize,
-            cupStyle,
+            cupStyle: servingLine(temperature, service),
             recipeId: recipe.id,
             variantId: variant.id,
           } as const
           const costs = planStockCosts(catalog, resolved, stockContext)
           plans[service] = compileWorkflow(catalog, resolved, costs, stockContext)
           vessels[service] = vesselId
+          cups[service] = cup
         } catch (error) {
           reasons.add(error instanceof Error ? error.message : String(error))
         }
       }
 
       if (Object.keys(plans).length) {
-        sizes[size] = { price, plans, vessels }
+        sizes[size] = { price, plans, vessels, cups }
       }
     }
 

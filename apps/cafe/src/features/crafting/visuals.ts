@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { RECIPES, recipeFor } from '../../content/recipes'
 import { STATIONS, type StationId, staffFacingZ } from '../../content/stations'
-import { CUP_DIMENSIONS } from '../../shared/visuals/cup-visual'
+import { cupFillY } from '../../shared/visuals/cup-visual'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_OUTLET } from '../cold-brew/equipment'
-import { cupService, cupSize } from '../inventory/cups'
+import { cupService } from '../inventory/cups'
 import { BLENDER_JAR_SPOT } from '../preparation/blender'
 import { productionTargetFill } from '../production/runtime'
 import {
@@ -57,7 +57,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       }
 
       const craft = cup.craft
-      const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind), craft.customizations)
+      const definition = recipeFor(cup.recipe, craft.size, cupService(craft.kind), craft.customizations)
       const step = operationFor(cup.recipe, craft) ?? undefined
       const operation = step?.operation
       const servingId = definition.vesselId
@@ -151,7 +151,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       spot.copy(positions.get(currentVessel ?? servingId) ?? bench.root.position)
       const color = operationColor(craft, operation, serving.color)
       const descriptor = heldTool(craft, step, definition.steps)
-      const tool = tools.update(descriptor, color, cupSize(craft.kind))
+      const tool = tools.update(descriptor, color, craft.size)
       if (tool) {
         positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
       }
@@ -197,7 +197,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         }
         const height =
           currentVessel === servingId
-            ? Math.max(0.025, serving.fill * (CUP_DIMENSIONS[craft.kind].height - 0.02))
+            ? Math.max(0.025, cupFillY(craft.kind, serving.fill))
             : Math.max(0.04, (craft.vessels[currentVessel ?? '']?.fill ?? 0) * 0.25)
         end.set(spot.x, spot.y + height, spot.z)
         effects.update(start, end, color, null, now)

@@ -1,8 +1,9 @@
 import clsx from 'clsx'
-import { Fragment, type ReactNode, useState } from 'react'
-import { DRINK_SIZES, type DrinkSize, drinkSizeIds, drinkSizeModelScale } from '../../content/drink-sizes'
-import { RECIPES } from '../../content/recipes'
+import { type ReactNode, useState } from 'react'
+import { DRINK_SIZES } from '../../content/drink-sizes'
+import { RECIPES, recipeCup } from '../../content/recipes'
 import { josa } from '../../shared/format'
+import { CUP_PROFILES, profileHeight, profileRadius, profileRim } from '../../shared/visuals/cup-profiles'
 import type { Action } from '../../simulation/actions'
 import type { GameState, OrderLine } from '../../simulation/state'
 import { currentTicket } from '../service/orders'
@@ -10,13 +11,15 @@ import {
   CUP_NAMES,
   type CupAttribute,
   type CupKind,
-  type CupStyle,
+  type CupRow,
   cleanCupCount,
-  cupKindFor,
-  cupKinds,
+  cupBody,
+  cupLabel,
   cupMismatch,
   cupStyle,
+  cupTemperature,
   isReusableCup,
+  rowCupKinds,
   SERVICE_NAMES,
 } from './cups'
 import { cupRestockAction } from './help'
@@ -25,22 +28,34 @@ type Act = (action: Action) => void
 /** A rejected pick: the attributes it got wrong, or none when the right cup has run out. */
 type Verdict = { kind: CupKind; wrong: CupAttribute[]; attempt: number }
 
-const GROUPS = [
-  { name: '매장', note: '다회용', styles: ['hot-mug', 'iced-glass'] },
-  { name: '포장', note: '일회용', styles: ['hot-paper', 'iced-plastic'] },
+// Columns follow the first call on a ticket, dine-in or takeout; rows follow the second, HOT or ICED.
+const SERVICES = [
+  { name: '매장', note: '다회용' },
+  { name: '포장', note: '일회용' },
 ] as const
-const TYPE_NAMES: Record<CupStyle, string> = {
+const ROWS = [
+  ['hot-mug', 'hot-paper'],
+  ['iced-glass', 'iced-plastic'],
+  ['dine-in-vessel', 'takeout-vessel'],
+] as const satisfies readonly (readonly [CupRow, CupRow])[]
+const ROW_NAMES: Record<CupRow, string> = {
   'hot-mug': '머그',
   'iced-glass': '유리잔',
+  'dine-in-vessel': '전용 잔',
   'hot-paper': '종이컵',
   'iced-plastic': '일회용 컵',
+  'takeout-vessel': '전용 컵',
 }
-const ATTRIBUTE_NAMES: Record<CupAttribute, string> = { service: '매장·포장', temperature: '온도', size: '사이즈' }
-const sizeName = (size: DrinkSize) => (size === 'single' ? '단일' : DRINK_SIZES[size].name)
+const ATTRIBUTE_NAMES: Record<CupAttribute, string> = {
+  service: '매장·포장',
+  temperature: '온도',
+  size: '사이즈',
+  vessel: '잔 종류',
+}
 
 /**
  * Choosing the cup is the player's call: the sheet shows the ticket and the rack, never the answer, and judges the
- * pick in a bubble over the tile that was pressed. Counts only matter when there is no order, so they show then.
+ * pick in a bubble over the cup that was pressed. Counts only matter when there is no order, so they show then.
  */
 export default function CupRack({ state, act }: { state: GameState; act: Act }) {
   const [verdict, setVerdict] = useState<Verdict | null>(null)
@@ -54,7 +69,7 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
       }
       return
     }
-    const wrong = cupMismatch(kind, cupKindFor(ticket.recipe, ticket.service, ticket.size))
+    const wrong = cupMismatch(kind, recipeCup(ticket.recipe, ticket.size, ticket.service))
     if (wrong.length || !cleanCupCount(state, kind)) {
       setVerdict({ kind, wrong, attempt: (verdict?.attempt ?? 0) + 1 })
       return
@@ -64,87 +79,108 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-5">
       {ticket && picking && <TicketLine line={ticket} wrong={verdict?.wrong ?? []} />}
-      <div className="grid grid-cols-[5.5rem_repeat(6,minmax(0,1fr))] items-center gap-1.5">
-        <span />
-        {drinkSizeIds.map((size) => (
-          <span key={size} className="text-center text-sm font-medium text-muted" aria-hidden="true">
-            {sizeName(size)}
-          </span>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
+        {SERVICES.map((service) => (
+          <p key={service.name} className="flex items-baseline gap-1.5 px-3">
+            <b className="text-base font-bold">{service.name}</b>
+            <span className="text-sm text-muted">{service.note}</span>
+          </p>
         ))}
-        {GROUPS.map((group) => (
-          <Fragment key={group.name}>
-            <p className="col-span-full mt-2 flex items-baseline gap-2">
-              <b className="text-base font-bold">{group.name}</b>
-              <span className="text-sm text-muted">{group.note}</span>
-            </p>
-            {group.styles.map((style) => (
-              <Fragment key={style}>
-                <p className="grid leading-tight">
-                  <span className="text-body font-medium">{TYPE_NAMES[style]}</span>
-                  <span
-                    className="text-sm font-bold tracking-wide data-[hot=true]:text-hot data-[hot=false]:text-iced"
-                    data-hot={style.startsWith('hot')}
-                  >
-                    {style.startsWith('hot') ? 'HOT' : 'ICED'}
-                  </span>
-                </p>
-                {drinkSizeIds.map((size) => {
-                  const kind = `${style}-${size}` as CupKind
-
-                  return (
-                    <CupTile
-                      key={size}
-                      state={state}
-                      act={act}
-                      kind={kind}
-                      picking={picking}
-                      verdict={verdict?.kind === kind ? verdict : null}
-                      onChoose={choose}
-                      onRestocked={() => setVerdict(null)}
-                    />
-                  )
-                })}
-              </Fragment>
-            ))}
-          </Fragment>
+        {ROWS.flat().map((row) => (
+          <section
+            key={row}
+            className="grid content-start gap-2 rounded-2xl bg-control p-2"
+            aria-label={ROW_NAMES[row]}
+          >
+            <RowTitle row={row} />
+            <div className="grid grid-cols-4 gap-1.5">
+              {rowCupKinds(row).map((kind) => (
+                <CupTile
+                  key={kind}
+                  state={state}
+                  act={act}
+                  kind={kind}
+                  picking={picking}
+                  verdict={verdict?.kind === kind ? verdict : null}
+                  onChoose={choose}
+                  onRestocked={() => setVerdict(null)}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
     </div>
   )
 }
 
-function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] }) {
-  const temperature = RECIPES[line.recipe].temperature
-  const mark = 'rounded data-[wrong=true]:outline-2 data-[wrong=true]:outline-offset-2 data-[wrong=true]:outline-danger'
+/** Standard lines carry their temperature in the title; a drink's own vessels are told apart by name. */
+function RowTitle({ row }: { row: CupRow }) {
+  const first = rowCupKinds(row)[0]
 
   return (
-    <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-xl bg-control px-3.5 py-2.5 text-body">
-      <span className="text-sm font-semibold text-muted">주문</span>
-      <b className="font-semibold">{RECIPES[line.recipe].shortName}</b>
-      <span className={mark} data-wrong={wrong.includes('temperature')}>
+    <h3 className="flex items-baseline gap-1.5 px-1 pt-0.5 text-body font-medium">
+      {ROW_NAMES[row]}
+      {cupStyle(first) && (
         <span
-          className={clsx(
-            'block rounded-full px-2 text-sm leading-5.5 font-bold tracking-wide text-white',
-            'data-[temperature=hot]:bg-hot data-[temperature=iced]:bg-iced',
-          )}
-          data-temperature={temperature}
+          className="text-sm font-bold tracking-wide data-[temperature=hot]:text-hot data-[temperature=iced]:text-iced"
+          data-temperature={cupTemperature(first)}
         >
-          {temperature.toUpperCase()}
+          {cupTemperature(first).toUpperCase()}
         </span>
-      </span>
-      <span className={mark} data-wrong={wrong.includes('size')}>
-        {DRINK_SIZES[line.size].name}
-      </span>
-      <span className={mark} data-wrong={wrong.includes('service')}>
-        {SERVICE_NAMES[line.service]}
-      </span>
-    </p>
+      )}
+    </h3>
   )
 }
 
-/** While picking, a tile shows only the cup and a 0 when it is empty; with no order it shows the count instead. */
+/** The ticket reads like the order rail it replaces while the sheet is open: the drink, then its chip and calls. */
+function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] }) {
+  const temperature = RECIPES[line.recipe].temperature
+  const mark = 'data-[wrong=true]:outline-2 data-[wrong=true]:outline-offset-2 data-[wrong=true]:outline-danger'
+
+  return (
+    <div
+      className={clsx(
+        'flex flex-wrap items-center justify-between gap-x-4 gap-y-2',
+        'rounded-2xl border border-line px-4 py-3',
+      )}
+    >
+      <p className="flex min-w-0 items-baseline gap-2.5">
+        <span className="shrink-0 text-sm text-muted">주문</span>
+        <b className="text-lg leading-snug font-semibold tracking-tight">{RECIPES[line.recipe].shortName}</b>
+      </p>
+      <p className="flex shrink-0 items-center gap-2 text-body">
+        <span className={clsx(mark, 'rounded-full')} data-wrong={wrong.includes('temperature')}>
+          <span
+            className={clsx(
+              'block rounded-full px-2 text-sm leading-5.5 font-bold tracking-wide text-white',
+              'data-[temperature=hot]:bg-hot data-[temperature=iced]:bg-iced',
+            )}
+            data-temperature={temperature}
+          >
+            {temperature.toUpperCase()}
+          </span>
+        </span>
+        <span className={clsx(mark, 'rounded-sm')} data-wrong={wrong.includes('size') || wrong.includes('vessel')}>
+          {DRINK_SIZES[line.size].name}
+        </span>
+        <span className="text-muted" aria-hidden="true">
+          ·
+        </span>
+        <span className={clsx(mark, 'rounded-sm')} data-wrong={wrong.includes('service')}>
+          {SERVICE_NAMES[line.service]}
+        </span>
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Every cup shows its silhouette and name, with the count on a line below: always without an order, only an empty
+ * 0 while picking. Only a tile that can be pressed looks like one, so the rack at rest is flat but for `보충`.
+ */
 function CupTile({
   state,
   act,
@@ -162,14 +198,29 @@ function CupTile({
   onChoose: (kind: CupKind) => void
   onRestocked: () => void
 }) {
-  if (!cupKinds.includes(kind)) {
-    return <span />
-  }
   const count = cleanCupCount(state, kind)
   const restockable = !picking && !isReusableCup(kind) && !count && state.disposableCups[kind].reserve > 0
   const tile = clsx(
-    'relative grid h-16 w-full items-end rounded-xl bg-control pb-1.5',
+    'grid size-full content-start justify-items-center rounded-lg px-0.5 pt-2 pb-2',
     'group-data-[empty=true]/tile:[&_svg]:opacity-30',
+  )
+  const content = (
+    <>
+      <CupIcon kind={kind} />
+      <span className="mt-1 text-sm leading-5 font-medium whitespace-nowrap">{cupLabel(kind)}</span>
+      {(!picking || !count) && (
+        <span
+          className={clsx(
+            'text-sm leading-5 text-muted tabular-nums',
+            'data-[tone=empty]:font-semibold data-[tone=empty]:text-danger',
+            'data-[tone=restock]:font-semibold data-[tone=restock]:text-brand',
+          )}
+          data-tone={countTone(count, restockable)}
+        >
+          {restockable ? '보충' : `${count}개`}
+        </span>
+      )}
+    </>
   )
 
   return (
@@ -180,62 +231,27 @@ function CupTile({
           type="button"
           className={clsx(
             tile,
-            'hover:bg-surface hover:ring-2 hover:ring-focus',
-            'data-[verdict=empty]:bg-surface data-[verdict=empty]:ring-2 data-[verdict=empty]:ring-focus',
-            'data-[verdict=wrong]:animate-nudge data-[verdict=wrong]:bg-surface data-[verdict=wrong]:ring-2',
-            'data-[verdict=wrong]:ring-danger data-[restock=true]:bg-surface data-[restock=true]:ring-1',
-            'data-[restock=true]:ring-control-line motion-reduce:animate-none',
+            'bg-surface',
+            'hover:ring-2 hover:ring-focus',
+            'data-[verdict=empty]:ring-2 data-[verdict=empty]:ring-focus',
+            'data-[verdict=wrong]:animate-nudge data-[verdict=wrong]:ring-2 data-[verdict=wrong]:ring-danger',
+            'data-[restock=true]:ring-1 data-[restock=true]:ring-brand/40',
+            'motion-reduce:animate-none',
           )}
           data-verdict={verdictState(verdict)}
           data-restock={restockable}
           aria-label={restockable ? `${CUP_NAMES[kind]} 보충` : CUP_NAMES[kind]}
           onClick={() => onChoose(kind)}
         >
-          <TileContent kind={kind} count={count} picking={picking} restockable={restockable} />
+          {content}
         </button>
       ) : (
         <div className={tile} role="img" aria-label={`${CUP_NAMES[kind]} ${count}개`}>
-          <TileContent kind={kind} count={count} picking={picking} restockable={false} />
+          {content}
         </div>
       )}
       {verdict && <Bubble state={state} act={act} verdict={verdict} onRestocked={onRestocked} />}
     </div>
-  )
-}
-
-function TileContent({
-  kind,
-  count,
-  picking,
-  restockable,
-}: {
-  kind: CupKind
-  count: number
-  picking: boolean
-  restockable: boolean
-}) {
-  if (picking) {
-    return (
-      <>
-        <CupShape kind={kind} />
-        {!count && <span className="absolute top-1 right-2 text-sm font-semibold text-danger tabular-nums">0</span>}
-      </>
-    )
-  }
-
-  return (
-    <>
-      <CupShape kind={kind} small />
-      <span
-        className={clsx(
-          'block text-center text-body leading-tight font-semibold tabular-nums',
-          'data-[tone=empty]:text-danger data-[tone=restock]:text-sm data-[tone=restock]:text-brand',
-        )}
-        data-tone={countTone(count, restockable)}
-      >
-        {restockable ? '보충' : count}
-      </span>
-    </>
   )
 }
 
@@ -330,59 +346,91 @@ function EmptyCup({
   )
 }
 
-/** Drawn to the same volume ratio as the 3D cups, so size reads from the shape as well as the column. */
-function CupShape({ kind, small = false }: { kind: CupKind; small?: boolean }) {
-  const style = cupStyle(kind)
-  const scale = drinkSizeModelScale(kind.slice(kind.lastIndexOf('-') + 1) as DrinkSize)
-  const height = 30 * scale
-  const top = 20 * scale
-  const bottom = top * TAPER[style]
-  const center = style === 'hot-mug' ? 18 : 20
-  const y = 44 - height
-  const body = `${center - top / 2},${y} ${center + top / 2},${y} ${center + bottom / 2},44 ${center - bottom / 2},44`
+// Rack icons draw the shared cup outline at 100px per scene unit, standing on the bottom of the view box.
+const ICON_SCALE = 100
+const ICON_BASE = 49
+
+/**
+ * The same outline as the 3D cup, so size and shape read from the silhouette. The outline colour is the temperature;
+ * the fill and details are the material.
+ */
+function CupIcon({ kind }: { kind: CupKind }) {
+  const profile = CUP_PROFILES[kind]
+  const body = cupBody(kind)
+  const temperature = cupTemperature(kind)
+  const center = body === 'ceramic' ? 19 : 22
+  const x = (radius: number, side: number) => center + side * radius * ICON_SCALE
+  const y = (height: number) => ICON_BASE - height * ICON_SCALE
+  const point = (height: number, side: number) => `${x(profileRadius(profile, height), side)},${y(height)}`
+  const edge = (side: number) => profile.outline.map(([radius, height]) => `${x(radius, side)},${y(height)}`)
+  const base = profile.outline[0][1]
+  const height = profileHeight(profile)
+  const at = (share: number) => base + (height - base) * share
+  const stroke = 'data-[temperature=hot]:stroke-hot data-[temperature=iced]:stroke-iced'
+  const fill = clsx(
+    'data-[body=ceramic]:fill-surface data-[body=glass]:fill-iced/20 data-[body=paper]:fill-surface',
+    'data-[body=plastic]:fill-iced/8',
+  )
+  const handle = (height - base) * ICON_SCALE
 
   return (
-    <svg
-      className="mx-auto block h-11 w-10 data-[small=true]:h-8 data-[small=true]:w-7"
-      data-small={small}
-      viewBox="0 0 40 45"
-      aria-hidden="true"
-    >
-      <polygon
-        points={body}
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        className={clsx(
-          'data-[style=hot-mug]:fill-surface data-[style=hot-mug]:stroke-hot',
-          'data-[style=hot-paper]:fill-surface data-[style=hot-paper]:stroke-hot',
-          'data-[style=iced-glass]:fill-iced/20 data-[style=iced-glass]:stroke-iced',
-          'data-[style=iced-plastic]:fill-iced/8 data-[style=iced-plastic]:stroke-iced',
-        )}
-        data-style={style}
-      />
-      {style === 'hot-mug' && (
-        <path
-          d={`M${center + top / 2 - 1} ${y + height * 0.25} q${8 * scale} 0 ${8 * scale} ${height * 0.25} t-${8 * scale} ${height * 0.25}`}
-          fill="none"
-          strokeWidth="1.4"
-          className="stroke-hot"
+    <svg className="block h-11 w-10" viewBox="0 0 44 50" aria-hidden="true">
+      {profile.saucer && (
+        <rect
+          x={x(profile.saucer, -1)}
+          y={y(base) + 0.5}
+          width={profile.saucer * 2 * ICON_SCALE}
+          height={ICON_BASE - y(base) - 0.5}
+          rx="1"
+          strokeWidth="1.2"
+          className={clsx(fill, stroke)}
+          data-body={body}
+          data-temperature={temperature}
         />
       )}
-      {style === 'hot-paper' && (
-        <rect
-          x={center - top * 0.43}
-          y={y + height * 0.36}
-          width={top * 0.86}
-          height={height * 0.28}
+      <polygon
+        points={[...edge(1), ...edge(-1).reverse()].join(' ')}
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+        className={clsx(fill, stroke)}
+        data-body={body}
+        data-temperature={temperature}
+      />
+      {profile.innerWall && (
+        <polyline
+          points={[
+            `${x(profileRim(profile) - 0.012, -1)},${y(height - 0.006)}`,
+            `${x(profileRadius(profile, profile.floor) - 0.014, -1)},${y(profile.floor)}`,
+            `${x(profileRadius(profile, profile.floor) - 0.014, 1)},${y(profile.floor)}`,
+            `${x(profileRim(profile) - 0.012, 1)},${y(height - 0.006)}`,
+          ].join(' ')}
+          fill="none"
+          strokeWidth="1"
+          className={clsx('opacity-60', stroke)}
+          data-temperature={temperature}
+        />
+      )}
+      {body === 'ceramic' && (
+        <path
+          d={`M${x(profileRadius(profile, at(0.75)), 1) - 1} ${y(at(0.75))} q${handle * 0.27} 0 ${handle * 0.27} ${handle * 0.25} t-${handle * 0.27} ${handle * 0.25}`}
+          fill="none"
+          strokeWidth="1.4"
+          className={stroke}
+          data-temperature={temperature}
+        />
+      )}
+      {body === 'paper' && (
+        <polygon
+          points={[point(at(0.64), -1), point(at(0.64), 1), point(at(0.36), 1), point(at(0.36), -1)].join(' ')}
           className="fill-hot/35"
         />
       )}
-      {style === 'iced-plastic' && (
+      {body === 'plastic' && (
         <line
-          x1={center - top * 0.36}
-          x2={center + top * 0.36}
-          y1={y + height * 0.3}
-          y2={y + height * 0.3}
+          x1={x(profileRadius(profile, at(0.7)) * 0.72, -1)}
+          x2={x(profileRadius(profile, at(0.7)) * 0.72, 1)}
+          y1={y(at(0.7))}
+          y2={y(at(0.7))}
           strokeWidth="1"
           className="stroke-iced/60"
         />
@@ -390,8 +438,6 @@ function CupShape({ kind, small = false }: { kind: CupKind; small?: boolean }) {
     </svg>
   )
 }
-
-const TAPER: Record<CupStyle, number> = { 'hot-mug': 0.94, 'iced-glass': 0.86, 'hot-paper': 0.7, 'iced-plastic': 0.7 }
 
 function mismatchTitle(attributes: CupAttribute[]) {
   const names = attributes.map((attribute) => ATTRIBUTE_NAMES[attribute])

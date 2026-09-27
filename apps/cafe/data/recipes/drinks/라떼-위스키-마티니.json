@@ -109,7 +109,7 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "toolIds": ["strainer", "fine-strainer"],
               "excludeMaterialIds": ["ice"]
             }
@@ -124,7 +124,7 @@
             {
               "action": "add",
               "materialId": "바닐라-크림-베이스",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "amount": {
                 "kind": "count",
                 "value": 1,
@@ -143,7 +143,7 @@
             {
               "action": "add",
               "materialId": "리저브-다크-초콜릿-소스",
-              "into": "serving-cup",
+              "into": "martini-glass",
               "amount": {
                 "kind": "unspecified",
                 "description": "드리즐 양 미기재"
@@ -160,7 +160,7 @@
           "operations": [
             {
               "action": "etch",
-              "vessel": "serving-cup"
+              "vessel": "martini-glass"
             }
           ]
         },

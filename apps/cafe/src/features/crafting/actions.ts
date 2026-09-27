@@ -1,9 +1,10 @@
-import { recipeFor } from '../../content/recipes'
+import { recipeCup, recipeFor } from '../../content/recipes'
+import { josa } from '../../shared/format'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
-import { CUP_NAMES, cleanCupCount, cupKindFor, cupService, cupSize, isReusableCup } from '../inventory/cups'
+import { CUP_NAMES, cleanCupCount, cupService, isReusableCup } from '../inventory/cups'
 import { addAmounts } from '../inventory/inventory'
 import { decideObservation, skipObservedSteps } from '../production/conditions'
 import {
@@ -37,8 +38,8 @@ export function handleCraftActions(
 
     const kind = action.kind
 
-    if (kind !== cupKindFor(ticket.recipe, ticket.service, ticket.size)) {
-      fail('주문과 맞지 않는 컵이에요. 매장·포장, 온도, 사이즈를 확인해주세요.')
+    if (kind !== recipeCup(ticket.recipe, ticket.size, ticket.service)) {
+      fail('주문과 맞지 않는 컵이에요. 매장·포장, 온도, 사이즈나 잔 종류를 확인해주세요.')
       return
     }
 
@@ -56,9 +57,9 @@ export function handleCraftActions(
       id: uid(),
       recipe: ticket.recipe,
       orderLineId: ticket.id,
-      craft: createCraft(kind, ticket.customizations),
+      craft: createCraft(kind, ticket.size, ticket.customizations),
     }
-    say(s, `${CUP_NAMES[kind]}를 집었어요.`)
+    say(s, `${josa(CUP_NAMES[kind], '을', '를')} 집었어요.`)
     return
   }
 
@@ -139,7 +140,7 @@ export function handleCraftActions(
   }
 
   if (action.type === 'confirm-craft' && step.kind === 'condition') {
-    const steps = recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind), session.customizations).steps
+    const steps = recipeFor(cup.recipe, session.size, cupService(session.kind), session.customizations).steps
 
     if (!action.observation || !decideObservation(steps, session, action.observation.id, action.observation.value)) {
       fail('현재 단계에서 관찰한 상태를 선택해주세요.')
@@ -182,7 +183,7 @@ export function handleCraftActions(
       return
     }
     skipObservedSteps(
-      recipeFor(cup.recipe, cupSize(session.kind), cupService(session.kind), session.customizations).steps,
+      recipeFor(cup.recipe, session.size, cupService(session.kind), session.customizations).steps,
       session,
     )
     if (step.operation.action === 'serve') {

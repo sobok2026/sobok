@@ -18,7 +18,7 @@
             {
               "action": "add",
               "materialId": "아페롤",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "amount",
                 "value": 1,
@@ -37,7 +37,7 @@
             {
               "action": "add",
               "materialId": "칸티-프로세코",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "amount",
                 "value": 2,
@@ -56,7 +56,7 @@
             {
               "action": "add",
               "materialId": "토닉-워터",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "amount",
                 "value": 1,
@@ -75,7 +75,7 @@
             {
               "action": "add",
               "materialId": "ice",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "rim-gap",
                 "millimeters": 20
@@ -92,7 +92,7 @@
             {
               "action": "add",
               "materialId": "하프-오렌지-슬라이스",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "count",
                 "value": 1,

@@ -1,5 +1,5 @@
 import menuData from '../../data/menu.json'
-import type { ServiceMode } from '../features/inventory/cups'
+import type { CupKind, ServiceMode } from '../features/inventory/cups'
 import { compileWorkflow } from '../features/production/workflow'
 import { recipeCatalog } from './catalog'
 import { type Customizations, customizationPrice, customizePlan } from './customizations'
@@ -63,6 +63,15 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
   }
   customizedRecipes.set(key, result)
   return result
+}
+
+/** The rack cup an order line is served in, resolved from the recipe's serving vessel when the menu is built. */
+export function recipeCup(id: RecipeId, size: DrinkSize, service: ServiceMode): CupKind {
+  const cup = RECIPES[id]?.sizes[size]?.cups[service]
+  if (!cup) {
+    throw new Error(`판매할 수 없는 주문입니다: ${id}/${size}/${service}`)
+  }
+  return cup
 }
 
 export function recipePrice(id: RecipeId, size: DrinkSize) {

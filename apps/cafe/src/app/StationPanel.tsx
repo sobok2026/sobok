@@ -48,7 +48,7 @@ export default function StationPanel({
       <section
         className={clsx(
           'pointer-events-auto absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] w-100 flex-col',
-          'data-[wide=true]:w-128',
+          'data-[wide=true]:w-144',
           'overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent]',
           'rounded-2xl border border-white/60 bg-surface p-6 shadow-panel',
           'compact:top-4 compact:max-h-[calc(100dvh-2rem)] compact:p-5',

@@ -2,17 +2,15 @@ import { z } from 'zod'
 import { customizationSchema } from '../content/customizations'
 import { drinkSizeIds } from '../content/drink-sizes'
 import { ingredientIds } from '../content/ingredients'
-import { recipeFor, recipeIds } from '../content/recipes'
+import { recipeCup, recipeFor, recipeIds } from '../content/recipes'
 import { isCupSurface, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/cold-brew/rules'
 import { isSealed, packStorage } from '../features/inventory/batches'
 import {
   cupCount,
-  cupKindFor,
   cupKinds,
   cupService,
-  cupSize,
   disposableCupKinds,
   isReusableCup,
   REUSABLE_CUPS_PER_KIND,
@@ -192,6 +190,7 @@ const totalsSchema = z.object({
 const craftSchema = productionStateSchema.extend({
   customizations: customizationSchema,
   kind: z.enum(cupKinds),
+  size: z.enum(drinkSizeIds),
   location: z.union([z.literal('hand'), z.enum(stationIds)]),
   lidded: z.boolean(),
 })
@@ -296,8 +295,7 @@ export const stateSchema = z
         try {
           return (
             cup.craft.cursor <=
-            recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind), cup.craft.customizations).steps
-              .length
+            recipeFor(cup.recipe, cup.craft.size, cupService(cup.craft.kind), cup.craft.customizations).steps.length
           )
         } catch {
           return false
@@ -335,7 +333,8 @@ export const stateSchema = z
       state.cup.orderLineId === ticket.id &&
       state.cup.recipe === ticket.recipe &&
       JSON.stringify(state.cup.craft.customizations) === JSON.stringify(ticket.customizations) &&
-      state.cup.craft.kind === cupKindFor(ticket.recipe, ticket.service, ticket.size)
+      state.cup.craft.size === ticket.size &&
+      state.cup.craft.kind === recipeCup(ticket.recipe, ticket.size, ticket.service)
     )
   }, '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.')
   .refine(

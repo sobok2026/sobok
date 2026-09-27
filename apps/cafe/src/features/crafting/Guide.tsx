@@ -3,7 +3,7 @@ import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES, recipeFor } from '../../content/recipes'
 import { STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
-import { cupService, cupSize } from '../inventory/cups'
+import { cupService } from '../inventory/cups'
 import { operationNotes } from '../production/presentation'
 import type { WorkStep } from '../production/workflow'
 import { currentTicket } from '../service/orders'
@@ -11,7 +11,7 @@ import { currentTicket } from '../service/orders'
 export function RecipeGuide({ state }: { state: GameState }) {
   const ticket = currentTicket(state)
   const recipe = state.cup?.recipe ?? ticket?.recipe
-  const size = state.cup ? cupSize(state.cup.craft.kind) : ticket?.size
+  const size = state.cup ? state.cup.craft.size : ticket?.size
   const service = state.cup ? cupService(state.cup.craft.kind) : ticket?.service
   if (!recipe || !size || !service) {
     return <p className="text-body text-muted">제조 중인 음료가 없어요.</p>

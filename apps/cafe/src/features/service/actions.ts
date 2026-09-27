@@ -1,12 +1,12 @@
 import { CUSTOMER_HABITS } from '../../content/customers'
 import { type Costs, INGREDIENTS } from '../../content/ingredients'
-import { recipeFor } from '../../content/recipes'
+import { recipeCup, recipeFor } from '../../content/recipes'
 import { tableIds } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { nextStep } from '../crafting/rules'
-import { cupKindFor, cupService, cupSize } from '../inventory/cups'
+import { cupService } from '../inventory/cups'
 import { addAmounts } from '../inventory/inventory'
 import { customerToCondiment } from './customer'
 import { currentTicket } from './orders'
@@ -46,7 +46,7 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
       if (
         s.cup.recipe !== ticket.recipe ||
         s.cup.orderLineId !== ticket.id ||
-        s.cup.craft.kind !== cupKindFor(ticket.recipe, ticket.service, ticket.size)
+        s.cup.craft.kind !== recipeCup(ticket.recipe, ticket.size, ticket.service)
       ) {
         fail('현재 제조할 주문과 다른 컵이에요. 컵을 정리하고 주문표에 맞게 다시 준비해주세요.')
         break
@@ -54,7 +54,7 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
 
       const servingVessel = recipeFor(
         s.cup.recipe,
-        cupSize(s.cup.craft.kind),
+        s.cup.craft.size,
         cupService(s.cup.craft.kind),
         s.cup.craft.customizations,
       ).vesselId

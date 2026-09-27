@@ -4,7 +4,7 @@ import type { GameState } from '../../simulation/state'
 import { PREPARATIONS, preparationForMaterial } from '../preparation/rules'
 import type { ProductionState, WorkStep } from '../production/workflow'
 import { currentTicket } from '../service/orders'
-import { cupService, cupSize } from './cups'
+import { cupService } from './cups'
 import { available } from './inventory'
 
 export function inventorySummary(state: GameState) {
@@ -50,7 +50,7 @@ export function inventorySummary(state: GameState) {
   const requested = state.customer?.items[0]
   const recipe =
     state.cup?.recipe ?? ticket?.recipe ?? (state.customer?.stage === 'ordering' ? requested?.recipe : null)
-  const size = state.cup ? cupSize(state.cup.craft.kind) : (ticket?.size ?? requested?.size)
+  const size = state.cup ? state.cup.craft.size : (ticket?.size ?? requested?.size)
   const service = state.cup ? cupService(state.cup.craft.kind) : (ticket?.service ?? requested?.service)
   const customizations = state.cup?.craft.customizations ?? ticket?.customizations ?? requested?.customizations
   if (recipe && size && service) {

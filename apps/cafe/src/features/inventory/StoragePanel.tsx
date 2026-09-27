@@ -1,5 +1,6 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import { useState } from 'react'
+import { recipeCup } from '../../content/recipes'
 import { josa, money } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import {
@@ -18,7 +19,7 @@ import type { Objective, Subject } from '../../simulation/guidance'
 import type { Batch, GameState } from '../../simulation/state'
 import { currentTicket } from '../service/orders'
 import { batchHome, isSealed, materialHome } from './batches'
-import { CUP_NAMES, CUP_SUPPLY, cupKindFor, disposableCupKinds } from './cups'
+import { CUP_NAMES, CUP_SUPPLY, disposableCupKinds } from './cups'
 import LabelWriter from './LabelWriter'
 import { labelText } from './labels'
 import { inventorySummary } from './summary'
@@ -378,7 +379,7 @@ function MaterialStatus({
 
 function CupStock({ state, act }: { state: GameState; act: Act }) {
   const ticket = currentTicket(state)
-  const needed = ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null
+  const needed = ticket ? recipeCup(ticket.recipe, ticket.size, ticket.service) : null
   const kinds = [...disposableCupKinds].sort(
     (a, b) =>
       Number(b === needed) - Number(a === needed) || state.disposableCups[a].reserve - state.disposableCups[b].reserve,

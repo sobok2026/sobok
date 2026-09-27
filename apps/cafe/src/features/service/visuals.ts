@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import { RECIPES } from '../../content/recipes'
+import { RECIPES, recipeCup } from '../../content/recipes'
 import { CUP_DIMENSIONS, createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
-import { cupKindFor, cupKinds } from '../inventory/cups'
+import { cupKinds } from '../inventory/cups'
 import { customerHasCup, customerSitting, customerWalking } from './customer'
 
 export function createCustomerVisuals(scene: THREE.Scene) {
@@ -147,7 +147,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
           if (!line) {
             return
           }
-          const kind = cupKindFor(line.recipe, line.service, line.size)
+          const kind = recipeCup(line.recipe, line.size, line.service)
           display.root.position.x = (index - (received.length - 1) / 2) * 0.24
           display.liquidMaterial.color.set(RECIPES[line.recipe].color)
 

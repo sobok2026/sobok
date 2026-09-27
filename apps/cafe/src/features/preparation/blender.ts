@@ -12,7 +12,7 @@ import {
 } from '../../shared/visuals/equipment-geometry'
 import type { GameState, Job } from '../../simulation/state'
 import { operationFor } from '../crafting/rules'
-import { cupService, cupSize } from '../inventory/cups'
+import { cupService } from '../inventory/cups'
 import { PREPARATIONS, preparationStep } from './rules'
 
 export const BLENDER_JAR_SPOT: [number, number, number] = [-2.9, 1.355, -5.12]
@@ -257,7 +257,7 @@ export function createBlender(scene: THREE.Scene) {
         PREPARATIONS[prep.recipe].steps.some((entry) => entry.equipmentId === 'blender')
       const drinkJar =
         !!cup &&
-        recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind), cup.craft.customizations).steps.some(
+        recipeFor(cup.recipe, cup.craft.size, cupService(cup.craft.kind), cup.craft.customizations).steps.some(
           (entry) => entry.equipmentId === 'blender',
         )
       const jarInUse = prepJar || drinkJar

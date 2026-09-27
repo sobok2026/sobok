@@ -1,56 +1,200 @@
-import { DRINK_SIZES, type DrinkSize, drinkSizeIds } from '../../content/drink-sizes'
-import { RECIPES, type RecipeId } from '../../content/recipes'
+import { DRINK_SIZES } from '../../content/drink-sizes'
+import type { CatalogSize } from '../../content/recipe-schema'
+import { josa } from '../../shared/format'
 import type { GameState } from '../../simulation/state'
 
 export const serviceModes = ['dine-in', 'takeout'] as const
 export type ServiceMode = (typeof serviceModes)[number]
 export const SERVICE_NAMES = { 'dine-in': '매장', takeout: '포장' } as const
+export type Temperature = 'hot' | 'iced'
+/** Material and silhouette of the 3D cup and the rack icon; temperature is shown separately. */
+export type CupBody = 'paper' | 'plastic' | 'ceramic' | 'glass'
 export const cupStyles = ['hot-paper', 'iced-plastic', 'hot-mug', 'iced-glass'] as const
 export type CupStyle = (typeof cupStyles)[number]
-type StandardCupSize = Exclude<DrinkSize, 'trenta'>
-export type DisposableCupKind = `hot-paper-${StandardCupSize}` | `iced-plastic-${DrinkSize}`
-export type ReusableCupKind = `hot-mug-${StandardCupSize}` | `iced-glass-${StandardCupSize}`
-export type CupKind = DisposableCupKind | ReusableCupKind
+
+type CupLine = {
+  name: string
+  service: ServiceMode
+  temperature: Temperature
+  body: CupBody
+  sizes: readonly CatalogSize[]
+}
+type VesselCup = { name: string; label: string; service: ServiceMode; temperature: Temperature; body: CupBody }
+
+// Starbucks Korea serves Short for HOT drinks only and Trenta for ICED takeout only.
+const CUP_LINES = {
+  'hot-paper': {
+    name: 'HOT 종이컵',
+    service: 'takeout',
+    temperature: 'hot',
+    body: 'paper',
+    sizes: ['short', 'tall', 'grande', 'venti'],
+  },
+  'iced-plastic': {
+    name: 'ICED 일회용 컵',
+    service: 'takeout',
+    temperature: 'iced',
+    body: 'plastic',
+    sizes: ['tall', 'grande', 'venti', 'trenta'],
+  },
+  'hot-mug': {
+    name: 'HOT 머그',
+    service: 'dine-in',
+    temperature: 'hot',
+    body: 'ceramic',
+    sizes: ['short', 'tall', 'grande', 'venti'],
+  },
+  'iced-glass': {
+    name: 'ICED 유리잔',
+    service: 'dine-in',
+    temperature: 'iced',
+    body: 'glass',
+    sizes: ['tall', 'grande', 'venti'],
+  },
+} as const satisfies Record<CupStyle, CupLine>
+
+// Drinks served in their own vessel, keyed by the serving vessel id in the recipe data, in rack order.
+const VESSEL_CUPS = {
+  demitasse: { name: '데미타스 잔', label: '데미타스', service: 'dine-in', temperature: 'hot', body: 'ceramic' },
+  'vin-chaud-glass': { name: '뱅쇼 글라스', label: '뱅쇼', service: 'dine-in', temperature: 'hot', body: 'glass' },
+  'martini-glass': { name: '마티니 글라스', label: '마티니', service: 'dine-in', temperature: 'iced', body: 'glass' },
+  'tulip-glass': { name: '튤립 글라스', label: '튤립', service: 'dine-in', temperature: 'iced', body: 'glass' },
+  'cocktail-glass': { name: '칵테일 전용잔', label: '칵테일', service: 'dine-in', temperature: 'iced', body: 'glass' },
+  'white-wine-glass': {
+    name: '화이트 와인 글라스',
+    label: '와인',
+    service: 'dine-in',
+    temperature: 'iced',
+    body: 'glass',
+  },
+  'double-shot-glass': {
+    name: '더블샷 전용잔',
+    label: '더블샷',
+    service: 'dine-in',
+    temperature: 'iced',
+    body: 'glass',
+  },
+  'double-shot-cup': {
+    name: '더블샷 일회용 컵',
+    label: '더블샷',
+    service: 'takeout',
+    temperature: 'iced',
+    body: 'plastic',
+  },
+} as const satisfies Record<string, VesselCup>
+
+type LineCup<S extends CupStyle> = `${S}-${(typeof CUP_LINES)[S]['sizes'][number]}`
+export type VesselCupKind = keyof typeof VESSEL_CUPS
+type ServedIn<M extends ServiceMode> =
+  | { [S in CupStyle]: (typeof CUP_LINES)[S]['service'] extends M ? LineCup<S> : never }[CupStyle]
+  | { [K in VesselCupKind]: (typeof VESSEL_CUPS)[K]['service'] extends M ? K : never }[VesselCupKind]
+export type ReusableCupKind = ServedIn<'dine-in'>
+export type DisposableCupKind = ServedIn<'takeout'>
+export type CupKind = ReusableCupKind | DisposableCupKind
 export type ReusableCupCounts = Record<ReusableCupKind, number>
 
-export const CUP_STYLE_NAMES: Record<CupStyle, string> = {
-  'hot-paper': 'HOT 종이컵',
-  'iced-plastic': 'ICED 일회용 컵',
-  'hot-mug': 'HOT 머그',
-  'iced-glass': 'ICED 유리잔',
-}
+type CupSpec = VesselCup & { style: CupStyle | null; size: CatalogSize | null }
 
-export const cupStyle = (kind: CupKind) => kind.slice(0, kind.lastIndexOf('-')) as CupStyle
-export const cupSize = (kind: CupKind) => kind.slice(kind.lastIndexOf('-') + 1) as DrinkSize
+const CUPS = Object.fromEntries([
+  ...cupStyles.flatMap((style) => {
+    const { sizes, ...line }: CupLine = CUP_LINES[style]
 
-export const isReusableCup = (kind: CupKind): kind is ReusableCupKind =>
-  cupStyle(kind) === 'hot-mug' || cupStyle(kind) === 'iced-glass'
+    return sizes.map((size) => [
+      `${style}-${size}`,
+      {
+        ...line,
+        name: `${line.name} · ${DRINK_SIZES[size].name}`,
+        label: DRINK_SIZES[size].name,
+        style,
+        size,
+      },
+    ])
+  }),
+  ...Object.entries(VESSEL_CUPS).map(([kind, cup]) => [kind, { ...cup, style: null, size: null }]),
+]) as Record<CupKind, CupSpec>
 
-export const cupKinds: CupKind[] = cupStyles.flatMap((style) =>
-  drinkSizeIds
-    .filter((size) => size !== 'trenta' || style === 'iced-plastic')
-    .map((size) => `${style}-${size}` as CupKind),
-)
+// The recipe's '숏 일회용 컵' for espresso to go is the Short HOT paper cup on the rack.
+const VESSEL_ALIASES: Partial<Record<string, CupKind>> = { 'short-paper-cup': 'hot-paper-short' }
 
+export const cupKinds = Object.keys(CUPS) as CupKind[]
+export const CUP_NAMES = Object.fromEntries(cupKinds.map((kind) => [kind, CUPS[kind].name])) as Record<CupKind, string>
+/** Size name for a standard cup, short vessel name for a drink's own vessel. */
+export const cupLabel = (kind: CupKind) => CUPS[kind].label
+export const cupService = (kind: CupKind) => CUPS[kind].service
+export const cupTemperature = (kind: CupKind) => CUPS[kind].temperature
+export const cupBody = (kind: CupKind) => CUPS[kind].body
+/** The standard cup line, or null for a drink's own vessel. */
+export const cupStyle = (kind: CupKind) => CUPS[kind].style
+export const cupSize = (kind: CupKind) => CUPS[kind].size
+
+export const isReusableCup = (kind: CupKind): kind is ReusableCupKind => cupService(kind) === 'dine-in'
 export const reusableCupKinds = cupKinds.filter(isReusableCup)
 export const disposableCupKinds = cupKinds.filter((kind): kind is DisposableCupKind => !isReusableCup(kind))
 
-export const CUP_NAMES = Object.fromEntries(
-  cupKinds.map((kind) => [kind, `${CUP_STYLE_NAMES[cupStyle(kind)]} · ${DRINK_SIZES[cupSize(kind)].name}`]),
-) as Record<CupKind, string>
+/** Rack rows: the standard lines, then each service's own vessels. */
+export const cupRows = [...cupStyles, 'dine-in-vessel', 'takeout-vessel'] as const
+export type CupRow = (typeof cupRows)[number]
+export const CUP_ROW_NAMES: Record<CupRow, string> = {
+  ...(Object.fromEntries(cupStyles.map((style) => [style, CUP_LINES[style].name])) as Record<CupStyle, string>),
+  'dine-in-vessel': '전용 잔',
+  'takeout-vessel': '전용 컵',
+}
+export const cupRow = (kind: CupKind): CupRow => CUPS[kind].style ?? `${CUPS[kind].service}-vessel`
+export const rowCupKinds = (row: CupRow) => cupKinds.filter((kind) => cupRow(kind) === row)
 
-export const cupService = (kind: CupKind): ServiceMode => (isReusableCup(kind) ? 'dine-in' : 'takeout')
-export const cupTemperature = (kind: CupKind) =>
-  cupStyle(kind).startsWith('hot') ? ('hot' as const) : ('iced' as const)
+/** The standard line a drink takes when its recipe pours into the generic serving cup. */
+export function servingLine(temperature: Temperature, service: ServiceMode): CupStyle {
+  const style = cupStyles.find((id) => CUP_LINES[id].temperature === temperature && CUP_LINES[id].service === service)
+  if (!style) {
+    throw new Error(`${SERVICE_NAMES[service]} ${temperature.toUpperCase()} 컵이 없어요.`)
+  }
+  return style
+}
 
-export type CupAttribute = 'service' | 'temperature' | 'size'
+/** The rack cup for a serving vessel in the recipe data; throws when the shop has no cup for it. */
+export function servingCup(
+  vessel: string,
+  temperature: Temperature,
+  service: ServiceMode,
+  size: CatalogSize | undefined,
+): CupKind {
+  const kind = vessel === 'serving-cup' ? lineCup(servingLine(temperature, service), size) : vesselCup(vessel)
+  if (cupService(kind) !== service || cupTemperature(kind) !== temperature) {
+    throw new Error(
+      `${josa(CUP_NAMES[kind], '은', '는')} ${SERVICE_NAMES[service]} ${temperature.toUpperCase()} 음료에 쓸 수 없어요.`,
+    )
+  }
+  return kind
+}
 
-/** Which parts of an order a chosen cup gets wrong, in the order a barista reads them off the ticket. */
+function lineCup(style: CupStyle, size: CatalogSize | undefined): CupKind {
+  const line: CupLine = CUP_LINES[style]
+  if (!size || !line.sizes.includes(size)) {
+    throw new Error(`${line.name}에는 ${size ? DRINK_SIZES[size].name : '단일 제공'} 규격이 없어요.`)
+  }
+  return `${style}-${size}` as CupKind
+}
+
+function vesselCup(vessel: string): CupKind {
+  const kind = VESSEL_ALIASES[vessel] ?? (vessel in VESSEL_CUPS ? (vessel as VesselCupKind) : undefined)
+  if (!kind) {
+    throw new Error(`제공 용기에 맞는 컵이 없어요: ${vessel}`)
+  }
+  return kind
+}
+
+export type CupAttribute = 'service' | 'temperature' | 'size' | 'vessel'
+
+/**
+ * Which parts of an order a chosen cup gets wrong, in the order a barista reads them off the ticket. Standard cups
+ * differ by size; a drink with its own vessel differs by the vessel itself.
+ */
 export function cupMismatch(chosen: CupKind, needed: CupKind): CupAttribute[] {
+  const standard = !!cupStyle(chosen) && !!cupStyle(needed)
   const checks: [CupAttribute, boolean][] = [
     ['service', cupService(chosen) !== cupService(needed)],
     ['temperature', cupTemperature(chosen) !== cupTemperature(needed)],
-    ['size', cupSize(chosen) !== cupSize(needed)],
+    standard ? ['size', cupSize(chosen) !== cupSize(needed)] : ['vessel', chosen !== needed],
   ]
   return checks.filter(([, wrong]) => wrong).map(([attribute]) => attribute)
 }
@@ -61,33 +205,11 @@ export const emptyCupCounts = (): ReusableCupCounts =>
 export const cupCount = (counts: ReusableCupCounts | undefined) =>
   counts ? reusableCupKinds.reduce((sum, kind) => sum + counts[kind], 0) : 0
 
-export function reusableCupFor(recipe: RecipeId, size: DrinkSize): ReusableCupKind {
-  if (size === 'trenta') {
-    throw new Error('Trenta는 포장 전용이에요.')
-  }
-  return `${RECIPES[recipe].temperature === 'hot' ? 'hot-mug' : 'iced-glass'}-${size}`
-}
-
-export function cupKindFor(recipe: RecipeId, service: ServiceMode, size: DrinkSize): CupKind {
-  if (service === 'dine-in') {
-    return reusableCupFor(recipe, size)
-  }
-
-  if (RECIPES[recipe].temperature === 'hot') {
-    if (size === 'trenta') {
-      throw new Error('HOT 음료에는 Trenta 컵을 사용할 수 없어요.')
-    }
-    return `hot-paper-${size}`
-  }
-
-  return `iced-plastic-${size}`
-}
-
 export function cleanCupCount(state: GameState, kind: CupKind) {
   return isReusableCup(kind) ? state.reusableCups[kind].clean : state.disposableCups[kind].bar
 }
 
-// Each size keeps its own stock; washing uses the same workflow for every size.
+// Each kind keeps its own stock; washing uses the same workflow for every kind.
 export const REUSABLE_CUPS_PER_KIND = 4
 
 export const CUP_SUPPLY = {

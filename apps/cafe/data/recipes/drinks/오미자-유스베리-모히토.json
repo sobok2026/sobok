@@ -90,7 +90,7 @@
             {
               "action": "add",
               "materialId": "ice",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "rim-gap",
                 "millimeters": 20
@@ -108,7 +108,7 @@
             {
               "action": "transfer",
               "from": "fizzio-bottle",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "all"
               }
@@ -124,7 +124,7 @@
             {
               "action": "add",
               "materialId": "애플민트",
-              "into": "serving-cup",
+              "into": "cocktail-glass",
               "amount": {
                 "kind": "count",
                 "value": 1,

@@ -1,7 +1,7 @@
 import { customizationLabels } from '../../content/customizations'
-import { recipeFor } from '../../content/recipes'
+import { recipeCup, recipeFor } from '../../content/recipes'
 import type { OrderItem, OrderLine } from '../../simulation/state'
-import { cupKindFor, emptyCupCounts, isReusableCup, type ReusableCupCounts } from '../inventory/cups'
+import { emptyCupCounts, isReusableCup, type ReusableCupCounts } from '../inventory/cups'
 
 export const currentTicket = (state: {
   sale: { paidAt: number | null; lines: OrderLine[] } | null
@@ -79,7 +79,7 @@ export function customerCupCounts(state: {
   }
 
   for (const item of state.sale?.lines ?? []) {
-    const kind = cupKindFor(item.recipe, item.service, item.size)
+    const kind = recipeCup(item.recipe, item.size, item.service)
     if (isReusableCup(kind)) {
       counts[kind] += item.served
     }

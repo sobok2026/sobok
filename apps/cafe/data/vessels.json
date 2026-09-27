@@ -291,6 +291,20 @@
   },
   {
     "lineVolumes": [],
+    "id": "martini-glass",
+    "lines": [],
+    "name": "마티니 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "tulip-glass",
+    "lines": [],
+    "name": "튤립 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
     "id": "vin-chaud-glass",
     "lines": [],
     "name": "뱅쇼 더블월 글라스",
@@ -372,6 +386,20 @@
     "lines": [],
     "name": "숏 일회용 컵",
     "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "double-shot-glass",
+    "lines": [],
+    "name": "더블샷 전용 유리잔",
+    "notes": ["한국 매장 기준 7oz(약 207ml)."]
+  },
+  {
+    "lineVolumes": [],
+    "id": "double-shot-cup",
+    "lines": [],
+    "name": "더블샷 7oz 일회용 컵",
+    "notes": ["한국 매장 기준 7oz(약 207ml)."]
   },
   {
     "id": "toddy-brewer",

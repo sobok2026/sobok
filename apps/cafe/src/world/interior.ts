@@ -1,10 +1,10 @@
 import * as THREE from 'three'
-import { drinkSizeIds } from '../content/drink-sizes'
+import { recipeSizeSchema } from '../content/recipe-schema'
 import { BAR_CENTER_Z, staffFacingZ } from '../content/stations'
 import { createColdBrewDispenser } from '../features/cold-brew/equipment'
 import { createEspressoMachine } from '../features/crafting/espresso-machine'
 import { createIceBin, createSyrupStation, createWaterStation } from '../features/crafting/station-equipment'
-import { cupKinds, cupSize, cupStyle, cupStyles } from '../features/inventory/cups'
+import { cupKinds, cupRow, cupRows, cupSize, rowCupKinds } from '../features/inventory/cups'
 import { createDryStorage } from '../features/inventory/dry-storage'
 import { createRefrigerator } from '../features/inventory/refrigerator'
 import { createBlender } from '../features/preparation/blender'
@@ -232,19 +232,22 @@ export function createShopInterior(scene: THREE.Scene) {
   plant(-5.0, 3.7, 0.75)
   // Named work surfaces remain visually distinct at first-person distance.
   const register = createRegister(scene)
-  const cupStacks = cupKinds.map((kind) => ({
-    kind,
-    cups: Array.from({ length: 4 }, (_, i) => {
-      const body = createCupBody(scene, kind)
-      body.root.scale.setScalar(0.48)
-      body.root.position.set(
-        -4.13 + cupStyles.indexOf(cupStyle(kind)) * 0.2,
-        1.066 + i * 0.055,
-        -1.45 + drinkSizeIds.indexOf(cupSize(kind)) * 0.23,
-      )
-      return body
-    }),
-  }))
+  // One rack row per cup line or vessel group. Standard cups line up by size and stack; a drink's own vessels stand
+  // one each in rack order, since stemmed glasses do not stack.
+  const cupStacks = cupKinds.map((kind) => {
+    const size = cupSize(kind)
+    const column = size ? recipeSizeSchema.options.indexOf(size) * 0.23 : rowCupKinds(cupRow(kind)).indexOf(kind) * 0.19
+
+    return {
+      kind,
+      cups: Array.from({ length: size ? 4 : 1 }, (_, i) => {
+        const body = createCupBody(scene, kind)
+        body.root.scale.setScalar(0.48)
+        body.root.position.set(-4.13 + cupRows.indexOf(cupRow(kind)) * 0.17, 1.066 + i * 0.055, -1.45 + column)
+        return body
+      }),
+    }
+  })
   createEspressoMachine(scene)
   const milkCarton = box(-3.23, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)

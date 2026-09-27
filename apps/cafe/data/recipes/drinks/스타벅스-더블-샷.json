@@ -104,12 +104,26 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
-              "excludeMaterialIds": ["ice"]
+              "into": "double-shot-glass",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "double-shot-cup",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
             },
             {
               "action": "serve",
-              "lid": "always",
+              "lid": "takeaway",
               "lidType": "double-shot"
             }
           ]
@@ -219,12 +233,26 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
-              "excludeMaterialIds": ["ice"]
+              "into": "double-shot-glass",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "double-shot-cup",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
             },
             {
               "action": "serve",
-              "lid": "always",
+              "lid": "takeaway",
               "lidType": "double-shot"
             }
           ]
@@ -334,12 +362,26 @@
             {
               "action": "strain",
               "from": "shaker",
-              "into": "serving-cup",
-              "excludeMaterialIds": ["ice"]
+              "into": "double-shot-glass",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "double-shot-cup",
+              "excludeMaterialIds": ["ice"],
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
             },
             {
               "action": "serve",
-              "lid": "always",
+              "lid": "takeaway",
               "lidType": "double-shot"
             }
           ]

@@ -7687,6 +7687,178 @@
       "lines": {},
       "marks": {}
     },
+    "martini-glass": {
+      "geometry": {
+        "single": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "short": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "tall": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "grande": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "venti": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "trenta": {
+          "capacityMilliliters": 200,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        }
+      },
+      "cupStyles": null,
+      "lines": {},
+      "marks": {}
+    },
+    "tulip-glass": {
+      "geometry": {
+        "single": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "short": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "tall": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "grande": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "venti": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "trenta": {
+          "capacityMilliliters": 400,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        }
+      },
+      "cupStyles": null,
+      "lines": {},
+      "marks": {}
+    },
+    "double-shot-glass": {
+      "geometry": {
+        "single": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "short": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "tall": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "grande": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "venti": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "trenta": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        }
+      },
+      "cupStyles": null,
+      "lines": {},
+      "marks": {}
+    },
+    "double-shot-cup": {
+      "geometry": {
+        "single": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "short": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "tall": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "grande": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "venti": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        },
+        "trenta": {
+          "capacityMilliliters": 207,
+          "heightMillimeters": 150,
+          "topDiameterMillimeters": 90,
+          "bottomDiameterMillimeters": 60
+        }
+      },
+      "cupStyles": null,
+      "lines": {},
+      "marks": {}
+    },
     "toddy-brewer": {
       "geometry": {
         "single": {

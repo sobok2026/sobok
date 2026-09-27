@@ -1,10 +1,8 @@
 import { orderSequence } from '../../content/customers'
 import { type Customizations, canOmit, countAmount, noCustomizations } from '../../content/customizations'
-import type { DrinkSize } from '../../content/drink-sizes'
-import { RECIPES, type RecipeId, recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
+import { recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
 import { STATIONS, type TableId } from '../../content/stations'
 import type { Customer, GameState } from '../../simulation/state'
-import type { ServiceMode } from '../inventory/cups'
 
 export const customerStages = [
   'entering',
@@ -56,17 +54,6 @@ export const customerHasCup = (state: Pick<GameState, 'customer' | 'sale'>) =>
 
 const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
-export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] => {
-  const menu = RECIPES[recipe]
-  if (!menu) {
-    return []
-  }
-
-  return recipeSizes(recipe, service).filter(
-    (size) => size !== 'trenta' || (service === 'takeout' && menu.temperature === 'iced'),
-  )
-}
-
 export function createCustomer(orderNumber: number): Customer | null {
   if (!orderSequence.length) {
     return null
@@ -74,9 +61,9 @@ export function createCustomer(orderNumber: number): Customer | null {
   const preferredService = Math.random() < 0.5 ? 'dine-in' : 'takeout'
   const items: Customer['items'] = Array.from({ length: 1 + (orderNumber % 3) }, (_, index) => {
     const recipe = orderSequence[(orderNumber - 1 + index) % orderSequence.length]
-    const services = recipeServices(recipe).filter((service) => orderSizes(recipe, service).length > 0)
+    const services = recipeServices(recipe)
     const service = services.includes(preferredService) ? preferredService : services[0]
-    const sizes = orderSizes(recipe, service)
+    const sizes = recipeSizes(recipe, service)
     const size = sizes[Math.floor(Math.random() * sizes.length)]
     let customizations = noCustomizations()
 

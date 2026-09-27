@@ -1,9 +1,9 @@
 import type { GameState, Washing } from '../../simulation/state'
 import {
   CUP_NAMES,
-  CUP_STYLE_NAMES,
+  CUP_ROW_NAMES,
   type CupKind,
-  cupStyle,
+  cupRow,
   type ReusableCupKind,
   reusableCupKinds,
 } from '../inventory/cups'
@@ -37,16 +37,16 @@ export function washingHandsBusy(washing: Washing | null) {
  * within its kind so washing never picks an unrelated size.
  */
 export function washQueue(state: GameState, needed: CupKind | null) {
-  return (['pitcher', 'hot-mug', 'iced-glass'] as const)
+  return (['pitcher', 'hot-mug', 'iced-glass', 'dine-in-vessel'] as const)
     .map((group) => {
-      const items = washItems.filter((item) => (item === 'pitcher' ? item : cupStyle(item)) === group)
+      const items = washItems.filter((item) => (item === 'pitcher' ? item : cupRow(item)) === group)
       const next = (key: 'dirty' | 'washed') =>
         items.find((item) => item === needed && washStock(state, item)[key] > 0) ??
         items.find((item) => washStock(state, item)[key] > 0)
 
       return {
         group,
-        name: group === 'pitcher' ? WASH_NAMES.pitcher : CUP_STYLE_NAMES[group],
+        name: group === 'pitcher' ? WASH_NAMES.pitcher : CUP_ROW_NAMES[group],
         dirty: items.reduce((sum, item) => sum + washStock(state, item).dirty, 0),
         washed: items.reduce((sum, item) => sum + washStock(state, item).washed, 0),
         dirtyItem: next('dirty'),
