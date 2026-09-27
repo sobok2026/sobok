@@ -4,6 +4,8 @@
 
 ## 사진 참고
 
+2026-09-27에는 [스타벅스 공식 BUNN Digital Brewer 사진](https://about.starbucks.com/stories/2026/freshly-brewed-coffee-on-demand-how-the-innovative-clover-vertica-is-changing-starbucks-coffeehouses/)을 참고해 URN Digital 외형을 추가했다. `features/drip-coffee/equipment.ts`의 두 깔때기·사각 보온 서버·수위관·레버·온수 탭·LCD·배수 격자를 기존 바의 에스프레소 머신과 콜드 브루 탭 사이에 배치한다. 2026-09-28 [URN 추출·COW·POS](./digital-urn-proposal.md)를 연결했다. 기기 화면에 원두·타이머·잔량을 표시하고 수위·추출 줄기·ICED 용기의 상태를 갱신한다.
+
 | 장비                   | 참고 자료                                                                                                                                                                                                                       | 반영한 외형                                                                                                               |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Mastrena II            | [Thermoplan의 Starbucks 방문 사진](https://www.thermoplan.ch/en/news/news-media/starbucks-visit), [정면 기기 사진](https://www.visionequipment.com/product/new-2023-thermoplan-mastrena-2-cs-super-automatic-espresso-machine/) | 세 개의 투명 원두통, 넓은 가운데 원두통, 구리색 측면, 원형 추출 조작부, 중앙 화면, 오른쪽 스팀 봉, 압력계, 금속 배수 받침 |
