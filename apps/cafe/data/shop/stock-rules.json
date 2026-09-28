@@ -22,6 +22,24 @@
     "cold-brew-grounds": "ml"
   },
   "materials": {
+    "signature-chocolate-powder": {
+      "millilitersPerStockUnit": 600,
+      "gramsPerStockUnit": 500,
+      "counts": {
+        "piece": 0.00833333,
+        "bag": 1,
+        "pack": 1,
+        "tap": 0.00041667,
+        "turn": 0.00833333,
+        "drop": 8.333e-5,
+        "cup": 0.33333333,
+        "cycle": 0.00833333,
+        "shot": 0.05,
+        "pump": 0.0125,
+        "scoop": 0.00833333
+      },
+      "phase": "solid"
+    },
     "drip-beans-house-blend": {
       "millilitersPerStockUnit": 2.5,
       "gramsPerStockUnit": 1,
@@ -287,7 +305,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 15.0,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -557,7 +575,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 3.75,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -1871,7 +1889,7 @@
         "cup": 110.0,
         "cycle": 2.75,
         "shot": 16.5,
-        "pump": 4.125,
+        "pump": 5.61,
         "scoop": 2.75
       },
       "phase": "solid"
@@ -1997,7 +2015,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 10.2,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -2303,7 +2321,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 21.9,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -3905,7 +3923,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 10.2,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -3923,7 +3941,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 21.9,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -4319,7 +4337,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 13.0,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -4337,7 +4355,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 21.9,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -4499,7 +4517,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 10.2,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -4571,7 +4589,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 21.9,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -4589,7 +4607,7 @@
         "cup": 200.0,
         "cycle": 5.0,
         "shot": 30.0,
-        "pump": 7.5,
+        "pump": 21.9,
         "scoop": 5.0
       },
       "phase": "liquid"
@@ -5244,6 +5262,7 @@
     }
   },
   "tools": {
+    "mocha-cbs-pump": { "value": 7.5, "unit": "ml", "bySize": null },
     "white-mocha-pump": {
       "value": 10.2,
       "unit": "ml",
@@ -5282,7 +5301,7 @@
       }
     },
     "base-pump": {
-      "value": 15,
+      "value": 21.9,
       "unit": "ml",
       "bySize": null
     },
@@ -5337,7 +5356,7 @@
       "bySize": null
     },
     "frappuccino-roast-pump": {
-      "value": 5,
+      "value": 13,
       "unit": "ml",
       "bySize": null
     },
@@ -8401,6 +8420,41 @@
     "charge": 1
   },
   "preparationOutputs": {
+    "whipped-cream/canister": {
+      "materialId": "whipped-cream",
+      "amount": 500,
+      "stockUnit": "ml"
+    },
+    "half-and-half/standard": {
+      "materialId": "half-and-half",
+      "amount": 1000,
+      "stockUnit": "ml"
+    },
+    "signature-chocolate-premix/standard": {
+      "materialId": "signature-chocolate-premix",
+      "amount": 1000,
+      "stockUnit": "ml"
+    },
+    "frappuccino-roast/standard": {
+      "materialId": "frappuccino-roast",
+      "amount": 1000,
+      "stockUnit": "ml"
+    },
+    "espresso-chips/standard": {
+      "materialId": "espresso-chips",
+      "amount": 4,
+      "stockUnit": "g"
+    },
+    "cold-foam/large": {
+      "materialId": "cold-foam",
+      "amount": 780,
+      "stockUnit": "ml"
+    },
+    "classic-milk-tea-base/large": {
+      "materialId": "classic-milk-tea-base",
+      "amount": 2080,
+      "stockUnit": "ml"
+    },
     "classic-milk-tea-base/standard": {
       "materialId": "classic-milk-tea-base",
       "amount": 1040,
