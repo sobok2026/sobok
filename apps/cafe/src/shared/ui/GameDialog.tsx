@@ -6,11 +6,13 @@ export default function GameDialog({
   children,
   onClose,
   wide = false,
+  scrollBody = false,
 }: {
   title: string
   children: ReactNode
   onClose?: () => void
   wide?: boolean
+  scrollBody?: boolean
 }) {
   const titleId = useId()
   const surface = useRef<HTMLElement>(null)
@@ -40,8 +42,9 @@ export default function GameDialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={clsx(
-          'max-h-full w-full overflow-y-auto [scrollbar-width:thin]',
+          'max-h-full w-full [scrollbar-width:thin]',
           'rounded-2xl bg-surface p-7 shadow-dialog outline-none',
+          scrollBody ? 'flex flex-col overflow-hidden' : 'overflow-y-auto',
           wide ? 'max-w-140' : 'max-w-100',
         )}
         onKeyDown={(event) => {
@@ -73,7 +76,7 @@ export default function GameDialog({
           }
         }}
       >
-        <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mb-6 flex shrink-0 items-center justify-between gap-4">
           <h2 id={titleId} className="text-2xl font-semibold tracking-tight">
             {title}
           </h2>
@@ -88,7 +91,18 @@ export default function GameDialog({
             </button>
           )}
         </div>
-        {children}
+        {scrollBody ? (
+          <section
+            className="min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:thin]"
+            aria-labelledby={titleId}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard focus lets players scroll with arrow and page keys.
+            tabIndex={0}
+          >
+            {children}
+          </section>
+        ) : (
+          children
+        )}
       </section>
     </div>
   )

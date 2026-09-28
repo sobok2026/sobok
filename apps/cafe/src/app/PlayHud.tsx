@@ -27,6 +27,7 @@ export default function PlayHud({
   setDismissedMessageId,
   saveError,
   openPanel,
+  openLabel,
   act,
   use,
   stopUse,
@@ -43,6 +44,7 @@ export default function PlayHud({
   setDismissedMessageId: (id: string | undefined) => void
   saveError: boolean
   openPanel: (station: StationId) => void
+  openLabel: () => void
   act: (action: Action) => void
   use: (station: StationId) => void
   stopUse: () => void
@@ -71,7 +73,9 @@ export default function PlayHud({
 
   return (
     <>
-      {!panel && <OrderRail state={state} goal={goal} now={focusedWork && target === goal.station} />}
+      {!panel && (
+        <OrderRail state={state} goal={goal} now={focusedWork && target === goal.station} openLabel={openLabel} />
+      )}
       {!panel && !focusedWork && (
         <>
           <div

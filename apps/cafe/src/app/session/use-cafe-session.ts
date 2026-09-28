@@ -4,6 +4,7 @@ import { craftWorkStation } from '../../features/crafting/rules'
 import { carriedBatch } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
 import { customerWalking } from '../../features/service/customer'
+import { currentTicket } from '../../features/service/orders'
 import type { Action } from '../../simulation/actions'
 import { cupHandsBusy } from '../../simulation/hands'
 import { initialState } from '../../simulation/initial-state'
@@ -25,8 +26,8 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   const { preferences, preferencesRef, preferencesError, soundStatus, sounds, updatePreferences } =
     useWorkPreferences(initialPreferences)
   const focused = useRef(true)
-  const [mode, setMode] = useState<'welcome' | 'play' | 'pause' | 'guide' | 'overview'>('welcome')
-  const guideReturn = useRef<{
+  const [mode, setMode] = useState<'welcome' | 'play' | 'pause' | 'guide' | 'label' | 'overview'>('welcome')
+  const referenceReturn = useRef<{
     mode: 'welcome' | 'play' | 'pause'
     panel: StationId | null
     station: StationId | null
@@ -61,9 +62,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
   flags.current = { mode, panel, started, hasLock, confirmNew, mouseMode }
 
-  function openGuide() {
+  function openReference(nextMode: 'guide' | 'label') {
     const previous = flags.current
-    guideReturn.current = {
+    referenceReturn.current = {
       mode: previous.mode === 'welcome' || previous.mode === 'pause' ? previous.mode : 'play',
       panel: previous.panel,
       station: previous.panel ?? targetRef.current,
@@ -71,13 +72,22 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     }
     stopUse()
     sounds.current?.stop()
-    flags.current.mode = 'guide'
-    setMode('guide')
+    flags.current.mode = nextMode
+    setMode(nextMode)
     scene.current?.unlock()
   }
 
-  function closeGuide() {
-    const previous = guideReturn.current
+  function openGuide() {
+    openReference('guide')
+  }
+
+  function openLabel() {
+    if (!['play', 'pause'].includes(flags.current.mode) || !currentTicket(store.getSnapshot())) return
+    openReference('label')
+  }
+
+  function closeReference() {
+    const previous = referenceReturn.current
     flags.current.mode = previous.mode
     flags.current.panel = previous.panel
     setMode(previous.mode)
@@ -419,9 +429,20 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       ) {
         event.preventDefault()
         if (flags.current.mode === 'guide') {
-          closeGuide()
+          closeReference()
         } else {
           openGuide()
+        }
+        return
+      }
+
+      if (event.code === 'KeyL' && flags.current.started && store.getSnapshot().phase !== 'summary') {
+        if (flags.current.mode === 'label') {
+          event.preventDefault()
+          closeReference()
+        } else if (['play', 'pause'].includes(flags.current.mode) && currentTicket(store.getSnapshot())) {
+          event.preventDefault()
+          openLabel()
         }
         return
       }
@@ -529,7 +550,8 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     input,
     updatePreferences,
     openGuide,
-    closeGuide,
+    openLabel,
+    closeReference,
     openPanel,
     closePanel,
     pause,
@@ -543,7 +565,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     capture,
     persist,
     importBackup,
-    guideStation: guideReturn.current.station,
+    guideStation: referenceReturn.current.station,
     previewSound: () => void sounds.current?.preview(),
   }
 }

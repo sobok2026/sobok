@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { type ReactNode, useEffect, useState } from 'react'
+import OrderLabelDialog from '../features/service/OrderLabelDialog'
 import ShiftLedger from '../features/shift/ShiftLedger'
 import ShiftOverview from '../features/shift/ShiftOverview'
 import { money } from '../shared/format'
@@ -105,7 +106,7 @@ function CafeGame(props: CafeSessionProps) {
     input,
     updatePreferences,
     openGuide,
-    closeGuide,
+    closeReference,
     closePanel,
     pause,
     resume,
@@ -227,10 +228,11 @@ function CafeGame(props: CafeSessionProps) {
       {running && panel && <StationPanel state={state} panel={panel} act={act} closePanel={closePanel} />}
 
       {mode === 'guide' && (
-        <GameDialog title="도움말" onClose={closeGuide} wide>
+        <GameDialog title="도움말" onClose={closeReference} wide>
           <WorkGuide state={state} station={guideStation} started={started} />
         </GameDialog>
       )}
+      {mode === 'label' && <OrderLabelDialog state={state} onClose={closeReference} />}
       {mode === 'pause' && (
         <GameDialog title="일시정지" onClose={resume}>
           <Button disabled={!canStart} onClick={resume}>

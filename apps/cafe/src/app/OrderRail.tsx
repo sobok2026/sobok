@@ -8,12 +8,21 @@ import type { Objective } from '../simulation/guidance'
 import type { GameState, Job, OrderLine } from '../simulation/state'
 
 /**
- * The quest tracker of a shift: every drink the current customer paid for, how far the active one is,
- * and the one thing to do next.
+ * The active drink, its progress, the remaining drink count, and the one thing to do next.
  */
-export default function OrderRail({ state, goal, now }: { state: GameState; goal: Objective; now: boolean }) {
+export default function OrderRail({
+  state,
+  goal,
+  now,
+  openLabel,
+}: {
+  state: GameState
+  goal: Objective
+  now: boolean
+  openLabel: () => void
+}) {
   const ticket = currentTicket(state)
-  const others = state.sale?.paidAt != null ? state.sale.lines.filter((line) => line.id !== ticket?.id) : []
+  const waiting = ticket ? state.sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) - 1 : 0
   const jobs = state.jobs.filter((job) => job.kind === 'production' && job.cupId && job.cupId === state.cup?.id)
 
   return (
@@ -25,66 +34,66 @@ export default function OrderRail({ state, goal, now }: { state: GameState; goal
       )}
       aria-label="주문과 다음 할 일"
     >
-      {ticket && <ActiveDrink state={state} line={ticket} compact={now} />}
+      {ticket && <ActiveDrink state={state} line={ticket} compact={now} openLabel={openLabel} />}
       {jobs.map((job) => (
         <JobChip key={job.id} job={job} time={state.time} />
       ))}
       {!now && <ObjectiveLine goal={goal} />}
-      {!now && others.length > 0 && (
-        <ul className="mt-3.5 grid gap-2.5 border-t border-line pt-3.5">
-          {others.map((line) => (
-            <QueuedDrink key={line.id} line={line} />
-          ))}
-        </ul>
+      {!now && waiting > 0 && (
+        <p className="mt-3.5 border-t border-line pt-3.5 text-sm text-muted tabular-nums">대기 {waiting}잔</p>
       )}
     </aside>
   )
 }
 
 /**
- * The drink being made. Once the sticker is on the cup the block reads as that sticker, the paper the barista
- * works from. While the work card is up it folds to the name and the step dots.
+ * A glanceable order summary. Reading the full printed label is an explicit action, independent of attachment.
+ * While the work card is up the summary folds to the name and step dots, keeping the label shortcut available.
  */
-function ActiveDrink({ state, line, compact }: { state: GameState; line: OrderLine; compact: boolean }) {
+function ActiveDrink({
+  state,
+  line,
+  compact,
+  openLabel,
+}: {
+  state: GameState
+  line: OrderLine
+  compact: boolean
+  openLabel: () => void
+}) {
   const recipe = RECIPES[line.recipe]
   const extras = itemCustomizations(line)
   const total = recipeFor(line.recipe, line.size, line.service, line.customizations).steps.length
   const cup = state.cup?.orderLineId === line.id ? state.cup : null
   const done = cup ? cup.craft.cursor : 0
   const variant = variantName(line)
-  const sticker = !!cup?.craft.sticker
 
   return (
-    <div
-      className={clsx(
-        'mb-3',
-        'data-[sticker=true]:rounded-lg data-[sticker=true]:border data-[sticker=true]:border-line',
-        'data-[sticker=true]:bg-white data-[sticker=true]:px-3 data-[sticker=true]:py-2.5',
-      )}
-      data-sticker={sticker}
-    >
-      {sticker && (
-        <p className="mb-0.5 text-sm text-muted tabular-nums">
-          주문 스티커 #{String(state.orderNumber).padStart(3, '0')}
-        </p>
-      )}
-      <h2 className="text-lg leading-snug font-semibold tracking-tight">{recipe.shortName}</h2>
+    <div className="mb-3">
+      <div className="flex items-start gap-3">
+        <h2 className="line-clamp-2 min-w-0 flex-1 text-lg leading-snug font-semibold tracking-tight">
+          {recipe.shortName}
+        </h2>
+        <button
+          type="button"
+          className="pointer-events-auto flex shrink-0 items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted"
+          aria-haspopup="dialog"
+          aria-keyshortcuts="L"
+          onClick={openLabel}
+        >
+          <kbd className="rounded border border-line px-1 text-xs">L</kbd>
+          라벨 보기
+        </button>
+      </div>
       {!compact && (
-        <>
-          <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-body text-muted">
-            <TemperatureChip line={line} />
-            {variant && <span>{variant}</span>}
-            <span>
-              {DRINK_SIZES[line.size].name} · {SERVICE_NAMES[line.service]}
-            </span>
-            {line.quantity > 1 && (
-              <span className="tabular-nums">
-                {line.served + 1}/{line.quantity}잔
-              </span>
-            )}
-          </p>
-          {extras.length > 0 && <p className="mt-1 text-sm text-muted">{extras.join(' · ')}</p>}
-        </>
+        <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-body text-muted">
+          <TemperatureChip line={line} />
+          {variant && <span>{variant}</span>}
+          <span>
+            {DRINK_SIZES[line.size].name} · {SERVICE_NAMES[line.service]}
+          </span>
+          {extras.length > 0 && <span>커스텀 {extras.length}개</span>}
+        </p>
       )}
       <ol className="mt-3.5 flex gap-0.75" aria-label={`제조 ${done}/${total}단계`}>
         {Array.from({ length: total }, (_, index) => (
@@ -153,27 +162,6 @@ function ObjectiveLine({ goal }: { goal: Objective }) {
   )
 }
 
-function QueuedDrink({ line }: { line: OrderLine }) {
-  const served = line.served === line.quantity
-
-  return (
-    <li
-      className="flex items-center justify-between gap-3 text-body data-[served=true]:text-muted"
-      data-served={served}
-    >
-      <span className="flex min-w-0 items-center gap-2">
-        {served && <CheckIcon />}
-        <span className="truncate">{RECIPES[line.recipe].shortName}</span>
-        {line.quantity > 1 && <span className="shrink-0 text-muted tabular-nums">×{line.quantity}</span>}
-      </span>
-      <span className="flex shrink-0 items-center gap-2 text-muted">
-        <TemperatureChip line={line} />
-        {DRINK_SIZES[line.size].name}
-      </span>
-    </li>
-  )
-}
-
 function TemperatureChip({ line }: { line: OrderLine }) {
   const temperature = RECIPES[line.recipe].temperature
 
@@ -187,14 +175,6 @@ function TemperatureChip({ line }: { line: OrderLine }) {
     >
       {temperature.toUpperCase()}
     </span>
-  )
-}
-
-function CheckIcon() {
-  return (
-    <svg className="size-4 shrink-0 text-success" viewBox="0 0 16 16" fill="none" aria-label="전달 완료">
-      <path d="m3 8.5 3.2 3L13 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
   )
 }
 
