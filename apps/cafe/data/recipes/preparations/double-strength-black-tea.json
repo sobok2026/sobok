@@ -87,9 +87,30 @@
               }
             }
           ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": ["BT로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 실온 보관하며 제조 후 12시간 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "water-pitcher",
+              "labels": ["BT", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "water-pitcher",
+              "storage": "room"
+            }
+          ]
         }
       ],
-      "notes": ["2020년 도입된 1리터용 블랙 아이스 티백 기준."],
+      "notes": [
+        "2020년 도입된 1리터용 블랙 아이스 티백 기준.",
+        "보관·기한·마킹은 2026-09-28 사용자 제공 부재료 제조표를 따른다."
+      ],
       "review": [],
       "output": {
         "materialId": "double-strength-black-tea",
@@ -185,9 +206,30 @@
               }
             }
           ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": ["BT로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 실온 보관하며 제조 후 12시간 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "water-pitcher",
+              "labels": ["BT", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "water-pitcher",
+              "storage": "room"
+            }
+          ]
         }
       ],
-      "notes": ["2020년 도입된 1리터용 블랙 아이스 티백 기준."],
+      "notes": [
+        "2020년 도입된 1리터용 블랙 아이스 티백 기준.",
+        "보관·기한·마킹은 2026-09-28 사용자 제공 부재료 제조표를 따른다."
+      ],
       "review": [],
       "output": {
         "materialId": "double-strength-black-tea",

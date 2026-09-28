@@ -1,23 +1,23 @@
 {
-  "id": "mocha-sauce",
-  "name": "바모카 제조",
+  "id": "frappuccino-roast",
+  "name": "프라푸치노 로스트 제조",
   "kind": "preparation",
   "variants": [
     {
       "id": "standard",
-      "name": "standard",
+      "name": "기본 제조",
       "temperature": null,
       "sizes": [],
       "steps": [
         {
           "id": "powder",
-          "label": "바모카 원팩",
-          "instructions": ["바모카 원팩 1봉을 넣는다."],
+          "label": "로스트 원팩",
+          "instructions": ["프라푸치노 로스트 1봉을 넣는다."],
           "notes": [],
           "operations": [
             {
               "action": "add",
-              "materialId": "mocha-powder",
+              "materialId": "frappuccino-roast-powder",
               "into": "mixing-pitcher",
               "amount": {
                 "kind": "count",
@@ -28,9 +28,9 @@
           ]
         },
         {
-          "id": "hot-water",
-          "label": "온수 계량",
-          "instructions": ["온수 1L를 넣는다."],
+          "id": "water",
+          "label": "정수 계량",
+          "instructions": ["정수물 1L를 넣는다."],
           "notes": [],
           "operations": [
             {
@@ -41,9 +41,6 @@
                 "kind": "amount",
                 "value": 1,
                 "unit": "l"
-              },
-              "temperature": {
-                "kind": "hot"
               }
             }
           ]
@@ -51,26 +48,25 @@
         {
           "id": "mix",
           "label": "혼합",
-          "instructions": ["덩어리 없이 잘 섞는다."],
+          "instructions": ["로스트 파우더와 정수를 섞는다."],
           "notes": [],
           "operations": [
             {
               "action": "mix",
-              "vessel": "mixing-pitcher",
-              "toolId": "spatula"
+              "vessel": "mixing-pitcher"
             }
           ]
         },
         {
           "id": "label-and-store",
           "label": "마킹 및 보관",
-          "instructions": ["M로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 실온 보관하며 제조 후 24시간 사용한다."],
+          "instructions": ["FR로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 실온 보관하며 제조 후 48시간 사용한다."],
           "notes": [],
           "operations": [
             {
               "action": "label",
               "vessel": "mixing-pitcher",
-              "labels": ["M", "숫자 + Price Tag"]
+              "labels": ["FR", "숫자 + Price Tag"]
             },
             {
               "action": "store",
@@ -80,15 +76,12 @@
           ]
         }
       ],
-      "notes": [
-        "제조 후 실온 보관, 24시간.",
-        "2026-09-28 사용자 제공 부재료 제조표와 원팩 1봉·온수 1L·실온 24시간이 일치한다."
-      ],
+      "notes": ["2026-09-28 사용자 제공 부재료 제조표 기준.", "사진은 1봉의 무게와 혼합 시간·횟수를 명시하지 않는다."],
       "review": [],
       "output": {
-        "materialId": "mocha",
+        "materialId": "frappuccino-roast",
         "amount": null,
-        "description": "온수 1L는 투입량이며 완성량은 미기재."
+        "description": "사진에 완성 수율은 명시되지 않았다."
       }
     }
   ]

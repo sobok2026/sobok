@@ -1,6 +1,17 @@
 [
   {
     "dose": {
+      "value": 7.5,
+      "unit": "ml"
+    },
+    "id": "mocha-cbs-pump",
+    "kind": "pump",
+    "name": "바모카 CBS 펌프",
+    "notes": ["2026-09-28 사용자 확인. 샬로우자용 CBS 7.5ml이며 시럽 CBS 3.75ml와 구분한다."],
+    "programs": []
+  },
+  {
+    "dose": {
       "value": 10.2,
       "unit": "ml"
     },
@@ -211,11 +222,14 @@
     ]
   },
   {
-    "dose": null,
+    "dose": {
+      "value": 21.9,
+      "unit": "ml"
+    },
     "id": "base-pump",
     "kind": "pump",
     "name": "프라푸치노 베이스 펌프",
-    "notes": [],
+    "notes": ["2026-09-28 사용자 확인: 매장 펌프의 1회 토출량."],
     "programs": []
   },
   {
@@ -435,27 +449,36 @@
     "programs": []
   },
   {
-    "dose": null,
+    "dose": {
+      "value": 13,
+      "unit": "ml"
+    },
     "id": "frappuccino-roast-pump",
     "kind": "pump",
     "name": "프라푸치노 로스트 펌프",
-    "notes": [],
+    "notes": ["2026-09-28 사용자 확인: 매장 펌프의 1회 토출량."],
     "programs": []
   },
   {
-    "dose": null,
+    "dose": {
+      "value": 15,
+      "unit": "ml"
+    },
     "id": "mocha-pump",
     "kind": "pump",
     "name": "모카 소스 펌프",
-    "notes": [],
+    "notes": ["2026-09-28 사용자 확인: 매장 펌프의 1회 토출량."],
     "programs": []
   },
   {
-    "dose": null,
+    "dose": {
+      "value": 10.2,
+      "unit": "ml"
+    },
     "id": "dolce-pump",
     "kind": "pump",
     "name": "돌체 시럽 펌프",
-    "notes": [],
+    "notes": ["2026-09-28 사용자 확인: 매장 펌프의 1회 토출량."],
     "programs": []
   },
   {
@@ -577,5 +600,19 @@
     "dose": null,
     "programs": [],
     "notes": []
+  },
+  {
+    "id": "coffee-grinder",
+    "name": "커피 그라인더",
+    "kind": "machine",
+    "dose": null,
+    "programs": [
+      {
+        "id": "espresso",
+        "name": "에스프레소",
+        "duration": null
+      }
+    ],
+    "notes": ["부재료 제조표의 에스프레소 칩 분쇄용 그라인더. 원문은 모델과 분쇄 시간을 지정하지 않는다."]
   }
 ]

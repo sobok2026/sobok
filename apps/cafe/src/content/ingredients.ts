@@ -6,6 +6,7 @@ import { materialSchema } from './recipe-schema'
 
 export type IngredientId = string
 export type Costs = Record<string, number>
+export type IngredientStorage = 'room' | 'fridge'
 
 export type Ingredient = {
   id: string
@@ -14,8 +15,10 @@ export type Ingredient = {
   stockUnit: string
   pack: number
   price: number
-  storage: 'room' | 'fridge'
+  storage: IngredientStorage
   lifetime: Lifetime
+  storageLifetimes?: Partial<Record<IngredientStorage, Lifetime>>
+  closingStorage?: IngredientStorage
   prepared: boolean
   preparationId: string | null
   startingAmount: number
@@ -88,6 +91,8 @@ export const INGREDIENTS: Record<string, Ingredient> = Object.fromEntries(
           ...supply,
           storage,
           lifetime,
+          storageLifetimes: quality?.storageLifetimes,
+          closingStorage: quality?.closingStorage,
           id: material.id,
           name: material.name,
           // Purchased finished packs follow the opening/label workflow, while source kind stays in the catalog.
@@ -98,3 +103,8 @@ export const INGREDIENTS: Record<string, Ingredient> = Object.fromEntries(
     ]
   }),
 )
+
+export function ingredientLifetime(ingredient: IngredientId, storage: IngredientStorage): Lifetime {
+  const definition = INGREDIENTS[ingredient]
+  return definition.storageLifetimes?.[storage] ?? definition.lifetime
+}

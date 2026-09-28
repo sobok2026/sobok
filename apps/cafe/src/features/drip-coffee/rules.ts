@@ -6,6 +6,7 @@ export const DRIP = z
   .strictObject({
     note: z.string(),
     brewSeconds: z.number().int().positive(),
+    batchSetting: z.literal('1/4'),
     waterMilliliters: z.number().positive(),
     hotBeansGrams: z.number().positive(),
     icedBeansGrams: z.number().positive(),

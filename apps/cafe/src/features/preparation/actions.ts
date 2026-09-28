@@ -246,6 +246,7 @@ export function finishPreparation(work: WorkContext, completedAt: number) {
     return
   }
   const batch = newBatch(definition.output.materialId, definition.output.amount, completedAt, 'prep')
+  batch.ingredientExpiresAt = prep.ingredientExpiresAt
   if (prep.ingredientExpiresAt !== null) {
     batch.expiresAt = Math.min(batch.expiresAt ?? prep.ingredientExpiresAt, prep.ingredientExpiresAt)
   }

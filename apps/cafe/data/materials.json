@@ -156,7 +156,7 @@
     "kind": "prepared",
     "name": "하프앤하프",
     "notes": [],
-    "preparationId": null,
+    "preparationId": "half-and-half",
     "stockUnit": "ml"
   },
   {
@@ -245,8 +245,10 @@
     "id": "whipped-cream",
     "kind": "prepared",
     "name": "일반 휘핑 크림",
-    "notes": ["이 자료에서 동일한 이름의 준비 제조법은 연결되지 않았다."],
-    "preparationId": null,
+    "notes": [
+      "2026-09-28 사용자 확인으로 통 제조의 가스 주입·30회 흔들기를 연결했다. 바트의 자동휘핑머신 작업은 별도 확인이 필요하다."
+    ],
+    "preparationId": "whipped-cream",
     "stockUnit": null
   },
   {
@@ -1357,10 +1359,10 @@
   },
   {
     "id": "espresso-chips",
-    "kind": "raw",
+    "kind": "prepared",
     "name": "에스프레소 칩",
-    "notes": [],
-    "preparationId": null,
+    "notes": ["2026-09-28 사용자 제공 부재료 제조표로 제조법·마킹·보관 기한을 보완했다."],
+    "preparationId": "espresso-chips",
     "stockUnit": null
   },
   {
@@ -1855,8 +1857,8 @@
     "id": "frappuccino-roast",
     "kind": "prepared",
     "name": "프라푸치노 로스트",
-    "notes": [],
-    "preparationId": null,
+    "notes": ["2026-09-28 사용자 제공 부재료 제조표로 제조법·마킹·보관 기한을 보완했다."],
+    "preparationId": "frappuccino-roast",
     "stockUnit": "ml"
   },
   {
@@ -1992,7 +1994,7 @@
     "kind": "prepared",
     "name": "시그니처 초콜릿 프리믹스",
     "notes": [],
-    "preparationId": null,
+    "preparationId": "signature-chocolate-premix",
     "stockUnit": "ml"
   },
   {
@@ -2322,5 +2324,15 @@
     "notes": ["COW 드립 추출용 원두. 게임 원팩 규격·입고가·기한은 기존 원두 운영값을 사용한다."],
     "preparationId": null,
     "stockUnit": "g"
+  },
+  {
+    "id": "signature-chocolate-powder",
+    "name": "시그니처 초코 원팩",
+    "kind": "raw",
+    "stockUnit": "pack",
+    "preparationId": null,
+    "notes": [
+      "부재료 제조표의 시그니처 초코 1봉. 원문의 무게는 미기재이며 리저브 다크 초콜릿·토핑용 초코 파우더와 구분한다."
+    ]
   }
 ]

@@ -80,12 +80,12 @@ export default function DripPanel({ state, act }: { state: GameState; act: (acti
           <details className="text-body">
             <summary>제조 기준</summary>
             <p className="mt-2">
-              원두 {dripDose(temperature)}g · 자동 급수 {DRIP.waterMilliliters}ml · 추출 5분
+              원두 {dripDose(temperature)}g · {DRIP.batchSetting} 설정 · 급수 {DRIP.waterMilliliters}ml · 추출 5분
             </p>
             <p>
               {temperature === 'hot'
                 ? '추출 완료 후 URN 보온 1시간'
-                : `추출 후 얼음 ${DRIP.icedIceGrams}g · 혼합 · 라벨 · 냉장 보관`}
+                : `추출 후 얼음 ${DRIP.icedIceGrams}g · 혼합 · 라벨 · 실온 4시간 또는 냉장 8시간`}
             </p>
           </details>
           <Button onClick={() => act({ type: 'drip-prepare', temperature, bean })}>배치 준비</Button>

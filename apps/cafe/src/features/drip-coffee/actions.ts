@@ -1,4 +1,4 @@
-import { INGREDIENTS } from '../../content/ingredients'
+import { ingredientLifetime } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import { uid } from '../../shared/id'
 import type { DripAction } from '../../simulation/actions'
@@ -24,6 +24,7 @@ import {
 function outputBatch(state: GameState, temperature: DripTemperature, brew: DripBrew) {
   const batch = newBatch(dripIngredient(temperature), DRIP.waterMilliliters + brew.ice, brew.completedAt!, 'urn')
   batch.dripBean = brew.bean
+  batch.ingredientExpiresAt = brew.ingredientExpiresAt
   batch.labelled = temperature === 'hot'
   batch.expiresAt = Math.min(batch.expiresAt!, brew.ingredientExpiresAt ?? Infinity)
   state.batches.push(batch)
@@ -73,7 +74,7 @@ export function settleDrip(state: GameState) {
       brew.completedAt === null
         ? brew.ingredientExpiresAt
         : Math.min(
-            expiryAt(brew.completedAt, INGREDIENTS[dripIngredient(temperature)].lifetime),
+            expiryAt(brew.completedAt, ingredientLifetime(dripIngredient(temperature), 'room')),
             brew.ingredientExpiresAt ?? Infinity,
           )
     if (!brew.fault && expiresAt !== null && expiresAt <= state.time) {
@@ -171,7 +172,7 @@ export function handleDripActions(work: WorkContext, action: DripAction) {
     say(s, 'URN 추출을 시작했어요. 5분 동안 다른 일을 할 수 있어요.')
   } else if (action.type === 'drip-mix' && brew.stage === 'mix' && temperature === 'iced') {
     outputBatch(s, temperature, brew)
-    say(s, '아이스 드립을 혼합했어요. 라벨을 쓰고 냉장 보관해주세요.', 'success')
+    say(s, '아이스 드립을 혼합했어요. 실온·냉장 보관을 선택하고 해당 기한의 라벨을 써주세요.', 'success')
   }
 }
 

@@ -64,9 +64,124 @@
               }
             }
           ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": [
+            "Cold F로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 냉장 보관하며 제조 후 24시간 사용한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "foam-pitcher",
+              "labels": ["Cold F", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "foam-pitcher",
+              "storage": "fridge"
+            }
+          ]
         }
       ],
-      "notes": [],
+      "notes": [
+        "2026-09-28 사용자 제공 부재료 제조표와 배합 일치. 바닐라 시럽은 7.5ml 펌프 4회이며 대용량은 배합을 2배로 한다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "cold-foam",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    },
+    {
+      "id": "large",
+      "name": "대용량 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "폼 베이스 추가",
+          "instructions": ["폼 베이스 500ml를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam-base",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "바닐라 시럽 추가",
+          "instructions": ["바닐라 시럽을 7.5ml 펌프로 8회 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "vanilla-syrup",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 8,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": [
+            "Cold F로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 냉장 보관하며 제조 후 24시간 사용한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "foam-pitcher",
+              "labels": ["Cold F", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "foam-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "제공된 부재료 제조표의 대용량 2배 배합이다. 블렌더 프로그램·횟수·시간은 기존 콜드 폼 제조법을 따른다."
+      ],
       "review": [],
       "output": {
         "materialId": "cold-foam",

@@ -1,49 +1,46 @@
 {
-  "id": "mocha-sauce",
-  "name": "바모카 제조",
+  "id": "half-and-half",
+  "name": "하프 앤 하프 제조",
   "kind": "preparation",
   "variants": [
     {
       "id": "standard",
-      "name": "standard",
+      "name": "기본 제조",
       "temperature": null,
       "sizes": [],
       "steps": [
         {
-          "id": "powder",
-          "label": "바모카 원팩",
-          "instructions": ["바모카 원팩 1봉을 넣는다."],
+          "id": "cream",
+          "label": "크림 계량",
+          "instructions": ["프릿츠골드 250ml를 넣는다."],
           "notes": [],
           "operations": [
             {
               "action": "add",
-              "materialId": "mocha-powder",
+              "materialId": "cream",
               "into": "mixing-pitcher",
               "amount": {
-                "kind": "count",
-                "value": 1,
-                "unit": "pack"
+                "kind": "amount",
+                "value": 250,
+                "unit": "ml"
               }
             }
           ]
         },
         {
-          "id": "hot-water",
-          "label": "온수 계량",
-          "instructions": ["온수 1L를 넣는다."],
+          "id": "milk",
+          "label": "우유 계량",
+          "instructions": ["우유 750ml를 넣는다. 우유와 휘핑크림의 비율은 3:1이다."],
           "notes": [],
           "operations": [
             {
               "action": "add",
-              "materialId": "water",
+              "materialId": "milk",
               "into": "mixing-pitcher",
               "amount": {
                 "kind": "amount",
-                "value": 1,
-                "unit": "l"
-              },
-              "temperature": {
-                "kind": "hot"
+                "value": 750,
+                "unit": "ml"
               }
             }
           ]
@@ -51,44 +48,42 @@
         {
           "id": "mix",
           "label": "혼합",
-          "instructions": ["덩어리 없이 잘 섞는다."],
+          "instructions": ["우유와 크림을 섞는다."],
           "notes": [],
           "operations": [
             {
               "action": "mix",
-              "vessel": "mixing-pitcher",
-              "toolId": "spatula"
+              "vessel": "mixing-pitcher"
             }
           ]
         },
         {
           "id": "label-and-store",
           "label": "마킹 및 보관",
-          "instructions": ["M로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 실온 보관하며 제조 후 24시간 사용한다."],
+          "instructions": ["H&H로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 제조 후 냉장 보관하며 24시간 사용한다."],
           "notes": [],
           "operations": [
             {
               "action": "label",
               "vessel": "mixing-pitcher",
-              "labels": ["M", "숫자 + Price Tag"]
+              "labels": ["H&H", "숫자 + Price Tag"]
             },
             {
               "action": "store",
               "vessel": "mixing-pitcher",
-              "storage": "room"
+              "storage": "fridge"
             }
           ]
         }
       ],
       "notes": [
-        "제조 후 실온 보관, 24시간.",
-        "2026-09-28 사용자 제공 부재료 제조표와 원팩 1봉·온수 1L·실온 24시간이 일치한다."
+        "2026-09-28 사용자 제공 부재료 제조표 기준. 기존 슈크림 휘핑 원문에서 프릿츠 골드로 확인된 cream 재료를 사용한다."
       ],
       "review": [],
       "output": {
-        "materialId": "mocha",
+        "materialId": "half-and-half",
         "amount": null,
-        "description": "온수 1L는 투입량이며 완성량은 미기재."
+        "description": "사진에 완성 수율은 명시되지 않았다."
       }
     }
   ]

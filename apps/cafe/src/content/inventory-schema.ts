@@ -7,9 +7,13 @@ const text = z.string().trim().min(1)
 const positive = z.number().positive()
 const nonnegative = z.number().nonnegative()
 
+const storage = z.enum(['room', 'fridge'])
+const lifetime = z.strictObject({ amount: positive, unit: z.enum(['days', 'hours', 'months']) })
 const materialQuality = z.strictObject({
-  storage: z.enum(['room', 'fridge']),
-  lifetime: z.strictObject({ amount: positive, unit: z.enum(['days', 'hours', 'months']) }),
+  storage,
+  lifetime,
+  storageLifetimes: z.partialRecord(storage, lifetime).optional(),
+  closingStorage: storage.optional(),
 })
 
 export const qualitySchema = z.record(catalogIdSchema, materialQuality)

@@ -1,0 +1,174 @@
+{
+  "id": "whipped-cream",
+  "name": "일반 휘핑 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "canister",
+      "name": "까라페·ITIS",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "cream",
+          "label": "휘핑크림 계량",
+          "instructions": ["휘핑크림 260ml를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 260,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "syrup",
+          "label": "심플 시럽 계량",
+          "instructions": ["심플 시럽을 3펌프 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "simple-syrup",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "charge-and-shake",
+          "label": "가스 주입 및 쉐이킹",
+          "instructions": ["휘핑 가스 주입 후 위아래로 30회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "charge",
+              "vessel": "whipping-canister",
+              "equipmentId": "whipping-dispenser"
+            },
+            {
+              "action": "shake",
+              "vessel": "whipping-canister",
+              "repetitions": 30
+            }
+          ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": ["WC로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 제조 후 냉장 보관하며 24시간 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "whipping-canister",
+              "labels": ["WC", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "whipping-canister",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "2026-09-28 사용자 제공 부재료 제조표의 배합·마킹·보관 기준이다.",
+        "심플 시럽 펌프의 토출량은 사진에 명시되지 않았다.",
+        "2026-09-28 사용자 확인: 통에 담은 뒤 가스를 주입하고 위아래로 30회 흔드는 방법은 슈크림 휘핑과 같다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "whipped-cream",
+        "amount": null,
+        "description": "사진에 완성 수율은 명시되지 않았다."
+      }
+    },
+    {
+      "id": "vat",
+      "name": "바트",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "cream",
+          "label": "휘핑크림 계량",
+          "instructions": ["휘핑크림 1000ml를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "stainless-vat",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "syrup",
+          "label": "심플 시럽 계량",
+          "instructions": ["심플 시럽을 11펌프 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "simple-syrup",
+              "into": "stainless-vat",
+              "amount": {
+                "kind": "count",
+                "value": 11,
+                "unit": "pump"
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "label-and-store",
+          "label": "마킹 및 보관",
+          "instructions": ["WC로 마킹하고 숫자와 Price Tag로 기한을 표기한다. 제조 후 냉장 보관하며 24시간 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "stainless-vat",
+              "labels": ["WC", "숫자 + Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "stainless-vat",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "2026-09-28 사용자 제공 부재료 제조표의 배합·마킹·보관 기준이다.",
+        "심플 시럽 펌프의 토출량은 사진에 명시되지 않았다."
+      ],
+      "review": [
+        "바트 배합 후 혼합·자동휘핑머신 연결 작업은 확인이 필요하다. 사용자 확인으로 확정한 가스 주입·30회 흔들기는 통 제조에 적용한다."
+      ],
+      "output": {
+        "materialId": "whipped-cream",
+        "amount": null,
+        "description": "사진에 완성 수율은 명시되지 않았다."
+      }
+    }
+  ]
+}

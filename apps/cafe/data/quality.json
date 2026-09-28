@@ -89,5 +89,86 @@
       "amount": 3,
       "unit": "months"
     }
+  },
+  "iced-coffee": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 8,
+      "unit": "hours"
+    },
+    "storageLifetimes": {
+      "room": {
+        "amount": 4,
+        "unit": "hours"
+      },
+      "fridge": {
+        "amount": 8,
+        "unit": "hours"
+      }
+    }
+  },
+  "frappuccino-roast": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 48,
+      "unit": "hours"
+    }
+  },
+  "double-strength-black-tea": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 12,
+      "unit": "hours"
+    }
+  },
+  "double-strength-mint-tea": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 12,
+      "unit": "hours"
+    }
+  },
+  "espresso-chips": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "half-and-half": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "whipped-cream": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "classic-milk-tea-base": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "cold-foam": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "signature-chocolate-premix": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 2,
+      "unit": "days"
+    },
+    "closingStorage": "fridge"
   }
 }
