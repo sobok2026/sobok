@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { cupSurfaceIds, STATIONS } from '../../content/stations'
+import { CONDIMENT_COUNTER_Y, CONDIMENT_RETURN_Y } from '../../shared/visuals/condiment-bar'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { cupCount, type ReusableCupCounts, reusableCupKinds } from '../inventory/cups'
@@ -70,9 +71,12 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
 
   const tables = cupSurfaceIds.map((id) => {
     const [x, y, z] = cleaningSpot(id)
-    const cups = Array.from({ length: 8 }, (_, i) =>
-      cup(scene, x + ((i % 3) - 1) * 0.21, y + 0.005, z + (Math.floor(i / 3) - 0.5) * 0.3),
-    )
+    const cups = Array.from({ length: 8 }, (_, i) => {
+      if (id === 'condiment') {
+        return cup(scene, x + (Math.floor(i / 4) - 0.5) * 0.24, y + 0.005, z + ((i % 4) - 1.5) * 0.23)
+      }
+      return cup(scene, x + ((i % 3) - 1) * 0.21, y + 0.005, z + (Math.floor(i / 3) - 0.5) * 0.3)
+    })
     return { id, cups, stain: stain(x + 0.12, y, z - 0.08) }
   })
   const barStain = stain(...cleaningSpot('mix'))
@@ -89,11 +93,15 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     new THREE.SphereGeometry(0.2, 16, 12),
     new THREE.MeshStandardMaterial({ color: '#596c5b', roughness: 0.9 }),
   )
-  bag.position.set(STATIONS.trash.x, 0.98, STATIONS.trash.z)
+  bag.position.set(STATIONS.trash.x, CONDIMENT_COUNTER_Y + 0.17, STATIONS.trash.z)
   scene.add(bag)
   const waste = Array.from({ length: 5 }, (_, i) => {
     const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.065, 0), paper)
-    mesh.position.set(STATIONS.trash.x - 0.16 + (i % 3) * 0.15, 0.9 + Math.floor(i / 3) * 0.1, STATIONS.trash.z - 0.02)
+    mesh.position.set(
+      STATIONS.trash.x + ((i % 2) - 0.5) * 0.045,
+      CONDIMENT_COUNTER_Y - 0.12 + Math.floor(i / 2) * 0.04,
+      STATIONS.trash.z + (i % 2 ? -0.25 : 0.25),
+    )
     scene.add(mesh)
     return mesh
   })
@@ -147,13 +155,13 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
 export function cleaningSpot(station: CleaningStation): [number, number, number] {
   const { x, z } = STATIONS[station]
   if (station === 'condiment') {
-    return [x, 1.085, z - 0.15]
+    return [x, CONDIMENT_RETURN_Y, z]
   }
   if (station === 'mix') {
     return [x, 1.09, z - 0.08]
   }
   if (station === 'trash') {
-    return [x, 0.87, z]
+    return [x, CONDIMENT_COUNTER_Y, z]
   }
   return [x, 0.85, z]
 }

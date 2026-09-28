@@ -2,6 +2,7 @@ export const BAR_CENTER_Z = -1.05
 export const SHOP_BOUNDS = { minX: -7, maxX: 7, minZ: -10, maxZ: 6 } as const
 export const BACKROOM_FRONT_Z = -5.85
 export const BACKROOM_DOOR = { x: -5.8, width: 1.4 } as const
+export const CONDIMENT_BAR = { x: -6.18, z: 3.1, width: 0.94, depth: 3.5 } as const
 const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
 // Reflect the original customer-facing fixtures toward the employee aisle.
@@ -32,10 +33,10 @@ export const STATIONS = {
   rack: { name: '도구 선반', x: -3.9, z: -5.1 },
   table: { name: '고객 테이블 1', x: 3.2, z: 3.7 },
   'table-left': { name: '고객 테이블 2', x: -2.2, z: 3.7 },
-  // Returned cups and cleaning share this surface; condiment supplies have their own station.
-  condiment: { name: '컵 반납대', x: -5.6, z: 2.5 },
-  supplies: { name: '컨디먼트 바', x: 6.25, z: 3.0 },
-  trash: { name: '분리수거함', x: -5.6, z: 4.2 },
+  // Three working areas on the same cabinet, facing the customer floor from the left wall.
+  condiment: { name: '컨디먼트 바 · 컵 반납', x: CONDIMENT_BAR.x + 0.12, z: CONDIMENT_BAR.z },
+  supplies: { name: '컨디먼트 바 · 소모품', x: CONDIMENT_BAR.x + 0.12, z: CONDIMENT_BAR.z - 1.15 },
+  trash: { name: '컨디먼트 바 · 분리수거', x: CONDIMENT_BAR.x + 0.12, z: CONDIMENT_BAR.z + 1.15 },
 } as const
 
 export type StationId = keyof typeof STATIONS

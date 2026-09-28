@@ -1,6 +1,13 @@
 import * as THREE from 'three'
 import { recipeSizeSchema } from '../content/recipe-schema'
-import { BACKROOM_DOOR, BACKROOM_FRONT_Z, BAR_CENTER_Z, STATIONS, staffFacingZ } from '../content/stations'
+import {
+  BACKROOM_DOOR,
+  BACKROOM_FRONT_Z,
+  BAR_CENTER_Z,
+  CONDIMENT_BAR,
+  STATIONS,
+  staffFacingZ,
+} from '../content/stations'
 import { createColdBrewDispenser } from '../features/cold-brew/equipment'
 import { createEspressoMachine } from '../features/crafting/espresso-machine'
 import { createIceBin, createSyrupStation, createWaterStation } from '../features/crafting/station-equipment'
@@ -14,6 +21,7 @@ import { CUSTOMER_DOOR_X } from '../features/service/customer'
 import { createRegister } from '../features/service/register'
 import { createWashingEquipment } from '../features/washing/equipment'
 import { canvasFont, paintTexture } from '../shared/visuals/canvas-text'
+import { createCondimentBar } from '../shared/visuals/condiment-bar'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
 
@@ -277,7 +285,7 @@ export function createShopInterior(scene: THREE.Scene) {
   }
 
   plant(5.9, 4.6, 1.3)
-  plant(-5.0, 3.7, 0.75)
+  plant(-6.15, 5.28, 0.75)
   // Named work surfaces remain visually distinct at first-person distance.
   const register = createRegister(scene)
   // One rack row per cup line or vessel group. Standard cups line up by size and stack; a drink's own vessels stand
@@ -341,24 +349,8 @@ export function createShopInterior(scene: THREE.Scene) {
   extractionSign.position.set(1, 2.2, -9.7)
   scene.add(extractionSign)
   createWashingEquipment(scene)
-  box(STATIONS.trash.x, 0.38, STATIONS.trash.z, 0.58, 0.76, 0.58, '#3c5e4a')
-  box(STATIONS.trash.x, 0.8, STATIONS.trash.z, 0.65, 0.07, 0.65, '#263f31')
-  obstacles.push({ ...STATIONS.trash, width: 0.65, depth: 0.65 })
-  box(STATIONS.condiment.x, 0.49, STATIONS.condiment.z, 1.85, 0.98, 0.8, '#946e4c')
-  box(STATIONS.condiment.x, 1.03, STATIONS.condiment.z, 1.95, 0.08, 0.9, '#ddd1b9')
-  box(STATIONS.condiment.x, 1.074, STATIONS.condiment.z - 0.15, 1.38, 0.014, 0.33, '#b7b299')
-  obstacles.push({ ...STATIONS.condiment, width: 1.95, depth: 0.9 })
-  const condimentSign = sign('RETURN\n사용한 컵 반납', 1.8, 0.36, '#eee5d1', '#344e3d')
-  condimentSign.position.set(STATIONS.condiment.x, 1.55, STATIONS.condiment.z + 0.42)
-  condimentSign.rotation.y = Math.PI
-  scene.add(condimentSign)
-  box(STATIONS.supplies.x, 0.49, STATIONS.supplies.z, 0.8, 0.98, 1.85, '#946e4c')
-  box(STATIONS.supplies.x, 1.03, STATIONS.supplies.z, 0.9, 0.08, 1.95, '#ddd1b9')
-  obstacles.push({ ...STATIONS.supplies, width: 0.9, depth: 1.95 })
-  const supplySign = sign('CONDIMENT BAR\n냅킨 · 빨대 · 설탕', 1.8, 0.36, '#eee5d1', '#344e3d')
-  supplySign.position.set(STATIONS.supplies.x + 0.4, 1.55, STATIONS.supplies.z)
-  supplySign.rotation.y = -Math.PI / 2
-  scene.add(supplySign)
+  createCondimentBar(scene)
+  obstacles.push({ ...CONDIMENT_BAR })
 
   // Two quiet seating areas.
   for (const x of [3.2, -2.2]) {

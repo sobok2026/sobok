@@ -1,17 +1,16 @@
 import * as THREE from 'three'
 import { recipeCatalog } from '../../content/catalog'
-import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES } from '../../content/recipes'
 import { STATIONS, type StationId, staffFacingZ } from '../../content/stations'
 import { vesselProfile } from '../../content/stock-amounts'
-import { cupFillY } from '../../shared/visuals/cup-visual'
-import { createPumpVisual } from '../../shared/visuals/pump-visual'
+import { CUP_DIMENSIONS, cupFillY } from '../../shared/visuals/cup-visual'
+import { createPumpVisual, operationPump } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_OUTLET } from '../cold-brew/equipment'
 import { URN_HOT_OUTLET } from '../drip-coffee/equipment'
-import { SERVICE_NAMES } from '../inventory/cups'
+import { dispensingFill } from '../inventory/batches'
 import { BLENDER_JAR_SPOT } from '../preparation/blender'
-import { itemCustomizations } from '../service/orders'
+import { orderSticker } from '../service/order-sticker'
 import {
   createDrinkVisual,
   createProductionEffects,
@@ -22,6 +21,7 @@ import {
   operationVessel,
   positionProductionTool,
   projectVessel,
+  type WorkVesselShape,
   workVesselShape,
 } from './drink-visual'
 import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
@@ -29,7 +29,7 @@ import { cupRecipe, operationFor, stepVessels, vesselPlace } from './rules'
 import { WATER_OUTLET } from './station-equipment'
 
 /** Where a helper vessel stands at a station: under the wand, under the group head, in the blender, or beside. */
-function vesselSpot(station: StationId, shape: 'pitcher' | 'shot' | 'blender', index: number): THREE.Vector3 {
+function vesselSpot(station: StationId, shape: WorkVesselShape, index: number): THREE.Vector3 {
   if (station === 'steam' && shape === 'pitcher') {
     return new THREE.Vector3(...STEAM_PITCHER_SPOT)
   }
@@ -44,18 +44,13 @@ function vesselSpot(station: StationId, shape: 'pitcher' | 'shot' | 'blender', i
 }
 
 /** The sticker printed at payment: the order as the POS took it, never the cup to use. */
-function stickerLines(state: GameState): string[] | null {
+function cupSticker(state: GameState) {
   const cup = state.cup
   const line = state.sale?.lines.find((item) => item.id === cup?.orderLineId)
   if (!cup?.craft.sticker || !line) {
     return null
   }
-  const recipe = RECIPES[line.recipe]
-  return [
-    `#${String(state.orderNumber).padStart(3, '0')} ${recipe.shortName}`,
-    `${recipe.temperature.toUpperCase()} ${DRINK_SIZES[line.size].name} · ${SERVICE_NAMES[line.service]}`,
-    ...itemCustomizations(line).slice(0, 2),
-  ]
+  return orderSticker(state, line)
 }
 
 export function createCraftVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -67,7 +62,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   const effects = createProductionEffects(scene)
   const auxiliaries = new Map<string, ReturnType<typeof createWorkVesselVisual>>()
   const carried = new Map<string, ReturnType<typeof createWorkVesselVisual>>()
-  const pumps = new Map<'glaze' | 'classic', ReturnType<typeof createPumpVisual>>()
+  const pumps = new Map<string, ReturnType<typeof createPumpVisual>>()
   const positions = new Map<string, THREE.Vector3>()
   const start = new THREE.Vector3()
   const end = new THREE.Vector3()
@@ -103,7 +98,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const station = step?.station ?? null
       const jobs = state.jobs.filter((item) => item.kind === 'production' && item.cupId === cup.id)
       const view = craft.location === 'hand' ? held : bench
-      view.update({ kind: craft.kind, lidded: craft.lidded, vessel: serving, sticker: stickerLines(state) })
+      view.update({ kind: craft.kind, lidded: craft.lidded, vessel: serving, sticker: cupSticker(state) })
       held.root.rotation.z = Math.sin(now / 650) * 0.018
 
       if (craft.location !== 'hand') {
@@ -186,30 +181,30 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       spot.copy(positions.get(currentVessel ?? servingId) ?? bench.root.position)
       const liquidColor = operationColor(craft, operation, serving.color)
+      const surfaceHeight =
+        currentVessel === servingId
+          ? Math.max(0.025, cupFillY(craft.kind, serving.fill))
+          : Math.max(0.04, (craft.vessels[currentVessel ?? '']?.fill ?? 0) * 0.25)
       const descriptor = heldTool(craft, step, definition.steps)
       const tool = tools.update(descriptor, liquidColor, craft.size)
       if (tool) {
-        positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
+        positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now, surfaceHeight)
       }
-      const pumped =
-        operation?.action === 'add' &&
-        (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
-        operation.amount.unit === 'pump'
+      const spec = operationPump(operation)
       let pump: ReturnType<typeof createPumpVisual> | undefined
 
-      if (station && pumped && (operation.materialId === 'classic' || operation.materialId === 'glaze')) {
-        const kind = operation.materialId
-        pump = pumps.get(kind)
+      if (station && vesselPlace(cup, currentVessel ?? servingId, step) === station && spec) {
+        pump = pumps.get(spec.key)
 
         if (!pump) {
-          pump = createPumpVisual(scene, kind)
-          pumps.set(kind, pump)
+          pump = createPumpVisual(scene, spec)
+          pumps.set(spec.key, pump)
         }
 
+        if (tool) tool.root.visible = false
         pump.root.visible = true
-        pump.root.rotation.y = Math.PI
-        pump.root.position.set(spot.x, spot.y, spot.z + 0.36)
-        pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
+        pump.place(spot, currentVessel === servingId ? CUP_DIMENSIONS[craft.kind].top : 0.14)
+        pump.update(Math.sin(pulse * Math.PI), dispensingFill(state, spec.materialId))
       }
 
       const extraction = operation?.action === 'espresso' && pulse > 0
@@ -232,11 +227,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         if (pump) {
           pump.outlet.getWorldPosition(start)
         }
-        const height =
-          currentVessel === servingId
-            ? Math.max(0.025, cupFillY(craft.kind, serving.fill))
-            : Math.max(0.04, (craft.vessels[currentVessel ?? '']?.fill ?? 0) * 0.25)
-        end.set(spot.x, spot.y + height, spot.z)
+        if (tool?.dispenser) tool.dispenser.outlet.getWorldPosition(start)
+        end.set(spot.x, spot.y + surfaceHeight, spot.z)
+        if (pump) end.z = start.z
         effects.update(start, end, liquidColor, null, now)
       }
 

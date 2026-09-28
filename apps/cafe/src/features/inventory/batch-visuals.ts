@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import { INGREDIENTS } from '../../content/ingredients'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import { materialColor } from '../../shared/visuals/material-color'
+import { createPumpVisual, pumpSpec } from '../../shared/visuals/pump-visual'
+import { createWhippingDispenser } from '../../shared/visuals/whipping-dispenser'
 import type { GameState } from '../../simulation/state'
 import { carriedBatch, isSealed } from './batches'
 import { CUP_SUPPLY, type DisposableCupKind } from './cups'
@@ -16,6 +18,13 @@ const BATCH_COLORS: Partial<Record<string, string>> = {
 const BATCH_SCALES: Partial<Record<string, number>> = { 'cold-brew': 1.15, mocha: 1 }
 
 export function createBatchVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+  const materialModels = new Map<string, ReturnType<typeof createPumpVisual>>()
+  const carriedMaterial = new THREE.Group()
+  carriedMaterial.position.set(0.25, -0.44, -0.74)
+  carriedMaterial.rotation.y = -0.25
+  carriedMaterial.scale.setScalar(0.85)
+  camera.add(carriedMaterial)
+  let whipper: ReturnType<typeof createWhippingDispenser> | undefined
   const bundles = new Map<DisposableCupKind, ReturnType<typeof createCupBody>[]>()
   const cupBundle = new THREE.Group()
   cupBundle.position.set(0.24, -0.36, -0.7)
@@ -68,14 +77,11 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
   )
   packLabel.position.set(0, 0.15, 0.087)
   pack.add(packLabel)
-  const shelfCups = Array.from({ length: 3 }, (_, index) => {
-    const cup = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12, 0.1, 0.32, 20),
-      new THREE.MeshStandardMaterial({ color: '#705241', roughness: 0.7 }),
-    )
-    cup.position.set(2.45 + index * 0.4, 1.25, -5.18)
-    scene.add(cup)
-    return cup
+  const shelfJars = Array.from({ length: 3 }, (_, index) => {
+    const jar = createPumpVisual(scene, pumpSpec('mocha')!)
+    jar.root.position.set(2.45 + index * 0.4, 1.25, -5.18)
+    jar.root.scale.setScalar(0.85)
+    return jar
   })
 
   return {
@@ -85,6 +91,30 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const rawPack = !!held && !INGREDIENTS[held.ingredient].prepared
       vessel.visible = !!held && !sealed && !rawPack
       pack.visible = sealed || rawPack
+      for (const model of materialModels.values()) model.root.visible = false
+      if (whipper) whipper.root.visible = false
+
+      if (held) {
+        const spec = pumpSpec(held.ingredient)
+        if (spec && (!sealed || spec.kind === 'syrup')) {
+          let model = materialModels.get(spec.key)
+
+          if (!model) {
+            model = createPumpVisual(carriedMaterial, spec)
+            materialModels.set(spec.key, model)
+          }
+
+          model.root.visible = true
+          model.update(0, held.amount / INGREDIENTS[held.ingredient].pack, sealed)
+          vessel.visible = pack.visible = false
+        } else if (!sealed && held.ingredient.endsWith('whipped-cream')) {
+          whipper ??= createWhippingDispenser(carriedMaterial)
+          whipper.root.visible = true
+          whipper.update(0, materialColor(held.ingredient))
+          vessel.visible = pack.visible = false
+        }
+      }
+
       for (const cups of bundles.values()) for (const cup of cups) cup.root.visible = false
       cupBundle.visible = !!state.cupDelivery
 
@@ -119,8 +149,8 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
         (batch) => batch.ingredient === 'mocha' && batch.location === 'bar' && batch.amount > 0,
       ).length
 
-      shelfCups.forEach((cup, index) => {
-        cup.visible = index < stored
+      shelfJars.forEach((jar, index) => {
+        jar.root.visible = index < stored
       })
     },
   }

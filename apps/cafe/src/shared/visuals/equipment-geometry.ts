@@ -41,6 +41,14 @@ export function equipmentMesh(
   material: THREE.Material,
   position: Point = [0, 0, 0],
 ) {
+  // Models created after the initial scene traversal need the same baked reflection as fixed equipment.
+  let owner: THREE.Object3D | null = parent
+  while (owner?.parent) owner = owner.parent
+  const environment = owner?.userData.equipmentEnvironment
+  if (material instanceof THREE.MeshStandardMaterial && material.userData.equipment && environment) {
+    material.envMap = environment
+    material.envMapIntensity = 0.85
+  }
   const mesh = new THREE.Mesh(geometry, material)
   mesh.position.fromArray(position)
   mesh.castShadow = !material.transparent

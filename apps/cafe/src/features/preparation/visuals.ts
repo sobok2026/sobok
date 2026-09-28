@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { STATIONS } from '../../content/stations'
 import { materialColor } from '../../shared/visuals/material-color'
-import { createPumpVisual } from '../../shared/visuals/pump-visual'
+import { createPumpVisual, operationPump } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
 import {
   createProductionEffects,
@@ -14,6 +14,7 @@ import {
   projectVessel,
   workVesselShape,
 } from '../crafting/drink-visual'
+import { dispensingFill } from '../inventory/batches'
 import { PREP_BLENDER_JAR_SPOT } from './blender'
 import { PREPARATIONS, preparationStep } from './rules'
 
@@ -21,7 +22,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const vessels = new Map<string, ReturnType<typeof createWorkVesselVisual>>()
   const tools = createProductionToolVisual(scene)
   const effects = createProductionEffects(scene)
-  const pumps = new Map<'classic' | 'glaze', ReturnType<typeof createPumpVisual>>()
+  const pumps = new Map<string, ReturnType<typeof createPumpVisual>>()
   const positions = new Map<string, THREE.Vector3>()
   const spot = new THREE.Vector3()
   const from = new THREE.Vector3()
@@ -103,7 +104,10 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         positions.set(id, model.root.position)
         const current = id === vesselId
         model.update(projectVessel(prep, id, fallback), {
-          lidded: atBlender || (current && (operation?.action === 'cover' || operation?.action === 'shake')),
+          lidded:
+            atBlender ||
+            (shape === 'whipper' && (!operation || !['add', 'mix'].includes(operation.action))) ||
+            (current && (operation?.action === 'cover' || operation?.action === 'shake')),
           stirring: blending || (current && active && step?.kind === 'mix'),
           labelled: !!batch?.labelled && current,
           now,
@@ -112,30 +116,27 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
 
       spot.copy(positions.get(vesselId ?? '') ?? from.fromArray(PREP_SPOT))
       const color = operationColor(prep, operation, fallback)
+      const surfaceHeight = Math.max(0.025, (prep.vessels[vesselId ?? '']?.fill ?? 0) * 0.3)
       const descriptor = heldTool(prep, step, definition.steps)
       const tool = tools.update(descriptor, color)
       if (tool) {
-        positionProductionTool(tool, camera, step, spot, active, pulse, now)
+        positionProductionTool(tool, camera, step, spot, active, pulse, now, surfaceHeight)
       }
-      const pumped =
-        operation?.action === 'add' &&
-        (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
-        operation.amount.unit === 'pump'
+      const spec = operationPump(operation)
       let pump: ReturnType<typeof createPumpVisual> | undefined
 
-      if (pumped && (operation.materialId === 'classic' || operation.materialId === 'glaze')) {
-        const kind = operation.materialId
-        pump = pumps.get(kind)
+      if (spec) {
+        pump = pumps.get(spec.key)
 
         if (!pump) {
-          pump = createPumpVisual(scene, kind)
-          pumps.set(kind, pump)
+          pump = createPumpVisual(scene, spec)
+          pumps.set(spec.key, pump)
         }
 
+        if (tool) tool.root.visible = false
         pump.root.visible = true
-        pump.root.rotation.y = Math.PI
-        pump.root.position.set(spot.x, spot.y, spot.z + 0.36)
-        pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
+        pump.place(spot, vesselId === 'whipping-canister' ? 0.05 : 0.14)
+        pump.update(Math.sin(pulse * Math.PI), dispensingFill(state, spec.materialId, 'backroom'))
       }
 
       const pouring = (active && step?.kind === 'pour') || (pulse > 0 && operation?.action === 'add')
@@ -145,8 +146,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         if (pump) {
           pump.outlet.getWorldPosition(from)
         }
-        const fill = prep.vessels[vesselId ?? '']?.fill ?? 0
-        to.set(spot.x, spot.y + Math.max(0.025, fill * 0.3), spot.z)
+        if (tool?.dispenser) tool.dispenser.outlet.getWorldPosition(from)
+        to.set(spot.x, spot.y + surfaceHeight, spot.z)
+        if (pump) to.z = from.z
       }
 
       const steaming = job?.equipmentId === 'steam-wand' || (operation?.action === 'steam' && pulse > 0)

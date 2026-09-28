@@ -36,8 +36,8 @@ export const CUSTOMER_DOOR_X = 5.45
 const CUSTOMER_ENTRANCE: CustomerPoint = [CUSTOMER_DOOR_X, 6.65]
 const ORDER_SPOT: CustomerPoint = [-4.8, 0.45]
 const PICKUP_SPOT: CustomerPoint = [6.1, 0.25]
-export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x - 0.95, STATIONS.supplies.z]
-export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x, STATIONS.condiment.z - 0.85]
+export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x + 0.95, STATIONS.supplies.z]
+export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x + 0.95, STATIONS.condiment.z]
 // Prototype movement and interaction timings; the 10-second table stay is user-approved.
 const CUSTOMER_SPEED = 1.7
 export const CUSTOMER_SECONDS = { condiment: 1.2, drinking: 10, returning: 1.2 } as const

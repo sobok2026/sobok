@@ -1,15 +1,17 @@
 import * as THREE from 'three'
 import type { Ingredient } from '../../content/ingredients'
 import type { ResolvedOperation } from '../../content/recipe-plan'
-import { canvasFont, paintTexture } from '../../shared/visuals/canvas-text'
 import { cupScale } from '../../shared/visuals/cup-profiles'
 import { CUP_DIMENSIONS, createCupBody, cupRadius } from '../../shared/visuals/cup-visual'
 import { createIceScoop, type IceScoopSize } from '../../shared/visuals/ice-scoop'
 import { materialColor, materialGroup } from '../../shared/visuals/material-color'
+import { createWhippingDispenser } from '../../shared/visuals/whipping-dispenser'
 import { workBox as box, workCylinder as cylinder, workMaterial as standard } from '../../shared/visuals/work-geometry'
 import type { CupKind } from '../inventory/cups'
 import { createBlenderJar } from '../preparation/blender'
 import type { ProductionState, ProductionTool, WorkStep } from '../production/workflow'
+import type { OrderSticker } from '../service/order-sticker'
+import { createOrderStickerTexture } from '../service/order-sticker-texture'
 
 export type VesselVisualState = {
   fill: number
@@ -20,8 +22,13 @@ export type VesselVisualState = {
   foam: boolean
 }
 
-/** The order sticker text, one line each, or null before the player sticks it on. */
-export type DrinkVisualState = { kind: CupKind; lidded: boolean; vessel: VesselVisualState; sticker: string[] | null }
+/** The printed order, or null before the player sticks it on. */
+export type DrinkVisualState = {
+  kind: CupKind
+  lidded: boolean
+  vessel: VesselVisualState
+  sticker: OrderSticker | null
+}
 
 export function projectVessel(session: ProductionState, vesselId: string, fallbackColor: string): VesselVisualState {
   const vessel = session.vessels[vesselId]
@@ -107,10 +114,14 @@ export function operationVessel(operation: ResolvedOperation): string | null {
   if ('from' in operation) {
     return operation.from
   }
+  if (operation.action === 'attach') return operation.toId
   return null
 }
 
-export function workVesselShape(id: string, steps: WorkStep[]): 'pitcher' | 'shot' | 'blender' {
+export type WorkVesselShape = 'pitcher' | 'shot' | 'blender' | 'whipper'
+
+export function workVesselShape(id: string, steps: WorkStep[]): WorkVesselShape {
+  if (id === 'whipping-canister') return 'whipper'
   if (
     steps.some(
       ({ operation }) =>
@@ -127,46 +138,41 @@ export function workVesselShape(id: string, steps: WorkStep[]): 'pitcher' | 'sho
 
 /** A printed order sticker on the side of the cup that faces the player: +1 toward the camera, -1 away. */
 function createSticker(root: THREE.Object3D, facing: 1 | -1) {
-  const canvas = document.createElement('canvas')
-  canvas.width = 256
-  canvas.height = 160
-  const context = canvas.getContext('2d')!
-  const map = new THREE.CanvasTexture(canvas)
-  map.colorSpace = THREE.SRGBColorSpace
+  const texture = createOrderStickerTexture()
+  const geometry = new THREE.PlaneGeometry(1, 1, 20, 16)
   const mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(1, 1),
-    new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false }),
+    geometry,
+    new THREE.MeshBasicMaterial({ map: texture.map, transparent: true, depthWrite: false, toneMapped: false }),
   )
   mesh.rotation.y = facing > 0 ? 0 : Math.PI
   mesh.renderOrder = 2
   root.add(mesh)
-  let printed = ''
+  let previousKind: CupKind | null = null
+  let previousAspect = 0
 
-  return (kind: CupKind, lines: string[] | null) => {
-    mesh.visible = !!lines
-    if (!lines) {
-      return
-    }
+  return (kind: CupKind, sticker: OrderSticker | null) => {
+    mesh.visible = !!sticker
+    if (!sticker) return
+    const aspect = texture.update(sticker)
+    if (kind === previousKind && aspect === previousAspect) return
+    previousKind = kind
+    previousAspect = aspect
     const { floor, height } = CUP_DIMENSIONS[kind]
     const y = floor + (height - floor) * 0.5
-    const width = cupRadius(kind, y) * 1.05
-    mesh.scale.set(width, width * 0.625, 1)
-    mesh.position.set(0, y, facing * (cupRadius(kind, y) + 0.003))
-    const text = lines.join('\n')
-    if (text === printed) {
-      return
+    const labelHeight = Math.min((height - floor) * 0.82, (cupRadius(kind, y) * 1.45) / aspect)
+    const width = labelHeight * aspect
+    const positions = geometry.getAttribute('position')
+    const uv = geometry.getAttribute('uv')
+
+    for (let vertex = 0; vertex < positions.count; vertex++) {
+      const rowY = y + (uv.getY(vertex) - 0.5) * labelHeight
+      const radius = cupRadius(kind, rowY) + 0.003
+      const angle = ((uv.getX(vertex) - 0.5) * width) / radius
+      positions.setXYZ(vertex, Math.sin(angle) * radius, rowY, Math.cos(angle) * radius)
     }
-    printed = text
-    paintTexture(map, () => {
-      context.fillStyle = '#fbfaf4'
-      context.fillRect(0, 0, 256, 160)
-      context.fillStyle = '#1f2a26'
-      context.textBaseline = 'top'
-      lines.forEach((line, index) => {
-        context.font = canvasFont(index === 0 ? 30 : 24, index === 0 ? 700 : 500)
-        context.fillText(line, 14, 12 + index * 34, 228)
-      })
-    })
+
+    positions.needsUpdate = true
+    geometry.computeBoundingSphere()
   }
 }
 
@@ -267,7 +273,21 @@ export function createDrinkVisual(parent: THREE.Object3D, facing: 1 | -1 = 1) {
   return { root, update }
 }
 
-export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' | 'shot' | 'blender') {
+type WorkVesselOptions = { lidded?: boolean; stirring?: boolean; labelled?: boolean; marks?: number[]; now: number }
+
+export function createWorkVesselVisual(parent: THREE.Object3D, shape: WorkVesselShape) {
+  if (shape === 'whipper') {
+    const dispenser = createWhippingDispenser(parent)
+
+    return {
+      root: dispenser.root,
+      height: dispenser.height,
+      update(view: VesselVisualState, options: WorkVesselOptions) {
+        dispenser.update(view.fill, view.color, options.lidded)
+      },
+    }
+  }
+
   const blender = shape === 'blender' ? createBlenderJar() : null
   const root = blender?.root ?? new THREE.Group()
   parent.add(root)
@@ -339,10 +359,7 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
     }
   }
 
-  function update(
-    view: VesselVisualState,
-    options: { lidded?: boolean; stirring?: boolean; labelled?: boolean; marks?: number[]; now: number },
-  ) {
+  function update(view: VesselVisualState, options: WorkVesselOptions) {
     etch(options.marks ?? [])
     const liquidHeight = Math.max(0.001, view.fill * (height - 0.04))
     liquid.visible = view.fill > 0
@@ -359,9 +376,15 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: 'pitcher' 
   return { root, height, update }
 }
 
-// Seven appearance meshes are created on demand, independent of the material catalog size.
+type ProductionToolVisual = {
+  root: THREE.Group
+  dispenser?: ReturnType<typeof createWhippingDispenser>
+}
+
+// Generic tools and the manual dispenser are created only when they are used.
 export function createProductionToolVisual(parent: THREE.Object3D) {
   const tools = new Map<ProductionTool['appearance'], { root: THREE.Group; material: THREE.MeshStandardMaterial }>()
+  let dispenser: ReturnType<typeof createWhippingDispenser> | undefined
   const iceScoops = new Map<IceScoopSize, THREE.Group>()
   const scoopLabels: Record<string, IceScoopSize> = {
     'equipment:ice-scoop-tall': 'tall',
@@ -423,11 +446,23 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
   }
 
   return {
-    update(tool: ProductionTool | null, color: string, servingSize = 'grande') {
+    update(tool: ProductionTool | null, color: string, servingSize = 'grande'): ProductionToolVisual | null {
       for (const cached of tools.values()) cached.root.visible = false
       for (const scoop of iceScoops.values()) scoop.visible = false
+      if (dispenser) dispenser.root.visible = false
       if (!tool) {
         return null
+      }
+
+      if (
+        tool.id === 'vessel:whipping-canister' ||
+        tool.id === 'equipment:whipping-head' ||
+        (tool.id.startsWith('material:') && tool.id.endsWith('whipped-cream'))
+      ) {
+        dispenser ??= createWhippingDispenser(parent)
+        dispenser.root.visible = true
+        dispenser.update(0, color)
+        return { root: dispenser.root, dispenser }
       }
 
       if (tool.appearance === 'scoop' && (tool.id === 'equipment:ice-scoop' || scoopLabels[tool.id])) {
@@ -441,35 +476,47 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
         }
 
         scoop.visible = true
-        return scoop
+        return { root: scoop }
       }
 
       const selected = model(tool.appearance)
       selected.root.visible = true
       selected.material.color.set(color)
-      return selected.root
+      return { root: selected.root }
     },
   }
 }
 
 export function positionProductionTool(
-  model: THREE.Group,
+  visual: ProductionToolVisual,
   camera: THREE.PerspectiveCamera,
   step: WorkStep | undefined,
   spot: THREE.Vector3,
   active: boolean,
   pulse: number,
   now: number,
+  surfaceHeight = 0.3,
 ) {
+  const model = visual.root
   if (!active && pulse <= 0) {
-    model.position.set(0.26, -0.25, -0.58)
+    model.position.set(0.26, visual.dispenser ? -0.46 : -0.25, -0.58)
     camera.localToWorld(model.position)
     camera.getWorldQuaternion(model.quaternion)
+    if (visual.dispenser) model.rotateY(Math.PI / 2)
     return
   }
 
   model.position.set(spot.x + 0.15, spot.y + 0.47, spot.z)
   model.rotation.set(0, 0, 0.85)
+
+  if (visual.dispenser && step?.operation.action === 'add') {
+    model.rotation.set(Math.PI, Math.PI / 2, -0.15)
+    model.position.set(0, 0, 0)
+    const nozzle = visual.dispenser.outlet.getWorldPosition(new THREE.Vector3())
+    model.position.set(spot.x - nozzle.x, spot.y + surfaceHeight + 0.035 - nozzle.y, spot.z - nozzle.z)
+    visual.dispenser.update(0, '#f4ecdc', true, 1)
+    return
+  }
 
   if (step?.kind === 'mix') {
     model.position.set(spot.x + Math.sin(now / 120) * 0.04, spot.y + 0.26, spot.z + Math.cos(now / 120) * 0.04)

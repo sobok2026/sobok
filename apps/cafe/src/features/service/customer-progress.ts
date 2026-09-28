@@ -57,6 +57,10 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
         break
       case 'to-condiment':
         customerWait(customer, 'condiment')
+        customer.yaw = Math.atan2(
+          STATIONS.supplies.x - customer.position[0],
+          STATIONS.supplies.z - customer.position[1],
+        )
         break
       case 'to-table':
         customerWait(customer, 'drinking')
@@ -64,6 +68,10 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
         break
       case 'to-return':
         customerWait(customer, 'returning')
+        customer.yaw = Math.atan2(
+          STATIONS.condiment.x - customer.position[0],
+          STATIONS.condiment.z - customer.position[1],
+        )
         break
       case 'leaving':
         if (customer.visit) {
@@ -128,7 +136,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
     }
   } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
     customerSurface(s, 'condiment', customerCupCounts(s), customer.visit.dirtyReturn)
-    say(s, '손님이 컵 반납대에 컵을 반납했어요.')
+    say(s, '손님이 컨디먼트 바의 반납 선반에 컵을 반납했어요.')
     customerLeave(customer)
   }
 }

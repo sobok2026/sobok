@@ -49,6 +49,7 @@ export type CafeScene = {
 }
 
 function pickWidth(id: StationId) {
+  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 0.74
   if (id === 'printer') {
     return 0.22
   }
@@ -67,9 +68,10 @@ function pickWidth(id: StationId) {
   return 0.8
 }
 
-// The storeroom shelf runs along the side wall, so its pick volume is long in depth rather than width.
+// Side-wall fixtures face across the room. Each condiment-bar area has its own non-overlapping target.
 function pickDepth(id: StationId) {
-  return id === 'stock' || id === 'supplies' ? 1.6 : 0.8
+  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 1.04
+  return id === 'stock' ? 1.6 : 0.8
 }
 
 function pickHeight(id: StationId) {
@@ -81,11 +83,12 @@ function pickHeight(id: StationId) {
 }
 
 function markerHeight(id: StationId) {
+  if (id === 'condiment') return 1.85
   if (id === 'urn') return 2.45
   if (id === 'espresso' || id === 'water') {
     return 1.9
   }
-  return isTable(id) || id === 'condiment' || id === 'trash' ? 1.2 : 1.42
+  return isTable(id) || id === 'trash' ? 1.2 : 1.42
 }
 
 type Placement = { cupId: string; location: string; places: Record<string, string> } | null
@@ -148,7 +151,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   renderer.toneMappingExposure = 1.1
   renderer.domElement.setAttribute(
     'aria-label',
-    '1인칭 카페 매장. WASD 이동, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
+    '1인칭 카페 매장. WASD 이동, Shift 달리기, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
   )
   renderer.domElement.tabIndex = 0
   container.appendChild(renderer.domElement)
@@ -206,6 +209,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const environmentRoom = new RoomEnvironment()
   const environmentGenerator = new THREE.PMREMGenerator(renderer)
   const equipmentEnvironment = environmentGenerator.fromScene(environmentRoom, 0.04)
+  scene.userData.equipmentEnvironment = equipmentEnvironment.texture
   environmentRoom.dispose()
   environmentGenerator.dispose()
 

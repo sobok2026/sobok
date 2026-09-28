@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { INGREDIENTS } from '../../content/ingredients'
+import { STATIONS } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBasin as basin,
@@ -10,9 +12,9 @@ import {
   equipmentPanel as panel,
 } from '../../shared/visuals/equipment-geometry'
 import { createIceScoop, iceScoopScale, iceScoopSizes } from '../../shared/visuals/ice-scoop'
-import { createPumpVisual } from '../../shared/visuals/pump-visual'
+import { createPumpVisual, operationPump, pumpSpec } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
-import { operationFor } from './rules'
+import { operationFor, vesselPlace } from './rules'
 
 export const WATER_OUTLET: [number, number, number] = [1.1, 1.62, -1.48]
 
@@ -163,33 +165,52 @@ export function createIceBin(scene: THREE.Scene) {
 
 export function createSyrupStation(scene: THREE.Scene) {
   const root = new THREE.Group()
-  root.name = 'Syrup pump rail'
-  root.position.set(3.1, 1.067, -0.99)
+  root.name = 'Glass syrup bottles and shallow sauce jars'
+  root.position.set(3.1, 1.067, -0.93)
   root.rotation.y = Math.PI
   scene.add(root)
   const steel = material({ color: '#acb9c0', metalness: 0.9, roughness: 0.3 })
   const rubber = material({ color: '#25302e', roughness: 0.9 })
-  box(root, [0.67, 0.018, 0.43], [0, 0.01, 0.03], steel)
-  box(root, [0.625, 0.009, 0.39], [0, 0.023, 0.03], rubber, 0.003)
-  for (const x of [-0.326, 0.326]) box(root, [0.012, 0.085, 0.43], [x, 0.047, 0.03], steel, 0.004)
-  const bottles = { glaze: createPumpVisual(root, 'glaze'), classic: createPumpVisual(root, 'classic') }
-  bottles.glaze.root.position.set(-0.175, 0.027, -0.03)
-  bottles.classic.root.position.set(0.175, 0.027, -0.03)
+  box(root, [1.14, 0.012, 0.64], [0, 0.006, 0.005], steel, 0.004)
+  box(root, [1.11, 0.006, 0.61], [0, 0.015, 0.005], rubber, 0.003)
+  const glassIds = ['classic', 'vanilla-syrup', 'french-vanilla-syrup', 'hazelnut-syrup', 'simple-syrup', 'sweet-syrup']
+  const jarIds = ['mocha', 'white-mocha-sauce', 'condensed-milk', 'frappuccino-roast', 'glaze']
+  const bottles = [...glassIds, ...jarIds].map((id, index) => {
+    const model = createPumpVisual(root, pumpSpec(id)!)
+    if (index < glassIds.length) {
+      model.root.position.set(-0.34 + index * 0.136, 0.018, -0.2)
+    } else {
+      model.root.position.set(-0.44 + (index - glassIds.length) * 0.22, 0.018, 0.13)
+    }
+    return { id, model }
+  })
+  const bases = new THREE.Group()
+  bases.position.set(STATIONS.blender.x - 0.88, 1.105, STATIONS.blender.z)
+  scene.add(bases)
+
+  for (const [index, id] of ['cream-base', 'coffee-base'].entries()) {
+    const model = createPumpVisual(bases, pumpSpec(id)!)
+    model.root.position.x = index * 0.185
+    bottles.push({ id, model })
+  }
 
   return {
     update(state: GameState) {
       const cup = state.cup
-      const operation = cup?.craft.location === 'sauce' ? operationFor(cup.recipe, cup.craft)?.operation : null
-      const selected =
-        operation?.action === 'add' &&
-        (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
-        operation.amount.unit === 'pump' &&
-        (operation.materialId === 'glaze' || operation.materialId === 'classic')
-          ? operation.materialId
-          : null
-      // The chosen pump is placed over the cup by crafting visuals; avoid a second copy in the rail.
-      bottles.glaze.root.visible = selected !== 'glaze'
-      bottles.classic.root.visible = selected !== 'classic'
+      const step = cup ? operationFor(cup.recipe, cup.craft) : null
+      const operation = step?.operation
+      const placed =
+        cup && step && operation?.action === 'add' && vesselPlace(cup, operation.into, step) === step.station
+      const selected = placed ? operationPump(operation) : null
+
+      for (const { id, model } of bottles) {
+        // The active vessel uses the same model at its work position, so remove its copy from the rack.
+        model.root.visible = selected?.materialId !== id
+        const remaining = state.batches
+          .filter((batch) => batch.ingredient === id && batch.location === 'bar')
+          .reduce((amount, batch) => amount + batch.amount, 0)
+        model.update(0, Math.min(1, remaining / INGREDIENTS[id].pack))
+      }
     },
   }
 }
