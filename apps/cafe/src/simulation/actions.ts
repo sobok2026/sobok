@@ -69,6 +69,7 @@ export type Action =
   | { type: 'clean-confirm' }
   | { type: 'leave-cleaning' }
   | { type: 'label-batch'; id: string; station: StationId; until: number }
+  | { type: 'set-batch-storage'; id: string; station: StationId; storage: 'room' | 'fridge' }
   | { type: 'take-batch'; id: string; station: StationId }
   | { type: 'discard-batch'; id: string; station: StationId }
   | { type: 'return-batch'; station: StationId }

@@ -3,6 +3,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { INGREDIENTS } from '../../content/ingredients'
 import { WorkButton } from '../../shared/ui/WorkControls'
 import type { Batch } from '../../simulation/state'
+import { batchLifetime } from './batches'
 import {
   checkLabel,
   daysIn,
@@ -158,8 +159,16 @@ export default function LabelWriter({
         <summary className="flex min-h-9 items-center text-sm text-muted">기한표</summary>
         <ul className="mt-1 grid gap-1 text-sm text-muted">
           <li className="text-ink">
-            {definition.name} · {definition.prepared ? '제조' : '개봉'} 후 {lifetimeText(definition.lifetime)}
+            {definition.name} · {definition.prepared ? '제조' : '개봉'} 후 {lifetimeText(batchLifetime(batch))}
           </li>
+          {definition.storageLifetimes && (
+            <li>
+              {Object.entries(definition.storageLifetimes)
+                .map(([storage, lifetime]) => `${storage === 'fridge' ? '냉장' : '실온'} ${lifetimeText(lifetime)}`)
+                .join(' · ')}
+            </li>
+          )}
+          {definition.closingStorage === 'fridge' && <li>마감 시 남은 배치를 백룸 냉장고에 보관해요.</li>}
           <li>일·개월 기한은 시작한 날을 첫날로 세고 날짜만 적어요.</li>
           <li>시간 기한은 시작 시각부터 세고 분까지 적어요.</li>
           {definition.prepared && <li>배합은 넣은 원재료의 기한을 넘길 수 없어요.</li>}

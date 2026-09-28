@@ -1,4 +1,10 @@
-import { type Costs, INGREDIENTS, type IngredientId, ingredientIds } from '../../content/ingredients'
+import {
+  type Costs,
+  INGREDIENTS,
+  type IngredientId,
+  ingredientIds,
+  ingredientLifetime,
+} from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import { uid } from '../../shared/id'
 import { say } from '../../simulation/feedback'
@@ -23,6 +29,8 @@ export function newBatch(
   location: Batch['location'] = 'bar',
   sealed = false,
 ): Batch {
+  const storage = ingredient === 'iced-coffee' && location === 'urn' ? 'room' : INGREDIENTS[ingredient].storage
+
   return {
     id: uid(),
     ingredient,
@@ -30,7 +38,9 @@ export function newBatch(
     location,
     carryFrom: null,
     openedAt: sealed ? null : now,
-    expiresAt: sealed ? null : expiryAt(now, INGREDIENTS[ingredient].lifetime),
+    expiresAt: sealed ? null : expiryAt(now, ingredientLifetime(ingredient, storage)),
+    storage,
+    ingredientExpiresAt: null,
     labelled: location === 'bar',
     dripBean: null,
   }

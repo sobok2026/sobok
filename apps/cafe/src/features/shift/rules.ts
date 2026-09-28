@@ -85,6 +85,12 @@ export function shiftTasks(state: GameState): ShiftTask[] {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 폐기` })
     } else if (!batch.labelled) {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 라벨 쓰기` })
+    } else if (
+      state.phase === 'closing' &&
+      INGREDIENTS[batch.ingredient].closingStorage === 'fridge' &&
+      batch.location !== 'fridge'
+    ) {
+      tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 백룸 냉장 보관` })
     }
   }
 

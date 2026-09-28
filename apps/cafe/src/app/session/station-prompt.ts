@@ -120,9 +120,10 @@ function stationStatus(state: GameState, target: StationId) {
   if (target === 'wash') {
     return '씻을 용기가 없어요'
   }
-  const low = supplyIds.filter((id) => state.supplies[id].bar <= 5)
-  if (target === 'supplies' && low.length) {
-    return `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충 필요`
+  if (target === 'supplies') {
+    const low = supplyIds.filter((id) => state.supplies[id].bar <= 5)
+    if (low.length) return `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충 필요`
+    return supplyIds.map((id) => `${SUPPLIES[id].name} ${state.supplies[id].bar}${SUPPLIES[id].unit}`).join(' · ')
   }
   return '정리할 것이 없어요'
 }

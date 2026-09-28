@@ -136,6 +136,7 @@ export class CafeStore {
         case 'buy-supply':
         case 'open-batch':
         case 'label-batch':
+        case 'set-batch-storage':
         case 'take-batch':
         case 'return-batch':
         case 'store-batch':

@@ -282,11 +282,6 @@
       "unit": "ml",
       "pack": 1000,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#eee4ce",
       "visualGroup": "milk"
@@ -394,11 +389,6 @@
       "unit": "ml",
       "pack": 390,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#f1e9d7",
       "visualGroup": "foam"
@@ -435,16 +425,10 @@
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 500,
-      "price": 6000,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
+      "price": 0,
       "startingAmount": 0,
       "color": "#f4ecdc",
-      "visualGroup": "foam",
-      "purchasedPrepared": true
+      "visualGroup": "foam"
     },
     "yuja-v-base": {
       "stockUnit": "ml",
@@ -1305,11 +1289,6 @@
       "unit": "ml",
       "pack": 1000,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#a27143",
       "visualGroup": "tea"
@@ -1445,11 +1424,6 @@
       "unit": "ml",
       "pack": 1000,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#705040",
       "visualGroup": "coffee"
@@ -2215,11 +2189,6 @@
       "unit": "ml",
       "pack": 1040,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#c9b596",
       "visualGroup": "milk"
@@ -2368,12 +2337,7 @@
       "stockUnit": "g",
       "unit": "g",
       "pack": 500,
-      "price": 6000,
-      "storage": "room",
-      "lifetime": {
-        "amount": 3,
-        "unit": "months"
-      },
+      "price": 0,
       "startingAmount": 0,
       "color": "#694837",
       "visualGroup": "other"
@@ -3236,16 +3200,10 @@
       "stockUnit": "ml",
       "unit": "ml",
       "pack": 1000,
-      "price": 6000,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
+      "price": 0,
       "startingAmount": 0,
       "color": "#634630",
-      "visualGroup": "coffee",
-      "purchasedPrepared": true
+      "visualGroup": "coffee"
     },
     "coffee-base": {
       "stockUnit": "ml",
@@ -3462,11 +3420,6 @@
       "unit": "ml",
       "pack": 1000,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#503527",
       "visualGroup": "sauce"
@@ -3644,11 +3597,6 @@
       "unit": "ml",
       "pack": 500,
       "price": 0,
-      "storage": "fridge",
-      "lifetime": {
-        "amount": 24,
-        "unit": "hours"
-      },
       "startingAmount": 0,
       "color": "#b7c58e",
       "visualGroup": "tea"
@@ -3899,6 +3847,20 @@
       "startingAmount": 0,
       "color": "#634630",
       "visualGroup": "coffee"
+    },
+    "signature-chocolate-powder": {
+      "stockUnit": "pack",
+      "unit": "봉",
+      "pack": 1,
+      "price": 7000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#694832",
+      "visualGroup": "powder"
     }
   }
 }

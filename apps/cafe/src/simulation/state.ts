@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { customizationSchema } from '../content/customizations'
 import { drinkSizeIds } from '../content/drink-sizes'
-import { ingredientIds } from '../content/ingredients'
+import { INGREDIENTS, ingredientIds, ingredientLifetime } from '../content/ingredients'
+import { expiryAt } from '../content/lifetime'
 import { recipeCup, recipeFor, recipeIds } from '../content/recipes'
 import { isCupSurface, SHOP_BOUNDS, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
@@ -232,17 +233,32 @@ const customerSchema = z
     '손님의 이용 방식과 테이블 정보가 맞지 않아요.',
   )
 
-const batchSchema = z.object({
-  id: z.string().max(100),
-  ingredient: z.enum(ingredientIds),
-  amount: quantity,
-  location: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn', 'hand']),
-  carryFrom: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn']).nullable(),
-  openedAt: timestamp.nullable(),
-  expiresAt: timestamp.nullable(),
-  labelled: z.boolean(),
-  dripBean: dripBeanSchema.nullable(),
-})
+const batchSchema = z
+  .object({
+    id: z.string().max(100),
+    ingredient: z.enum(ingredientIds),
+    amount: quantity,
+    location: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn', 'hand']),
+    carryFrom: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'urn']).nullable(),
+    openedAt: timestamp.nullable(),
+    expiresAt: timestamp.nullable(),
+    storage: z.enum(['room', 'fridge']),
+    ingredientExpiresAt: timestamp.nullable(),
+    labelled: z.boolean(),
+    dripBean: dripBeanSchema.nullable(),
+  })
+  .refine((batch) => {
+    const definition = INGREDIENTS[batch.ingredient]
+    return batch.storage === definition.storage || !!definition.storageLifetimes?.[batch.storage]
+  }, '재료에 허용되지 않은 보관 방식이에요.')
+  .refine((batch) => {
+    if (batch.openedAt === null) return batch.expiresAt === null && batch.ingredientExpiresAt === null
+    const limit = Math.min(
+      expiryAt(batch.openedAt, ingredientLifetime(batch.ingredient, batch.storage)),
+      batch.ingredientExpiresAt ?? Infinity,
+    )
+    return batch.expiresAt !== null && batch.expiresAt <= limit
+  }, '배치 기한이 제조·개봉 또는 원재료 기한을 넘었어요.')
 
 const jobSchema = z.object({
   id: z.string().max(100),

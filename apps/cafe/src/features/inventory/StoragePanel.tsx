@@ -20,6 +20,7 @@ import type { Objective, Subject } from '../../simulation/guidance'
 import type { Batch, GameState } from '../../simulation/state'
 import { isDripIngredient } from '../drip-coffee/rules'
 import { currentTicket } from '../service/orders'
+import BatchStorage from './BatchStorage'
 import {
   BAR_BATCH_CAPACITY,
   barBatchCount,
@@ -69,7 +70,9 @@ export default function StoragePanel({
   const all = inventorySummary(state)
   const writing = state.batches.find((batch) => batch.id === labelling && !batch.labelled && batch.amount > 0)
   const focus = writing?.ingredient ?? promoted(state, all, place, subject)
-  const items = all.filter((item) => packStorage(item.id) === place)
+  const items = all.filter(
+    (item) => packStorage(item.id) === place || item.batches.some((batch) => batch.location === place),
+  )
   const attention = items.filter((item) => item.shortage > EPSILON || waiting(state, item, place)).length
 
   return (
@@ -227,8 +230,9 @@ function MaterialNow({
         detail={`바 용기 ${barBatchCount(state, item.id)}/${BAR_BATCH_CAPACITY}개`}
       >
         <Button onClick={() => act({ type: 'take-batch', id: task.batch.id, station: place })}>
-          용기 집기 → {STATIONS[materialHome(item.id)].name}
+          용기 집기 → {STATIONS[materialHome(item.id, task.batch.storage)].name}
         </Button>
+        <BatchStorage batch={task.batch} station={place} act={act} />
       </PanelNow>
     )
   }
@@ -248,9 +252,11 @@ function MaterialNow({
 function LabelNow({ batch, act, place }: { batch: Batch; act: Act; place: Place }) {
   return (
     <PanelNow title="라벨을 써야 쓸 수 있어요">
+      <BatchStorage batch={batch} station={place} act={act} />
       <LabelWriter
-        key={batch.id}
+        key={`${batch.id}:${batch.storage}`}
         batch={batch}
+        inputsUntil={batch.ingredientExpiresAt}
         onAttach={(until) => act({ type: 'label-batch', id: batch.id, station: place, until })}
       />
     </PanelNow>
@@ -308,7 +314,7 @@ function Materials({
   const [query, setQuery] = useState('')
   const needle = searchName(query)
   const buying = place === 'stock'
-  const searchable = buying ? all.filter((item) => !item.definition.prepared || packStorage(item.id) === place) : items
+  const searchable = buying ? all.filter((item) => !item.definition.prepared || items.includes(item)) : items
   const matches = searchable
     .filter((item) => item.id !== focus && searchName(item.definition.name).includes(needle))
     .slice(0, 30)
@@ -393,11 +399,13 @@ function MaterialRow({
                   기한 지난 배치 폐기
                 </HoldAction>
               )}
-              {!expired && (
+              {!expired && !batch.labelled && <RowButton onClick={() => onLabel(batch.id)}>라벨 쓰기</RowButton>}
+              {!expired && batch.labelled && (
                 <RowButton onClick={() => act({ type: 'take-batch', id: batch.id, station: place })}>
                   용기 집기
                 </RowButton>
               )}
+              {!expired && <BatchStorage batch={batch} station={place} act={act} />}
             </PanelRow>
           )
         })}

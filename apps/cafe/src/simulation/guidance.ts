@@ -22,7 +22,6 @@ import {
   carriedBatch,
   deliveryDestination,
   isSealed,
-  materialHome,
   materialSource,
 } from '../features/inventory/batches'
 import { CUP_NAMES, cupCount } from '../features/inventory/cups'
@@ -65,7 +64,12 @@ const blocked = (blocker: Blocker): Objective => ({ station: blocker.station, pa
 
 function materialStation(state: GameState, ingredient: IngredientId, area: StockArea, amount: number): StationId {
   if (ingredient === 'todays-coffee') return 'urn'
-  if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) return materialHome(ingredient)
+  if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) {
+    const batch = state.batches.find(
+      (item) => item.ingredient === ingredient && item.location === 'bar' && item.amount > 0,
+    )!
+    return batchHome(batch)!
+  }
   const source = materialSource(state, ingredient, area, amount, state.cup?.craft.dripBean ?? null)
   if (source) return batchHome(source) ?? 'stock'
   if (isDripIngredient(ingredient)) return 'urn'
@@ -270,6 +274,17 @@ function closingObjective(state: GameState): Objective | null {
   const unlabelledHome = unlabelled && batchHome(unlabelled)
   if (unlabelledHome) {
     return at(unlabelledHome, `${INGREDIENTS[unlabelled.ingredient].name} 라벨 쓰기`)
+  }
+  const overnight = state.batches.find(
+    (batch) =>
+      batch.amount > 0 &&
+      !isSealed(batch) &&
+      INGREDIENTS[batch.ingredient].closingStorage === 'fridge' &&
+      batch.location !== 'fridge',
+  )
+  const overnightHome = overnight && batchHome(overnight)
+  if (overnightHome) {
+    return at(overnightHome, `${INGREDIENTS[overnight.ingredient].name} 집어 백룸 냉장 보관`)
   }
   return state.customer ? at('pos', '남은 손님 확인') : null
 }

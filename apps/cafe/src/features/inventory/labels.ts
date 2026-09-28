@@ -1,6 +1,7 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt, type Lifetime } from '../../content/lifetime'
 import type { Batch } from '../../simulation/state'
+import { batchLifetime } from './batches'
 
 const DAY = 86400
 const LIFETIME_UNITS = { days: '일', hours: '시간', months: '개월' } as const
@@ -13,7 +14,7 @@ export type LabelVerdict = { title: string; detail?: string }
 export function labelFormat(batch: Batch): LabelFormat {
   const expiresAt = batch.expiresAt ?? 0
 
-  return INGREDIENTS[batch.ingredient].lifetime.unit === 'hours' || expiresAt % DAY !== 0 ? 'time' : 'date'
+  return batchLifetime(batch).unit === 'hours' || expiresAt % DAY !== 0 ? 'time' : 'date'
 }
 
 const parts = (moment: number) => {
@@ -44,7 +45,10 @@ export function labelMoment(value: LabelValue, format: LabelFormat, from: number
 }
 
 export function expectedLabel(batch: Batch) {
-  const expiresAt = batch.expiresAt ?? 0
+  let expiresAt = batch.expiresAt ?? 0
+  if (INGREDIENTS[batch.ingredient].storageLifetimes && batch.openedAt !== null) {
+    expiresAt = Math.min(expiryAt(batch.openedAt, batchLifetime(batch)), batch.ingredientExpiresAt ?? Infinity)
+  }
   return labelFormat(batch) === 'date' ? expiresAt : Math.floor(expiresAt / 60) * 60
 }
 
@@ -62,12 +66,19 @@ export function checkLabel(batch: Batch, moment: number): LabelVerdict | null {
   const definition = INGREDIENTS[batch.ingredient]
   const late = moment > expected
   const title = late ? '기한을 늦게 적었어요' : '기한을 이르게 적었어요'
-  const ownExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, definition.lifetime)
+  const lifetime = batchLifetime(batch)
+  const ownExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, lifetime)
 
-  if (definition.prepared && late && ownExpiry !== null && ownExpiry > (batch.expiresAt ?? 0)) {
+  if (
+    definition.prepared &&
+    late &&
+    ownExpiry !== null &&
+    batch.ingredientExpiresAt !== null &&
+    ownExpiry > batch.ingredientExpiresAt
+  ) {
     return { title, detail: '넣은 원재료 중 더 먼저 끝나는 것이 있어요.' }
   }
-  if (definition.lifetime.unit !== 'hours' && late && moment - expected === DAY) {
+  if (lifetime.unit !== 'hours' && late && moment - expected === DAY) {
     return { title, detail: '시작한 날을 첫날로 세요.' }
   }
 

@@ -288,7 +288,8 @@ export function createPlayerControls(
         forward /= length
         sideways /= length
         const yaw = camera.rotation.y
-        const speed = dt * 2.9
+        const running = keys.has('ShiftLeft') || keys.has('ShiftRight')
+        const speed = dt * 2.9 * (running ? 2 : 1)
         const dx = (-Math.sin(yaw) * forward + Math.cos(yaw) * sideways) * speed
         const dz = (-Math.cos(yaw) * forward - Math.sin(yaw) * sideways) * speed
         if (!collides(camera.position.x + dx, camera.position.z)) {

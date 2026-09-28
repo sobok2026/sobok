@@ -12,9 +12,8 @@ import {
   batchHome,
   deliveryDestination,
   isSealed,
-  materialHome,
   materialSource,
-  packStorage,
+  reserveStorage,
 } from './batches'
 import { CUP_NAMES, type CupKind, isReusableCup } from './cups'
 import type { StockArea } from './inventory'
@@ -22,9 +21,14 @@ import type { StockArea } from './inventory'
 export function materialTip(state: GameState, ingredient: IngredientId, area: StockArea = 'bar', needed = 0): Tip {
   const definition = INGREDIENTS[ingredient]
   if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) {
+    const batch = state.batches.find(
+      (item) => item.ingredient === ingredient && item.location === 'bar' && item.amount > 0,
+    )!
+    const home = batchHome(batch)!
+
     return {
       title: `${definition.name} 보충 자리 확보`,
-      action: `${STATIONS[materialHome(ingredient)].name}에서 용기 하나를 집어 백룸에 옮긴 뒤 보충하세요.`,
+      action: `${STATIONS[home].name}에서 용기 하나를 집어 백룸에 옮긴 뒤 보충하세요.`,
       reason: `바에는 품목별 ${BAR_BATCH_CAPACITY}용기까지 둘 수 있어요. 잔량과 라벨은 이동해도 유지돼요.`,
     }
   }
@@ -40,7 +44,7 @@ export function materialTip(state: GameState, ingredient: IngredientId, area: St
       reason:
         ingredient === 'todays-coffee'
           ? '5분 추출 후 URN에서 1시간 보온해요. 다른 원두나 기한이 지난 배치는 사용할 수 없어요.'
-          : '5분 추출 후 얼음 혼합·라벨을 마치고 바 냉장고에 보관해야 사용할 수 있어요.',
+          : '5분 추출 후 얼음 660g을 혼합하고 실온 4시간·냉장 8시간 중 선택해 라벨을 써요. 선택한 바 보관 장소에 넣어 사용하세요.',
     }
   }
   if (source && home) {
@@ -58,7 +62,7 @@ export function materialTip(state: GameState, ingredient: IngredientId, area: St
         reason: '개봉·제조 시각을 기준으로 기한을 적어요.',
       }
     }
-    const destination = area === 'backroom' ? packStorage(ingredient) : deliveryDestination(state, source)
+    const destination = area === 'backroom' ? reserveStorage(source) : deliveryDestination(state, source)
 
     return {
       title: `${definition.name} 운반`,

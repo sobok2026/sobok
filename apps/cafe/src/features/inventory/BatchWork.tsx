@@ -12,6 +12,7 @@ import {
 } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import type { Batch } from '../../simulation/state'
+import BatchStorage from './BatchStorage'
 import { batchDestination, batchName } from './batches'
 import LabelWriter from './LabelWriter'
 import { labelText } from './labels'
@@ -52,10 +53,11 @@ export default function BatchWork({
       <>
         <WorkHeader title="라벨 쓰기" value={`${formatDecimal(batch.amount)}${definition.unit}`} />
         <WorkNote>{batchName(batch)}</WorkNote>
+        <BatchStorage batch={batch} station={station} act={act} />
         <LabelWriter
-          key={batch.id}
+          key={`${batch.id}:${batch.storage}`}
           batch={batch}
-          inputsUntil={inputsUntil}
+          inputsUntil={inputsUntil ?? batch.ingredientExpiresAt}
           onAttach={(until) => act({ type: 'label-batch', id: batch.id, station, until })}
         />
         {discard}
@@ -67,6 +69,7 @@ export default function BatchWork({
     <>
       <WorkHeader title={`${batchName(batch)} 보관`} value={`${formatDecimal(batch.amount)}${definition.unit}`} />
       <WorkNote>라벨 {labelText(batch)}</WorkNote>
+      <BatchStorage batch={batch} station={station} act={act} />
       <WorkActions>
         <WorkButton shortcut="E" primary onUse={() => act({ type: 'take-batch', id: batch.id, station })}>
           용기 집기 → {STATIONS[batchDestination(batch)].name}

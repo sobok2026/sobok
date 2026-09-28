@@ -1,4 +1,4 @@
-import { INGREDIENTS } from '../../content/ingredients'
+import { INGREDIENTS, ingredientLifetime } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import { STATIONS, toward } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
@@ -16,6 +16,7 @@ import {
   isSealed,
   materialHome,
   packStorage,
+  reserveStorage,
 } from './batches'
 import { CUP_NAMES, CUP_SUPPLY } from './cups'
 import { addAmounts, newBatch } from './inventory'
@@ -38,6 +39,7 @@ export function handleStockActions(
         | 'buy-supply'
         | 'open-batch'
         | 'label-batch'
+        | 'set-batch-storage'
         | 'take-batch'
         | 'return-batch'
         | 'store-batch'
@@ -181,6 +183,34 @@ export function handleStockActions(
       say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 라벨을 써서 붙여주세요.`)
       break
     }
+    case 'set-batch-storage': {
+      const batch = s.batches.find((item) => item.id === action.id)
+      if (!batch || isSealed(batch) || batch.amount <= 0 || batch.openedAt === null) break
+      if (batch.location === 'hand' || batch.location === 'bar' || batchHome(batch) !== action.station) {
+        fail('URN이나 백룸에 용기를 내려놓고 보관 방식을 바꿔주세요.')
+        break
+      }
+      if (!INGREDIENTS[batch.ingredient].storageLifetimes?.[action.storage] || batch.storage === action.storage) break
+      if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
+        fail('이미 기한이 지난 배치는 보관 방식을 바꿔 사용할 수 없어요.')
+        break
+      }
+      const expiresAt = Math.min(
+        expiryAt(batch.openedAt, ingredientLifetime(batch.ingredient, action.storage)),
+        batch.ingredientExpiresAt ?? Infinity,
+      )
+      if (expiresAt <= s.time) {
+        fail('선택한 보관 방식의 사용 기한이 이미 지났어요.')
+        break
+      }
+
+      batch.storage = action.storage
+      // A longer cold-storage deadline starts applying only once the container is put away.
+      batch.expiresAt = Math.min(batch.expiresAt ?? expiresAt, expiresAt)
+      batch.labelled = false
+      say(s, '보관 방식을 바꿨어요. 처음 제조한 시각을 기준으로 라벨을 다시 써주세요.')
+      break
+    }
     case 'label-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
       if (!batch || batch.amount <= 0 || isSealed(batch) || batch.labelled) {
@@ -272,8 +302,8 @@ export function handleStockActions(
         break
       }
 
-      const barPlace = materialHome(batch.ingredient)
-      const reservePlace = packStorage(batch.ingredient)
+      const barPlace = materialHome(batch.ingredient, batch.storage)
+      const reservePlace = reserveStorage(batch)
       if (action.station !== barPlace && action.station !== reservePlace) {
         fail(`용기를 들고 ${toward(STATIONS[batchDestination(batch)].name)} 가져가주세요.`)
         break
@@ -296,6 +326,12 @@ export function handleStockActions(
       }
 
       batch.location = action.station === barPlace ? 'bar' : reservePlace
+      if (batch.openedAt !== null && INGREDIENTS[batch.ingredient].storageLifetimes) {
+        batch.expiresAt = Math.min(
+          expiryAt(batch.openedAt, ingredientLifetime(batch.ingredient, batch.storage)),
+          batch.ingredientExpiresAt ?? Infinity,
+        )
+      }
       batch.carryFrom = null
       if (s.preparation?.batchId === batch.id) {
         s.preparation = null

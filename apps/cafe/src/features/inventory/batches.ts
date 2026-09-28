@@ -1,11 +1,11 @@
 import { z } from 'zod'
 import storageData from '../../../data/shop/storage.json'
-import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
+import { INGREDIENTS, type IngredientId, type IngredientStorage, ingredientLifetime } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import type { StationId } from '../../content/stations'
 import type { Batch, GameState } from '../../simulation/state'
 import { DRIP_BEANS, type DripBean, isDripIngredient } from '../drip-coffee/rules'
-import { available, type StockArea } from './inventory'
+import { available, batchIdsFor, type StockArea } from './inventory'
 
 export const batchName = (batch: Batch) =>
   batch.dripBean
@@ -26,30 +26,44 @@ export const carriedBatch = (state: GameState) => state.batches.find((batch) => 
 /** An unopened pack; a carried one is a delivery the player still has to put away. */
 export const isSealed = (batch: Batch) => batch.openedAt === null
 
+/** The first container that consumption would use, expressed as a visual fill fraction. */
+export function dispensingFill(state: GameState, ingredient: IngredientId, area: StockArea = 'bar') {
+  const [id] = batchIdsFor(state, ingredient, 1, area)
+  const batch = state.batches.find((entry) => entry.id === id)
+  return Math.min(1, (batch?.amount ?? 0) / INGREDIENTS[ingredient].pack)
+}
+
 /** Only chilled goods go in the fridge; everything else waits in the storeroom. */
 export const packStorage = (ingredient: IngredientId) =>
   INGREDIENTS[ingredient].storage === 'fridge' ? ('fridge' as const) : ('stock' as const)
 
+export const batchLifetime = (batch: Batch) => ingredientLifetime(batch.ingredient, batch.storage)
+export const reserveStorage = (batch: Batch) =>
+  (INGREDIENTS[batch.ingredient].closingStorage ?? batch.storage) === 'fridge'
+    ? ('fridge' as const)
+    : ('stock' as const)
+
 export function batchOrigin(batch: Batch): StationId {
-  if (batch.carryFrom === 'bar') return materialHome(batch.ingredient)
+  if (batch.carryFrom === 'bar') return materialHome(batch.ingredient, batch.storage)
   if (batch.carryFrom) return batch.carryFrom
   return batch.ingredient === 'cold-brew' ? 'cold-prep' : 'prep'
 }
 
 export const batchDestination = (batch: Batch) =>
-  batch.carryFrom === 'bar' ? packStorage(batch.ingredient) : materialHome(batch.ingredient)
+  batch.carryFrom === 'bar' ? reserveStorage(batch) : materialHome(batch.ingredient, batch.storage)
 
 export function deliveryDestination(state: GameState, batch: Batch) {
   const destination = batchDestination(batch)
-  return destination === materialHome(batch.ingredient) && barBatchCount(state, batch.ingredient) >= BAR_BATCH_CAPACITY
-    ? packStorage(batch.ingredient)
+  return destination === materialHome(batch.ingredient, batch.storage) &&
+    barBatchCount(state, batch.ingredient) >= BAR_BATCH_CAPACITY
+    ? reserveStorage(batch)
     : destination
 }
 
 /** Where an ingredient is kept once it is ready: chilled goods in the fridge, room-temperature mixes on the shelf. */
-export function materialHome(ingredient: IngredientId) {
+export function materialHome(ingredient: IngredientId, storage: IngredientStorage = INGREDIENTS[ingredient].storage) {
   if (ingredient === 'todays-coffee') return 'urn' as const
-  if (INGREDIENTS[ingredient].storage === 'fridge') {
+  if (storage === 'fridge') {
     return 'bar-fridge' as const
   }
   return 'shelf' as const
@@ -99,13 +113,18 @@ export function batchHome(batch: Batch) {
   if (batch.location === 'hand') {
     return null
   }
-  return batch.location === 'bar' ? materialHome(batch.ingredient) : batch.location
+  return batch.location === 'bar' ? materialHome(batch.ingredient, batch.storage) : batch.location
 }
 
 /** A prepared batch expires early when one of its raw ingredients would expire before its own shelf life. */
 export function limitedByIngredient(batch: Batch) {
   const definition = INGREDIENTS[batch.ingredient]
-  const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, definition.lifetime)
+  const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, batchLifetime(batch))
 
-  return !!definition.prepared && batch.expiresAt !== null && usualExpiry !== null && batch.expiresAt < usualExpiry
+  return (
+    !!definition.prepared &&
+    batch.ingredientExpiresAt !== null &&
+    usualExpiry !== null &&
+    batch.ingredientExpiresAt < usualExpiry
+  )
 }
