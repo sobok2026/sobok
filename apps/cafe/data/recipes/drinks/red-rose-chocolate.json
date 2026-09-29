@@ -278,7 +278,7 @@
         {
           "id": "add-chocolate-premix",
           "label": "초콜릿 프리믹스 추가",
-          "instructions": ["초콜릿 프리믹스을 넣는다. 해당 사이즈 아이스 컵의 스타벅스 로고 제일 하단까지"],
+          "instructions": ["초콜릿 프리믹스을 넣는다. 해당 사이즈 아이스 컵의 소복다방 로고 제일 하단까지"],
           "notes": [],
           "operations": [
             {
@@ -287,7 +287,7 @@
               "into": "serving-cup",
               "amount": {
                 "kind": "mark",
-                "label": "스타벅스 로고 제일 하단"
+                "label": "소복다방 로고 제일 하단"
               }
             }
           ]

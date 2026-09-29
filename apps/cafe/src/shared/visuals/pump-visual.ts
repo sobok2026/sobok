@@ -136,7 +136,7 @@ function bottleLabel(root: THREE.Group, id: string) {
       ctx.fillText(label.english, w / 2, 394, w - 102)
       ctx.fillStyle = '#1b5140'
       ctx.font = canvasFont(29, 700)
-      ctx.fillText('STARBUCKS', w / 2, 572)
+      ctx.fillText('소복다방', w / 2, 572)
       ctx.font = canvasFont(29)
       ctx.fillText(INGREDIENTS[id].name, w / 2, 672, w - 80)
     }

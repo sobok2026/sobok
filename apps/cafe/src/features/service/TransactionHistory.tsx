@@ -5,7 +5,14 @@ import type { GameState } from '../../simulation/state'
 import { CashReceiptForm } from './CashReceiptForm'
 import { PosButton, PosDialog } from './PosControls'
 import { Receipt, ReceiptPreview } from './Receipt'
-import { cashReceiptLabel, receiptNumber, receiptTime, transactionCash, transactionTotal } from './transactions'
+import {
+  cashReceiptLabel,
+  receiptItemName,
+  receiptNumber,
+  receiptTime,
+  transactionCash,
+  transactionTotal,
+} from './transactions'
 
 export function TransactionHistory({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const [today, setToday] = useState(true)
@@ -20,7 +27,7 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
         (!today || transaction.day === state.day) &&
         (!query ||
           receiptNumber(transaction).includes(query) ||
-          transaction.lines.some((line) => line.name.includes(query))),
+          transaction.lines.some((line) => receiptItemName(line.name).includes(query))),
     )
   const selected = transactions.find((transaction) => transaction.id === selectedId) ?? transactions[0]
   const total = transactions.reduce((sum, transaction) => sum + transactionTotal(transaction), 0)

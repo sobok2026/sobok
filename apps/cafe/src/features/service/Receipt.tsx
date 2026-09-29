@@ -3,7 +3,14 @@ import { money } from '../../shared/format'
 import type { Action } from '../../simulation/actions'
 import type { Transaction } from '../../simulation/state'
 import { PosButton, PosDialog } from './PosControls'
-import { cashReceiptLabel, receiptNumber, receiptTime, transactionCash, transactionTotal } from './transactions'
+import {
+  cashReceiptLabel,
+  receiptItemName,
+  receiptNumber,
+  receiptTime,
+  transactionCash,
+  transactionTotal,
+} from './transactions'
 
 export function Receipt({ transaction }: { transaction: Transaction }) {
   const receipt = transaction.cashReceipts.at(-1)
@@ -21,7 +28,7 @@ export function Receipt({ transaction }: { transaction: Transaction }) {
         {transaction.lines.map((line) => (
           <div key={line.id}>
             <div className="flex justify-between gap-4 font-semibold">
-              <span>{line.name}</span>
+              <span>{receiptItemName(line.name)}</span>
               <span className="shrink-0 tabular-nums">{money(line.unitPrice * line.quantity)}</span>
             </div>
             <p className="mt-1 text-xs">{line.specification}</p>

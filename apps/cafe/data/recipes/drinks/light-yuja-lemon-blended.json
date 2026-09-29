@@ -62,8 +62,8 @@
         },
         {
           "id": "step-3",
-          "label": "스타벅스 레모네이드 추가",
-          "instructions": ["스타벅스 레모네이드 추가"],
+          "label": "소복다방 레모네이드 추가",
+          "instructions": ["소복다방 레모네이드 추가"],
           "notes": [],
           "operations": [
             {

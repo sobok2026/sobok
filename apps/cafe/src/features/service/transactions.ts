@@ -15,6 +15,7 @@ export const receiptNumber = (transaction: Transaction) =>
   `${new Date(transaction.paidAt * 1000).toISOString().slice(0, 10).replaceAll('-', '')}-${String(transaction.orderNumber).padStart(5, '0')}`
 
 export const receiptTime = (time: number) => new Date(time * 1000).toISOString().slice(0, 19).replace('T', ' ')
+export const receiptItemName = (name: string) => name.replace(/starbucks|스타벅스/gi, '소복다방')
 
 export function cashReceiptLabel(transaction: Transaction) {
   if (!transactionCash(transaction)) return '해당 없음'
