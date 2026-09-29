@@ -22,6 +22,7 @@ export function PosButton({
       className={clsx(
         'min-h-10 rounded px-3 py-2 text-sm font-semibold leading-snug',
         'disabled:opacity-40 aria-pressed:bg-pos-active aria-pressed:text-white',
+        'touch:min-h-11',
         colors[tone],
         className,
       )}
@@ -62,7 +63,12 @@ export function PosDialog({
   }, [])
 
   return (
-    <div className="absolute inset-0 z-30 grid place-items-center bg-black/50 p-5">
+    <div
+      className={clsx(
+        'absolute inset-0 z-30 grid place-items-center bg-black/50 p-5',
+        'touch:fixed touch:top-safe-top touch:right-safe-right touch:bottom-safe-bottom touch:left-safe-left touch:p-3',
+      )}
+    >
       <div
         ref={dialog}
         role="dialog"

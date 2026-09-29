@@ -1,3 +1,4 @@
+import { josa } from '../../shared/format'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import { cupHandsBusy } from '../../simulation/hands'
@@ -14,9 +15,13 @@ import {
   workIsBusy,
 } from '../production/runtime'
 import type { WorkStep } from '../production/workflow'
-import { createPreparation, PREPARATIONS, preparationStep } from './rules'
+import { createPreparation, PREPARATIONS, preparationStation, preparationStep } from './rules'
 
-const ownerFor = (prep: Preparation) => ({ kind: 'preparation' as const, id: prep.id, station: 'prep' as const })
+const ownerFor = (prep: Preparation) => ({
+  kind: 'preparation' as const,
+  id: prep.id,
+  station: preparationStation(prep),
+})
 
 function reserveTool(work: WorkContext, prep: Preparation, step: WorkStep) {
   if (!step.requiresReusableTool || prep.reservedTool) {
@@ -102,7 +107,7 @@ export function handlePreparationActions(
 
       if (step?.tool && reserveTool(work, prep, step)) {
         prep.tool = step.tool.id
-        say(s, `${step.tool.name}를 집었어요.`)
+        say(s, `${josa(step.tool.name, '을', '를')} 집었어요.`)
       }
 
       break
@@ -245,7 +250,7 @@ export function finishPreparation(work: WorkContext, completedAt: number) {
   if (prep.cursor !== definition.steps.length || workIsBusy(work, ownerFor(prep))) {
     return
   }
-  const batch = newBatch(definition.output.materialId, definition.output.amount, completedAt, 'prep')
+  const batch = newBatch(definition.output.materialId, definition.output.amount, completedAt, preparationStation(prep))
   batch.ingredientExpiresAt = prep.ingredientExpiresAt
   if (prep.ingredientExpiresAt !== null) {
     batch.expiresAt = Math.min(batch.expiresAt ?? prep.ingredientExpiresAt, prep.ingredientExpiresAt)

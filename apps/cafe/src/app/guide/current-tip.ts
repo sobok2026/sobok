@@ -21,7 +21,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (carrying?.openedAt === null) {
     return {
       title: '입고한 원팩을 보관하세요',
-      action: '보관 방식에 맞는 곳을 보고 E를 눌러 보관하세요.',
+      action: '보관 방식에 맞는 곳을 보고 작업 버튼을 눌러 보관하세요.',
       reason: '냉장 보관 재료는 냉장고, 실온 보관 재료는 창고에 둬요. 잘못 넣으면 다시 넣어야 해요.',
     }
   }
@@ -30,8 +30,8 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
     return {
       title: expired ? '기한이 지난 용기예요' : '배합 용기를 보관하세요',
       action: expired
-        ? `${STATIONS[batchOrigin(carrying)].name}에 E로 내려놓고 폐기하세요.`
-        : `${STATIONS[deliveryDestination(state, carrying)].name}까지 운반해 E로 보관하세요.`,
+        ? `${STATIONS[batchOrigin(carrying)].name}에 내려놓고 폐기하세요.`
+        : `${STATIONS[deliveryDestination(state, carrying)].name}까지 운반해 보관하세요.`,
       reason: `다시 놓으려면 ${toward(STATIONS[batchOrigin(carrying)].name)} 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
     }
   }
@@ -39,23 +39,29 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (state.cupDelivery) {
     return {
       title: `${CUP_NAMES[state.cupDelivery.kind]} ${state.cupDelivery.amount}개 운반 중`,
-      action: '바 컵 보관대에서 E로 보충하세요.',
-      reason: '백룸 창고에서 E로 다시 내려놓을 수 있어요.',
+      action: '바 컵 보관대에서 보충하세요.',
+      reason: '백룸 창고에서 다시 내려놓을 수 있어요.',
     }
   }
 
   if (panel === 'cold-prep' && !state.coldBrew) {
     return {
       title: '콜드 브루 한 배치를 준비하세요',
-      action: '원두 한 배치 준비 버튼을 누르면 직접 계량을 시작해요.',
-      reason: '원두와 물을 계량하고 추출이 끝나면 회수·라벨 쓰기·냉장 보관을 마쳐주세요.',
+      action: '추출 준비 버튼을 누른 뒤 BUNN G3에서 COARSE로 분쇄하세요.',
+      reason: '분쇄한 원두를 추출대로 가져가 물을 계량하고, 추출 후 회수·라벨·냉장 보관을 마쳐주세요.',
+    }
+  }
+  if (panel === 'grinder') {
+    return {
+      title: 'BUNN G3 원두 분쇄',
+      action: '분쇄할 작업과 분쇄도를 고르고 원두를 넣으세요. 드립은 DRIP, 콜드 브루는 COARSE, 칩은 ESPRESSO예요.',
+      reason: '드립 원두 용기는 URN으로, 콜드 브루 원두 봉투는 추출대로 가져가요. 칩은 그라인더에서 라벨을 써요.',
     }
   }
   if (panel === 'urn' || dripHandsBusy(state)) {
     return {
       title: 'URN Digital 드립 추출',
-      action:
-        'HOT·ICED와 원두를 선택하고 필터·원두 계량·추출을 진행하세요. 패널의 제조 기준에서 수량을 확인할 수 있어요.',
+      action: '필터를 넣고 BUNN G3에서 원두를 계량·DRIP 분쇄하세요. 분쇄 원두 용기를 URN에 가져와 필터에 부어요.',
       reason:
         '추출은 5분 동안 자동으로 진행돼요. HOT은 완료부터 1시간 보온하고, ICED는 얼음 혼합·라벨·냉장 보관을 마쳐요.',
     }
@@ -63,14 +69,14 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (state.supplyDelivery) {
     return {
       title: '보충품을 먼저 놓으세요',
-      action: '컨디먼트 바에서 E로 소모품을 보충하세요.',
-      reason: '창고에서 E로 다시 내려놓을 수도 있어요. 손을 비워야 다른 도구를 집을 수 있어요.',
+      action: '컨디먼트 바에서 소모품을 보충하세요.',
+      reason: '창고에서 다시 내려놓을 수도 있어요. 손을 비워야 다른 도구를 집을 수 있어요.',
     }
   }
   if (cup?.craft.location === 'hand' && (state.preparation || state.washing || state.coldBrew)) {
     return {
       title: '컵을 먼저 내려놓으세요',
-      action: `${STATIONS[nextStep(state)?.station ?? 'pickup'].name}를 보고 E를 누르세요.`,
+      action: `${STATIONS[nextStep(state)?.station ?? 'pickup'].name}를 보고 작업 버튼을 누르세요.`,
       reason: '컵을 내려놓은 뒤 부재료 준비나 피처 세척을 이어갈 수 있어요.',
     }
   }
@@ -90,7 +96,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (cup?.craft.fault) {
     return {
       title: '이 컵은 다시 만들어야 해요',
-      action: `${panel ? 'Esc로 창을 닫고 ' : ''}컵이 있는 작업대에서 Q를 길게 눌러 정리한 뒤 새 컵을 집으세요.`,
+      action: `${panel ? '창을 닫고 ' : ''}컵이 있는 작업대에서 폐기 버튼을 길게 눌러 정리한 뒤 새 컵을 집으세요.`,
       reason: cup.craft.fault,
       fault: true,
     }
@@ -123,7 +129,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   }
   return {
     title: '주문에 맞는 컵을 고르세요',
-    action: '컵 보관대에서 E를 누르고 주문의 매장·포장, 온도, 사이즈를 보고 컵을 고르세요.',
+    action: '컵 보관대에서 작업 버튼을 누르고 주문의 매장·포장, 온도, 사이즈를 보고 컵을 고르세요.',
     reason:
       '매장은 HOT 머그·ICED 유리잔, 포장은 HOT 종이컵·ICED 일회용 컵이에요. 비어 있으면 그 자리에서 보충 방법을 알려줘요.',
   }
@@ -131,7 +137,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
 
 function orderEntryAction(state: GameState, panel: StationId | null) {
   if (panel !== 'pos') {
-    return 'WASD로 이동하고 마우스로 POS를 본 뒤 E를 누르세요.'
+    return 'POS로 이동해 화면 가운데에 맞추고 작업 버튼을 누르세요.'
   }
   if (state.customer?.stage === 'ordering') {
     return '메뉴·온도·사이즈·매장/포장을 확인하고 음료를 담고 결제를 완료하세요.'

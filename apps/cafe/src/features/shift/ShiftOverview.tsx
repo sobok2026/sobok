@@ -13,7 +13,6 @@ import ShiftLedger from './ShiftLedger'
 
 type Tab = 'work' | 'ledger'
 
-/** The whole shop at a glance: the current objective first, then every remaining job by place. */
 export default function ShiftOverview({ state, onClose }: { state: GameState; onClose: () => void }) {
   const [tab, setTab] = useState<Tab>('work')
 

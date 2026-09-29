@@ -9,7 +9,7 @@ import { ProductionControls } from '../production/ProductionControls'
 import { ProductionGauge } from '../production/ProductionGauge'
 import { workReading, workTitle } from '../production/presentation'
 import type { WorkStep } from '../production/workflow'
-import { PREPARATIONS, preparationStep } from './rules'
+import { PREPARATIONS, preparationStation, preparationStep } from './rules'
 
 type Props = {
   state: GameState
@@ -21,7 +21,7 @@ type Props = {
 
 export default function PreparationHud({ state, target, active, act, stop }: Props) {
   const prep = state.preparation
-  if (!prep || target !== 'prep') {
+  if (!prep || target !== 'prep' || preparationStation(prep) !== 'prep') {
     return null
   }
 
@@ -32,7 +32,7 @@ export default function PreparationHud({ state, target, active, act, stop }: Pro
   )
 }
 
-function PreparationWork({
+export function PreparationWork({
   state,
   prep,
   active,
@@ -70,7 +70,15 @@ function PreparationWork({
   }
 
   if (prep.stage === 'ready' && batch) {
-    return <BatchWork batch={batch} time={state.time} inputsUntil={prep.ingredientExpiresAt} act={act} station="prep" />
+    return (
+      <BatchWork
+        batch={batch}
+        time={state.time}
+        inputsUntil={prep.ingredientExpiresAt}
+        act={act}
+        station={preparationStation(prep)}
+      />
+    )
   }
 
   if (!step) {

@@ -27,7 +27,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     !action.type.startsWith('pos-') &&
     action.type !== 'close'
   ) {
-    fail('URN에서 계량 도구를 먼저 내려놓아주세요.')
+    fail('드립 원두 용기나 계량 도구를 먼저 내려놓아주세요.')
     return false
   }
 
@@ -78,6 +78,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     s.coldBrew?.tool &&
     ![
       'cold-tool',
+      'cold-grind',
       'cold-use',
       'cold-confirm',
       'discard-cold-brew',
@@ -163,6 +164,7 @@ export function canDispatch(work: WorkContext, action: Action) {
       'take-batch',
       'take-cups',
       'start-cold-brew',
+      'cold-grind',
       'cold-tool',
       'cold-use',
       'cold-confirm',
@@ -172,6 +174,8 @@ export function canDispatch(work: WorkContext, action: Action) {
       'drip-tool',
       'drip-use',
       'drip-confirm',
+      'drip-grind',
+      'drip-load',
       'drip-brew',
       'drip-mix',
     ].includes(action.type)

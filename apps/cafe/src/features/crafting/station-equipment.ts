@@ -27,7 +27,6 @@ export function createWaterStation(scene: THREE.Scene) {
   const steel = material({ color: '#c6c9cb', metalness: 0.96, roughness: 0.25 })
   const capSteel = material({ color: '#b9bdc0', metalness: 0.94, roughness: 0.31 })
   const black = material({ color: '#181b1d', roughness: 0.71 })
-  // The reference is a continuous round L-shaped font, with three buttons along its crown.
   const path = new THREE.CurvePath<THREE.Vector3>()
   path.add(new THREE.LineCurve3(new THREE.Vector3(0, 0.012, 0), new THREE.Vector3(0, 0.515, 0)))
   path.add(
@@ -53,7 +52,6 @@ export function createWaterStation(scene: THREE.Scene) {
   }
 
   mesh(root, new THREE.CylinderGeometry(0.043, 0.046, 0.007, 40), steel, [0, 0.0035, 0])
-  // A flush drain leaves the pipe silhouette clear and keeps the serving cup on the worktop.
   box(root, [0.3, 0.004, 0.33], [0, 0.001, 0.195], capSteel, 0.002)
   box(root, [0.277, 0.001, 0.307], [0, 0.0035, 0.195], black, 0.0005)
   instances(
@@ -74,7 +72,6 @@ export function createIceBin(scene: THREE.Scene) {
   const black = material({ color: '#101819', roughness: 0.88 })
   const well = basin(root, 0.5, 0.67, 0.31, steel, 0.014)
 
-  // Subtle baked contact shading keeps the recessed liner distinct from the outer sheet metal.
   well.children.forEach((object, surface) => {
     if (!(object instanceof THREE.Mesh)) {
       return
@@ -104,7 +101,6 @@ export function createIceBin(scene: THREE.Scene) {
     object.material = liner
   })
 
-  // Black lid channels sit inside a thin rolled stainless flange.
   for (const x of [-0.233, 0.233]) box(root, [0.018, 0.009, 0.633], [x, 0.317, 0], black, 0.002)
   for (const z of [-0.316, 0.316]) box(root, [0.478, 0.009, 0.018], [0, 0.317, z], black, 0.002)
   for (const x of [-0.251, 0.251]) box(root, [0.007, 0.008, 0.679], [x, 0.323, 0], steel, 0.002)

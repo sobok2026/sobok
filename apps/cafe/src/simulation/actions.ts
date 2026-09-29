@@ -2,6 +2,7 @@ import type { IngredientId } from '../content/ingredients'
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
 import type { DripBean, DripTemperature } from '../features/drip-coffee/rules'
+import type { GrindSetting } from '../features/grinder/rules'
 import type { CupKind, DisposableCupKind } from '../features/inventory/cups'
 import type { SupplyId } from '../features/inventory/supplies'
 import type { PreparationId } from '../features/preparation/rules'
@@ -12,7 +13,16 @@ export type DripAction =
   | { type: 'set-cow'; hot: DripBean; iced: DripBean }
   | { type: 'drip-prepare'; temperature: DripTemperature; bean: DripBean }
   | {
-      type: 'drip-filter' | 'drip-tool' | 'drip-use' | 'drip-confirm' | 'drip-brew' | 'drip-mix' | 'drip-discard'
+      type:
+        | 'drip-filter'
+        | 'drip-tool'
+        | 'drip-use'
+        | 'drip-confirm'
+        | 'drip-grind'
+        | 'drip-load'
+        | 'drip-brew'
+        | 'drip-mix'
+        | 'drip-discard'
       temperature: DripTemperature
     }
   | { type: 'drip-stop' }
@@ -40,6 +50,7 @@ export type Action =
   | DripAction
   | PosAction
   | ReceiptAction
+  | { type: 'grinder-setting'; setting: GrindSetting }
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }
   | { type: 'prep-use' }
@@ -76,6 +87,7 @@ export type Action =
   | { type: 'store-batch'; id: string; station: StationId }
   | { type: 'shelve-pack'; station: StationId }
   | { type: 'start-cold-brew' }
+  | { type: 'cold-grind' }
   | { type: 'cold-tool' }
   | { type: 'cold-use' }
   | { type: 'cold-confirm' }

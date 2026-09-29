@@ -22,7 +22,6 @@ export type VesselVisualState = {
   foam: boolean
 }
 
-/** The printed order, or null before the player sticks it on. */
 export type DrinkVisualState = {
   kind: CupKind
   lidded: boolean
@@ -118,10 +117,11 @@ export function operationVessel(operation: ResolvedOperation): string | null {
   return null
 }
 
-export type WorkVesselShape = 'pitcher' | 'shot' | 'blender' | 'whipper'
+export type WorkVesselShape = 'pitcher' | 'shot' | 'blender' | 'whipper' | 'jar'
 
 export function workVesselShape(id: string, steps: WorkStep[]): WorkVesselShape {
   if (id === 'whipping-canister') return 'whipper'
+  if (id === 'shallow-jar') return 'jar'
   if (
     steps.some(
       ({ operation }) =>
@@ -291,8 +291,12 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: WorkVessel
   const blender = shape === 'blender' ? createBlenderJar() : null
   const root = blender?.root ?? new THREE.Group()
   parent.add(root)
-  const height = shape === 'shot' ? 0.085 : 0.34
-  const radius = shape === 'shot' ? 0.045 : 0.14
+  const [height, radius] = {
+    shot: [0.085, 0.045],
+    jar: [0.15, 0.12],
+    pitcher: [0.34, 0.14],
+    blender: [0.34, 0.14],
+  }[shape]
   const cream = standard('#eee6cd')
   const steel = standard('#afbcb2', 0.6)
 
@@ -339,7 +343,6 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: WorkVessel
   const ticks: THREE.Mesh[] = []
   let etchedFills = ''
 
-  /** Lines etched on the inside of a pitcher, both faces, so the player reads them from either side. */
   function etch(fills: number[]) {
     const key = fills.join('|')
     if (key === etchedFills) {
@@ -381,7 +384,6 @@ type ProductionToolVisual = {
   dispenser?: ReturnType<typeof createWhippingDispenser>
 }
 
-// Generic tools and the manual dispenser are created only when they are used.
 export function createProductionToolVisual(parent: THREE.Object3D) {
   const tools = new Map<ProductionTool['appearance'], { root: THREE.Group; material: THREE.MeshStandardMaterial }>()
   let dispenser: ReturnType<typeof createWhippingDispenser> | undefined

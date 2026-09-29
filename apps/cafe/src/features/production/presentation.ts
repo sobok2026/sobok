@@ -70,7 +70,6 @@ function operationObjects(op: ResolvedOperation): string[] {
   return objects
 }
 
-/** Settings, durations and finishing details that the work HUD cannot express through the tool or target. */
 export function operationNotes(step: WorkStep): string[] {
   if (step.kind === 'condition') {
     return []
@@ -195,7 +194,6 @@ const addVerbs: Partial<Record<keyof typeof countUnits, string>> = {
   drop: '떨어뜨리기',
 }
 
-/** What the hands do and to which vessel. The title never carries the amount; the recipe keeps that. */
 export function workTitle(step: WorkStep): string {
   if (step.kind === 'condition' || step.mixesMaterialId) {
     return step.label
@@ -236,10 +234,6 @@ export function workTitle(step: WorkStep): string {
   }
 }
 
-/**
- * What the instrument in the player's hand reads: pumps pressed, shots pulled, millilitres on the jug, seconds
- * held. Fill lines have no reading; the player reads them on the vessel. The target is never shown.
- */
 export function workReading(step: WorkStep, progress: number): string | null {
   if (step.kind === 'condition' || step.mixesMaterialId) {
     return null
@@ -294,6 +288,7 @@ const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {
 }
 
 export function workUseLabel(step: WorkStep): string {
+  if (step.operation.action === 'grind' && step.kind === 'count') return '원두 1스쿱 넣고 분쇄'
   if (step.kind === 'condition') {
     return '상태 선택'
   }

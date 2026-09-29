@@ -7,13 +7,13 @@ import { type Judgement, MEASURE_TOLERANCE } from '../production/runtime'
 
 const { variant } = recipeVariant(recipeCatalog, 'cold-brew-batch', 'standard')
 const operations = planRecipe(variant, { container: 'standard-cup', service: 'takeaway' }).map((step) => step.operation)
-const beans = operations.find((operation) => operation.action === 'add' && operation.materialId === 'cold-brew-beans')
+const beans = operations.find((operation) => operation.action === 'grind' && operation.materialId === 'cold-brew-beans')
 const water = operations.find((operation) => operation.action === 'add' && operation.materialId === 'water')
 const steep = operations.find((operation) => operation.action === 'steep')
 
 if (
-  beans?.action !== 'add' ||
-  beans.amount.kind !== 'amount' ||
+  beans?.action !== 'grind' ||
+  beans.amount?.kind !== 'amount' ||
   beans.amount.unit !== 'lb' ||
   water?.action !== 'add' ||
   water.amount.kind !== 'amount' ||
@@ -60,7 +60,6 @@ export const COLD_BREW_STEPS = [
 
 export const coldBrewStep = (brew: ColdBrew) => COLD_BREW_STEPS[brew.step]
 
-/** Measured like drinks: within the shared tolerance passes, less continues, more is a spoiled batch. */
 export function judgeColdBrew(brew: ColdBrew): Judgement {
   const step = coldBrewStep(brew)
   if (brew.progress + 1e-9 < step.target * (1 - MEASURE_TOLERANCE)) {
@@ -74,7 +73,8 @@ export function createColdBrew(): ColdBrew {
     id: crypto.randomUUID(),
     step: 0,
     progress: 0,
-    stage: 'measuring',
+    stage: 'grind',
+    groundBeans: 0,
     tool: null,
     beans: 0,
     water: 0,

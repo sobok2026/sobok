@@ -13,6 +13,7 @@ import type { RecipeAmount } from '../../content/recipe-schema'
 import type { StationId } from '../../content/stations'
 import type { StockContext, StockNextAdd } from '../../content/stock-amounts'
 import { dripBeanSchema } from '../drip-coffee/rules'
+import { bunnGrindSetting } from '../grinder/rules'
 import type { StockArea } from '../inventory/inventory'
 import { workStepLabels } from './step-labels'
 
@@ -52,10 +53,6 @@ export type ProductionTool = {
 
 export type ChoiceKey = 'temperature' | 'bean' | 'extraction' | 'program' | 'lid'
 
-/**
- * A setting the recipe fixes on equipment or at the counter. The player picks it and the game judges the pick,
- * so the work card lists every option and never marks the answer.
- */
 export type StepChoice = {
   key: ChoiceKey
   label: string
@@ -132,7 +129,6 @@ function steamCelsius(operation: SteamOperation) {
   return /x-?hot/i.test(operation.setting ?? '') ? steamRule.xHotCelsius : steamRule.referenceCelsius
 }
 
-/** Heating time grows with the temperature rise, anchored at the standard steam of the shop's wand. */
 function steamSeconds(operation: SteamOperation) {
   const rise =
     (steamCelsius(operation) - steamRule.startCelsius) / (steamRule.referenceCelsius - steamRule.startCelsius)
@@ -292,6 +288,9 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
 }
 
 function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): ProductionTool | null {
+  if (operation.action === 'grind' && bunnGrindSetting(operation)) {
+    return { id: `material:${operation.materialId}`, name: '원두 스쿱', appearance: 'scoop' }
+  }
   if (operation.action === 'add' && operation.materialId === 'todays-coffee') return null
   if ('toolIds' in operation && operation.toolIds?.length) {
     return {
@@ -329,6 +328,7 @@ function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): Producti
 }
 
 function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
+  if (bunnGrindSetting(operation)) return 'grinder'
   if (owner) {
     return owner
   }
@@ -413,15 +413,16 @@ export function compileWorkflow(
     if (operation.action === 'add' || operation.action === 'transfer') {
       control = quantityControl(operation.amount)
     } else if (operation.action === 'espresso') {
-      // Each press pulls one shot, so the number of shots is the player's call like pumps.
       control = { ...quantityControl(operation.amount), kind: 'count' }
       equipmentId ??= 'espresso-machine'
       choices = espressoChoices(operation)
     } else if (operation.action === 'grind') {
-      control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '분쇄' }
+      control =
+        bunnGrindSetting(operation) && operation.amount
+          ? quantityControl(operation.amount)
+          : { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '분쇄' }
     } else if (operation.action === 'run-machine') {
       const [target, maximum] = repetitionBounds(operation.cycles)
-      // Timed programs run on their own; untimed ones count each press as one run.
       control =
         seconds === null
           ? { kind: 'count', target, maximum, increment: 1, unit: '회' }
@@ -487,7 +488,7 @@ export function compileWorkflow(
       ...control,
       label: labels[index],
       stockContext,
-      stockArea: owner === 'prep' ? 'backroom' : 'bar',
+      stockArea: owner === 'prep' && stationFor(operation, owner) !== 'grinder' ? 'backroom' : 'bar',
       nextStockAdd,
       nextStockPortion: nextStockStep?.portion,
       tool: toolFor(catalog, operation),

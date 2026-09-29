@@ -11,10 +11,6 @@ export const currentTicket = (state: {
     ? (state.sale.lines.find((line) => line.served < line.quantity) ?? null)
     : null
 
-/**
- * Stickers the printer has put out for drinks not yet delivered and not yet on a cup. A remade drink gets a new
- * sticker, so the count follows the paid order rather than a separate stock.
- */
 export function pendingStickers(state: {
   sale: { paidAt: number | null; lines: OrderLine[] } | null
   cup: { craft: { sticker: boolean } } | null

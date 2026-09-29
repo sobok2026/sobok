@@ -1,4 +1,5 @@
 import { formatDecimal } from '@sobok/std/format/number'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { batchDate } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
@@ -29,6 +30,8 @@ import {
   dripHandsBusy,
   dripMenuTemperature,
   dripRemaining,
+  dripStation,
+  dripTemperatures,
 } from './rules'
 
 export default function DripPanel({
@@ -41,7 +44,9 @@ export default function DripPanel({
   act: (action: Action) => void
 }) {
   const ticket = currentTicket(state)
-  const [temperature, setTemperature] = useState<DripTemperature>(dripMenuTemperature(ticket?.recipe ?? '') ?? 'hot')
+  const [temperature, setTemperature] = useState<DripTemperature>(
+    dripTemperatures.find((id) => state.drip[id]?.tool) ?? dripMenuTemperature(ticket?.recipe ?? '') ?? 'hot',
+  )
   const [bean, setBean] = useState<DripBean>(ticket?.dripBean ?? state.cow[temperature])
   const brew = state.drip[temperature]
 
@@ -60,7 +65,10 @@ export default function DripPanel({
             type="button"
             aria-pressed={temperature === value}
             disabled={dripHandsBusy(state)}
-            className="rounded-lg border border-control-line bg-control p-3 aria-pressed:bg-brand aria-pressed:text-on-brand disabled:opacity-60"
+            className={clsx(
+              'rounded-lg border border-control-line bg-control p-3',
+              'aria-pressed:bg-brand aria-pressed:text-on-brand disabled:opacity-60',
+            )}
             onClick={() => select(value)}
           >
             {value.toUpperCase()} URN
@@ -115,26 +123,44 @@ export default function DripPanel({
   )
 }
 
-function DripWork({
+export function DripWork({
   state,
   brew,
   temperature,
   active,
   act,
+  station = 'urn',
 }: {
   state: GameState
   brew: DripBrew
   temperature: DripTemperature
   active: boolean
   act: (action: Action) => void
+  station?: 'urn' | 'grinder'
 }) {
   const batch = state.batches.find((batch) => batch.id === brew.batchId)
   const seconds = dripRemaining(state, temperature)
   const remaining = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
   const measuring = brew.stage === 'beans' || brew.stage === 'ice'
   const amount = brew.stage === 'beans' ? brew.beans : brew.ice
-  const tool = brew.stage === 'beans' ? '분쇄 원두 용기' : '얼음 스쿱'
+  const tool = brew.stage === 'beans' ? '원두 용기' : '얼음 스쿱'
   const shortage = brew.stage === 'beans' && available(state, dripBeanIngredient(brew.bean)) <= 0
+
+  if (station === 'urn' && dripStation(brew) === 'grinder' && !brew.fault) {
+    return (
+      <>
+        <WorkHeader title={`${temperature.toUpperCase()} · ${DRIP_BEANS[brew.bean]}`} />
+        {brew.stage === 'ground' && brew.tool ? (
+          <Button onClick={() => act({ type: 'drip-load', temperature })}>분쇄 원두를 필터에 붓기</Button>
+        ) : (
+          <WorkNote>BUNN G3 그라인더에서 원두를 계량·분쇄한 뒤 용기를 집어 가져오세요.</WorkNote>
+        )}
+        <HoldAction shortcut={false} onConfirm={() => act({ type: 'drip-discard', temperature })}>
+          배치 폐기
+        </HoldAction>
+      </>
+    )
+  }
 
   return (
     <>
@@ -146,7 +172,7 @@ function DripWork({
         <>
           {measuring && (
             <WorkHeader
-              title={brew.stage === 'beans' ? '분쇄 원두 계량' : '얼음 계량'}
+              title={brew.stage === 'beans' ? '원두 계량' : '얼음 계량'}
               value={`${formatDecimal(amount)}g`}
             />
           )}
@@ -158,10 +184,7 @@ function DripWork({
       )}
       {!brew.fault && measuring && (
         <>
-          <WorkHeader
-            title={brew.stage === 'beans' ? '분쇄 원두 계량' : '얼음 계량'}
-            value={`${formatDecimal(amount)}g`}
-          />
+          <WorkHeader title={brew.stage === 'beans' ? '원두 계량' : '얼음 계량'} value={`${formatDecimal(amount)}g`} />
           {shortage && (
             <WorkBlocker
               reason="사용할 원두가 없어요"
@@ -194,6 +217,17 @@ function DripWork({
             <summary>제조 기준</summary>
             <p className="mt-2">{brew.stage === 'beans' ? dripDose(temperature) : DRIP.icedIceGrams}g</p>
           </details>
+        </>
+      )}
+      {!brew.fault && brew.stage === 'grind' && (
+        <Button onClick={() => act({ type: 'drip-grind', temperature })}>계량한 원두 분쇄</Button>
+      )}
+      {!brew.fault && brew.stage === 'ground' && (
+        <>
+          <WorkNote>분쇄 완료 · 용기를 집어 URN의 필터에 부어주세요.</WorkNote>
+          <Button onClick={() => act({ type: 'drip-tool', temperature })}>
+            분쇄 원두 용기 {brew.tool ? '놓기' : '집기'}
+          </Button>
         </>
       )}
       {!brew.fault && brew.stage === 'loaded' && (

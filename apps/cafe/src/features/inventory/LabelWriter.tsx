@@ -24,10 +24,6 @@ const wrap = (value: number, min: number, max: number) => {
   return value < min ? max : value
 }
 
-/**
- * The player writes the expiry the way a real date label is filled in: the start is copied from the clock and the
- * deadline is theirs to work out. Nothing is attached until it matches the rule exactly.
- */
 export default function LabelWriter({
   batch,
   inputsUntil = null,
@@ -178,7 +174,6 @@ export default function LabelWriter({
   )
 }
 
-/** One field of the date: type the digits or step it with the arrow keys, which wrap within the field. */
 function Segment({
   label,
   value,

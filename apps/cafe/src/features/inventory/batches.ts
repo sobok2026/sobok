@@ -23,17 +23,14 @@ export const isStorageStation = (station: StationId): station is StorageStation 
 
 export const carriedBatch = (state: GameState) => state.batches.find((batch) => batch.location === 'hand')
 
-/** An unopened pack; a carried one is a delivery the player still has to put away. */
 export const isSealed = (batch: Batch) => batch.openedAt === null
 
-/** The first container that consumption would use, expressed as a visual fill fraction. */
 export function dispensingFill(state: GameState, ingredient: IngredientId, area: StockArea = 'bar') {
   const [id] = batchIdsFor(state, ingredient, 1, area)
   const batch = state.batches.find((entry) => entry.id === id)
   return Math.min(1, (batch?.amount ?? 0) / INGREDIENTS[ingredient].pack)
 }
 
-/** Only chilled goods go in the fridge; everything else waits in the storeroom. */
 export const packStorage = (ingredient: IngredientId) =>
   INGREDIENTS[ingredient].storage === 'fridge' ? ('fridge' as const) : ('stock' as const)
 
@@ -60,7 +57,6 @@ export function deliveryDestination(state: GameState, batch: Batch) {
     : destination
 }
 
-/** Where an ingredient is kept once it is ready: chilled goods in the fridge, room-temperature mixes on the shelf. */
 export function materialHome(ingredient: IngredientId, storage: IngredientStorage = INGREDIENTS[ingredient].storage) {
   if (ingredient === 'todays-coffee') return 'urn' as const
   if (storage === 'fridge') {
@@ -87,7 +83,10 @@ export function materialSource(
   const outside = (batch: Batch) =>
     area === 'bar'
       ? batch.location !== 'bar'
-      : batch.location === 'bar' || batch.location === 'prep' || batch.location === 'cold-prep'
+      : batch.location === 'bar' ||
+        batch.location === 'prep' ||
+        batch.location === 'cold-prep' ||
+        batch.location === 'grinder'
 
   if (area === 'backroom') {
     const local = batches.filter((batch) => batch.location === 'fridge' || batch.location === 'stock')
@@ -108,7 +107,6 @@ export function materialSource(
   )
 }
 
-/** The station that shows a batch and where it can be discarded, or null while it is carried. */
 export function batchHome(batch: Batch) {
   if (batch.location === 'hand') {
     return null
@@ -116,7 +114,6 @@ export function batchHome(batch: Batch) {
   return batch.location === 'bar' ? materialHome(batch.ingredient, batch.storage) : batch.location
 }
 
-/** A prepared batch expires early when one of its raw ingredients would expire before its own shelf life. */
 export function limitedByIngredient(batch: Batch) {
   const definition = INGREDIENTS[batch.ingredient]
   const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, batchLifetime(batch))

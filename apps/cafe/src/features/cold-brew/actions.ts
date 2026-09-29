@@ -2,6 +2,7 @@ import type { Action } from '../../simulation/actions'
 import { say, startJob } from '../../simulation/feedback'
 import { craftingHandsBusy, cupHandsBusy } from '../../simulation/hands'
 import type { WorkContext } from '../../simulation/work-context'
+import { GRINDER_HOPPER_POUNDS } from '../grinder/rules'
 import { addAmounts, newBatch } from '../inventory/inventory'
 import {
   COLD_BREW_BEANS,
@@ -17,7 +18,16 @@ export function handleColdBrewActions(
   work: WorkContext,
   action: Extract<
     Action,
-    { type: 'start-cold-brew' | 'cold-tool' | 'cold-use' | 'cold-confirm' | 'collect-cold-brew' | 'discard-cold-brew' }
+    {
+      type:
+        | 'start-cold-brew'
+        | 'cold-grind'
+        | 'cold-tool'
+        | 'cold-use'
+        | 'cold-confirm'
+        | 'collect-cold-brew'
+        | 'discard-cold-brew'
+    }
   >,
 ) {
   const s = work.state
@@ -43,10 +53,39 @@ export function handleColdBrewActions(
       s.cash -= COLD_BREW_COST
       s.totals.coldBrewPurchases += COLD_BREW_COST
       s.coldBrew = createColdBrew()
-      say(s, '한 배치분의 콜드 브루 원두를 준비했어요. 원두와 물을 직접 계량해주세요.')
+      say(s, '한 배치분의 원두를 준비했어요. BUNN G3에서 COARSE로 나누어 분쇄해주세요.')
       break
+    case 'cold-grind': {
+      const brew = s.coldBrew
+      if (brew?.stage !== 'grind' || brew.fault) break
+      if (craftingHandsBusy(s)) {
+        fail('컵과 다른 도구를 먼저 내려놓아주세요.')
+        break
+      }
+      if (s.grindSetting !== 'coarse') {
+        fail('콜드 브루는 COARSE 설정으로 분쇄해주세요.')
+        break
+      }
+
+      brew.groundBeans = Math.min(COLD_BREW_BEANS, brew.groundBeans + GRINDER_HOPPER_POUNDS)
+      if (brew.groundBeans === COLD_BREW_BEANS) brew.stage = 'ground'
+      say(
+        s,
+        brew.stage === 'ground'
+          ? '분쇄를 마쳤어요. 원두 봉투를 집어 콜드 브루 추출대로 가져가세요.'
+          : '3lb 분쇄를 마쳤어요. 남은 원두를 이어서 분쇄해주세요.',
+        'success',
+      )
+      break
+    }
     case 'cold-tool': {
       const brew = s.coldBrew
+      if (brew?.stage === 'ground' && !brew.fault && !craftingHandsBusy(s)) {
+        brew.stage = 'measuring'
+        brew.tool = 'bean-bag'
+        say(s, '분쇄 원두 봉투를 집었어요. 콜드 브루 추출대의 필터에 담아주세요.')
+        break
+      }
       if (brew?.stage !== 'measuring') {
         break
       }

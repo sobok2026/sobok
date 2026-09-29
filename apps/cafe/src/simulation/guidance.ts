@@ -13,7 +13,7 @@ import {
   stepVessels,
   vesselName,
 } from '../features/crafting/rules'
-import { dripHandsBusy, isDripIngredient } from '../features/drip-coffee/rules'
+import { dripStation, dripTemperatures, isDripIngredient } from '../features/drip-coffee/rules'
 import {
   BAR_BATCH_CAPACITY,
   barBatchCount,
@@ -28,28 +28,25 @@ import { CUP_NAMES, cupCount } from '../features/inventory/cups'
 import { materialTip } from '../features/inventory/help'
 import type { StockArea } from '../features/inventory/inventory'
 import { SUPPLIES, type SupplyId, supplyIds } from '../features/inventory/supplies'
-import { PREPARATIONS, preparationForMaterial, preparationStep } from '../features/preparation/rules'
+import {
+  PREPARATIONS,
+  preparationForMaterial,
+  preparationStation,
+  preparationStep,
+} from '../features/preparation/rules'
 import { workTitle } from '../features/production/presentation'
 import { missingInput, readyWork, requiredInput } from '../features/production/runtime'
 import type { WorkStep } from '../features/production/workflow'
 import { currentTicket } from '../features/service/orders'
 import { WASH_NAMES, washDestination, washItems, washStock } from '../features/washing/rules'
-import { cupHandsBusy } from './hands'
+import { craftingHandsBusy, cupHandsBusy } from './hands'
 import type { Cleaning, CraftState, GameState, Preparation } from './state'
 
-/** What an objective is about, so the panel at that station can offer the exact action. */
 export type Subject = { ingredient: IngredientId; area?: StockArea; amount?: number } | { supply: SupplyId }
 
-/**
- * Why the next task cannot start yet. A fault is a mistake to undo and reads as an error. Anything else is work
- * that comes first, such as opening a pack, and reads as a plain next task.
- */
+/** Only mistakes are faults; routine prerequisites such as opening a pack are normal work. */
 export type Blocker = { station: StationId; reason: string; fix: string; subject?: Subject; fault?: boolean }
 
-/**
- * The single answer to "where do I go next and why". The order rail, the 3D marker, the off-screen arrow
- * and the work HUD blockers all read this so they never disagree.
- */
 export type Objective = {
   station: StationId | null
   particle: '에' | '에서'
@@ -73,7 +70,8 @@ function materialStation(state: GameState, ingredient: IngredientId, area: Stock
   const source = materialSource(state, ingredient, area, amount, state.cup?.craft.dripBean ?? null)
   if (source) return batchHome(source) ?? 'stock'
   if (isDripIngredient(ingredient)) return 'urn'
-  if (preparationForMaterial(ingredient)) return state.tools.clean ? 'prep' : 'wash'
+  const preparation = preparationForMaterial(ingredient)
+  if (preparation) return state.tools.clean ? preparation.steps[0].station : 'wash'
   return ingredient === 'cold-brew' ? 'cold-prep' : 'stock'
 }
 
@@ -113,7 +111,7 @@ export function craftBlocker(state: GameState, craft: CraftState, step: WorkStep
 export function preparationBlocker(state: GameState, prep: Preparation, step: WorkStep): Blocker | null {
   const missing = missingInput(state, step, prep.progress)
   if (missing) {
-    return materialBlocker(state, missing, 'backroom', requiredInput(step, missing, prep.progress))
+    return materialBlocker(state, missing, step.stockArea, requiredInput(step, missing, prep.progress))
   }
   if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean) {
     return toolBlocker(state)
@@ -160,21 +158,22 @@ function chore(state: GameState): Objective | null {
 
 function preparationObjective(state: GameState, prep: Preparation): Objective {
   const definition = PREPARATIONS[prep.recipe]
+  const station = preparationStation(prep)
   if (prep.fault) {
-    return blocked({ station: 'prep', reason: '배합 실패', fix: prep.fault, fault: true })
+    return blocked({ station, reason: '배합 실패', fix: prep.fault, fault: true })
   }
 
   if (prep.stage === 'ready') {
     const batch = state.batches.find((item) => item.id === prep.batchId)
     if (batch?.expiresAt != null && batch.expiresAt <= state.time) {
-      return blocked({ station: 'prep', reason: '배합 기한 만료', fix: '폐기하고 다시 준비하세요.', fault: true })
+      return blocked({ station, reason: '배합 기한 만료', fix: '폐기하고 다시 준비하세요.', fault: true })
     }
-    return at('prep', batch?.labelled ? `${definition.name} 용기 집기` : `${definition.name} 라벨 쓰기`)
+    return at(station, batch?.labelled ? `${definition.name} 용기 집기` : `${definition.name} 라벨 쓰기`)
   }
 
   const step = preparationStep(prep)
   if (!step) {
-    return blocked({ station: 'prep', reason: '준비 상태 오류', fix: '배합을 정리하고 다시 시작하세요.', fault: true })
+    return blocked({ station, reason: '준비 상태 오류', fix: '배합을 정리하고 다시 시작하세요.', fault: true })
   }
   const cupStep = nextStep(state)
   if (state.cup?.craft.tool && cupStep) {
@@ -185,11 +184,15 @@ function preparationObjective(state: GameState, prep: Preparation): Objective {
       ? preparationBlocker(state, prep, step)
       : null
 
-  return blocker ? blocked(blocker) : at('prep', `${definition.name} · ${step.label}`)
+  return blocker ? blocked(blocker) : at(station, `${definition.name} · ${step.label}`)
 }
 
 function coldBrewObjective(state: GameState): Objective {
   const brew = state.coldBrew!
+  if (brew.stage === 'grind' || brew.stage === 'ground') {
+    return at('grinder', brew.stage === 'grind' ? '콜드 브루 원두 COARSE 분쇄' : '분쇄 원두 봉투 집기')
+  }
+
   const batch = state.batches.find((item) => item.id === brew.batchId)
   if (brew.fault) {
     return blocked({ station: 'cold-prep', reason: '추출 준비 실패', fix: brew.fault, fault: true })
@@ -330,6 +333,14 @@ function plannedObjective(state: GameState): Objective {
     return coldBrewObjective(state)
   }
 
+  const pendingDrip = dripTemperatures
+    .map((id) => state.drip[id])
+    .find((brew) => brew && ['filter', 'beans', 'grind', 'ground', 'loaded', 'ice', 'mix'].includes(brew.stage))
+
+  if (pendingDrip && !craftingHandsBusy(state)) {
+    return at(dripStation(pendingDrip), pendingDrip.fault ? '드립 배치 폐기' : '드립 배치 준비 이어가기')
+  }
+
   const step = nextStep(state)
   if (step) {
     return craftObjective(state, step)
@@ -355,9 +366,17 @@ function plannedObjective(state: GameState): Objective {
 }
 
 export function objective(state: GameState): Objective {
-  if (dripHandsBusy(state)) return at('urn', '계량 마치고 도구 내려놓기')
+  const heldDrip = dripTemperatures.map((id) => state.drip[id]).find((brew) => brew?.tool)
+  if (heldDrip) {
+    return at(
+      heldDrip.stage === 'ground' ? 'urn' : dripStation(heldDrip),
+      heldDrip.stage === 'ground' ? '분쇄 원두를 URN 필터에 붓기' : '계량 마치고 도구 내려놓기',
+    )
+  }
+
+  if (state.coldBrew?.tool) return coldBrewObjective(state)
   const planned = plannedObjective(state)
-  const needsFreeHands: StationId[] = ['prep', 'cold-prep', 'wash', 'rack']
+  const needsFreeHands: StationId[] = ['prep', 'cold-prep', 'wash', 'rack', 'grinder']
   const cup = state.cup
   const held = heldVessel(cup)
   if (cup && (cup.craft.location === 'hand' || held) && planned.station && needsFreeHands.includes(planned.station)) {

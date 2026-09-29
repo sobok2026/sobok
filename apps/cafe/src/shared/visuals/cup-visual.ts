@@ -15,7 +15,6 @@ export const CUP_DIMENSIONS = Object.fromEntries(
   }),
 ) as Record<CupKind, { top: number; bottom: number; height: number; floor: number }>
 
-/** Height of a fill fraction; a stemmed or double-wall glass holds the drink above its floor. */
 export function cupFillY(kind: CupKind, fill: number) {
   const { floor, height } = CUP_DIMENSIONS[kind]
   return floor + 0.008 + fill * (height - floor - 0.02)
@@ -71,7 +70,6 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
     )
 
   lathe(profile.outline)
-  // A tall gap to the floor is a stem or a double wall, which stand on a thin foot; otherwise the base is solid.
   const solid = floor - base <= 0.03
   const thickness = solid ? Math.max(floor - base, glass ? 0.022 : 0.007) : 0.004
   cylinder(bottom, bottom, thickness, base + thickness / 2, material)
@@ -134,7 +132,6 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   const style = cupStyle(kind)
   const size = cupSize(kind)
 
-  // Only the standard cold cups carry the printed fill lines the recipes measure against.
   if (detailed && clear && style && size) {
     const black = new THREE.MeshBasicMaterial({ color: '#263b32' })
     const white = new THREE.MeshBasicMaterial({ color: '#fff9e8' })

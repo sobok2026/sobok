@@ -18,7 +18,13 @@ import { cupHandsBusy } from '../../simulation/hands'
 import type { GameState, OrderLine } from '../../simulation/state'
 import { available } from '../inventory/inventory'
 import { currentTicket } from '../service/orders'
-import { PREPARATIONS, type PreparationDefinition, preparationForMaterial, preparationIds } from './rules'
+import {
+  PREPARATIONS,
+  type PreparationDefinition,
+  preparationForMaterial,
+  preparationIds,
+  preparationStation,
+} from './rules'
 
 const choices = preparationIds.map((id) => PREPARATIONS[id]).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 
@@ -104,6 +110,8 @@ export default function PreparationPanel({
 }
 
 function unavailableReason(state: GameState) {
+  if (state.preparation && preparationStation(state.preparation) === 'grinder')
+    return 'BUNN G3 그라인더에서 에스프레소 칩 제조를 이어가세요.'
   if (state.preparation || state.cup?.craft.location === 'prep' || state.jobs.some((job) => job.station === 'prep')) {
     return '준비대에서 다른 작업이 진행 중이에요.'
   }

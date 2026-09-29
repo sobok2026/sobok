@@ -7,7 +7,6 @@ export const STICKER_COLORS = { paper: '#f9f9f3', band: '#c6d9ae', ink: '#252723
 type PrintText = { value: string; x: number; y: number; size: number; anchor: 'start' | 'middle'; inverted?: boolean }
 type PrintBox = { x: number; y: number; width: number; height: number; solid?: boolean }
 
-/** The same typesetting is used by the HUD's SVG and the printer/cup canvas textures. */
 export function orderStickerPrint(sticker: OrderSticker) {
   const texts: PrintText[] = []
   const boxes: PrintBox[] = []

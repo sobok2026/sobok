@@ -2,7 +2,6 @@ import type * as THREE from 'three'
 
 let family: string | undefined
 
-/** The page's own stack from @sobok/typography, so text on a texture is set like the HUD around it. */
 export function canvasFont(size: number, weight = 400) {
   family ??= getComputedStyle(document.body).fontFamily
   return `${weight} ${size}px ${family}`
@@ -11,11 +10,8 @@ export function canvasFont(size: number, weight = 400) {
 const latestDraw = new WeakMap<THREE.Texture, () => void>()
 
 /**
- * Draws onto a canvas texture, then once more when the web-font slices that drawing asked for have arrived.
- *
- * A texture keeps the pixels it was given, so text set before its Pretendard slice loads would stay in the fallback
- * face for good. Drawing the text is itself what starts that slice loading, which is why the check follows the
- * draw. Only the texture's latest drawing is repeated, so a late repaint never shows a stale frame.
+ * Drawing starts the Pretendard slice load. Without repainting afterwards, the texture keeps the fallback font.
+ * Only repeat the latest drawing so a late font load cannot restore a stale frame.
  */
 export function paintTexture(texture: THREE.Texture, draw: () => void) {
   const canvas = texture.image as HTMLCanvasElement

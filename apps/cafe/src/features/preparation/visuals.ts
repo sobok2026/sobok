@@ -14,9 +14,10 @@ import {
   projectVessel,
   workVesselShape,
 } from '../crafting/drink-visual'
+import { GRINDER_CATCH_SPOT, GRINDER_HOPPER_SPOT } from '../grinder/equipment'
 import { dispensingFill } from '../inventory/batches'
 import { PREP_BLENDER_JAR_SPOT } from './blender'
-import { PREPARATIONS, preparationStep } from './rules'
+import { PREPARATIONS, preparationStation, preparationStep } from './rules'
 
 export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const vessels = new Map<string, ReturnType<typeof createWorkVesselVisual>>()
@@ -47,6 +48,8 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
 
       const definition = PREPARATIONS[prep.recipe]
       const step = preparationStep(prep)
+      const atGrinder = preparationStation(prep) === 'grinder'
+      const workSpot = atGrinder ? GRINDER_CATCH_SPOT : PREP_SPOT
       const operation = step?.operation
       const fallback = definition.color ?? materialColor(definition.output.materialId)
       const populated = Object.entries(prep.vessels)
@@ -91,7 +94,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         }
 
         model.root.visible = prep.tool !== `vessel:${id}`
-        model.root.position.fromArray(PREP_SPOT)
+        model.root.position.fromArray(workSpot)
         if (id !== vesselId) {
           model.root.position.x += index * 0.32
         }
@@ -114,13 +117,14 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         })
       }
 
-      spot.copy(positions.get(vesselId ?? '') ?? from.fromArray(PREP_SPOT))
+      spot.copy(positions.get(vesselId ?? '') ?? from.fromArray(workSpot))
       const color = operationColor(prep, operation, fallback)
       const surfaceHeight = Math.max(0.025, (prep.vessels[vesselId ?? '']?.fill ?? 0) * 0.3)
       const descriptor = heldTool(prep, step, definition.steps)
       const tool = tools.update(descriptor, color)
       if (tool) {
-        positionProductionTool(tool, camera, step, spot, active, pulse, now, surfaceHeight)
+        const toolSpot = atGrinder ? from.fromArray(GRINDER_HOPPER_SPOT) : spot
+        positionProductionTool(tool, camera, step, toolSpot, active, pulse, now, surfaceHeight)
       }
       const spec = operationPump(operation)
       let pump: ReturnType<typeof createPumpVisual> | undefined

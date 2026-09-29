@@ -56,7 +56,6 @@ export function createEspressoMachine(scene: THREE.Scene) {
     box(root, [0.12, 0.045, 0.12], [x, 0.017, 0.43], rubber)
   }
 
-  // Recessed stainless back, separate copper shoulders, and a projecting brew group.
   box(root, [0.99, 0.52, 0.3], [0, 0.32, -0.065], black, 0.035)
   box(root, [0.79, 0.29, 0.02], [0, 0.275, 0.095], steel)
   box(root, [1.04, 0.052, 0.38], [0, 0.588, -0.045], black, 0.025)
@@ -149,7 +148,6 @@ export function createEspressoMachine(scene: THREE.Scene) {
   const dial = mesh(console, new THREE.CylinderGeometry(0.021, 0.023, 0.025, 24), rubber, [-0.1, -0.053, 0.035])
   dial.rotation.x = Math.PI / 2
 
-  // Three tinted bean hoppers; the center hopper is wider in the reference machine.
   for (const [x, width] of [
     [-0.35, 0.24],
     [-0.01, 0.37],
@@ -178,7 +176,6 @@ export function createEspressoMachine(scene: THREE.Scene) {
     )
   }
 
-  // Chrome steam assembly with insulated grip, gauge, and curved wand.
   const steamHead = mesh(root, new THREE.CylinderGeometry(0.073, 0.073, 0.21, 32), chrome, [0.4, 0.51, 0.24])
   steamHead.rotation.z = Math.PI / 2
   box(root, [0.11, 0.09, 0.08], [0.42, 0.615, 0.23], chrome)

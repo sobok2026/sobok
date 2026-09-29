@@ -91,7 +91,12 @@ export default function PosPanel({
   const closeDialog = () => setDialog(null)
 
   return (
-    <div className="absolute inset-0 z-12 bg-black/35 p-3 compact:p-2">
+    <div
+      className={clsx(
+        'pointer-events-auto absolute inset-0 z-12 overflow-y-auto overscroll-contain bg-black/35 p-3',
+        'compact:p-2',
+      )}
+    >
       <section
         ref={screen}
         role="dialog"
@@ -102,6 +107,7 @@ export default function PosPanel({
           'relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden',
           'rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none',
           'max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]',
+          'touch:min-h-150 touch:portrait:h-auto touch:portrait:grid-cols-1 touch:portrait:overflow-visible',
         )}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
@@ -136,7 +142,12 @@ export default function PosPanel({
           }
         }}
       >
-        <aside className="flex min-h-0 min-w-0 flex-col rounded-md bg-white p-2.5">
+        <aside
+          className={clsx(
+            'flex min-h-0 min-w-0 flex-col rounded-md bg-white p-2.5',
+            'touch:portrait:order-2 touch:portrait:min-h-96',
+          )}
+        >
           <header className="shrink-0 pb-3">
             <div className="flex justify-between text-xs text-pos-panel">
               <span>소복점 · POS 01</span>
@@ -166,7 +177,11 @@ export default function PosPanel({
               ))}
             </div>
           )}
-          <fieldset ref={list} className="min-h-0 flex-1 space-y-1 overflow-y-auto" aria-label="주문 목록">
+          <fieldset
+            ref={list}
+            className="min-h-0 flex-1 space-y-1 overflow-y-auto touch:portrait:max-h-80"
+            aria-label="주문 목록"
+          >
             {sale?.lines.map((line, index) => (
               <div
                 key={line.id}
@@ -318,8 +333,13 @@ export default function PosPanel({
             <span className="text-lg tabular-nums">{checkoutButtonLabel(paid, view, total)}</span>
           </PosButton>
         </aside>
-        <div className="flex min-h-0 min-w-0 flex-col gap-2">
-          <header className="flex min-h-10 shrink-0 items-center justify-between gap-3 px-2 text-sm text-white">
+        <div className="flex min-h-0 min-w-0 flex-col gap-2 touch:portrait:min-h-150">
+          <header
+            className={clsx(
+              'flex min-h-10 shrink-0 items-center justify-between gap-3 px-2 text-sm text-white',
+              'touch:sticky touch:top-0 touch:z-10 touch:bg-pos-shell',
+            )}
+          >
             <span>
               제조중{' '}
               <strong className="ml-2">
@@ -331,13 +351,19 @@ export default function PosPanel({
               ×
             </PosButton>
           </header>
-          <div className="flex min-h-0 flex-1 gap-1.5">
+          <div className="flex min-h-0 flex-1 gap-1.5 touch:portrait:flex-col">
             {view === 'checkout' ? (
               <PosCheckout state={state} act={act} onBack={() => setView('order')} onClose={onClose} />
             ) : (
               <>
                 {view === 'order' && (
-                  <nav className="flex w-22 shrink-0 flex-col gap-1" aria-label="주문 규격">
+                  <nav
+                    className={clsx(
+                      'flex w-22 shrink-0 flex-col gap-1',
+                      'touch:portrait:w-auto touch:portrait:flex-row touch:portrait:flex-wrap',
+                    )}
+                    aria-label="주문 규격"
+                  >
                     <PosButton
                       tone="active"
                       disabled={!selected}
@@ -434,7 +460,10 @@ export default function PosPanel({
                 )}
               </>
             )}
-            <nav className="flex w-16 shrink-0 flex-col gap-1" aria-label="POS 도구">
+            <nav
+              className="flex w-16 shrink-0 flex-col gap-1 touch:portrait:w-auto touch:portrait:flex-row"
+              aria-label="POS 도구"
+            >
               <PosButton tone="dark" className="flex-1 px-1" onClick={() => setDialog('store')}>
                 매장
                 <br />
@@ -450,7 +479,7 @@ export default function PosPanel({
               </PosButton>
             </nav>
           </div>
-          <footer className="grid min-h-14 shrink-0 grid-cols-6 gap-1">
+          <footer className="grid min-h-14 shrink-0 grid-cols-6 gap-1 touch:portrait:grid-cols-3">
             <PosButton
               tone="dark"
               disabled={!editable}

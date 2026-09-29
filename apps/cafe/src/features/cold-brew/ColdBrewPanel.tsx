@@ -12,6 +12,7 @@ export default function ColdBrewPanel({ state, act }: { state: GameState; act: (
       <PanelStatus>
         원두 {COLD_BREW_BEANS}lb · 정수 {COLD_BREW_WATER}L · 추출 {COLD_BREW_HOURS}시간
       </PanelStatus>
+      <p className="mb-4 text-body text-muted">준비한 원두는 BUNN G3에서 COARSE로 분쇄한 뒤 추출대에 가져와요.</p>
       {state.cash < COLD_BREW_COST ? (
         <p className="text-body text-danger">운영비가 부족해요.</p>
       ) : (

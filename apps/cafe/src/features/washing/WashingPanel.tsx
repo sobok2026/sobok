@@ -5,7 +5,6 @@ import type { GameState } from '../../simulation/state'
 import { currentTicket } from '../service/orders'
 import { washQueue } from './rules'
 
-/** Opens only when there is more than one thing to wash or collect; a single choice starts with E instead. */
 export default function WashingPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
   const ticket = currentTicket(state)
   const queue = washQueue(state, ticket ? recipeCup(ticket.recipe, ticket.size, ticket.service) : null)

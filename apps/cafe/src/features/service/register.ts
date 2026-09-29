@@ -24,7 +24,6 @@ export function createRegister(scene: THREE.Scene) {
   const frameBlack = material({ color: '#080a0d', roughness: 0.28, metalness: 0.03 })
   const rubber = material({ color: '#0b1014', roughness: 0.9 })
   const aluminum = material({ color: '#9aa5ab', metalness: 0.9, roughness: 0.25 })
-  // CX7's low, broad, chamfered black foot and short rear bracket define its silhouette.
   const footprint = new THREE.Shape()
   footprint.moveTo(-0.218, -0.15)
 
@@ -92,7 +91,6 @@ export function createRegister(scene: THREE.Scene) {
     rubber,
   )
 
-  // A receipt printer and a card terminal keep their controls facing the employee aisle.
   box(root, [0.21, 0.15, 0.24], [0.44, 0.08, 0.1], black, 0.024)
   box(root, [0.17, 0.015, 0.18], [0.44, 0.154, 0.09], aluminum, 0.007)
   box(root, [0.13, 0.011, 0.007], [0.44, 0.157, 0.184], rubber, 0.002)

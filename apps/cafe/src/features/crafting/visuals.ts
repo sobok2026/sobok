@@ -28,7 +28,6 @@ import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
 import { cupRecipe, operationFor, stepVessels, vesselPlace } from './rules'
 import { WATER_OUTLET } from './station-equipment'
 
-/** Where a helper vessel stands at a station: under the wand, under the group head, in the blender, or beside. */
 function vesselSpot(station: StationId, shape: WorkVesselShape, index: number): THREE.Vector3 {
   if (station === 'steam' && shape === 'pitcher') {
     return new THREE.Vector3(...STEAM_PITCHER_SPOT)
@@ -43,7 +42,6 @@ function vesselSpot(station: StationId, shape: WorkVesselShape, index: number): 
   return new THREE.Vector3(x - 0.32 * (index + 1), y, z + 0.04)
 }
 
-/** The sticker printed at payment: the order as the POS took it, never the cup to use. */
 function cupSticker(state: GameState) {
   const cup = state.cup
   const line = state.sale?.lines.find((item) => item.id === cup?.orderLineId)
@@ -160,7 +158,6 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         index++
       }
 
-      // With a shot glass under the group head, the cup steps aside on the drip tray.
       if (craft.location === 'espresso' && currentVessel !== servingId && positions.has(currentVessel ?? '')) {
         bench.root.position.x += 0.48
         bench.root.position.z -= 0.06

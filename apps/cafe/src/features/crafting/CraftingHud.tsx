@@ -85,7 +85,7 @@ function CraftingWork({
           value={step ? (workReading(step, craft.progress) ?? undefined) : undefined}
         />
         {step && <ProductionGauge session={craft} step={step} />}
-        <WorkBlocker reason={craft.fault} fix="Q를 길게 눌러 정리하고 새 컵으로 시작하세요." fault />
+        <WorkBlocker reason={craft.fault} fix="폐기 버튼을 길게 눌러 정리하고 새 컵으로 시작하세요." fault />
         <WorkLinks>
           <HoldAction onConfirm={onDiscard}>{isReusableCup(craft.kind) ? '비우고 세척 대기로' : '컵 폐기'}</HoldAction>
         </WorkLinks>
@@ -183,10 +183,9 @@ function CraftingWork({
   )
 }
 
-/** Why the step at this station cannot run yet. Only a real mistake reads as a fault. */
 function stepBlocker(state: GameState, cup: Cup, step: WorkStep) {
   if (!cup.craft.sticker) {
-    return { reason: '주문 스티커를 먼저 붙여주세요', fix: '컵을 들고 스티커 프린터에서 E를 누르세요.' }
+    return { reason: '주문 스티커를 먼저 붙여주세요', fix: '컵을 들고 스티커 프린터에서 작업 버튼을 누르세요.' }
   }
   const misplaced = misplacedVessels(cup, step)[0]
   if (misplaced) {
@@ -195,8 +194,8 @@ function stepBlocker(state: GameState, cup: Cup, step: WorkStep) {
       reason: `${josa(name, '이', '가')} 여기에 없어요`,
       fix:
         misplaced.place && misplaced.place !== 'hand'
-          ? `${STATIONS[misplaced.place].name}에서 집어 와 E로 놓으세요.`
-          : `E로 ${josa(name, '을', '를')} 내려놓으세요.`,
+          ? `${STATIONS[misplaced.place].name}에서 집어 와 놓으세요.`
+          : `${josa(name, '을', '를')} 내려놓으세요.`,
     }
   }
   const busy = stepVessels(step, cupRecipe(cup).vesselId).find((id) => vesselBusy(state, cup, id))

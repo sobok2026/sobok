@@ -98,7 +98,7 @@ export function equipmentTube(parent: THREE.Object3D, points: Point[], radius: n
   return equipmentMesh(parent, new THREE.TubeGeometry(curve, 24, radius, 8, false), material)
 }
 
-/** A hollow, rounded stainless well with a floor and rolled lip. Origin is its base. */
+/** Origin is the well's base. */
 export function equipmentBasin(
   parent: THREE.Object3D,
   width: number,

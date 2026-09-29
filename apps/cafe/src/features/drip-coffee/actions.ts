@@ -57,7 +57,6 @@ export function finishDripJob(state: GameState, job: Job) {
   }
 }
 
-/** Release the brewer only after its output has been consumed, discarded, or stored elsewhere. */
 export function settleDrip(state: GameState) {
   for (const temperature of dripTemperatures) {
     const brew = state.drip[temperature]
@@ -149,11 +148,17 @@ export function handleDripActions(work: WorkContext, action: DripAction) {
 
   if (action.type === 'drip-filter' && brew.stage === 'filter') {
     brew.stage = 'beans'
-    say(s, '필터를 넣었어요. 선택한 원두를 분쇄해 계량해주세요.')
-  } else if (action.type === 'drip-tool' && (brew.stage === 'beans' || brew.stage === 'ice')) {
+    say(s, '필터를 넣었어요. BUNN G3에서 선택한 원두를 계량하고 DRIP으로 분쇄해주세요.')
+  } else if (action.type === 'drip-tool' && ['beans', 'ice', 'ground'].includes(brew.stage)) {
     brew.tool = !brew.tool
   } else if (action.type === 'drip-use' && brew.tool && (brew.stage === 'beans' || brew.stage === 'ice')) {
-    work.input = { kind: 'drip', station: 'urn', preparationId: brew.id, temperature, stage: brew.stage }
+    work.input = {
+      kind: 'drip',
+      station: brew.stage === 'beans' ? 'grinder' : 'urn',
+      preparationId: brew.id,
+      temperature,
+      stage: brew.stage,
+    }
   } else if (action.type === 'drip-confirm' && (brew.stage === 'beans' || brew.stage === 'ice')) {
     if (brew.tool) return fail('계량 도구를 내려놓은 뒤 확인해주세요.')
     const amount = brew.stage === 'beans' ? brew.beans : brew.ice
@@ -163,7 +168,16 @@ export function handleDripActions(work: WorkContext, action: DripAction) {
       brew.fault = '너무 많이 넣었어요. 배치를 폐기하고 다시 준비해주세요.'
       return fail(brew.fault)
     }
-    brew.stage = brew.stage === 'beans' ? 'loaded' : 'mix'
+    brew.stage = brew.stage === 'beans' ? 'grind' : 'mix'
+  } else if (action.type === 'drip-grind' && brew.stage === 'grind') {
+    if (s.grindSetting !== 'drip') return fail('드립커피는 DRIP 설정으로 분쇄해주세요.')
+    brew.stage = 'ground'
+    say(s, '분쇄를 마쳤어요. 원두 용기를 집어 URN 필터에 부어주세요.', 'success')
+  } else if (action.type === 'drip-load' && brew.stage === 'ground') {
+    if (!brew.tool) return fail('그라인더에서 분쇄 원두 용기를 먼저 집어주세요.')
+    brew.tool = false
+    brew.stage = 'loaded'
+    say(s, '분쇄 원두를 필터에 담았어요. 깔때기를 장착하고 추출해주세요.')
   } else if (action.type === 'drip-brew' && brew.stage === 'loaded') {
     brew.stage = 'extracting'
     startJob(s, 'drip-coffee', 'urn', `${temperature.toUpperCase()} 드립 추출`, DRIP.brewSeconds, {

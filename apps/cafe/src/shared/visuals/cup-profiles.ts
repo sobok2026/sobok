@@ -11,21 +11,15 @@ import {
 /** [radius, height] in scene units, where a Tall cold glass stands 0.3 high. */
 type ProfilePoint = readonly [number, number]
 
-/**
- * The outer wall of a cup from the base up to the rim. The rack icon mirrors it and the 3D cup lathes it, so both
- * draw the same silhouette. Proportions follow the real vessels; they do not measure contents or stock.
- */
 export type CupProfile = {
   outline: readonly ProfilePoint[]
   /** Where the drink starts: above a stem, a thick glass base or the inner floor of a double wall. */
   floor: number
   /** Radius of the saucer under the cup; the outline starts on top of it. */
   saucer?: number
-  /** A double-wall glass shows its inner wall from the floor up. */
   innerWall?: boolean
 }
 
-// Tall proportions of each standard line; other sizes scale by the cube root of their volume.
 const STANDARD = {
   paper: { top: 0.112, bottom: 0.078, height: 0.285 },
   plastic: { top: 0.112, bottom: 0.078, height: 0.285 },
@@ -33,7 +27,6 @@ const STANDARD = {
   glass: { top: 0.108, bottom: 0.092, height: 0.3 },
 } as const satisfies Record<CupBody, { top: number; bottom: number; height: number }>
 
-/** Foot, a thin stem up to `stem`, then the bowl. */
 const stemmed = (foot: number, stem: number, bowl: ProfilePoint[]): ProfilePoint[] => [
   [foot, 0],
   [foot, 0.006],
@@ -138,7 +131,6 @@ const last = (profile: CupProfile) => profile.outline[profile.outline.length - 1
 export const profileHeight = (profile: CupProfile) => last(profile)[1]
 export const profileRim = (profile: CupProfile) => last(profile)[0]
 
-/** Outer radius at a height, read off the outline. */
 export function profileRadius(profile: CupProfile, y: number) {
   const points = profile.outline
   if (y <= points[0][1]) {
@@ -156,7 +148,6 @@ export function profileRadius(profile: CupProfile, y: number) {
   return profileRim(profile)
 }
 
-/** How much larger than the Tall of its material a cup is drawn; sizes handles and ice. */
 export const cupScale = (kind: CupKind) => {
   const profile = CUP_PROFILES[kind]
   return (profileHeight(profile) - profile.outline[0][1]) / STANDARD[cupBody(kind)].height

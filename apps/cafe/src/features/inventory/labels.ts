@@ -6,7 +6,6 @@ import { batchLifetime } from './batches'
 const DAY = 86400
 const LIFETIME_UNITS = { days: '일', hours: '시간', months: '개월' } as const
 
-/** Day and month shelf lives end at midnight, so their labels carry a date. Anything else carries the minute. */
 export type LabelFormat = 'date' | 'time'
 export type LabelValue = { month: number; day: number; hour: number; minute: number }
 export type LabelVerdict = { title: string; detail?: string }
@@ -29,13 +28,11 @@ const parts = (moment: number) => {
   }
 }
 
-/** The label starts from the moment the batch was opened or made; the player moves it forward. */
 export function startingLabel(batch: Batch): LabelValue {
   const { month, day, hour, minute } = parts(batch.openedAt ?? 0)
   return { month, day, hour, minute }
 }
 
-/** A written label runs to the end of its date, or to its minute. 24:00 is the same moment as the next midnight. */
 export function labelMoment(value: LabelValue, format: LabelFormat, from: number) {
   const start = parts(from)
   const year = start.year + (value.month < start.month ? 1 : 0)
@@ -91,7 +88,6 @@ export function lifetimeText(lifetime: Lifetime) {
 
 const two = (value: number) => String(value).padStart(2, '0')
 
-/** How a moment reads on a label: midnight shows the day it closes, anything else the minute. */
 export function momentText(moment: number, format: LabelFormat = moment % DAY === 0 ? 'date' : 'time') {
   if (moment % DAY === 0) {
     const { month, day } = parts(moment - DAY)

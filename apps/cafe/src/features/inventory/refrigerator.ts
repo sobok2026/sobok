@@ -47,7 +47,6 @@ export function createRefrigerator(scene: THREE.Scene, position: { x: number; z:
   for (const x of [-0.33, 0.33]) {
     box(root, [0.656, 1.542, 0.015], [x, 1.275, 0.486], black, 0.002)
     box(root, [0.65, 1.534, 0.034], [x, 1.275, 0.503], doorSteel, 0.003)
-    // The reference uses angular black pull handles, not curved chrome rails.
     const handleX = Math.sign(x) * 0.096
     box(root, [0.021, 0.337, 0.025], [handleX, 1.298, 0.574], black, 0.003)
 

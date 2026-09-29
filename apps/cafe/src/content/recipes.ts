@@ -74,7 +74,6 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
   return result
 }
 
-/** The rack cup an order line is served in, resolved from the recipe's serving vessel when the menu is built. */
 export function recipeCup(id: RecipeId, size: DrinkSize, service: ServiceMode): CupKind {
   const cup = RECIPES[id]?.sizes[size]?.cups[service]
   if (!cup) {

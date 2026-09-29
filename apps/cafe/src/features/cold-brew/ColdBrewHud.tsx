@@ -80,6 +80,16 @@ function ColdBrewWork({
     )
   }
 
+  if (brew.stage === 'grind' || brew.stage === 'ground') {
+    return (
+      <>
+        <WorkHeader title="콜드 브루 원두 분쇄" />
+        <WorkNote>BUNN G3에서 COARSE로 분쇄한 뒤 원두 봉투를 집어 추출대로 가져오세요.</WorkNote>
+        {discard('준비 중단 · 원두와 준비비 소모')}
+      </>
+    )
+  }
+
   if (brew.stage === 'ready' && batch) {
     return <BatchWork batch={batch} time={state.time} act={act} station="cold-prep" />
   }
@@ -131,7 +141,6 @@ function ColdBrewWork({
 
   const holding = brew.tool === step.tool
   const measuring = brew.step < 2
-  // The bag and the jug read what went in so far; the recipe amount stays in the help.
   const value = measuring ? formatQuantity(brew.progress, step.unit) : undefined
 
   return (

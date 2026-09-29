@@ -4,7 +4,13 @@ import type { DripTemperature } from '../features/drip-coffee/rules'
 import type { GameState } from './state'
 
 export type ActiveInput =
-  | { kind: 'drip'; preparationId: string; temperature: DripTemperature; stage: 'beans' | 'ice'; station: 'urn' }
+  | {
+      kind: 'drip'
+      preparationId: string
+      temperature: DripTemperature
+      stage: 'beans' | 'ice'
+      station: 'urn' | 'grinder'
+    }
   | { kind: 'drink'; cupId: string; step: number; station: StationId; operation: string }
   | { kind: 'prep'; preparationId: string; step: number; station: 'prep' }
   | { kind: 'cold'; preparationId: string; step: number; station: 'cold-prep' }

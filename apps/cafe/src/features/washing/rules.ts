@@ -32,10 +32,7 @@ export function washingHandsBusy(washing: Washing | null) {
   return !!washing && (washing.spongeHeld || washing.stage === 'carrying')
 }
 
-/**
- * What the sink can start right now, one entry per kind of vessel. The cup the current order needs comes first
- * within its kind so washing never picks an unrelated size.
- */
+/** Prioritize the current order's cup within its kind so washing never picks an unrelated size. */
 export function washQueue(state: GameState, needed: CupKind | null) {
   return (['pitcher', 'hot-mug', 'iced-glass', 'dine-in-vessel'] as const)
     .map((group) => {

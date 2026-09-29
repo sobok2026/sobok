@@ -9,14 +9,14 @@ export function washingTip(wash: Washing): Tip {
   if (wash.stage === 'carrying') {
     return {
       title: `${name}를 정리하세요`,
-      action: `${toward(destination)} 가져가 E로 놓으세요.`,
+      action: `${toward(destination)} 가져가 놓으세요.`,
       reason: '씻기만 해서는 재사용할 수 없어요. 제자리에 놓으면 준비가 끝나요.',
     }
   }
   if (wash.stage === 'ready') {
     return {
       title: `씻은 ${name}를 옮기세요`,
-      action: `세척대에서 E로 집고 ${toward(destination)} 가세요.`,
+      action: `세척대에서 집고 ${toward(destination)} 가세요.`,
       reason: '용기를 다시 사용할 수 있게 정리하는 단계예요.',
     }
   }
@@ -31,10 +31,10 @@ export function washingTip(wash: Washing): Tip {
 
 function washingAction(wash: Washing, ready: boolean) {
   if (ready) {
-    return wash.spongeHeld ? 'G로 스펀지를 놓고 F를 누르세요.' : 'F로 완료를 확인하세요.'
+    return wash.spongeHeld ? '스펀지를 놓고 확인 버튼을 누르세요.' : '확인 버튼으로 완료를 확인하세요.'
   }
   if (wash.stage === 'scrub' && !wash.spongeHeld) {
-    return 'G로 스펀지를 먼저 집으세요.'
+    return '스펀지를 먼저 집으세요.'
   }
-  return 'Space나 작업 버튼을 누르고 있으면 진행돼요.'
+  return '작업 버튼을 누르고 있으면 진행돼요.'
 }

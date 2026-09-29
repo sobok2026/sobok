@@ -52,7 +52,6 @@ type MaterialTask =
 const EPSILON = 0.0001
 const searchName = (value: string) => value.toLocaleLowerCase('ko-KR').replace(/\s+/g, '')
 
-/** The fridge holds only chilled goods; the storeroom also keeps cup and condiment backstock and takes deliveries. */
 export default function StoragePanel({
   state,
   act,
@@ -108,7 +107,6 @@ export default function StoragePanel({
   )
 }
 
-/** The item the "지금" card is showing; the lists below leave it out so it appears once. */
 function promoted(state: GameState, all: Item[], place: Place, subject: Subject | undefined) {
   if (!subject || !('ingredient' in subject)) {
     return undefined
@@ -361,7 +359,6 @@ function Materials({
   )
 }
 
-/** Each row carries one state and at most one action, so the list reads as a to-do list rather than a ledger. */
 function MaterialRow({
   state,
   act,

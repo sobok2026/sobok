@@ -28,7 +28,6 @@ const controls = [
 
 type Tab = 'now' | 'recipe' | 'manual' | 'controls' | 'library'
 
-/** A reference, not a tutorial: the order rail already says what to do, so this explains why and how. */
 export default function WorkGuide({
   state,
   station,
@@ -65,7 +64,29 @@ export default function WorkGuide({
       )}
       {tab === 'controls' && (
         <>
-          <dl className="divide-y divide-line">
+          <div className="hidden touch:block">
+            <p className="mb-3 font-semibold">가로로 돌리면 매장을 더 넓게 볼 수 있어요.</p>
+            <dl className="divide-y divide-line">
+              {[
+                ['왼손 스틱', '밀어서 이동 · 조금 밀면 천천히'],
+                ['스틱을 위로 더 밀기', '누르는 동안 달리기'],
+                ['빈 화면 드래그', '둘러보기 · 이동과 동시에 가능'],
+                ['작업 버튼', '집기 · 놓기 · 작업대 열기'],
+                ['작업 카드', '도구 선택 · 누르고 붓기 · 확인'],
+                ['길게 누르기', '폐기 · 작업 취소'],
+                ['상단 메뉴', '일시정지 · 도움말 · 매장 현황'],
+              ].map(([gesture, action]) => (
+                <div key={gesture} className="grid grid-cols-[1fr_1.5fr] gap-3 py-3">
+                  <dt className="font-medium">{gesture}</dt>
+                  <dd className="text-muted">{action}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-3 text-sm text-muted">
+              붓는 동안은 시점이 고정됩니다. 작업 버튼에서 손을 떼면 멈추고, 이동해도 작업이 멈춥니다.
+            </p>
+          </div>
+          <dl className="divide-y divide-line touch:hidden">
             {controls.map(([key, action]) => (
               <div key={key} className="flex items-center justify-between gap-5 py-2.5">
                 <dt>
@@ -75,7 +96,7 @@ export default function WorkGuide({
               </div>
             ))}
           </dl>
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-muted touch:hidden">
             마우스 고정이 지원되지 않으면 화면을 누른 채 드래그하거나 방향키를 사용하세요.
           </p>
         </>

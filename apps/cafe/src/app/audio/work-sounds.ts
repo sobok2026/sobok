@@ -19,9 +19,7 @@ const assetIds = [
   'wipe-table',
 ] as const
 
-// FLAC rather than a lossy codec: five of these loop, and only a lossless file decodes to the exact sample count
-// in every browser, without encoder padding that would put a gap at each wrap. Vite fingerprints each URL, so
-// the files can be cached forever.
+// FLAC avoids encoder padding that would leave gaps when the five continuous sounds loop.
 const assetUrls = import.meta.glob<string>('./sounds/*.flac', { eager: true, import: 'default', query: '?no-inline' })
 type Asset = (typeof assetIds)[number]
 type WorkSound = 'ice' | 'complete' | 'serve'

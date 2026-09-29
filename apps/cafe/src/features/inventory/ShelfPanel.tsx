@@ -7,7 +7,6 @@ import type { GameState } from '../../simulation/state'
 import { BAR_BATCH_CAPACITY, barBatchCount, batchHome, batchName } from './batches'
 import { labelText } from './labels'
 
-/** Room-temperature mixes waiting for use; the panel exists to check their dates and clear expired ones. */
 export default function ShelfPanel({
   state,
   act,

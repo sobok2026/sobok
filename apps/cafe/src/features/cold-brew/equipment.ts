@@ -39,7 +39,6 @@ export function createColdBrewTank(scene: THREE.Scene) {
   vessel.position.y = 0.3
   vessel.scale.set(0.65, 0.9, 0.65)
   root.add(vessel)
-  // A closed lathed wall has a real interior, rolled rim, and molded reinforcing rings.
   lathe(
     vessel,
     [

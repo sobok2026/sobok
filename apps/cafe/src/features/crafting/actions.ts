@@ -51,7 +51,6 @@ type CraftAction = Extract<
   }
 >
 
-/** The vessel a machine works on, which stays busy while the machine runs. */
 function machineVessel(step: WorkStep) {
   const operation = step.operation
   if ('vessel' in operation) {
@@ -252,7 +251,6 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
     session.reservedTool = true
   }
 
-  // A helper vessel comes out at the station of its first step and stays there until the player moves it.
   for (const id of stepVessels(step, servingId)) {
     if (id !== servingId && !session.places[id]) {
       session.places[id] = step.station

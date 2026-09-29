@@ -7,10 +7,6 @@ import { createOrderStickerTexture } from './order-sticker-texture'
 
 const SHOWN_STICKERS = 4
 
-/**
- * The label printer beside the cup rack. Payment prints one sticker per drink, and the strip hanging from the slot
- * shows how many are waiting for a cup.
- */
 export function createStickerPrinter(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Order sticker printer'
@@ -21,7 +17,6 @@ export function createStickerPrinter(scene: THREE.Scene) {
   box(root, [0.13, 0.085, 0.16], [0, 0.043, 0], body, 0.012)
   box(root, [0.09, 0.006, 0.006], [0, 0.07, -0.081], slot, 0.002)
   const stickers = Array.from({ length: SHOWN_STICKERS }, (_, index) => {
-    // Printed stickers lie on the counter in front of the slot, fanned toward the staff aisle.
     const texture = createOrderStickerTexture()
     const paper = new THREE.MeshBasicMaterial({
       map: texture.map,

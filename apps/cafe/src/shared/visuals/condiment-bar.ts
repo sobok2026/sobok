@@ -39,7 +39,6 @@ function walnutTexture() {
   return texture
 }
 
-/** One customer-facing cabinet: supplies, an open dish-return shelf and inset waste chutes. */
 export function createCondimentBar(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Combined condiment and return bar'
@@ -68,7 +67,6 @@ export function createCondimentBar(scene: THREE.Scene) {
     })
   }
 
-  // Recessed plinth, sides and back leave a real cabinet cavity below the openings.
   box(root, [width - 0.12, 0.12, depth - 0.16], [0, 0.08, -0.025], dark)
   box(root, [width - 0.07, 0.035, depth - 0.08], [0, 0.16, 0], wood)
   box(root, [width - 0.07, 0.86, 0.03], [0, 0.59, -depth / 2 + 0.035], wood)
@@ -85,7 +83,6 @@ export function createCondimentBar(scene: THREE.Scene) {
     }
   }
 
-  // The slab is actually cut through, with metal collars and dark wells below it.
   const slab = new THREE.Shape()
   slab.moveTo(-width / 2, -depth / 2)
   slab.lineTo(width / 2, -depth / 2)
@@ -109,7 +106,6 @@ export function createCondimentBar(scene: THREE.Scene) {
   mesh(root, geometry, stone, [0, CONDIMENT_COUNTER_Y - 0.05, 0])
   box(root, [width - 0.025, 0.1, 0.035], [0, 1.1, -depth / 2 + 0.025], wood)
 
-  // The shallow canopy and raised sides make the return area read as an open shelf.
   box(root, [1.13, 0.49, 0.025], [0, 1.32, -0.39], wood)
 
   for (const x of [-0.558, 0.558]) {

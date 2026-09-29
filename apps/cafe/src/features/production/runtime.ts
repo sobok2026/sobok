@@ -7,15 +7,14 @@ import { say, startJob } from '../../simulation/feedback'
 import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
 import type { DripBean } from '../drip-coffee/rules'
+import { bunnGrindSetting, GRIND_SETTINGS } from '../grinder/rules'
 import { addAmounts, available, batchIdsFor, consume } from '../inventory/inventory'
 import { observationStep } from './conditions'
 import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workflow'
 
 export type WorkOwner = { kind: 'drink' | 'preparation'; id: string; station: StationId; vessel?: string }
 export const continuousWork = (step: WorkStep) => step.kind === 'pour' || step.kind === 'mix'
-/** Held pours and timings pass within this share of the recipe amount. Counts must match exactly. */
 export const MEASURE_TOLERANCE = 0.05
-/** Timed equipment runs by itself once started, so the step never waits for a confirmation. */
 export const backgroundWork = (step: WorkStep) => step.kind === 'machine' && step.seconds !== null
 
 export type Judgement = 'under' | 'pass' | 'over'
@@ -63,7 +62,6 @@ function judgementText(step: WorkStep, judgement: Exclude<Judgement, 'pass'>) {
   return '아직 동작하지 않았어요.'
 }
 
-/** Checks the picks for this step. Unset or wrong picks are refused before anything is consumed. */
 export function checkChoices(work: WorkContext, session: ProductionState, step: WorkStep) {
   for (const choice of step.choices) {
     const picked = session.choices[choice.key]
@@ -353,6 +351,12 @@ export function beginProduction(
   }
 
   if (session.fault) {
+    return false
+  }
+
+  const grindSetting = bunnGrindSetting(step.operation)
+  if (grindSetting && work.state.grindSetting !== grindSetting) {
+    say(work.state, `${GRIND_SETTINGS[grindSetting]} 설정으로 분쇄해주세요.`, 'error')
     return false
   }
 

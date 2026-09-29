@@ -2,11 +2,11 @@ import { INGREDIENTS } from '../../content/ingredients'
 import { cupSurfaceIds, STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { cupSurface } from '../cleaning/rules'
-import { DRIP_BEANS, dripTemperatures } from '../drip-coffee/rules'
+import { DRIP_BEANS, dripStation, dripTemperatures } from '../drip-coffee/rules'
 import { batchHome, carriedBatch, deliveryDestination, isSealed } from '../inventory/batches'
 import { CUP_NAMES, cupCount } from '../inventory/cups'
 import { SUPPLIES } from '../inventory/supplies'
-import { PREPARATIONS } from '../preparation/rules'
+import { PREPARATIONS, preparationStation } from '../preparation/rules'
 import { CUSTOMER_STATUS } from '../service/customer'
 import { WASH_NAMES, washDestination, washItems, washStock } from '../washing/rules'
 
@@ -14,7 +14,6 @@ export type ShiftTask = { place: string; task: string; count?: string }
 
 const taskLabel = ({ place, task, count }: ShiftTask) => `${place} · ${task}${count ? ` ${count}` : ''}`
 
-/** Everything left to finish in the shop, each named by where it happens and exactly what remains. */
 export function shiftTasks(state: GameState): ShiftTask[] {
   const tasks: ShiftTask[] = []
   const unserved = state.sale?.paidAt != null ? state.sale.lines.reduce((sum, l) => sum + l.quantity - l.served, 0) : 0
@@ -22,16 +21,22 @@ export function shiftTasks(state: GameState): ShiftTask[] {
     tasks.push({ place: '주문', task: '음료 제조', count: unserved ? `${unserved}잔 남음` : undefined })
   }
   if (state.preparation) {
-    tasks.push({ place: STATIONS.prep.name, task: `${PREPARATIONS[state.preparation.recipe].name} 마무리` })
+    tasks.push({
+      place: STATIONS[preparationStation(state.preparation)].name,
+      task: `${PREPARATIONS[state.preparation.recipe].name} 마무리`,
+    })
   }
   if (state.coldBrew && state.coldBrew.stage !== 'extracting') {
-    tasks.push({ place: STATIONS['cold-prep'].name, task: coldBrewTask(state.coldBrew.stage) })
+    tasks.push({
+      place: STATIONS[['grind', 'ground'].includes(state.coldBrew.stage) ? 'grinder' : 'cold-prep'].name,
+      task: coldBrewTask(state.coldBrew.stage),
+    })
   }
   for (const temperature of dripTemperatures) {
     const brew = state.drip[temperature]
     if (brew && brew.stage !== 'extracting')
       tasks.push({
-        place: STATIONS.urn.name,
+        place: STATIONS[dripStation(brew)].name,
         task: `${temperature.toUpperCase()} ${DRIP_BEANS[brew.bean]} ${brew.stage === 'ready' && temperature === 'hot' ? '잔량 사용 또는 폐기' : '준비 마무리 또는 폐기'}`,
       })
   }
@@ -138,13 +143,18 @@ export function shiftTasks(state: GameState): ShiftTask[] {
   return tasks
 }
 
-const coldBrewTasks = { measuring: '계량 마무리', finished: '추출액 회수', ready: '라벨 쓰고 보관' } as const
+const coldBrewTasks = {
+  grind: '원두 분쇄',
+  ground: '분쇄 원두 봉투 집기',
+  measuring: '계량 마무리',
+  finished: '추출액 회수',
+  ready: '라벨 쓰고 보관',
+} as const
 
 function coldBrewTask(stage: keyof typeof coldBrewTasks | 'extracting') {
   return stage === 'extracting' ? '추출 중' : coldBrewTasks[stage]
 }
 
-/** What still blocks the end-of-day summary, as short lines for the POS checklist and the refusal message. */
 export function closingTasks(state: GameState) {
   const tasks = shiftTasks(state)
   if (state.sale?.paidAt === null && state.sale.payments.length) {

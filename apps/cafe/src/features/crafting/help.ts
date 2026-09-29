@@ -21,7 +21,7 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
   if (craft.fault) {
     return {
       title: '제조한 음료를 정리해주세요',
-      action: '컵이 놓인 작업대에서 Q를 길게 눌러 정리하고 새 컵으로 다시 시작하세요.',
+      action: '컵이 놓인 작업대에서 폐기 버튼을 길게 눌러 정리하고 새 컵으로 다시 시작하세요.',
       reason: craft.fault,
     }
   }
@@ -36,7 +36,7 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
   if (!craft.sticker) {
     return {
       title: '컵에 주문 스티커를 붙이세요',
-      action: '컵을 든 채 스티커 프린터를 보고 E를 누르세요.',
+      action: '컵을 든 채 스티커 프린터를 보고 작업 버튼을 누르세요.',
       reason: '결제하면 음료마다 스티커가 나와요. 스티커를 보고 만들어요.',
     }
   }
@@ -45,14 +45,14 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
     const station = nextVesselStation(cup, held) ?? step.station
     return {
       title: `${vesselName(cup, held)}를 내려놓으세요`,
-      action: `${STATIONS[station].name}를 보고 E를 누르세요.`,
+      action: `${STATIONS[station].name}를 보고 작업 버튼을 누르세요.`,
       reason: '용기는 한 번에 하나만 들 수 있어요.',
     }
   }
   if (craft.location === 'hand') {
     return {
       title: `${STATIONS[nextCupStation(cup)].name} 쪽으로 이동하세요`,
-      action: '작업대를 보고 E로 컵을 내려놓으세요.',
+      action: '작업대를 보고 컵을 내려놓으세요.',
       reason: '컵이 필요 없는 단계는 그 용기로 진행해요. 우유 계량과 스팀은 스팀 완드의 피처로 해요.',
     }
   }
@@ -60,7 +60,7 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
   if (misplaced?.place && misplaced.place !== 'hand') {
     return {
       title: `${vesselName(cup, misplaced.id)}를 옮기세요`,
-      action: `${STATIONS[misplaced.place].name}에서 E로 집고 ${STATIONS[step.station].name}에 E로 놓으세요.`,
+      action: `${STATIONS[misplaced.place].name}에서 집고 ${STATIONS[step.station].name}에 놓으세요.`,
       reason: `다음 단계는 ${workTitle(step)}예요.`,
     }
   }
@@ -107,37 +107,37 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
 
 function handoffAction(state: GameState, craft: CraftState) {
   if (craft.location === 'hand') {
-    return '픽업대에서 E로 컵을 내려놓으세요.'
+    return '픽업대에서 컵을 내려놓으세요.'
   }
   if (craft.location !== 'pickup') {
-    return 'E로 컵을 집어 픽업대로 옮기세요.'
+    return '컵을 집어 픽업대로 옮기세요.'
   }
   if (state.customer?.stage === 'pickup') {
-    return '손님 요청을 확인하고 F로 전달하세요.'
+    return '손님 요청을 확인하고 확인 버튼으로 전달하세요.'
   }
-  return '손님이 픽업대에 도착하면 F로 전달하세요.'
+  return '손님이 픽업대에 도착하면 확인 버튼으로 전달하세요.'
 }
 
 function stepAction(craft: CraftState, step: WorkStep) {
   if (craft.tool && craft.tool !== step.tool?.id) {
-    return 'G로 들고 있는 도구를 내려놓으세요.'
+    return '들고 있는 도구를 내려놓으세요.'
   }
   if (step.tool && !craft.tool) {
-    return `G로 ${step.tool.name}를 집으세요.`
+    return `${step.tool.name}를 집으세요.`
   }
   if (step.choices.some((choice) => !craft.choices[choice.key])) {
     return step.operation.action === 'serve'
-      ? '리드를 고르고 F로 확인하세요.'
-      : '숫자 키나 버튼으로 장비 설정을 고른 뒤 Space로 시작하세요.'
+      ? '리드를 고르고 확인 버튼을 누르세요.'
+      : '장비 설정을 고른 뒤 작업 버튼으로 시작하세요.'
   }
   if (backgroundWork(step)) {
-    return 'Space로 시작하면 장비가 스스로 멈춰요.'
+    return '작업 버튼으로 시작하면 장비가 스스로 멈춰요.'
   }
   if (step.kind === 'pour') {
-    return 'Space를 길게 눌러 붓고 짧게 눌러 조금씩 보충하세요. 도구를 내려놓고 F로 확인하면 판정해요.'
+    return '작업 버튼을 길게 눌러 붓고 짧게 눌러 조금씩 보충하세요. 도구를 내려놓고 확인 버튼을 누르면 판정해요.'
   }
   if (continuousWork(step)) {
-    return 'Space를 누른 채 진행하고 알맞은 양에서 손을 떼세요. 도구를 내려놓고 F로 확인하면 판정해요.'
+    return '작업 버튼을 누른 채 진행하고 알맞은 양에서 손을 떼세요. 도구를 내려놓고 확인 버튼을 누르면 판정해요.'
   }
-  return 'Space를 한 번씩 눌러 횟수를 맞추고 F로 확인하세요. 모자라면 이어서 하고 넘치면 다시 만들어요.'
+  return '작업 버튼을 한 번씩 눌러 횟수를 맞추고 확인 버튼을 누르세요. 모자라면 이어서 하고 넘치면 다시 만들어요.'
 }

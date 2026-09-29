@@ -12,7 +12,7 @@ import { type Customizations, canOmit, countAmount, noCustomizations } from '../
 import type { DrinkSize } from '../../content/drink-sizes'
 import type { PlannedStep } from '../../content/recipe-plan'
 import { recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
-import { STATIONS, type TableId } from '../../content/stations'
+import { CUSTOMER_ENTRANCE, STATIONS, type TableId } from '../../content/stations'
 import type { Customer, GameState } from '../../simulation/state'
 
 export const customerStages = [
@@ -32,10 +32,10 @@ export const customerStages = [
 type CustomerStage = (typeof customerStages)[number]
 type CustomerPoint = [number, number]
 
-export const CUSTOMER_DOOR_X = 5.45
-const CUSTOMER_ENTRANCE: CustomerPoint = [CUSTOMER_DOOR_X, 6.65]
-const ORDER_SPOT: CustomerPoint = [-4.8, 0.45]
-const PICKUP_SPOT: CustomerPoint = [6.1, 0.25]
+const ENTRY_SPOT: CustomerPoint = [CUSTOMER_ENTRANCE.x, CUSTOMER_ENTRANCE.z + 0.75]
+const CUSTOMER_AISLE_Z = 1.4
+const ORDER_SPOT: CustomerPoint = [STATIONS.pos.x, 0.45]
+const PICKUP_SPOT: CustomerPoint = [STATIONS.pickup.x, 0.25]
 export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x + 0.95, STATIONS.supplies.z]
 export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x + 0.95, STATIONS.condiment.z]
 // Prototype movement and interaction timings; the 10-second table stay is user-approved.
@@ -64,7 +64,7 @@ export const customerHasCup = (state: Pick<GameState, 'customer' | 'sale'>) =>
     (line) => line.served > 0 && (line.service === 'takeout' || state.customer?.stage !== 'leaving'),
   )
 
-const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
+const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, STATIONS[table].z - 0.95]
 
 function customizationCandidates(plan: PlannedStep[], size: DrinkSize): Customizations[] {
   const candidates: Customizations[] = []
@@ -172,9 +172,9 @@ export function createCustomer(orderNumber: number): Customer | null {
     orderNumber,
     items,
     stage: 'entering',
-    position: [...CUSTOMER_ENTRANCE],
+    position: [...ENTRY_SPOT],
     yaw: Math.PI,
-    path: [[CUSTOMER_DOOR_X, 1.7], [ORDER_SPOT[0], 1.7], [...ORDER_SPOT]],
+    path: [[CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z], [ORDER_SPOT[0], CUSTOMER_AISLE_Z], [...ORDER_SPOT]],
     nextPoint: 0,
     elapsed: 0,
     visit: null,
@@ -197,7 +197,11 @@ export function customerToPickup(customer: Customer) {
 }
 
 export function customerToCondiment(customer: Customer) {
-  customerPath(customer, 'to-condiment', [[PICKUP_SPOT[0], 1.7], [CONDIMENT_SPOT[0], 1.7], [...CONDIMENT_SPOT]])
+  customerPath(customer, 'to-condiment', [
+    [PICKUP_SPOT[0], CUSTOMER_AISLE_Z],
+    [CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z],
+    [...CONDIMENT_SPOT],
+  ])
 }
 
 export function customerToTable(customer: Customer) {
@@ -205,7 +209,7 @@ export function customerToTable(customer: Customer) {
     return
   }
   const seat = customerSeat(customer.visit.table)
-  customerPath(customer, 'to-table', [[CONDIMENT_SPOT[0], 1.7], [seat[0] + 1, 1.7], [seat[0] + 1, seat[1]], seat])
+  customerPath(customer, 'to-table', [[CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z], [seat[0], CUSTOMER_AISLE_Z], seat])
 }
 
 export function customerToReturn(customer: Customer) {
@@ -214,9 +218,8 @@ export function customerToReturn(customer: Customer) {
   }
   const seat = customerSeat(customer.visit.table)
   customerPath(customer, 'to-return', [
-    [seat[0] + 1, seat[1]],
-    [seat[0] + 1, 1.7],
-    [RETURN_SPOT[0], 1.7],
+    [seat[0], CUSTOMER_AISLE_Z],
+    [RETURN_SPOT[0], CUSTOMER_AISLE_Z],
     [...RETURN_SPOT],
   ])
 }
@@ -227,15 +230,15 @@ export function customerLeave(customer: Customer) {
 
   if (customer.stage === 'drinking' && customer.visit?.table) {
     const seat = customerSeat(customer.visit.table)
-    path.push([seat[0] + 1, seat[1]], [seat[0] + 1, 1.7])
-  } else if (!(Math.abs(x - CUSTOMER_DOOR_X) < 0.1 && z >= 1.7)) {
-    path.push([x, 1.7])
+    path.push([seat[0], CUSTOMER_AISLE_Z])
+  } else if (!(Math.abs(x - CUSTOMER_ENTRANCE.x) < 0.1 && z >= CUSTOMER_AISLE_Z)) {
+    path.push([x, CUSTOMER_AISLE_Z])
   }
 
   if (path.length) {
-    path.push([CUSTOMER_DOOR_X, 1.7])
+    path.push([CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z])
   }
-  path.push([...CUSTOMER_ENTRANCE])
+  path.push([...ENTRY_SPOT])
   customerPath(customer, 'leaving', path)
 }
 

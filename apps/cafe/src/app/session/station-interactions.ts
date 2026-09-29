@@ -13,6 +13,7 @@ import {
 } from '../../features/crafting/rules'
 import { batchOrigin, carriedBatch, isSealed, isStorageStation } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
+import { preparationStation } from '../../features/preparation/rules'
 import { currentTicket } from '../../features/service/orders'
 import { washDestination, washQueue } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
@@ -20,7 +21,6 @@ import type { GameState } from '../../simulation/state'
 
 export type Interaction = Action | 'work' | 'panel' | null
 
-/** What E does at a station. Null means there is nothing to do there, so no panel opens. */
 export function interactionAt(current: GameState, id: StationId): Interaction {
   const carrying = carriedBatch(current)
   if (carrying && id !== 'pos') {
@@ -55,11 +55,12 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
     return { type: 'store-washed', station: id }
   }
 
-  if (id === 'prep' && current.preparation) {
+  if (current.preparation && id === preparationStation(current.preparation)) {
     const batch = current.batches.find((item) => item.id === current.preparation?.batchId)
-    return batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time
-      ? { type: 'take-batch', id: batch.id, station: id }
-      : 'work'
+    if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time) {
+      return { type: 'take-batch', id: batch.id, station: id }
+    }
+    return id === 'grinder' ? 'panel' : 'work'
   }
 
   if (id === 'cold-prep' && current.coldBrew) {
@@ -96,7 +97,18 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
   return stationDefault(current, id)
 }
 
-const panelStations: StationId[] = ['pos', 'cups', 'fridge', 'stock', 'bar-fridge', 'shelf', 'prep', 'cold-prep', 'urn']
+const panelStations: StationId[] = [
+  'pos',
+  'cups',
+  'fridge',
+  'stock',
+  'bar-fridge',
+  'shelf',
+  'prep',
+  'cold-prep',
+  'urn',
+  'grinder',
+]
 
 function stationDefault(state: GameState, id: StationId): Interaction {
   if (panelStations.includes(id)) {
@@ -111,7 +123,6 @@ function stationDefault(state: GameState, id: StationId): Interaction {
   return null
 }
 
-/** One thing to wash or collect starts at once; a choice between vessels opens the sink panel. */
 function washInteraction(state: GameState): Interaction {
   const ticket = currentTicket(state)
   const queue = washQueue(state, ticket ? recipeCup(ticket.recipe, ticket.size, ticket.service) : null)
@@ -130,7 +141,7 @@ export function workActionAt(state: GameState, station: StationId): Action {
     return { type: 'clean-use' }
   } else if (station === 'wash' && state.washing) {
     return { type: 'wash-use' }
-  } else if (station === 'prep' && state.preparation) {
+  } else if (station === 'prep' && state.preparation && preparationStation(state.preparation) === 'prep') {
     return { type: 'prep-use' }
   } else if (station === 'cold-prep' && state.coldBrew) {
     return { type: 'cold-use' }
@@ -144,7 +155,7 @@ export function toolAt(state: GameState, station: StationId): Action {
     return { type: 'clean-tool' }
   } else if (station === 'wash' && state.washing) {
     return { type: 'wash-tool' }
-  } else if (station === 'prep' && state.preparation) {
+  } else if (station === 'prep' && state.preparation && preparationStation(state.preparation) === 'prep') {
     return { type: 'prep-tool' }
   } else if (station === 'cold-prep' && state.coldBrew) {
     return { type: 'cold-tool' }
@@ -153,7 +164,6 @@ export function toolAt(state: GameState, station: StationId): Action {
   }
 }
 
-/** F confirms work. Discarding never shares this key; it sits behind the work HUD's hold action. */
 export function confirmationAt(state: GameState, station: StationId): Action | null {
   if (station === state.cleaning?.station) {
     return { type: 'clean-confirm' }
@@ -171,7 +181,7 @@ export function confirmationAt(state: GameState, station: StationId): Action | n
   }
   const prep = state.preparation
 
-  if (station === 'prep' && prep) {
+  if (station === 'prep' && prep && preparationStation(prep) === 'prep') {
     if (prep.fault) {
       return null
     } else if (prep.stage === 'ready') {

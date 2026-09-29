@@ -25,10 +25,8 @@ import {
 import { cupRestockAction } from './help'
 
 type Act = (action: Action) => void
-/** A rejected pick: the attributes it got wrong, or none when the right cup has run out. */
 type Verdict = { kind: CupKind; wrong: CupAttribute[]; attempt: number }
 
-// Columns follow the first call on a ticket, dine-in or takeout; rows follow the second, HOT or ICED.
 const SERVICES = [
   { name: '매장', note: '다회용' },
   { name: '포장', note: '일회용' },
@@ -53,10 +51,6 @@ const ATTRIBUTE_NAMES: Record<CupAttribute, string> = {
   vessel: '잔 종류',
 }
 
-/**
- * Choosing the cup is the player's call: the sheet shows the ticket and the rack, never the answer, and judges the
- * pick in a bubble over the cup that was pressed. Counts only matter when there is no order, so they show then.
- */
 export default function CupRack({ state, act }: { state: GameState; act: Act }) {
   const [verdict, setVerdict] = useState<Verdict | null>(null)
   const ticket = currentTicket(state)
@@ -114,7 +108,6 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
   )
 }
 
-/** Standard lines carry their temperature in the title; a drink's own vessels are told apart by name. */
 function RowTitle({ row }: { row: CupRow }) {
   const first = rowCupKinds(row)[0]
 
@@ -133,7 +126,6 @@ function RowTitle({ row }: { row: CupRow }) {
   )
 }
 
-/** One chip per call the cup is judged on, in the order rail's order, so a wrong pick outlines just what it missed. */
 function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] }) {
   const temperature = RECIPES[line.recipe].temperature
   const chip = clsx(
@@ -178,10 +170,6 @@ function TicketLine({ line, wrong }: { line: OrderLine; wrong: CupAttribute[] })
   )
 }
 
-/**
- * Every cup shows its silhouette and name, with the count on a line below: always without an order, only an empty
- * 0 while picking. Only a tile that can be pressed looks like one, so the rack at rest is flat but for `보충`.
- */
 function CupTile({
   state,
   kind,
@@ -252,7 +240,6 @@ function CupTile({
   )
 }
 
-/** A wrong pick shakes red; the right cup that has run out only stays selected while the bubble says how to refill it. */
 function verdictState(verdict: Verdict | null) {
   if (!verdict) {
     return undefined
@@ -267,7 +254,6 @@ function countTone(count: number, restockable: boolean) {
   return count ? 'stock' : 'empty'
 }
 
-/** The verdict sits over the tile that was pressed, so the eye moves only between the tile and the ticket. */
 function Bubble({ state, verdict }: { state: GameState; verdict: Verdict }) {
   const { kind, wrong } = verdict
 
@@ -303,10 +289,6 @@ function EmptyCup({ state, kind }: { state: GameState; kind: CupKind }) {
 const ICON_SCALE = 100
 const ICON_BASE = 49
 
-/**
- * The same outline as the 3D cup, so size and shape read from the silhouette. The outline colour is the temperature;
- * the fill and details are the material.
- */
 function CupIcon({ kind }: { kind: CupKind }) {
   const profile = CUP_PROFILES[kind]
   const body = cupBody(kind)

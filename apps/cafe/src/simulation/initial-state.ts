@@ -33,6 +33,7 @@ export function initialState(): GameState {
     coldBrew: null,
     cow: defaultCow(),
     drip: { hot: null, iced: null },
+    grindSetting: 'drip',
     washing: null,
     cleaning: null,
     batches: ingredientIds.flatMap((ingredient) => [

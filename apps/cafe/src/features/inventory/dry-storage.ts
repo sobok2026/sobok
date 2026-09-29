@@ -6,10 +6,6 @@ import {
   equipmentMesh as mesh,
 } from '../../shared/visuals/equipment-geometry'
 
-/**
- * Wire shelving for room-temperature packs, cup sleeves and condiment refills. It stands against the right wall
- * beside the fridge so chilled and dry storage read as two different places.
- */
 export function createDryStorage(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Dry storage shelving'
@@ -33,7 +29,6 @@ export function createDryStorage(scene: THREE.Scene) {
     box(root, [1.6, 0.018, 0.44], [0, y, 0], wire, 0.004)
   }
 
-  // Sealed packs and backstock, arranged so each tier reads at a glance from the aisle.
   box(root, [0.42, 0.3, 0.34], [-0.5, 0.34, 0], cardboard)
   box(root, [0.42, 0.26, 0.34], [0.02, 0.32, 0], lightCardboard)
   box(root, [0.36, 0.32, 0.34], [0.52, 0.35, 0], cardboard)

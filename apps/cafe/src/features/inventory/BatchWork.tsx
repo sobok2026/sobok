@@ -17,7 +17,6 @@ import { batchDestination, batchName } from './batches'
 import LabelWriter from './LabelWriter'
 import { labelText } from './labels'
 
-/** Writing the label for a finished batch and picking it up at the bench that made it. */
 export default function BatchWork({
   batch,
   time,

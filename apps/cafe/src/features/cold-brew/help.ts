@@ -9,7 +9,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS['cold-brew'].lifetime) <= state.time) {
     return {
       title: '추출액의 기한이 지났어요',
-      action: '추출대에서 Q를 길게 눌러 폐기한 뒤 다시 준비하세요.',
+      action: '추출대에서 폐기 버튼을 길게 눌러 폐기한 뒤 다시 준비하세요.',
       reason: '회수하거나 라벨을 써도 기한은 늘어나지 않아요.',
       fault: true,
     }
@@ -17,7 +17,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.fault) {
     return {
       title: '콜드 브루를 다시 준비하세요',
-      action: '추출대에서 Q를 길게 눌러 한 배치분을 폐기하세요.',
+      action: '추출대에서 폐기 버튼을 길게 눌러 한 배치분을 폐기하세요.',
       reason: brew.fault,
       fault: true,
     }
@@ -25,7 +25,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.stage === 'finished') {
     return {
       title: '추출액을 회수하세요',
-      action: '추출대에서 E로 용기에 회수하고 라벨을 써서 F로 붙이세요.',
+      action: '추출대에서 용기에 회수하고 라벨을 써서 확인 버튼으로 붙이세요.',
       reason: '추출 완료 시각부터 기한이 계산돼요. 회수한 뒤 냉장고로 운반해야 사용할 수 있어요.',
     }
   }
@@ -39,6 +39,14 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
       reason: '다음 날로 넘어간 시간도 추출에 반영돼요. 완료 후에는 직접 회수하세요.',
     }
   }
+  if (brew.stage === 'grind' || brew.stage === 'ground') {
+    return {
+      title: '콜드 브루 원두 분쇄',
+      action: 'BUNN G3에서 COARSE로 3lb와 2lb를 분쇄한 뒤 봉투를 집어 추출대로 가져오세요.',
+      reason: '물에 담그기 전에 원두를 굵게 분쇄해요. 전체 5lb·정수 14L·20시간 배합은 그대로예요.',
+    }
+  }
+
   const step = coldBrewStep(brew)
   const started = brew.progress > 0.0001
 
@@ -51,15 +59,15 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
 
 function measuringAction(brew: ColdBrew, step: ReturnType<typeof coldBrewStep>, started: boolean) {
   if (brew.step === 2) {
-    return 'Space로 추출을 시작하세요.'
+    return '작업 버튼으로 추출을 시작하세요.'
   }
   if (brew.tool && started) {
-    return '양을 맞췄다면 G로 도구를 내려놓고 F로 확인하세요.'
+    return '양을 맞췄다면 도구를 내려놓고 확인 버튼을 누르세요.'
   }
   if (!brew.tool) {
-    return `G로 ${COLD_BREW_TOOL_NAMES[step.tool!]}를 집으세요.`
+    return `${COLD_BREW_TOOL_NAMES[step.tool!]}를 집으세요.`
   }
   return brew.step === 0
-    ? 'Space를 누르고 원두를 담으세요.'
-    : 'Space를 누르고 물을 붓다가 배합에 맞는 양에서 손을 떼세요.'
+    ? '작업 버튼을 누르고 원두를 담으세요.'
+    : '작업 버튼을 누르고 물을 붓다가 배합에 맞는 양에서 손을 떼세요.'
 }

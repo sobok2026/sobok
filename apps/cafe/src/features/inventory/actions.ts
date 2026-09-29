@@ -219,7 +219,7 @@ export function handleStockActions(
 
       if (
         batch.location !== action.station ||
-        !['fridge', 'stock', 'prep', 'cold-prep', 'urn'].includes(batch.location)
+        !['fridge', 'stock', 'prep', 'cold-prep', 'urn', 'grinder'].includes(batch.location)
       ) {
         fail('용기가 놓인 작업대에서 라벨을 붙여주세요.')
         break

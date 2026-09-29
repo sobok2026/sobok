@@ -71,11 +71,12 @@ export function materialTip(state: GameState, ingredient: IngredientId, area: St
         area === 'bar' ? '바에 내려놓은 재료를 음료 제조에 사용해요.' : '백룸 준비는 백룸에 보관한 원재료를 사용해요.',
     }
   }
-  if (preparationForMaterial(ingredient)) {
+  const preparation = preparationForMaterial(ingredient)
+  if (preparation) {
     return {
       title: `${definition.name} 준비가 필요해요`,
       action: state.tools.clean
-        ? `백룸 준비대에서 ${definition.name} 제조를 선택하세요.`
+        ? `${STATIONS[preparation.steps[0].station].name}에서 ${definition.name} 제조를 선택하세요.`
         : '백룸 세척대에서 피처를 씻고 바 도구 선반에 정리하세요.',
       reason: '완성한 배치는 라벨을 쓰고 알맞은 위치로 운반해 보관해요.',
     }
@@ -85,7 +86,7 @@ export function materialTip(state: GameState, ingredient: IngredientId, area: St
       title: '추출액을 준비하세요',
       action:
         state.coldBrew?.stage === 'finished'
-          ? '백룸 추출대에서 E로 추출액을 회수하세요.'
+          ? '백룸 추출대에서 추출액을 회수하세요.'
           : '백룸 콜드 브루 추출대에서 계량해 추출하세요. 추출 중이면 완료를 기다려주세요.',
       reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
     }

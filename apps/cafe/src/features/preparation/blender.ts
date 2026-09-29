@@ -222,7 +222,6 @@ export function createBlender(scene: THREE.Scene, station: 'blender' | 'prep') {
   const idleJar = createBlenderJar()
   idleJar.root.position.y = 0.26
   root.add(idleJar.root)
-  // The enclosure pivots about the upper rear hinge, clearing the removable pitcher.
   const cover = new THREE.Group()
   cover.position.set(0, 0.72, -0.195)
   root.add(cover)

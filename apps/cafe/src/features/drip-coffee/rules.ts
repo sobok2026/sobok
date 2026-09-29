@@ -47,6 +47,10 @@ export function dripMenuName(recipe: string, fallback: string) {
 
 export const dripHandsBusy = (state: GameState) => dripTemperatures.some((temperature) => state.drip[temperature]?.tool)
 
+export function dripStation(brew: NonNullable<GameState['drip']['hot']>) {
+  return ['beans', 'grind', 'ground'].includes(brew.stage) ? ('grinder' as const) : ('urn' as const)
+}
+
 export function dripRemaining(state: GameState, temperature: DripTemperature) {
   const brew = state.drip[temperature]
   const job = state.jobs.find((job) => job.kind === 'drip-coffee' && job.preparationId === brew?.id)

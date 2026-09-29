@@ -77,3 +77,8 @@ export function createPreparation(recipe: PreparationId): Preparation {
 export function preparationStep(prep: Preparation): WorkStep | undefined {
   return currentWorkStep(PREPARATIONS[prep.recipe].steps, prep)
 }
+
+export function preparationStation(prep: Preparation): 'prep' | 'grinder' {
+  const steps = PREPARATIONS[prep.recipe].steps
+  return (steps[prep.cursor] ?? steps.at(-1))?.station === 'grinder' ? 'grinder' : 'prep'
+}

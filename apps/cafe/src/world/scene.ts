@@ -5,10 +5,12 @@ import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visual
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
 import { craftingAt, craftWorkStation } from '../features/crafting/rules'
 import { createCraftVisuals, cupSpot } from '../features/crafting/visuals'
+import { createGrinder, GRINDER_CATCH_SPOT } from '../features/grinder/equipment'
 import { createBatchVisuals } from '../features/inventory/batch-visuals'
 import { carriedBatch } from '../features/inventory/batches'
 import { cleanCupCount, cupCount } from '../features/inventory/cups'
 import { createSupplyVisuals } from '../features/inventory/supplies-visuals'
+import { preparationStation } from '../features/preparation/rules'
 import { createPreparationVisuals, PREP_SPOT } from '../features/preparation/visuals'
 import { createStickerPrinter } from '../features/service/sticker-printer'
 import { createCustomerVisuals } from '../features/service/visuals'
@@ -26,6 +28,7 @@ export type SceneOptions = {
   canMove: () => boolean
   isRunning: () => boolean
   mouseSensitivity: () => number
+  touchControls: () => boolean
   onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
   onGuideSide: (side: GuideSide) => void
   onInteract: (id: StationId) => void
@@ -43,6 +46,7 @@ export type CafeScene = {
   lock: () => void
   unlock: () => void
   unlockForCraft: () => void
+  moveTouch: (sideways: number, forward: number, running: boolean) => void
   capture: () => GameState['position']
   dispose: () => void
   reset: (position: GameState['position']) => void
@@ -68,13 +72,13 @@ function pickWidth(id: StationId) {
   return 0.8
 }
 
-// Side-wall fixtures face across the room. Each condiment-bar area has its own non-overlapping target.
 function pickDepth(id: StationId) {
   if (id === 'condiment' || id === 'supplies' || id === 'trash') return 1.04
   return id === 'stock' ? 1.6 : 0.8
 }
 
 function pickHeight(id: StationId) {
+  if (id === 'grinder') return 1.25
   if (id === 'urn') return 1.5
   if (id === 'espresso' || id === 'water') {
     return 1.12
@@ -83,6 +87,7 @@ function pickHeight(id: StationId) {
 }
 
 function markerHeight(id: StationId) {
+  if (id === 'grinder') return 2.23
   if (id === 'condiment') return 1.85
   if (id === 'urn') return 2.45
   if (id === 'espresso' || id === 'water') {
@@ -96,7 +101,6 @@ type Placement = { cupId: string; location: string; places: Record<string, strin
 const placementOf = (state: GameState): Placement =>
   state.cup ? { cupId: state.cup.id, location: state.cup.craft.location, places: { ...state.cup.craft.places } } : null
 
-/** The station where the cup or a helper vessel such as the steam pitcher was just set down. */
 function placedStation(previous: Placement, current: Placement): StationId | null {
   if (!previous || !current || previous.cupId !== current.cupId) {
     return null
@@ -108,7 +112,6 @@ function placedStation(previous: Placement, current: Placement): StationId | nul
   return (moved?.[1] as StationId | undefined) ?? null
 }
 
-/** Which screen edge leads to a point the camera cannot see, or null while it is in view. */
 function offscreenSide(point: THREE.Vector3, scratch: THREE.Vector3, camera: THREE.PerspectiveCamera): GuideSide {
   const projected = scratch.copy(point).project(camera)
   if (projected.z < 1 && Math.abs(projected.x) <= 0.92 && Math.abs(projected.y) <= 0.92) {
@@ -119,9 +122,9 @@ function offscreenSide(point: THREE.Vector3, scratch: THREE.Vector3, camera: THR
 
 export function createCafeScene(container: HTMLDivElement, options: SceneOptions): CafeScene {
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color('#e5e7de')
-  scene.fog = new THREE.Fog('#e5e7de', 22, 55)
-  const camera = new THREE.PerspectiveCamera(62, 1, 0.08, 65)
+  scene.background = new THREE.Color('#c3cec8')
+  scene.fog = new THREE.Fog('#c3cec8', 32, 90)
+  const camera = new THREE.PerspectiveCamera(62, 1, 0.08, 100)
   camera.rotation.order = 'YXZ'
   let previousPlacement: Placement = null
   let previousPreparation: string | null = null
@@ -148,32 +151,32 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFShadowMap
   renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.1
+  renderer.toneMappingExposure = 1.05
   renderer.domElement.setAttribute(
     'aria-label',
-    '1인칭 카페 매장. WASD 이동, Shift 달리기, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
+    '1인칭 카페 매장. 터치는 왼손 스틱으로 이동하고 빈 화면을 밀어 시점을 돌립니다. 키보드는 WASD 이동, Shift 달리기, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
   )
   renderer.domElement.tabIndex = 0
   container.appendChild(renderer.domElement)
-  scene.add(new THREE.HemisphereLight('#fff5df', '#8fa78e', 1.5))
-  const sunlight = new THREE.DirectionalLight('#fff0ce', 2.0)
-  sunlight.position.set(7, 12, 8)
+  scene.add(new THREE.HemisphereLight('#f4f1e7', '#77776b', 1.25))
+  const sunlight = new THREE.DirectionalLight('#ffe5b5', 2.4)
+  sunlight.position.set(18, 11, 20)
   sunlight.castShadow = true
   sunlight.shadow.mapSize.set(2048, 2048)
-  sunlight.shadow.camera.left = -13
-  sunlight.shadow.camera.right = 13
-  sunlight.shadow.camera.top = 13
-  sunlight.shadow.camera.bottom = -13
+  sunlight.shadow.camera.left = -24
+  sunlight.shadow.camera.right = 24
+  sunlight.shadow.camera.top = 24
+  sunlight.shadow.camera.bottom = -24
+  sunlight.shadow.camera.far = 75
   sunlight.shadow.normalBias = 0.045
   scene.add(sunlight)
-  const fillLight = new THREE.DirectionalLight('#dce9e3', 0.9)
+  const fillLight = new THREE.DirectionalLight('#eee6d6', 0.85)
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
   const { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn } =
     createShopInterior(scene)
   const stickerPrinter = createStickerPrinter(scene)
   customerVisuals = createCustomerVisuals(scene)
-  // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
@@ -184,7 +187,6 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     return mesh
   })
   const pickObjects = [...targets, ...occluders]
-  // The objective marker points down at the station and stays readable through equipment, like a waypoint.
   const guideMarker = new THREE.Mesh(
     new THREE.ConeGeometry(0.1, 0.2, 4),
     new THREE.MeshBasicMaterial({ color: '#f8db80', transparent: true, opacity: 0.92, depthTest: false }),
@@ -205,7 +207,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const supplyVisuals = createSupplyVisuals(scene, camera)
   const batchVisuals = createBatchVisuals(scene, camera)
   const coldBrewVisuals = createColdBrewVisuals(scene, camera)
-  // Bake an indoor reflection once; only the new equipment uses it. No per-frame reflection pass.
+  const grinder = createGrinder(scene, camera)
   const environmentRoom = new RoomEnvironment()
   const environmentGenerator = new THREE.PMREMGenerator(renderer)
   const equipmentEnvironment = environmentGenerator.fromScene(environmentRoom, 0.04)
@@ -240,6 +242,10 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   }
 
   renderer.domElement.addEventListener('webglcontextlost', contextLost)
+  const fontsLoaded = () => {
+    needsRender = true
+  }
+  document.fonts.addEventListener('loadingdone', fontsLoaded)
 
   function resize() {
     needsRender = true
@@ -277,7 +283,6 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       animationTime += dt * 1000
     }
     const placement = placementOf(state)
-    // Look at whatever the player just set down, the cup or a helper vessel such as the steam pitcher.
     const placed = placedStation(previousPlacement, placement)
     if (placed) {
       const spot = cupSpot(placed)
@@ -285,7 +290,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     }
     previousPlacement = placement
     if (state.preparation && state.preparation.id !== previousPreparation) {
-      camera.lookAt(PREP_SPOT[0], PREP_SPOT[1] + 0.17, PREP_SPOT[2])
+      const spot = preparationStation(state.preparation) === 'grinder' ? GRINDER_CATCH_SPOT : PREP_SPOT
+      camera.lookAt(spot[0], spot[1] + 0.17, spot[2])
     }
     previousPreparation = state.preparation?.id ?? null
     if (state.washing && state.washing.id !== previousWashing && state.washing.stage !== 'carrying') {
@@ -362,6 +368,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     blender.update(state)
     prepBlender.update(state)
     digitalUrn.update(state)
+    grinder.update(state, animationTime)
     register.update(state)
     stickerPrinter.update(state)
     syrupStation.update(state)
@@ -381,6 +388,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     lock: controls.lock,
     unlock: controls.unlock,
     unlockForCraft: controls.unlockForCraft,
+    moveTouch: controls.moveTouch,
     reset,
     capture: () => [camera.position.x, camera.position.z, camera.rotation.y, camera.rotation.x],
     dispose: () => {
@@ -389,6 +397,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       observer.disconnect()
       controls.dispose()
       renderer.domElement.removeEventListener('webglcontextlost', contextLost)
+      document.fonts.removeEventListener('loadingdone', fontsLoaded)
       const geometries = new Set<THREE.BufferGeometry>()
       const usedMaterials = new Set<THREE.Material>()
 

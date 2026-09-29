@@ -7,7 +7,6 @@ export const serviceModes = ['dine-in', 'takeout'] as const
 export type ServiceMode = (typeof serviceModes)[number]
 export const SERVICE_NAMES = { 'dine-in': '매장', takeout: '포장' } as const
 export type Temperature = 'hot' | 'iced'
-/** Material and silhouette of the 3D cup and the rack icon; temperature is shown separately. */
 export type CupBody = 'paper' | 'plastic' | 'ceramic' | 'glass'
 export const cupStyles = ['hot-paper', 'iced-plastic', 'hot-mug', 'iced-glass'] as const
 export type CupStyle = (typeof cupStyles)[number]
@@ -53,7 +52,6 @@ const CUP_LINES = {
   },
 } as const satisfies Record<CupStyle, CupLine>
 
-// Drinks served in their own vessel, keyed by the serving vessel id in the recipe data, in rack order.
 const VESSEL_CUPS = {
   demitasse: { name: '데미타스 잔', label: '데미타스', service: 'dine-in', temperature: 'hot', body: 'ceramic' },
   'vin-chaud-glass': { name: '뱅쇼 글라스', label: '뱅쇼', service: 'dine-in', temperature: 'hot', body: 'glass' },
@@ -118,12 +116,10 @@ const VESSEL_ALIASES: Partial<Record<string, CupKind>> = { 'short-paper-cup': 'h
 
 export const cupKinds = Object.keys(CUPS) as CupKind[]
 export const CUP_NAMES = Object.fromEntries(cupKinds.map((kind) => [kind, CUPS[kind].name])) as Record<CupKind, string>
-/** Size name for a standard cup, short vessel name for a drink's own vessel. */
 export const cupLabel = (kind: CupKind) => CUPS[kind].label
 export const cupService = (kind: CupKind) => CUPS[kind].service
 export const cupTemperature = (kind: CupKind) => CUPS[kind].temperature
 export const cupBody = (kind: CupKind) => CUPS[kind].body
-/** The standard cup line, or null for a drink's own vessel. */
 export const cupStyle = (kind: CupKind) => CUPS[kind].style
 export const cupSize = (kind: CupKind) => CUPS[kind].size
 
@@ -131,7 +127,6 @@ export const isReusableCup = (kind: CupKind): kind is ReusableCupKind => cupServ
 export const reusableCupKinds = cupKinds.filter(isReusableCup)
 export const disposableCupKinds = cupKinds.filter((kind): kind is DisposableCupKind => !isReusableCup(kind))
 
-/** Rack rows: the standard lines, then each service's own vessels. */
 export const cupRows = [...cupStyles, 'dine-in-vessel', 'takeout-vessel'] as const
 export type CupRow = (typeof cupRows)[number]
 export const CUP_ROW_NAMES: Record<CupRow, string> = {
@@ -142,7 +137,6 @@ export const CUP_ROW_NAMES: Record<CupRow, string> = {
 export const cupRow = (kind: CupKind): CupRow => CUPS[kind].style ?? `${CUPS[kind].service}-vessel`
 export const rowCupKinds = (row: CupRow) => cupKinds.filter((kind) => cupRow(kind) === row)
 
-/** The standard line a drink takes when its recipe pours into the generic serving cup. */
 export function servingLine(temperature: Temperature, service: ServiceMode): CupStyle {
   const style = cupStyles.find((id) => CUP_LINES[id].temperature === temperature && CUP_LINES[id].service === service)
   if (!style) {
@@ -151,7 +145,6 @@ export function servingLine(temperature: Temperature, service: ServiceMode): Cup
   return style
 }
 
-/** The rack cup for a serving vessel in the recipe data; throws when the shop has no cup for it. */
 export function servingCup(
   vessel: string,
   temperature: Temperature,
@@ -185,10 +178,6 @@ function vesselCup(vessel: string): CupKind {
 
 export type CupAttribute = 'service' | 'temperature' | 'size' | 'vessel'
 
-/**
- * Which parts of an order a chosen cup gets wrong, in the order a barista reads them off the ticket. Standard cups
- * differ by size; a drink with its own vessel differs by the vessel itself.
- */
 export function cupMismatch(chosen: CupKind, needed: CupKind): CupAttribute[] {
   const standard = !!cupStyle(chosen) && !!cupStyle(needed)
   const checks: [CupAttribute, boolean][] = [
@@ -209,7 +198,6 @@ export function cleanCupCount(state: GameState, kind: CupKind) {
   return isReusableCup(kind) ? state.reusableCups[kind].clean : state.disposableCups[kind].bar
 }
 
-// Each kind keeps its own stock; washing uses the same workflow for every kind.
 export const REUSABLE_CUPS_PER_KIND = 4
 
 export const CUP_SUPPLY = {

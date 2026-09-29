@@ -2,6 +2,7 @@ import { handleCleaningActions } from '../features/cleaning/actions'
 import { handleColdBrewActions } from '../features/cold-brew/actions'
 import { expireDrink, handleCraftActions } from '../features/crafting/actions'
 import { handleDripActions, settleDrip } from '../features/drip-coffee/actions'
+import { grindSettingSchema } from '../features/grinder/rules'
 import { handleStockActions } from '../features/inventory/actions'
 import { expirePreparation, handlePreparationActions } from '../features/preparation/actions'
 import { handleOrderActions } from '../features/service/actions'
@@ -68,12 +69,17 @@ export class CafeStore {
 
     if (canDispatch(work, action)) {
       switch (action.type) {
+        case 'grinder-setting':
+          if (grindSettingSchema.safeParse(action.setting).success) s.grindSetting = action.setting
+          break
         case 'set-cow':
         case 'drip-prepare':
         case 'drip-filter':
         case 'drip-tool':
         case 'drip-use':
         case 'drip-confirm':
+        case 'drip-grind':
+        case 'drip-load':
         case 'drip-brew':
         case 'drip-mix':
         case 'drip-discard':
@@ -160,6 +166,7 @@ export class CafeStore {
           handlePreparationActions(work, action)
           break
         case 'start-cold-brew':
+        case 'cold-grind':
         case 'cold-tool':
         case 'cold-use':
         case 'cold-confirm':

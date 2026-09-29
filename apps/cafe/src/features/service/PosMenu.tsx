@@ -74,7 +74,7 @@ export function PosMenu({
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1.5">
-      <div className="flex gap-1">
+      <div className="flex gap-1 touch:portrait:flex-wrap">
         <label className="flex min-w-0 flex-1 items-center gap-2 rounded bg-white px-3 text-pos-ink">
           <span aria-hidden="true">⌕</span>
           <input
@@ -127,7 +127,13 @@ export function PosMenu({
           ))}
         <div className="col-span-2 flex items-center justify-end pr-2 text-xs text-white/75">{menus.length}개 메뉴</div>
       </fieldset>
-      <fieldset className="grid min-h-0 flex-1 grid-cols-5 grid-rows-5 gap-1.5" aria-label="상품 목록">
+      <fieldset
+        className={clsx(
+          'grid min-h-0 flex-1 grid-cols-5 grid-rows-5 gap-1.5',
+          'touch:auto-rows-min touch:grid-cols-3 touch:grid-rows-none touch:overflow-y-auto touch:portrait:max-h-100',
+        )}
+        aria-label="상품 목록"
+      >
         {shown.map((id) => {
           const menu = RECIPES[id]
           const name = dripMenuName(id, menu.name)
@@ -146,10 +152,11 @@ export function PosMenu({
                 className={clsx(
                   'flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm leading-snug',
                   'disabled:opacity-60',
+                  'touch:min-h-24',
                 )}
                 aria-label={`${name} ${temperature === 'hot' ? 'HOT' : 'ICED'} 담기`}
               >
-                <span className="line-clamp-3 pr-3 font-semibold">{name}</span>
+                <span className="line-clamp-3 pr-3 font-semibold touch:pr-7">{name}</span>
                 {dripTemperature && (
                   <span className="line-clamp-2 text-xs text-pos-panel">{DRIP_BEANS[cow[dripTemperature]]}</span>
                 )}
@@ -162,7 +169,10 @@ export function PosMenu({
               </button>
               <button
                 type="button"
-                className="absolute top-0 right-0 grid size-6 place-items-center rounded text-xs text-pos-panel"
+                className={clsx(
+                  'absolute top-0 right-0 grid size-6 place-items-center rounded text-xs text-pos-panel',
+                  'touch:size-11',
+                )}
                 aria-label={`${menu.name} 즐겨찾기`}
                 aria-pressed={favorites.includes(id)}
                 onClick={() => {
@@ -182,7 +192,7 @@ export function PosMenu({
           )
         })}
         {Array.from({ length: Math.max(0, 25 - shown.length) }, (_, index) => (
-          <div key={`empty-${index}`} className="rounded bg-pos-panel/60" />
+          <div key={`empty-${index}`} className="rounded bg-pos-panel/60 touch:hidden" />
         ))}
       </fieldset>
       {!menus.length && (

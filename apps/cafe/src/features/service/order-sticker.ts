@@ -189,7 +189,6 @@ function generatedDrinkCode(recipeId: string, variantId: string) {
   return `${code} ${initials(variantId)}`
 }
 
-/** Reads the paid recipe, including defaults and POS changes, without adding saved label state. */
 export function orderSticker(state: GameState, line: OrderLine, unit = line.served + 1): OrderSticker {
   const recipe = RECIPES[line.recipe]
   const base = recipeFor(line.recipe, line.size, line.service).steps

@@ -49,7 +49,6 @@ export function createDigitalUrn(scene: THREE.Scene) {
   const body = new THREE.Group()
   body.position.y = STAND_LIFT
   root.add(body)
-  // A raised docking shelf leaves clearance for cups below the two dispensing faucets.
   box(body, [0.58, 0.09, 0.44], [0, 0.205, 0.01], steel, 0.008)
   box(body, [0.59, 0.018, 0.45], [0, 0.255, 0.015], chrome, 0.004)
   box(body, [0.56, 0.6, 0.17], [0, 0.56, -0.15], steel, 0.008)
@@ -132,7 +131,6 @@ export function createDigitalUrn(scene: THREE.Scene) {
   }> = []
   const coffee = material({ color: '#533125', roughness: 0.8 })
   for (const x of [-0.148, 0.148]) {
-    // Tapered metal funnels sit on rails, with the grey handles projecting toward the barista.
     lathe(
       body,
       [
@@ -151,7 +149,6 @@ export function createDigitalUrn(scene: THREE.Scene) {
     const screw = mesh(body, new THREE.CylinderGeometry(0.008, 0.008, 0.003, 12), chrome, [x, 0.795, 0.177])
     screw.rotation.x = Math.PI / 2
 
-    // Squared removable servers, lid handles, a front sight tube and a lower dispensing lever.
     box(body, [0.26, 0.344, 0.283], [x, 0.463, 0.018], steel, 0.018)
     box(body, [0.272, 0.023, 0.298], [x, 0.639, 0.02], grey, 0.008)
     box(body, [0.267, 0.022, 0.293], [x, 0.289, 0.02], grey, 0.006)
@@ -219,7 +216,6 @@ export function createDigitalUrn(scene: THREE.Scene) {
     )
   }
 
-  // The red hot-water handle belongs to the separate narrow column at the side.
   box(body, [0.061, 0.338, 0.24], [-0.335, 0.443, 0.041], steel, 0.006)
   tube(
     body,

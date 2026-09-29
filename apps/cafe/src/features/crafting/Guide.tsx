@@ -18,7 +18,6 @@ export function RecipeGuide({ state }: { state: GameState }) {
   }
   const steps = recipeFor(recipe, size, service, state.cup?.craft.customizations ?? ticket?.customizations).steps
   const cursor = state.cup?.craft.cursor ?? -1
-  // One original step can hold several operations; its instruction is shown once above them.
   const groups = steps.reduce<{ id: string; instruction: string; steps: { step: WorkStep; index: number }[] }[]>(
     (list, step, index) => {
       const last = list.at(-1)
@@ -75,17 +74,17 @@ export function CraftingGuide() {
     <section className="border-t border-line py-4 first:border-0 first:pt-0">
       <h3 className="font-semibold">주문과 제조</h3>
       <p className="mt-3 text-muted">
-        POS에서 결제하면 음료마다 주문 스티커가 나와요. 컵 보관대에서 컵을 고르고 스티커 프린터에서 E로 스티커를 붙인 뒤
+        POS에서 결제하면 음료마다 주문 스티커가 나와요. 컵 보관대에서 컵을 고르고 스티커 프린터에서 스티커를 붙인 뒤
         만들어요.
       </p>
       <p className="mt-2 text-muted">
         단계마다 그 단계가 쓰는 용기를 해당 작업대에 둬요. 우유 계량과 스팀은 스팀 완드의 피처로 하고 컵은 필요한
-        작업대에만 가져가요. 피처·블렌더 피처처럼 옮겨야 하는 용기는 E로 집고 놓아요.
+        작업대에만 가져가요. 피처·블렌더 피처처럼 옮겨야 하는 용기는 집고 놓아요.
       </p>
       <p className="mt-2 text-muted">
         작업 카드는 양을 알려주지 않아요. 레시피는 이 음료 탭에서 확인하세요. 펌프·샷은 누른 횟수를, 선까지 붓는 계량은
-        게이지 눈금을 보고 멈춘 뒤 도구를 놓고 F로 확인해요. 길게 누르면 빠르게 붓고, 짧게 누르면 조금씩 보충해요. 컵
-        상단 확대 눈금은 테두리 아래 거리(mm), 점선은 이 단계의 시작 수위예요. 모자라면 이어서 하고 넘치면 다시
+        게이지 눈금을 보고 멈춘 뒤 도구를 놓고 확인 버튼을 눌러요. 길게 누르면 빠르게 붓고, 짧게 누르면 조금씩 보충해요.
+        컵 상단 확대 눈금은 테두리 아래 거리(mm), 점선은 이 단계의 시작 수위예요. 모자라면 이어서 하고 넘치면 다시
         만들어요.
       </p>
       <p className="mt-2 text-muted">

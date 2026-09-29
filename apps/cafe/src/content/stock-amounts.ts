@@ -260,11 +260,6 @@ const sizeMarkLabels = { short: 'S', tall: 'T', grande: 'G', venti: 'V' } as con
 const lineMarkLabels: Record<string, string> = { lower: '하단', middle: '중간', upper: '상단', max: 'MAX' }
 const printedCupStyles: StockContext['cupStyle'][] = ['iced-plastic', 'iced-glass']
 
-/**
- * The outline and the lines a player can see on a vessel. Cups show the lines printed for their own size and only
- * on clear cold cups. A pitcher is one physical tool, so its size family is etched for every size at once.
- * A recipe mark on a cup appears only when the step names it, because a cup carries no other marks.
- */
 export function vesselProfile(
   catalog: RecipeCatalog,
   id: string,
@@ -343,7 +338,6 @@ function addLayer(state: StockVessel, layer: StockLayer) {
   }
 }
 
-/** Resolve one source operation against the actual contents at the beginning of that step. */
 function transferFraction(volume: number | null, available: number) {
   if (volume === null) {
     return 1
@@ -903,7 +897,6 @@ export function buildStockEffect(
   return effect
 }
 
-/** Apply a progress segment to canonical quantities, then derive presentation values. Pure and atomic. */
 export function projectStockEffect(
   state: StockFlowState,
   effect: StockEffect,
@@ -919,7 +912,6 @@ export function projectStockEffect(
   let fraction = effect.repeatable ? toRatio - fromRatio : Math.min(1, toRatio) - Math.min(1, fromRatio)
   const next = copyFlow(state)
 
-  // Partial transfers cannot move more stock than remains in their actual source vessel.
   for (const [id, change] of Object.entries(effect.vessels))
     for (const layer of change.layers) {
       const old = next.vessels[id]?.layers.find((item) => layerKey(item) === layerKey(layer))

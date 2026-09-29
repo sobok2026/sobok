@@ -13,7 +13,6 @@ import { interactionAt } from './station-interactions'
 
 export type StationPrompt = { verb: string; object: string } | { status: string }
 
-/** The words beside the crosshair say exactly what E will do at the aimed station, or why it will do nothing. */
 export function stationPrompt(state: GameState, target: StationId): StationPrompt {
   const interaction = interactionAt(state, target)
   if (interaction === null) {
