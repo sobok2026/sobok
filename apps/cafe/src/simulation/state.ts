@@ -50,8 +50,12 @@ const customerPoint = z.tuple([
   z.number().min(SHOP_BOUNDS.minX).max(SHOP_BOUNDS.maxX),
   z
     .number()
-    .min(0)
+    .min(SHOP_BOUNDS.minZ)
     .max(SHOP_BOUNDS.maxZ + 1),
+  z
+    .number()
+    .min(0)
+    .max(FLOOR_HEIGHT * 2),
 ])
 
 const orderItemSchema = z.object({
@@ -199,8 +203,8 @@ const customerSchema = z
     stage: z.enum(customerStages),
     position: customerPoint,
     yaw: z.number(),
-    path: z.array(customerPoint).max(12),
-    nextPoint: z.number().int().min(0).max(12),
+    path: z.array(customerPoint).max(64),
+    nextPoint: z.number().int().min(0).max(64),
     elapsed: quantity,
     visit: z
       .object({

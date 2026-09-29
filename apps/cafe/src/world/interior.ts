@@ -5,6 +5,7 @@ import {
   BACKROOM_FRONT_Z,
   BAR_CENTER_Z,
   CONDIMENT_BAR,
+  SHOP_BOUNDS,
   STATIONS,
   staffFacingZ,
 } from '../content/stations'
@@ -26,25 +27,23 @@ import { addVesselLabel } from '../shared/visuals/vessel-label'
 import { createCoffeehouse } from './coffeehouse'
 import { createMenuBoards } from './menu-board'
 
-export type Obstacle = { x: number; z: number; width: number; depth: number; minY?: number; maxY?: number }
-
 export function createShopInterior(scene: THREE.Scene) {
-  const materials = new Map<string, THREE.MeshStandardMaterial>()
+  const materialCache = new Map<string, THREE.MeshStandardMaterial>()
 
   const material = (color: string | THREE.MeshStandardMaterial, metal = 0) => {
     if (color instanceof THREE.MeshStandardMaterial) return color
     const key = `${color}/${metal}`
-    let value = materials.get(key)
+    let value = materialCache.get(key)
 
     if (!value) {
       value = new THREE.MeshStandardMaterial({ color, roughness: metal ? 0.35 : 0.78, metalness: metal })
-      materials.set(key, value)
+      materialCache.set(key, value)
     }
 
     return value
   }
 
-  const { finishes, obstacles, occluders } = createCoffeehouse(scene)
+  const { materials, obstacles, occluders } = createCoffeehouse(scene)
 
   function box(
     x: number,
@@ -59,7 +58,7 @@ export function createShopInterior(scene: THREE.Scene) {
   ) {
     const geometry = new THREE.BoxGeometry(w, h, d)
 
-    if (color === finishes.tile) {
+    if (color === materials.tile) {
       const points = geometry.attributes.position
       const uv = geometry.attributes.uv
 
@@ -147,17 +146,17 @@ export function createShopInterior(scene: THREE.Scene) {
   const doorRight = BACKROOM_DOOR.x + BACKROOM_DOOR.width / 2
 
   for (const [left, right] of [
-    [-6.85, doorLeft],
-    [doorRight, 6.85],
+    [SHOP_BOUNDS.minX, doorLeft],
+    [doorRight, SHOP_BOUNDS.maxX],
   ]) {
     const x = (left + right) / 2
     const width = right - left
-    occluders.push(box(x, 1.92, BACKROOM_FRONT_Z, width, 3.84, 0.18, finishes.tile))
+    occluders.push(box(x, 1.92, BACKROOM_FRONT_Z, width, 3.84, 0.18, materials.tile))
     obstacles.push({ x, z: BACKROOM_FRONT_Z, width, depth: 0.18 })
   }
 
-  occluders.push(box(BACKROOM_DOOR.x, 3.17, BACKROOM_FRONT_Z, BACKROOM_DOOR.width, 1.34, 0.18, finishes.tile))
-  for (const x of [doorLeft, doorRight]) box(x, 1.25, BACKROOM_FRONT_Z, 0.055, 2.5, 0.22, finishes.charcoal)
+  occluders.push(box(BACKROOM_DOOR.x, 3.17, BACKROOM_FRONT_Z, BACKROOM_DOOR.width, 1.34, 0.18, materials.tile))
+  for (const x of [doorLeft, doorRight]) box(x, 1.25, BACKROOM_FRONT_Z, 0.055, 2.5, 0.22, materials.charcoal)
   const backroomSign = sign('PARTNERS ONLY', 1, 0.17)
   backroomSign.position.set(BACKROOM_DOOR.x, 2.72, BACKROOM_FRONT_Z + 0.1)
   scene.add(backroomSign)
@@ -165,67 +164,73 @@ export function createShopInterior(scene: THREE.Scene) {
   barSign.position.set(BACKROOM_DOOR.x, 2.72, BACKROOM_FRONT_Z - 0.1)
   barSign.rotation.y = Math.PI
   scene.add(barSign)
-  box(-1.95, 0.48, -1.05, 7.6, 0.96, 1.18, finishes.oak)
-  box(4.05, 0.48, -1.05, 3.4, 0.96, 1.18, finishes.oak)
-  box(2.1, 0.48, -1.4525, 0.5, 0.96, 0.375, finishes.oak)
-  box(2.1, 0.48, -0.5275, 0.5, 0.96, 0.135, finishes.oak)
-  box(2.1, 0.36, -0.93, 0.5, 0.72, 0.67, finishes.oak)
-  box(-1.9925, 1.0, -1.05, 7.715, 0.12, 1.35, finishes.counter)
-  box(4.0925, 1.0, -1.05, 3.515, 0.12, 1.35, finishes.counter)
-  box(2.1, 1.0, -1.4875, 0.47, 0.12, 0.475, finishes.counter)
-  box(2.1, 1.0, -0.4925, 0.47, 0.12, 0.235, finishes.counter)
-  const barSlats: [number, number, number, number, number, number][] = []
-  for (let x = -5.7; x <= 6.61; x += 0.06) barSlats.push([x, 0.5, -0.438, 0.035, 0.78, 0.035])
-  repeatedBoxes(barSlats, finishes.oak)
-  box(0.45, 0.08, -0.437, 12.5, 0.15, 0.035, finishes.charcoal)
-  const strip = new THREE.Mesh(new THREE.BoxGeometry(12.45, 0.018, 0.018), finishes.light)
-  strip.position.set(0.45, 0.936, -0.42)
+  box(-0.075, 0.48, BAR_CENTER_Z, 8.55, 0.96, 1.18, materials.oak)
+  box(-0.075, 1.0, BAR_CENTER_Z, 8.65, 0.12, 1.35, materials.counter)
+  const slats: [number, number, number, number, number, number][] = []
+  for (let x = -4.3; x < 4.18; x += 0.06) slats.push([x, 0.5, -0.438, 0.035, 0.78, 0.035])
+  repeatedBoxes(slats, materials.oak)
+  box(-0.075, 0.08, -0.437, 8.6, 0.15, 0.035, materials.charcoal)
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(8.6, 0.018, 0.018), materials.light)
+  strip.position.set(-0.075, 0.936, -0.42)
   scene.add(strip)
-  const glowCanvas = document.createElement('canvas')
-  glowCanvas.width = 4
-  glowCanvas.height = 128
-  const glowContext = glowCanvas.getContext('2d')!
-  const glowGradient = glowContext.createLinearGradient(0, 0, 0, 128)
-  glowGradient.addColorStop(0, '#ffd4879e')
-  glowGradient.addColorStop(0.45, '#edb65b30')
-  glowGradient.addColorStop(1, '#e2a54b00')
-  glowContext.fillStyle = glowGradient
-  glowContext.fillRect(0, 0, 4, 128)
-  const glowTexture = new THREE.CanvasTexture(glowCanvas)
-  glowTexture.colorSpace = THREE.SRGBColorSpace
-  const barGlow = new THREE.Mesh(
-    new THREE.PlaneGeometry(12.45, 0.75),
-    new THREE.MeshBasicMaterial({ map: glowTexture, transparent: true, depthWrite: false, toneMapped: false }),
-  )
-  barGlow.position.set(0.45, 0.54, -0.413)
-  scene.add(barGlow)
-
-  for (let x = -5.15; x < 5.5; x += 1.15) {
-    box(x, 0.47, -1.655, 1.08, 0.83, 0.025, '#7c786e')
-    box(x, 0.79, -1.679, 0.22, 0.024, 0.025, finishes.charcoal, scene, 0.5)
+  for (let x = -3.8; x < 4; x += 1.05) {
+    box(x, 0.47, -1.655, 1, 0.83, 0.025, '#7c786e')
+    box(x, 0.79, -1.679, 0.22, 0.024, 0.025, materials.charcoal, scene, 0.5)
   }
+  obstacles.push({ x: -0.075, z: BAR_CENTER_Z, width: 8.65, depth: 1.35, minY: 0, maxY: 1.06, blocksSight: true })
 
-  obstacles.push({ x: 0, z: -1.05, width: 11.7, depth: 1.4 })
-  box(-6.26, 0.019, BAR_CENTER_Z, 0.94, 0.025, 1.45, finishes.charcoal)
-  for (const x of [-6.78, -5.83]) box(x, 1.17, BAR_CENTER_Z, 0.045, 2.34, 0.08, finishes.charcoal)
-  box(-6.3, 2.32, BAR_CENTER_Z, 1.02, 0.07, 0.1, finishes.charcoal)
-  const staffSign = sign('STAFF ONLY\n직원 출입구', 0.82, 0.32)
-  staffSign.position.set(-6.3, 2.08, BAR_CENTER_Z + 0.045)
+  const showcase = new THREE.Group()
+  showcase.position.set(-4.9, 0, -3.15)
+  showcase.rotation.y = -Math.PI / 2
+  scene.add(showcase)
+  box(0, 0.46, 0, 3.95, 0.92, 1.12, materials.oak, showcase)
+  box(0, 0.955, 0, 4, 0.07, 1.18, materials.counter, showcase)
+  box(0, 1.24, 0.575, 3.94, 0.56, 0.022, materials.glass, showcase)
+  for (const x of [-1.97, 1.97]) box(x, 1.25, 0, 0.035, 0.58, 1.17, materials.charcoal, showcase)
+  for (const y of [1.01, 1.25, 1.54]) {
+    box(0, y, 0, 3.94, 0.018, 1.16, materials.glass, showcase)
+    box(0, y, 0.58, 3.94, 0.015, 0.02, materials.brass, showcase)
+    if (y > 1.4) continue
+    for (let i = 0; i < 9; i++) {
+      box(-1.72 + i * 0.43, y + 0.06, 0.23, 0.3, 0.1, 0.3, materials.linen, showcase)
+      cylinder(-1.72 + i * 0.43, y + 0.06, -0.2, 0.13, 0.13, 0.1, materials.leather, showcase)
+    }
+  }
+  obstacles.push({
+    x: -4.9,
+    z: -3.15,
+    width: 3.95,
+    depth: 1.18,
+    yaw: -Math.PI / 2,
+    minY: 0,
+    maxY: 1.56,
+    blocksSight: true,
+  })
+
+  const staffSign = sign('STAFF ONLY', 1.1, 0.2)
+  staffSign.position.set(8.6, 2.6, -0.4)
   scene.add(staffSign)
-  const floorSign = sign('고객 공간 ↗', 0.82, 0.25, '#d9d8c8', '#304d3d')
-  floorSign.position.set(-6.3, 2.08, BAR_CENTER_Z - 0.045)
-  floorSign.rotation.y = Math.PI
-  scene.add(floorSign)
   box(-2.9, 0.5, -9.2, 5.5, 1, 0.9, '#d1d9cf')
   box(-5.56, 1.05, -9.2, 0.28, 0.09, 1.0, '#b9c4bb')
   box(-2.34, 1.05, -9.2, 4.48, 0.09, 1.0, '#b9c4bb')
   box(-5, 1.05, -9.56, 0.84, 0.09, 0.28, '#b9c4bb')
   box(-5, 1.05, -8.74, 0.84, 0.09, 0.08, '#b9c4bb')
   obstacles.push({ x: -2.9, z: -9.2, width: 5.6, depth: 1 })
-  box(-0.675, 0.5, -5.2, 8.75, 1, 0.9, '#a9aaa2')
-  box(5.85, 0.5, -5.2, 1.1, 1, 0.9, '#a9aaa2')
-  box(0.675, 1.05, -5.2, 11.45, 0.09, 1, finishes.counter)
-  obstacles.push({ x: 0.675, z: -5.2, width: 11.45, depth: 1 })
+  for (const [left, right] of [
+    [-3.6, 0.475],
+    [1.925, 3.95],
+    [4.45, 6.95],
+  ])
+    box((left + right) / 2, 0.48, -5.2, right - left, 0.96, 0.9, '#a9aaa2')
+  box(4.2, 0.35, -5.2, 0.5, 0.7, 0.9, '#a9aaa2')
+  for (const z of [-5.5925, -4.8075]) box(4.2, 0.48, z, 0.5, 0.96, 0.115, '#a9aaa2')
+  for (const [left, right] of [
+    [-3.65, 3.95],
+    [4.45, 6.95],
+  ])
+    box((left + right) / 2, 1.05, -5.2, right - left, 0.09, 1, materials.counter)
+  for (const z of [-5.6175, -4.7825]) box(4.2, 1.05, z, 0.5, 0.09, 0.165, materials.counter)
+  obstacles.push({ x: 1.65, z: -5.2, width: 10.6, depth: 1, minY: 0, maxY: 1.095 })
   box(STATIONS.rack.x, 1.4, STATIONS.rack.z, 0.95, 0.04, 0.72, '#adb9ac')
   for (const x of [STATIONS.rack.x - 0.42, STATIONS.rack.x + 0.42]) {
     box(x, 1.24, STATIONS.rack.z - 0.3, 0.04, 0.32, 0.04, '#adb9ac')
@@ -252,7 +257,11 @@ export function createShopInterior(scene: THREE.Scene) {
       cups: Array.from({ length: size ? 4 : 1 }, (_, i) => {
         const body = createCupBody(scene, kind)
         body.root.scale.setScalar(0.48)
-        body.root.position.set(-4.13 + cupRows.indexOf(cupRow(kind)) * 0.17, 1.066 + i * 0.055, -1.45 + column)
+        body.root.position.set(
+          STATIONS.cups.x - 0.42 + cupRows.indexOf(cupRow(kind)) * 0.12,
+          1.066 + i * 0.055,
+          -1.45 + column * 0.6,
+        )
         return body
       }),
     }
@@ -267,15 +276,20 @@ export function createShopInterior(scene: THREE.Scene) {
   createIceBin(scene)
   const syrupStation = createSyrupStation(scene)
   box(STATIONS.mix.x, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
-  const foamContainer = cylinder(STATIONS.topping.x - 0.15, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
+  const foamContainer = cylinder(STATIONS.topping.x - 0.15, 1.24, STATIONS.topping.z + 0.1, 0.15, 0.13, 0.33, '#e9ddbc')
   addVesselLabel(foamContainer, '폼', '#527f66', 0.19, 0.1, -0.015, 0.145)
-  const powderContainer = cylinder(STATIONS.topping.x + 0.2, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
+  const powderContainer = cylinder(
+    STATIONS.topping.x + 0.2,
+    1.18,
+    STATIONS.topping.z + 0.1,
+    0.11,
+    0.11,
+    0.22,
+    '#c69c5e',
+  )
   addVesselLabel(powderContainer, '파우더', '#886628', 0.16, 0.08, 0, 0.112)
-  box(6.1, 0.5, BAR_CENTER_Z, 1.1, 1, 1.2, finishes.oak)
-  box(6.1, 1.05, BAR_CENTER_Z, 1.15, 0.08, 1.35, finishes.counter)
-  obstacles.push({ x: 6.1, z: BAR_CENTER_Z, width: 1.15, depth: 1.4 })
   const pickupSign = sign('PICK UP', 0.7, 0.16, '#ac794b', '#262e28')
-  pickupSign.position.set(6.1, 0.74, -0.405)
+  pickupSign.position.set(STATIONS.pickup.x, 0.74, -0.405)
   scene.add(pickupSign)
   const blender = createBlender(scene, 'blender')
   const prepBlender = createBlender(scene, 'prep')
@@ -291,7 +305,11 @@ export function createShopInterior(scene: THREE.Scene) {
   storageSign.rotation.y = -Math.PI / 2
   scene.add(storageSign)
   const shelfSign = sign(`바 실온 재료 · 품목별 ${BAR_BATCH_CAPACITY}개`, 1.3, 0.14, '#d9d3c3', '#344238')
-  shelfSign.position.set(3, 0.83, -4.758)
+  box(9.07, 0.5, STATIONS.shelf.z, 0.55, 1, 1.8, materials.oak)
+  box(9.07, 1.05, STATIONS.shelf.z, 0.6, 0.09, 1.85, materials.counter)
+  obstacles.push({ x: 9.07, z: STATIONS.shelf.z, width: 0.6, depth: 1.85, minY: 0, maxY: 1.095 })
+  shelfSign.position.set(8.75, 0.83, STATIONS.shelf.z)
+  shelfSign.rotation.y = -Math.PI / 2
   scene.add(shelfSign)
   box(1, 0.5, -9.2, 1.55, 1, 0.85, '#a3b1a5')
   box(1, 1.05, -9.2, 1.65, 0.09, 0.95, '#c4cec3')
@@ -301,7 +319,7 @@ export function createShopInterior(scene: THREE.Scene) {
   scene.add(extractionSign)
   createWashingEquipment(scene)
   createCondimentBar(scene)
-  obstacles.push({ ...CONDIMENT_BAR })
+  obstacles.push({ ...CONDIMENT_BAR, minY: 0, maxY: 1.08, blocksSight: true })
 
   return { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn }
 }

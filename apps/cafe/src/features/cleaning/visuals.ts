@@ -1,5 +1,6 @@
 import * as THREE from 'three'
-import { cupSurfaceIds, STATIONS } from '../../content/stations'
+import { type CupSurfaceId, cupSurfaceIds, isTable, STATIONS, stationElevation } from '../../content/stations'
+import { TABLES } from '../../content/tables'
 import { CONDIMENT_COUNTER_Y, CONDIMENT_RETURN_Y } from '../../shared/visuals/condiment-bar'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
@@ -16,7 +17,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     root.position.set(x, y, z)
     root.scale.setScalar(0.65)
     parent.add(root)
-    const bodies = new Map(reusableCupKinds.map((kind) => [kind, createCupBody(root, kind)]))
+    const bodies = new Map<(typeof reusableCupKinds)[number], ReturnType<typeof createCupBody>>()
     const residue = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.006, 16), coffee)
     residue.position.y = 0.014
     root.add(residue)
@@ -32,6 +33,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     visuals.forEach((visual, i) => {
       visual.root.visible = i < count
       const kind = kinds[i]
+      if (kind && !visual.bodies.has(kind)) visual.bodies.set(kind, createCupBody(visual.root, kind))
       for (const [id, body] of visual.bodies) body.root.visible = id === kind
     })
   }
@@ -69,7 +71,7 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     return { root, material }
   }
 
-  const tables = cupSurfaceIds.map((id) => {
+  function tableVisual(id: CupSurfaceId) {
     const [x, y, z] = cleaningSpot(id)
     const cups = Array.from({ length: 8 }, (_, i) => {
       if (id === 'condiment') {
@@ -78,7 +80,8 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
       return cup(scene, x + ((i % 3) - 1) * 0.21, y + 0.005, z + (Math.floor(i / 3) - 0.5) * 0.3)
     })
     return { id, cups, stain: stain(x + 0.12, y, z - 0.08) }
-  })
+  }
+  const tables = new Map<CupSurfaceId, ReturnType<typeof tableVisual>>()
   const barStain = stain(...cleaningSpot('mix'))
   const held = new THREE.Group()
   camera.add(held)
@@ -98,9 +101,9 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
   const waste = Array.from({ length: 5 }, (_, i) => {
     const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.065, 0), paper)
     mesh.position.set(
-      STATIONS.trash.x + ((i % 2) - 0.5) * 0.045,
+      STATIONS.trash.x + (i % 2 ? -0.25 : 0.25),
       CONDIMENT_COUNTER_Y - 0.12 + Math.floor(i / 2) * 0.04,
-      STATIONS.trash.z + (i % 2 ? -0.25 : 0.25),
+      STATIONS.trash.z + ((i % 2) - 0.5) * 0.045,
     )
     scene.add(mesh)
     return mesh
@@ -112,7 +115,14 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
       const cleaning = state.cleaning
       const ratio = cleaning?.stage === 'wipe' ? cleaning.progress / CLEANING_SECONDS.wipe : 0
 
-      for (const table of tables) {
+      for (const id of cupSurfaceIds) {
+        const surface = cupSurface(state, id)
+        let table = tables.get(id)
+        if (!table && (surface.dirty || cupCount(surface.cups))) {
+          table = tableVisual(id)
+          tables.set(id, table)
+        }
+        if (!table) continue
         showCups(table.cups, cupSurface(state, table.id).cups)
         table.stain.root.visible = cupSurface(state, table.id).dirty
         const remaining = 1 - (cleaning?.station === table.id ? ratio : 0)
@@ -163,5 +173,5 @@ export function cleaningSpot(station: CleaningStation): [number, number, number]
   if (station === 'trash') {
     return [x, CONDIMENT_COUNTER_Y, z]
   }
-  return [x, 0.85, z]
+  return [x, isTable(station) ? stationElevation(station) + TABLES[station].height : 0.85, z]
 }

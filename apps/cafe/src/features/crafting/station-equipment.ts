@@ -16,13 +16,12 @@ import { createPumpVisual, operationPump, pumpSpec } from '../../shared/visuals/
 import type { GameState } from '../../simulation/state'
 import { operationFor, vesselPlace } from './rules'
 
-export const WATER_OUTLET: [number, number, number] = [STATIONS.water.x, 1.62, STATIONS.water.z - 0.08]
+export const WATER_OUTLET: [number, number, number] = [STATIONS.water.x, 1.62, STATIONS.water.z + 0.18]
 
 export function createWaterStation(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Marco MIX three-button font'
-  root.position.set(STATIONS.water.x, 1.065, STATIONS.water.z + 0.115)
-  root.rotation.y = Math.PI
+  root.position.set(STATIONS.water.x, 1.065, STATIONS.water.z - 0.015)
   scene.add(root)
   const steel = material({ color: '#c6c9cb', metalness: 0.96, roughness: 0.25 })
   const capSteel = material({ color: '#b9bdc0', metalness: 0.94, roughness: 0.31 })
@@ -65,8 +64,7 @@ export function createWaterStation(scene: THREE.Scene) {
 export function createIceBin(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Krowne-style recessed ice well'
-  root.position.set(2.1, 0.75, -0.93)
-  root.rotation.y = Math.PI
+  root.position.set(STATIONS.ice.x, 0.75, STATIONS.ice.z - 0.1)
   scene.add(root)
   const steel = material({ color: '#b8bcbe', metalness: 0.91, roughness: 0.38 })
   const black = material({ color: '#101819', roughness: 0.88 })

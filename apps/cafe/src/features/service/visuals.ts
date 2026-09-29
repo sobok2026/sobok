@@ -3,7 +3,7 @@ import { RECIPES, recipeCup } from '../../content/recipes'
 import { CUP_DIMENSIONS, createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { cupKinds } from '../inventory/cups'
-import { customerHasCup, customerSitting, customerWalking } from './customer'
+import { customerHasCup, customerSeatHeight, customerSeatYaw, customerSitting, customerWalking } from './customer'
 
 export function createCustomerVisuals(scene: THREE.Scene) {
   const root = new THREE.Group()
@@ -98,7 +98,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         return
       }
 
-      position.set(customer.position[0], 0, customer.position[1])
+      position.set(customer.position[0], customer.position[2], customer.position[1])
 
       if (shownId !== customer.id) {
         shownId = customer.id
@@ -113,16 +113,19 @@ export function createCustomerVisuals(scene: THREE.Scene) {
       if (running) {
         visualTime += delta
       }
-      const sitting = customerSitting({ ...customer, position: [root.position.x, root.position.z] })
+      const sitting = customerSitting({ ...customer, position: [root.position.x, root.position.z, root.position.y] })
       const walking = customerWalking(customer)
       const stride = walking ? Math.sin(visualTime * 8) * (1 - sitting) : 0
       const sipping = customer.stage === 'drinking' ? Math.max(0, Math.sin(visualTime * 2)) : 0
-      const yaw = customer.yaw + Math.atan2(Math.sin(-customer.yaw), Math.cos(-customer.yaw)) * sitting
+      const seatYaw = customer.visit?.table ? customerSeatYaw(customer.visit.table) : customer.yaw
+      const yaw =
+        customer.yaw + Math.atan2(Math.sin(seatYaw - customer.yaw), Math.cos(seatYaw - customer.yaw)) * sitting
       if (running) {
         root.rotation.y +=
           Math.atan2(Math.sin(yaw - root.rotation.y), Math.cos(yaw - root.rotation.y)) * Math.min(1, delta * 14)
       }
-      person.position.y = -0.27 * sitting + (walking ? Math.abs(stride) * 0.018 : 0)
+      const seatHeight = customer.visit?.table ? customerSeatHeight(customer.visit.table) : 0.5
+      person.position.y = (seatHeight - 0.82) * sitting + (walking ? Math.abs(stride) * 0.018 : 0)
 
       legs.forEach((leg, i) => {
         leg.hip.rotation.x = (-Math.PI / 2) * sitting + stride * (i ? -0.38 : 0.38)

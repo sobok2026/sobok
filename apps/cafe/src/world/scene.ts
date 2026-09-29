@@ -7,11 +7,12 @@ import {
   isEspressoStation,
   isSteamStation,
   isTable,
-  STAIRCASE,
   STATIONS,
   type StationId,
+  stationElevation,
   stationIds,
 } from '../content/stations'
+import { TABLES } from '../content/tables'
 import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visuals'
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
 import { craftingAt, craftWorkStation } from '../features/crafting/rules'
@@ -28,6 +29,7 @@ import { createCustomerVisuals } from '../features/service/visuals'
 import { createWashingVisuals, WASH_SPOT } from '../features/washing/visuals'
 import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
+import { stairGuide } from './floors'
 import { createShopInterior } from './interior'
 import { createPlayerControls } from './player-controls'
 
@@ -64,7 +66,9 @@ export type CafeScene = {
 }
 
 function pickWidth(id: StationId) {
-  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 0.74
+  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 1.04
+  if (id === 'shelf') return 0.65
+  if (id === 'bar-fridge') return 1.3
   if (id === 'printer') {
     return 0.22
   }
@@ -74,7 +78,7 @@ function pickWidth(id: StationId) {
   if (isSteamStation(id)) {
     return 0.66
   }
-  if (isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf') {
+  if (isCupSurface(id) || id === 'prep' || id === 'cold-prep') {
     return 1.3
   }
   if (id === 'wash') {
@@ -84,11 +88,15 @@ function pickWidth(id: StationId) {
 }
 
 function pickDepth(id: StationId) {
-  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 1.04
+  if (id === 'condiment' || id === 'supplies' || id === 'trash') return 0.74
+  if (id === 'shelf') return 1.5
+  if (id === 'bar-fridge') return 0.3
   return id === 'stock' ? 1.6 : 0.8
 }
 
 function pickHeight(id: StationId) {
+  if (id === 'bar-fridge') return 0.72
+  if (id === 'rack') return 0.4
   if (id === 'grinder') return 1.25
   if (id === 'urn') return 1.5
   if (isEspressoStation(id) || id === 'water') {
@@ -104,7 +112,8 @@ function markerHeight(id: StationId) {
   if (isEspressoStation(id) || id === 'water') {
     return 1.9
   }
-  return isTable(id) || id === 'trash' ? 1.2 : 1.42
+  if (isTable(id)) return stationElevation(id) + TABLES[id].height + 0.3
+  return id === 'trash' ? 1.2 : 1.42
 }
 
 type Placement = { cupId: string; location: string; places: Record<string, string> } | null
@@ -191,12 +200,39 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(pickWidth(id), pickHeight(id), pickDepth(id)), pickMaterial)
-    mesh.position.set(station.x, id === 'urn' ? 1.65 : 1.2, station.z)
+    let geometry: THREE.BufferGeometry = new THREE.BoxGeometry(pickWidth(id), pickHeight(id), pickDepth(id))
+    let y = id === 'urn' ? 1.65 : 1.2
+    if (id === 'bar-fridge') y = 0.58
+    if (id === 'rack') y = 1.65
+    if (isTable(id)) {
+      geometry.dispose()
+      const table = TABLES[id]
+      geometry =
+        table.shape === 'round'
+          ? new THREE.CylinderGeometry(table.width / 2, table.width / 2, 0.16, 24)
+          : new THREE.BoxGeometry(table.width, 0.16, table.depth)
+      y = stationElevation(id) + table.height
+    }
+    const mesh = new THREE.Mesh(geometry, pickMaterial)
+    mesh.position.set(station.x, y, station.z)
     mesh.userData.station = id
     scene.add(mesh)
     return mesh
   })
+  for (const obstacle of obstacles) {
+    if (!obstacle.blocksSight) continue
+    const bottom = obstacle.minY ?? 0,
+      top = obstacle.maxY ?? 3.95
+    const geometry =
+      obstacle.radius === undefined
+        ? new THREE.BoxGeometry(obstacle.width, top - bottom, obstacle.depth)
+        : new THREE.CylinderGeometry(obstacle.radius, obstacle.radius, top - bottom, 16)
+    const blocker = new THREE.Mesh(geometry, pickMaterial)
+    blocker.position.set(obstacle.x, (bottom + top) / 2, obstacle.z)
+    blocker.rotation.y = obstacle.yaw ?? 0
+    scene.add(blocker)
+    occluders.push(blocker)
+  }
   const pickObjects = [...targets, ...occluders]
   const guideMarker = new THREE.Mesh(
     new THREE.ConeGeometry(0.1, 0.2, 4),
@@ -341,9 +377,11 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     if (guideStation) {
       const anchor = STATIONS[guideStation]
       guidePoint.set(anchor.x, markerHeight(guideStation) + Math.sin(animationTime / 600) * 0.03, anchor.z)
-      if (camera.position.y - 1.65 >= FLOOR_HEIGHT - 0.2) {
-        const floor = Math.floor((camera.position.y - 1.45) / FLOOR_HEIGHT) * FLOOR_HEIGHT
-        guidePoint.set(STAIRCASE.rightX, floor + 0.75, STAIRCASE.startZ - 0.4)
+      const elevation = camera.position.y - 1.65
+      if (Math.abs(elevation - stationElevation(guideStation)) > 0.25) {
+        guidePoint.fromArray(
+          stairGuide(camera.position.x, camera.position.z, elevation, stationElevation(guideStation)),
+        )
       }
     }
 

@@ -4,8 +4,8 @@ import { craftWorkStation } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import { washDestination } from '../features/washing/rules'
+import { EYE_HEIGHT, intersectsObstacle, type Obstacle, PLAYER_RADIUS } from './collision'
 import { floorElevation } from './floors'
-import type { Obstacle } from './interior'
 import type { SceneOptions } from './scene'
 
 export function createPlayerControls(
@@ -23,17 +23,11 @@ export function createPlayerControls(
   let lookPointer: { id: number; x: number; y: number } | null = null
   let touchMovement = { sideways: 0, forward: 0, running: false }
   const collides = (x: number, z: number, elevation: number) =>
-    x < SHOP_BOUNDS.minX + 0.45 ||
-    x > SHOP_BOUNDS.maxX - 0.45 ||
-    z < SHOP_BOUNDS.minZ + 0.45 ||
-    z > SHOP_BOUNDS.maxZ - 0.55 ||
-    obstacles.some(
-      (o) =>
-        elevation < (o.maxY ?? 3.85) - 0.03 &&
-        elevation + 1.6 > (o.minY ?? 0) + 0.03 &&
-        Math.abs(x - o.x) < o.width / 2 + 0.22 &&
-        Math.abs(z - o.z) < o.depth / 2 + 0.22,
-    )
+    x < SHOP_BOUNDS.minX + PLAYER_RADIUS + 0.2 ||
+    x > SHOP_BOUNDS.maxX - PLAYER_RADIUS - 0.2 ||
+    z < SHOP_BOUNDS.minZ + PLAYER_RADIUS + 0.2 ||
+    z > SHOP_BOUNDS.maxZ - PLAYER_RADIUS - 0.2 ||
+    obstacles.some((obstacle) => intersectsObstacle(x, z, elevation, obstacle))
 
   function keydown(event: KeyboardEvent) {
     if (event.defaultPrevented) {
@@ -331,13 +325,13 @@ export function createPlayerControls(
     },
     update(dt: number) {
       if (options.canMove()) {
-        let elevation = camera.position.y - 1.65
+        let elevation = camera.position.y - EYE_HEIGHT
         if (
           collides(camera.position.x, camera.position.z, elevation) ||
           floorElevation(camera.position.x, camera.position.z, elevation) === null
         ) {
           const [x, z, , , y] = staffStartPosition()
-          camera.position.set(x, y + 1.65, z)
+          camera.position.set(x, y + EYE_HEIGHT, z)
           elevation = y
         }
         camera.rotation.y += ((keys.has('ArrowLeft') ? 1 : 0) - (keys.has('ArrowRight') ? 1 : 0)) * dt * 1.4
@@ -363,17 +357,22 @@ export function createPlayerControls(
         const speed = dt * 2.9 * (running ? 2 : 1)
         const dx = (-Math.sin(yaw) * forward + Math.cos(yaw) * sideways) * speed
         const dz = (-Math.cos(yaw) * forward - Math.sin(yaw) * sideways) * speed
-        const across = floorElevation(camera.position.x + dx, camera.position.z, elevation)
-        if (across !== null && !collides(camera.position.x + dx, camera.position.z, across)) {
-          camera.position.x += dx
-          elevation = across
+        const segments = Math.max(1, Math.ceil(Math.hypot(dx, dz) / 0.06))
+        for (let segment = 0; segment < segments; segment++) {
+          const stepX = dx / segments,
+            stepZ = dz / segments
+          const across = floorElevation(camera.position.x + stepX, camera.position.z, elevation)
+          if (across !== null && !collides(camera.position.x + stepX, camera.position.z, across)) {
+            camera.position.x += stepX
+            elevation = across
+          }
+          const forwardElevation = floorElevation(camera.position.x, camera.position.z + stepZ, elevation)
+          if (forwardElevation !== null && !collides(camera.position.x, camera.position.z + stepZ, forwardElevation)) {
+            camera.position.z += stepZ
+            elevation = forwardElevation
+          }
         }
-        const forwardElevation = floorElevation(camera.position.x, camera.position.z + dz, elevation)
-        if (forwardElevation !== null && !collides(camera.position.x, camera.position.z + dz, forwardElevation)) {
-          camera.position.z += dz
-          elevation = forwardElevation
-        }
-        camera.position.y = elevation + 1.65
+        camera.position.y = elevation + EYE_HEIGHT
       } else if (keys.size || using || dragging || lookPointer || touchMovement.forward || touchMovement.sideways) {
         clear()
       }

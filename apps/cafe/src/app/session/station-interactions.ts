@@ -1,7 +1,7 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import { recipeCup } from '../../content/recipes'
-import { isCupSurface, type StationId } from '../../content/stations'
+import { isCupSurface, isTable, type StationId } from '../../content/stations'
 import { needsCleaning } from '../../features/cleaning/rules'
 import {
   craftStations,
@@ -115,7 +115,7 @@ function stationDefault(state: GameState, id: StationId): Interaction {
     return 'panel'
   }
   if (isCupSurface(id) || id === 'mix' || id === 'trash') {
-    return needsCleaning(state, id) ? { type: 'start-cleaning', station: id } : null
+    return isTable(id) || needsCleaning(state, id) ? { type: 'start-cleaning', station: id } : null
   }
   if (id === 'wash') {
     return washInteraction(state)

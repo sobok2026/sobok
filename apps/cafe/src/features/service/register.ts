@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { RECIPES } from '../../content/recipes'
+import { STATIONS } from '../../content/stations'
 import { canvasFont, paintTexture } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
@@ -17,7 +18,7 @@ const KEY_COLORS: Partial<Record<number, string>> = { 9: '#ab5a4d', 11: '#436c51
 export function createRegister(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Counter POS terminal'
-  root.position.set(-4.8, 1.064, -0.99)
+  root.position.set(STATIONS.pos.x, 1.064, STATIONS.pos.z + 0.41)
   root.rotation.y = Math.PI
   scene.add(root)
   const black = material({ color: '#090c10', roughness: 0.62, metalness: 0.02 })

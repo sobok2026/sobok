@@ -12,7 +12,8 @@ import { type Customizations, canOmit, countAmount, noCustomizations } from '../
 import type { DrinkSize } from '../../content/drink-sizes'
 import type { PlannedStep } from '../../content/recipe-plan'
 import { recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
-import { CUSTOMER_ENTRANCE, STATIONS, type TableId } from '../../content/stations'
+import { CUSTOMER_ENTRANCE, FLOOR_HEIGHT, STAIRCASE, STATIONS, type TableId } from '../../content/stations'
+import { PUBLIC_AISLE_X, PUBLIC_AISLE_Z, TABLES } from '../../content/tables'
 import type { Customer, GameState } from '../../simulation/state'
 
 export const customerStages = [
@@ -30,14 +31,14 @@ export const customerStages = [
 ] as const
 
 type CustomerStage = (typeof customerStages)[number]
-type CustomerPoint = [number, number]
+type CustomerPoint = [number, number, number]
 
-const ENTRY_SPOT: CustomerPoint = [CUSTOMER_ENTRANCE.x, CUSTOMER_ENTRANCE.z + 0.75]
-const CUSTOMER_AISLE_Z = 1.4
-const ORDER_SPOT: CustomerPoint = [STATIONS.pos.x, 0.45]
-const PICKUP_SPOT: CustomerPoint = [STATIONS.pickup.x, 0.25]
-export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x + 0.95, STATIONS.supplies.z]
-export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x + 0.95, STATIONS.condiment.z]
+const ENTRY_SPOT: CustomerPoint = [CUSTOMER_ENTRANCE.x, CUSTOMER_ENTRANCE.z + 0.75, 0]
+const CUSTOMER_AISLE_Z = PUBLIC_AISLE_Z
+const ORDER_SPOT: CustomerPoint = [STATIONS.pos.x, 0.45, 0]
+const PICKUP_SPOT: CustomerPoint = [STATIONS.pickup.x, 0.25, 0]
+export const CONDIMENT_SPOT: CustomerPoint = [STATIONS.supplies.x, STATIONS.supplies.z + 1.2, 0]
+export const RETURN_SPOT: CustomerPoint = [STATIONS.condiment.x, STATIONS.condiment.z + 1.2, 0]
 // Prototype movement and interaction timings; the 10-second table stay is user-approved.
 const CUSTOMER_SPEED = 1.7
 export const CUSTOMER_SECONDS = { condiment: 1.2, drinking: 10, returning: 1.2 } as const
@@ -64,7 +65,47 @@ export const customerHasCup = (state: Pick<GameState, 'customer' | 'sale'>) =>
     (line) => line.served > 0 && (line.service === 'takeout' || state.customer?.stage !== 'leaving'),
   )
 
-const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, STATIONS[table].z - 0.95]
+export const customerSeat = (table: TableId): CustomerPoint => {
+  const { seats, floor } = TABLES[table]
+  return [seats[0].x, seats[0].z, floor * FLOOR_HEIGHT]
+}
+export const customerSeatYaw = (table: TableId) => TABLES[table].seats[0].yaw + Math.PI
+export const customerSeatHeight = (table: TableId) => (TABLES[table].seats[0].kind === 'stool' ? 0.65 : 0.5)
+
+function upperFloorRoute(floor: number): CustomerPoint[] {
+  const route: CustomerPoint[] = []
+  const stairs = STAIRCASE
+  const landingZ = (stairs.endZ + stairs.landingEndZ) / 2
+  if (!floor) return route
+  route.push([stairs.leftX, PUBLIC_AISLE_Z, 0])
+
+  for (let level = 0; level < floor; level++) {
+    const base = level * FLOOR_HEIGHT
+    route.push(
+      [stairs.leftX, stairs.startZ - 0.8, base],
+      [stairs.leftX, stairs.startZ, base],
+      [stairs.leftX, stairs.endZ, base + FLOOR_HEIGHT / 2],
+      [stairs.leftX, landingZ, base + FLOOR_HEIGHT / 2],
+      [stairs.rightX, landingZ, base + FLOOR_HEIGHT / 2],
+      [stairs.rightX, stairs.endZ, base + FLOOR_HEIGHT / 2],
+      [stairs.rightX, stairs.startZ, base + FLOOR_HEIGHT],
+      [stairs.rightX, stairs.startZ - 0.8, base + FLOOR_HEIGHT],
+    )
+  }
+
+  route.push([PUBLIC_AISLE_X, stairs.startZ - 0.8, floor * FLOOR_HEIGHT])
+  return route
+}
+
+function fromTable(tableId: TableId): CustomerPoint[] {
+  const table = TABLES[tableId]
+  const approach = table.approach
+    .map(([x, z]): CustomerPoint => [x, z, table.floor * FLOOR_HEIGHT])
+    .reverse()
+    .slice(1)
+  const stairs = upperFloorRoute(table.floor).reverse()
+  return [...approach, ...stairs, [PUBLIC_AISLE_X, PUBLIC_AISLE_Z, 0]]
+}
 
 function customizationCandidates(plan: PlannedStep[], size: DrinkSize): Customizations[] {
   const candidates: Customizations[] = []
@@ -174,7 +215,7 @@ export function createCustomer(orderNumber: number): Customer | null {
     stage: 'entering',
     position: [...ENTRY_SPOT],
     yaw: Math.PI,
-    path: [[CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z], [ORDER_SPOT[0], CUSTOMER_AISLE_Z], [...ORDER_SPOT]],
+    path: [[CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z, 0], [ORDER_SPOT[0], CUSTOMER_AISLE_Z, 0], [...ORDER_SPOT]],
     nextPoint: 0,
     elapsed: 0,
     visit: null,
@@ -193,51 +234,46 @@ export function customerWait(customer: Customer, stage: CustomerStage) {
 }
 
 export function customerToPickup(customer: Customer) {
-  customerPath(customer, 'to-pickup', [[ORDER_SPOT[0], 0.85], [PICKUP_SPOT[0], 0.85], [...PICKUP_SPOT]])
+  customerPath(customer, 'to-pickup', [[ORDER_SPOT[0], 0.85, 0], [PICKUP_SPOT[0], 0.85, 0], [...PICKUP_SPOT]])
 }
 
 export function customerToCondiment(customer: Customer) {
   customerPath(customer, 'to-condiment', [
-    [PICKUP_SPOT[0], CUSTOMER_AISLE_Z],
-    [CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z],
+    [PICKUP_SPOT[0], CUSTOMER_AISLE_Z, 0],
+    [CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z, 0],
     [...CONDIMENT_SPOT],
   ])
 }
 
 export function customerToTable(customer: Customer) {
-  if (!customer.visit?.table) {
-    return
-  }
-  const seat = customerSeat(customer.visit.table)
-  customerPath(customer, 'to-table', [[CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z], [seat[0], CUSTOMER_AISLE_Z], seat])
+  if (!customer.visit?.table) return
+  const table = TABLES[customer.visit.table]
+  customerPath(customer, 'to-table', [
+    [CONDIMENT_SPOT[0], CUSTOMER_AISLE_Z, 0],
+    [PUBLIC_AISLE_X, CUSTOMER_AISLE_Z, 0],
+    ...upperFloorRoute(table.floor),
+    ...table.approach.map(([x, z]): CustomerPoint => [x, z, table.floor * FLOOR_HEIGHT]),
+  ])
 }
 
 export function customerToReturn(customer: Customer) {
-  if (!customer.visit?.table) {
-    return
-  }
-  const seat = customerSeat(customer.visit.table)
+  if (!customer.visit?.table) return
   customerPath(customer, 'to-return', [
-    [seat[0], CUSTOMER_AISLE_Z],
-    [RETURN_SPOT[0], CUSTOMER_AISLE_Z],
+    ...fromTable(customer.visit.table),
+    [RETURN_SPOT[0], CUSTOMER_AISLE_Z, 0],
     [...RETURN_SPOT],
   ])
 }
 
 export function customerLeave(customer: Customer) {
-  const [x, z] = customer.position
+  const [x, z, elevation] = customer.position
   const path: CustomerPoint[] = []
-
-  if (customer.stage === 'drinking' && customer.visit?.table) {
-    const seat = customerSeat(customer.visit.table)
-    path.push([seat[0], CUSTOMER_AISLE_Z])
-  } else if (!(Math.abs(x - CUSTOMER_ENTRANCE.x) < 0.1 && z >= CUSTOMER_AISLE_Z)) {
-    path.push([x, CUSTOMER_AISLE_Z])
+  if (customer.stage === 'drinking' && customer.visit?.table) path.push(...fromTable(customer.visit.table))
+  else if (!(Math.abs(x - CUSTOMER_ENTRANCE.x) < 0.1 && z >= CUSTOMER_AISLE_Z)) {
+    path.push([x, CUSTOMER_AISLE_Z, elevation])
   }
 
-  if (path.length) {
-    path.push([CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z])
-  }
+  if (path.length) path.push([CUSTOMER_ENTRANCE.x, CUSTOMER_AISLE_Z, 0])
   path.push([...ENTRY_SPOT])
   customerPath(customer, 'leaving', path)
 }
@@ -249,7 +285,8 @@ export function moveCustomer(customer: Customer, seconds: number) {
     const target = customer.path[customer.nextPoint]
     const dx = target[0] - customer.position[0]
     const dz = target[1] - customer.position[1]
-    const remaining = Math.hypot(dx, dz)
+    const dy = target[2] - customer.position[2]
+    const remaining = Math.hypot(dx, dz, dy)
     if (remaining > 0.0001) {
       customer.yaw = Math.atan2(dx, dz)
     }
@@ -261,6 +298,7 @@ export function moveCustomer(customer: Customer, seconds: number) {
     } else {
       customer.position[0] += (dx / remaining) * distance
       customer.position[1] += (dz / remaining) * distance
+      customer.position[2] += (dy / remaining) * distance
       break
     }
   }
@@ -281,5 +319,8 @@ export function customerSitting(customer: Customer) {
     return 0
   }
   const seat = customerSeat(customer.visit.table)
-  return Math.max(0, 1 - Math.hypot(customer.position[0] - seat[0], customer.position[1] - seat[1]))
+  return Math.max(
+    0,
+    1 - Math.hypot(customer.position[0] - seat[0], customer.position[1] - seat[1], customer.position[2] - seat[2]),
+  )
 }

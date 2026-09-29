@@ -268,5 +268,6 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'prep' || station === 'blender') {
     return [STATIONS[station].x + 0.75, 1.105, STATIONS[station].z + 0.15]
   }
+  if (station === 'ice' || station === 'topping') return [STATIONS[station].x, 1.075, STATIONS[station].z + 0.28]
   return [STATIONS[station].x, 1.075, STATIONS[station].z - 0.08]
 }

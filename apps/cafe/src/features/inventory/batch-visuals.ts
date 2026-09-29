@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { INGREDIENTS } from '../../content/ingredients'
+import { STATIONS } from '../../content/stations'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import { materialColor } from '../../shared/visuals/material-color'
 import { createPumpVisual, pumpSpec } from '../../shared/visuals/pump-visual'
@@ -79,7 +80,7 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
   pack.add(packLabel)
   const shelfJars = Array.from({ length: 3 }, (_, index) => {
     const jar = createPumpVisual(scene, pumpSpec('mocha')!)
-    jar.root.position.set(2.45 + index * 0.4, 1.25, -5.18)
+    jar.root.position.set(STATIONS.shelf.x + 0.03, 1.095, STATIONS.shelf.z - 0.4 + index * 0.4)
     jar.root.scale.setScalar(0.85)
     return jar
   })

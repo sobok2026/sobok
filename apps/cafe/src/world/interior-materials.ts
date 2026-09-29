@@ -17,7 +17,7 @@ function surface(draw: (context: CanvasRenderingContext2D, random: () => number)
   return texture
 }
 
-export function createInteriorFinishes() {
+export function createInteriorMaterials() {
   const oak = surface((ctx, random) => {
     ctx.fillStyle = '#ac794b'
     ctx.fillRect(0, 0, 512, 512)

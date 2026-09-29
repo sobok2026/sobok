@@ -28,3 +28,23 @@ export function floorElevation(x: number, z: number, current: number): number | 
 
   return null
 }
+
+export function stairGuide(x: number, z: number, elevation: number, destination: number): [number, number, number] {
+  const up = destination > elevation
+  const base = Math.floor((elevation + 0.02) / FLOOR_HEIGHT) * FLOOR_HEIGHT
+  const progress = elevation - base
+  const onStairs = progress > 0.05 && progress < FLOOR_HEIGHT - 0.05
+  const { leftX, rightX, startZ, endZ, landingEndZ } = STAIRCASE
+  const landingZ = (endZ + landingEndZ) / 2
+  if (!onStairs) return [up ? leftX : rightX, elevation + 0.8, startZ - 0.6]
+  const onLeft = Math.abs(x - leftX) < Math.abs(x - rightX)
+
+  if (z >= endZ - 0.1) {
+    const targetX = up ? rightX : leftX
+    if (Math.abs(x - targetX) > 0.2) return [targetX, base + FLOOR_HEIGHT / 2 + 0.8, landingZ]
+    return [targetX, base + (up ? FLOOR_HEIGHT : 0) + 0.8, startZ - 0.6]
+  }
+
+  if ((up && onLeft) || (!up && !onLeft)) return [onLeft ? leftX : rightX, base + FLOOR_HEIGHT / 2 + 0.8, landingZ]
+  return [onLeft ? leftX : rightX, base + (up ? FLOOR_HEIGHT : 0) + 0.8, startZ - 0.6]
+}

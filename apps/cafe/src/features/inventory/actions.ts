@@ -240,7 +240,7 @@ export function handleStockActions(
       say(
         s,
         INGREDIENTS[batch.ingredient].prepared
-          ? '라벨을 붙였어요. E로 용기를 집어 보관 장소로 운반해주세요.'
+          ? '라벨을 붙였어요. 용기를 집어 보관 장소로 운반해주세요.'
           : '라벨을 붙였어요. 백룸 준비에 사용하거나 용기를 집어 바에 보충하세요.',
         'success',
       )

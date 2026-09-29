@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STATIONS } from '../../content/stations'
+import { CONDIMENT_BAR, STATIONS } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import { CONDIMENT_COUNTER_Y } from '../../shared/visuals/condiment-bar'
 import {
@@ -14,7 +14,7 @@ import { SUPPLIES, SUPPLY_CAPACITY, supplyIds } from './supplies'
 export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const display = new THREE.Group()
   display.position.set(STATIONS.supplies.x, 0, STATIONS.supplies.z)
-  display.rotation.y = Math.PI / 2
+  display.rotation.y = CONDIMENT_BAR.yaw
   scene.add(display)
   const tray = equipmentMaterial({ color: '#2c302b', roughness: 0.65 })
   const supplies = supplyIds.map((id, index) => {

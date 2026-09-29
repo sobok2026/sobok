@@ -1,4 +1,4 @@
-import { isCupSurface, STATIONS, toward } from '../../content/stations'
+import { isCupSurface, isTable, STATIONS, toward } from '../../content/stations'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
@@ -40,7 +40,7 @@ export function handleCleaningActions(
         break
       }
 
-      if (!needsCleaning(s, station)) {
+      if (!isTable(station) && !needsCleaning(s, station)) {
         fail('이미 깨끗하게 정리됐어요.')
         break
       }

@@ -1,8 +1,8 @@
-import { type CupSurfaceId, isCupSurface } from '../../content/stations'
+import { type CupSurfaceId, isCupSurface, tableIds } from '../../content/stations'
 import type { Cleaning, GameState } from '../../simulation/state'
 import { cupCount } from '../inventory/cups'
 
-export const cleaningStationIds = ['table', 'table-left', 'condiment', 'mix', 'trash'] as const
+export const cleaningStationIds = [...tableIds, 'condiment', 'mix', 'trash'] as const
 export type CleaningStation = (typeof cleaningStationIds)[number]
 
 // Interaction times for the prototype, not real sanitation procedures.

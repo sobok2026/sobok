@@ -1,5 +1,5 @@
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
-import { staffStartPosition } from '../content/stations'
+import { staffStartPosition, type TableId, tableIds } from '../content/stations'
 import { defaultCow } from '../features/drip-coffee/rules'
 import { packStorage } from '../features/inventory/batches'
 import {
@@ -52,7 +52,10 @@ export function initialState(): GameState {
     reusableCups: Object.fromEntries(
       reusableCupKinds.map((kind) => [kind, { clean: REUSABLE_CUPS_PER_KIND, dirty: 0, washed: 0 }]),
     ) as GameState['reusableCups'],
-    tables: { table: { cups: emptyCupCounts(), dirty: false }, 'table-left': { cups: emptyCupCounts(), dirty: false } },
+    tables: Object.fromEntries(tableIds.map((id) => [id, { cups: emptyCupCounts(), dirty: false }])) as Record<
+      TableId,
+      { cups: ReturnType<typeof emptyCupCounts>; dirty: boolean }
+    >,
     condiment: { cups: emptyCupCounts(), dirty: false },
     supplies: {
       napkins: { bar: SUPPLY_CAPACITY, stock: SUPPLY_PACK },

@@ -43,17 +43,17 @@ export function createCondimentBar(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Combined condiment and return bar'
   root.position.set(CONDIMENT_BAR.x, 0, CONDIMENT_BAR.z)
-  root.rotation.y = Math.PI / 2
+  root.rotation.y = CONDIMENT_BAR.yaw
   scene.add(root)
   const wood = material({ map: walnutTexture(), roughness: 0.64 })
   const stone = material({ color: '#292c29', roughness: 0.38 })
   const dark = material({ color: '#242822', roughness: 0.8 })
   const steel = material({ color: '#bbc0bd', metalness: 0.85, roughness: 0.3 })
   const tray = material({ color: '#394039', roughness: 0.7 })
-  const width = CONDIMENT_BAR.depth
-  const depth = CONDIMENT_BAR.width
-  const suppliesX = CONDIMENT_BAR.z - STATIONS.supplies.z
-  const trashX = CONDIMENT_BAR.z - STATIONS.trash.z
+  const width = CONDIMENT_BAR.width
+  const depth = CONDIMENT_BAR.depth
+  const suppliesX = STATIONS.supplies.x - CONDIMENT_BAR.x
+  const trashX = STATIONS.trash.x - CONDIMENT_BAR.x
 
   function label(text: string, x: number, y: number, z: number, labelWidth: number, height = 0.085) {
     return equipmentPanel(root, labelWidth, height, [x, y, z], (context, w, h) => {
