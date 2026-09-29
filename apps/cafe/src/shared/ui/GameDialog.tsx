@@ -31,10 +31,12 @@ export default function GameDialog({
   return (
     <div
       className={clsx(
-        'absolute inset-0 z-20 flex items-center justify-center bg-ink/35 p-6 backdrop-blur-sm',
+        'pointer-events-auto absolute inset-0 z-20 flex items-center justify-center p-6',
         'max-tablet:p-4',
+        'touch:p-3',
       )}
     >
+      <div className="pointer-events-none fixed inset-0 bg-ink/35 backdrop-blur-sm" aria-hidden="true" />
       <section
         ref={surface}
         role="dialog"
@@ -42,8 +44,9 @@ export default function GameDialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={clsx(
-          'max-h-full w-full [scrollbar-width:thin]',
+          'relative max-h-full w-full [scrollbar-width:thin]',
           'rounded-2xl bg-surface p-7 shadow-dialog outline-none',
+          'touch:p-5',
           scrollBody ? 'flex flex-col overflow-hidden' : 'overflow-y-auto',
           wide ? 'max-w-140' : 'max-w-100',
         )}
@@ -85,7 +88,10 @@ export default function GameDialog({
               type="button"
               onClick={onClose}
               aria-label={`${title} 닫기`}
-              className="-mr-2 grid size-10 place-items-center rounded-full text-xl text-muted hover:bg-control"
+              className={clsx(
+                '-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-xl text-muted',
+                'hover:bg-control touch:size-11',
+              )}
             >
               ×
             </button>

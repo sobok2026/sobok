@@ -7,9 +7,6 @@ import { currentTicket, itemCustomizations } from '../features/service/orders'
 import type { Objective } from '../simulation/guidance'
 import type { GameState, Job, OrderLine } from '../simulation/state'
 
-/**
- * The active drink, its progress, the remaining drink count, and the one thing to do next.
- */
 export default function OrderRail({
   state,
   goal,
@@ -31,6 +28,7 @@ export default function OrderRail({
         'pointer-events-none absolute top-6 left-6 z-6 w-86',
         'rounded-panel border border-white/60 bg-surface/95 px-5 py-4 shadow-hud',
         'max-tablet:top-4 max-tablet:left-4 max-tablet:w-72',
+        'touch:top-3 touch:left-3 touch:w-[min(21.5rem,calc(100%-10rem))] touch:px-3 touch:py-2.5',
       )}
       aria-label="주문과 다음 할 일"
     >
@@ -46,10 +44,6 @@ export default function OrderRail({
   )
 }
 
-/**
- * A glanceable order summary. Reading the full printed label is an explicit action, independent of attachment.
- * While the work card is up the summary folds to the name and step dots, keeping the label shortcut available.
- */
 function ActiveDrink({
   state,
   line,
@@ -69,14 +63,17 @@ function ActiveDrink({
   const variant = variantName(line)
 
   return (
-    <div className="mb-3">
-      <div className="flex items-start gap-3">
+    <div className="mb-3 touch:mb-1.5">
+      <div className="flex items-start gap-3 touch:flex-wrap touch:gap-1">
         <h2 className="line-clamp-2 min-w-0 flex-1 text-lg leading-snug font-semibold tracking-tight">
           {recipe.shortName}
         </h2>
         <button
           type="button"
-          className="pointer-events-auto flex shrink-0 items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted"
+          className={clsx(
+            'pointer-events-auto flex shrink-0 items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted',
+            'touch:min-h-11',
+          )}
           aria-haspopup="dialog"
           aria-keyshortcuts="L"
           onClick={openLabel}
@@ -86,7 +83,7 @@ function ActiveDrink({
         </button>
       </div>
       {!compact && (
-        <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-body text-muted">
+        <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-body text-muted touch:hidden">
           <TemperatureChip line={line} />
           {variant && <span>{variant}</span>}
           <span>
@@ -95,7 +92,7 @@ function ActiveDrink({
           {extras.length > 0 && <span>커스텀 {extras.length}개</span>}
         </p>
       )}
-      <ol className="mt-3.5 flex gap-0.75" aria-label={`제조 ${done}/${total}단계`}>
+      <ol className="mt-3.5 flex gap-0.75 touch:mt-1.5" aria-label={`제조 ${done}/${total}단계`}>
         {Array.from({ length: total }, (_, index) => (
           <li
             key={index}
@@ -111,7 +108,6 @@ function ActiveDrink({
   )
 }
 
-/** A machine still running for this drink, such as the steam wand, so the player can work elsewhere meanwhile. */
 function JobChip({ job, time }: { job: Job; time: number }) {
   const ratio = Math.min(1, (time - job.startedAt) / Math.max(1e-9, job.endsAt - job.startedAt))
 
@@ -178,7 +174,6 @@ function TemperatureChip({ line }: { line: OrderLine }) {
   )
 }
 
-/** Menu variants that are more than a temperature, such as a named version of the drink. */
 function variantName(line: OrderLine) {
   const recipe = RECIPES[line.recipe]
   const temperature = recipe.temperature.toUpperCase()

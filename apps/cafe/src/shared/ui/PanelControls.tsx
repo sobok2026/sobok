@@ -5,10 +5,6 @@ export function PanelStatus({ children }: { children: ReactNode }) {
   return <p className="-mt-3 mb-5 text-body text-muted">{children}</p>
 }
 
-/**
- * The one thing to do at this station, shown only when the order rail points here. The title says what is wrong and
- * the button inside, the panel's only primary action, says what to do about it.
- */
 export function PanelNow({
   blocked = false,
   title,
@@ -67,7 +63,6 @@ export function PanelRow({
   )
 }
 
-/** A row's state in one word, or the label itself when the item is in use. */
 export function StatusChip({
   tone = 'neutral',
   children,
@@ -98,6 +93,7 @@ export function RowButton({ primary = false, className, ...props }: ComponentPro
       className={clsx(
         'min-h-9 rounded-lg border border-control-line bg-control px-3 text-sm font-medium whitespace-nowrap text-ink',
         'data-[primary=true]:border-brand data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
+        'touch:min-h-11',
         className,
       )}
       data-primary={primary}
@@ -125,6 +121,7 @@ export function PanelTabs<T extends string>({
           className={clsx(
             'flex min-h-9 items-center justify-center gap-1.5 rounded-lg text-body text-muted',
             'aria-selected:bg-surface aria-selected:font-semibold aria-selected:text-ink aria-selected:shadow-sm',
+            'touch:min-h-11',
           )}
           onClick={() => onChange(tab.id)}
         >

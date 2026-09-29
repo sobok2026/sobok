@@ -40,6 +40,11 @@
   --breakpoint-tablet: 47.5rem;
   --breakpoint-wide: 65.625rem;
 
+  --spacing-safe-top: env(safe-area-inset-top, 0px);
+  --spacing-safe-right: env(safe-area-inset-right, 0px);
+  --spacing-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --spacing-safe-left: env(safe-area-inset-left, 0px);
+
   --animate-nudge: nudge 260ms ease;
   @keyframes nudge {
     25% {
@@ -63,10 +68,11 @@
   }
 }
 
-/* Keep controls reachable when the game viewport is short. */
 @custom-variant pos-compact (@media (height <= 50rem));
 
 @custom-variant compact (@media (height <= 40.625rem));
+
+@custom-variant touch (&:where([data-touch-controls='true'], [data-touch-controls='true'] *));
 
 #cafe-receipt-print {
   display: none;
@@ -97,6 +103,15 @@
   /* Key caps read as part of the sentence, so they keep the text face instead of Preflight's monospace. */
   kbd {
     font-family: inherit;
+  }
+
+  [data-touch-controls='true'] kbd {
+    display: none;
+  }
+
+  /* A readable input also prevents Safari from zooming the game when a form opens. */
+  [data-touch-controls='true'] :is(input, select, textarea) {
+    font-size: max(1rem, 16px);
   }
 
   button,

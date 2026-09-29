@@ -18,6 +18,9 @@ export function createPlayerControls(
   let disposed = false
   let using = false
   let pressedStation: StationId | null = null
+  let mousePointer: number | null = null
+  let lookPointer: { id: number; x: number; y: number } | null = null
+  let touchMovement = { sideways: 0, forward: 0, running: false }
   const collides = (x: number, z: number) =>
     x < SHOP_BOUNDS.minX + 0.45 ||
     x > SHOP_BOUNDS.maxX - 0.45 ||
@@ -95,6 +98,11 @@ export function createPlayerControls(
   const clear = () => {
     keys.clear()
     dragging = false
+    mousePointer = null
+    const lookId = lookPointer?.id
+    lookPointer = null
+    touchMovement = { sideways: 0, forward: 0, running: false }
+    if (lookId !== undefined && element.hasPointerCapture(lookId)) element.releasePointerCapture(lookId)
 
     if (using || options.activeStation()) {
       using = false
@@ -105,6 +113,10 @@ export function createPlayerControls(
 
   const lock = () => {
     if (!element.isConnected || !options.canMove()) {
+      return
+    }
+    if (options.touchControls()) {
+      unlockForCraft()
       return
     }
     wantsMouseLook = true
@@ -131,6 +143,7 @@ export function createPlayerControls(
   }
 
   const unlock = () => {
+    clear()
     wantsMouseLook = false
     releasingForCraft = false
     options.onMouseMode('cursor')
@@ -140,6 +153,7 @@ export function createPlayerControls(
   }
 
   const unlockForCraft = () => {
+    clear()
     wantsMouseLook = false
     releasingForCraft = true
     options.onMouseMode('cursor')
@@ -187,6 +201,17 @@ export function createPlayerControls(
       return
     }
 
+    // Looking never acts on a station. A second finger can keep the movement stick held.
+    if (event.pointerType === 'touch' || event.pointerType === 'pen') {
+      if (lookPointer) return
+      event.preventDefault()
+      lookPointer = { id: event.pointerId, x: event.clientX, y: event.clientY }
+      element.setPointerCapture(event.pointerId)
+      return
+    }
+
+    mousePointer = event.pointerId
+
     if (carriedBatch(options.getState()) && hovered) {
       options.onInteract(hovered)
       return
@@ -231,11 +256,33 @@ export function createPlayerControls(
     }
   }
 
-  const pointerUp = () => {
+  const pointerUp = (event: PointerEvent) => {
+    if (event.pointerId === lookPointer?.id) {
+      lookPointer = null
+      if (element.hasPointerCapture(event.pointerId)) element.releasePointerCapture(event.pointerId)
+      return
+    }
+    // Releasing the movement/look finger must not release a different finger's work button.
+    if (event.pointerId !== mousePointer) return
+    mousePointer = null
     dragging = false
     using = false
     pressedStation = null
     options.onUseEnd()
+  }
+
+  const touchLook = (event: PointerEvent) => {
+    const previous = lookPointer
+    if (!previous || previous.id !== event.pointerId) return
+    lookPointer = { id: event.pointerId, x: event.clientX, y: event.clientY }
+    if (!options.canMove() || using || options.activeStation()) return
+    const sensitivity = 0.006 * options.mouseSensitivity()
+    camera.rotation.y -= (event.clientX - previous.x) * sensitivity
+    camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - (event.clientY - previous.y) * sensitivity, -1.1, 1.1)
+  }
+
+  const hidden = () => {
+    if (document.hidden) clear()
   }
 
   const look = (event: MouseEvent) => {
@@ -254,15 +301,27 @@ export function createPlayerControls(
   document.addEventListener('pointerlockerror', pointerFailed)
   document.addEventListener('mousemove', look)
   window.addEventListener('pointerup', pointerUp)
+  window.addEventListener('pointercancel', pointerUp)
   element.addEventListener('pointerdown', pointerDown)
+  element.addEventListener('pointermove', touchLook)
+  element.addEventListener('lostpointercapture', pointerUp)
   window.addEventListener('keydown', keydown)
   window.addEventListener('keyup', keyup)
   window.addEventListener('blur', clear)
+  window.addEventListener('resize', clear)
+  document.addEventListener('visibilitychange', hidden)
 
   return {
     lock,
     unlock,
     unlockForCraft,
+    moveTouch(sideways: number, forward: number, running: boolean) {
+      if (!options.canMove()) {
+        touchMovement = { sideways: 0, forward: 0, running: false }
+        return
+      }
+      touchMovement = { sideways, forward, running }
+    },
     update(dt: number) {
       if (options.canMove()) {
         if (collides(camera.position.x, camera.position.z)) {
@@ -275,9 +334,9 @@ export function createPlayerControls(
           -1.1,
           1.1,
         )
-        let forward = Number(keys.has('KeyW')) - Number(keys.has('KeyS'))
-        let sideways = Number(keys.has('KeyD')) - Number(keys.has('KeyA'))
-        const length = Math.hypot(forward, sideways) || 1
+        let forward = Number(keys.has('KeyW')) - Number(keys.has('KeyS')) + touchMovement.forward
+        let sideways = Number(keys.has('KeyD')) - Number(keys.has('KeyA')) + touchMovement.sideways
+        const length = Math.max(1, Math.hypot(forward, sideways))
 
         if ((forward || sideways) && (using || options.activeStation())) {
           using = false
@@ -288,7 +347,7 @@ export function createPlayerControls(
         forward /= length
         sideways /= length
         const yaw = camera.rotation.y
-        const running = keys.has('ShiftLeft') || keys.has('ShiftRight')
+        const running = keys.has('ShiftLeft') || keys.has('ShiftRight') || touchMovement.running
         const speed = dt * 2.9 * (running ? 2 : 1)
         const dx = (-Math.sin(yaw) * forward + Math.cos(yaw) * sideways) * speed
         const dz = (-Math.cos(yaw) * forward - Math.sin(yaw) * sideways) * speed
@@ -298,12 +357,16 @@ export function createPlayerControls(
         if (!collides(camera.position.x, camera.position.z + dz)) {
           camera.position.z += dz
         }
-      } else {
+      } else if (keys.size || using || dragging || lookPointer || touchMovement.forward || touchMovement.sideways) {
         clear()
       }
     },
     setTarget(target: StationId | null) {
-      if ((using || options.activeStation()) && target !== (options.activeStation() ?? pressedStation)) {
+      if (
+        options.canMove() &&
+        (using || options.activeStation()) &&
+        target !== (options.activeStation() ?? pressedStation)
+      ) {
         using = false
         pressedStation = null
         options.onUseEnd()
@@ -316,11 +379,16 @@ export function createPlayerControls(
       document.removeEventListener('pointerlockerror', pointerFailed)
       document.removeEventListener('mousemove', look)
       window.removeEventListener('pointerup', pointerUp)
+      window.removeEventListener('pointercancel', pointerUp)
       unlock()
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('blur', clear)
+      window.removeEventListener('resize', clear)
+      document.removeEventListener('visibilitychange', hidden)
       element.removeEventListener('pointerdown', pointerDown)
+      element.removeEventListener('pointermove', touchLook)
+      element.removeEventListener('lostpointercapture', pointerUp)
     },
   }
 }

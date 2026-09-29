@@ -3,6 +3,7 @@ import type { StationId } from '../../content/stations'
 import { craftWorkStation } from '../../features/crafting/rules'
 import { carriedBatch } from '../../features/inventory/batches'
 import { cupCount } from '../../features/inventory/cups'
+import { preparationStation } from '../../features/preparation/rules'
 import { customerWalking } from '../../features/service/customer'
 import { currentTicket } from '../../features/service/orders'
 import type { Action } from '../../simulation/actions'
@@ -17,6 +18,7 @@ import { useWriterLock } from '../persistence/use-writer-lock'
 import type { Preferences } from './preferences'
 import { confirmationAt, interactionAt, toolAt, workActionAt } from './station-interactions'
 import { useCafeScene } from './use-cafe-scene'
+import { useTouchControls } from './use-touch-controls'
 import { useWorkPreferences } from './use-work-preferences'
 
 export type CafeSessionProps = { store: CafeStore; hasSave: boolean; notice: string; preferences: Preferences }
@@ -24,6 +26,7 @@ export type CafeSessionProps = { store: CafeStore; hasSave: boolean; notice: str
 export function useCafeSession({ store, notice, preferences: initialPreferences }: CafeSessionProps) {
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot)
   const activeInput = useSyncExternalStore(store.subscribe, store.getActiveInput)
+  const { touchControls, touchControlsRef } = useTouchControls()
   const { preferences, preferencesRef, preferencesError, soundStatus, sounds, updatePreferences } =
     useWorkPreferences(initialPreferences)
   const focused = useRef(true)
@@ -281,9 +284,20 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     if ((action.type === 'start-cold-brew' || action.type === 'collect-cold-brew') && current.coldBrew) {
       beginWork()
     }
-    if (action.type === 'start-preparation' && current.preparation) {
+    if (
+      action.type === 'start-preparation' &&
+      current.preparation &&
+      preparationStation(current.preparation) === 'prep'
+    ) {
       beginWork()
     }
+    if (action.type === 'cold-tool' && previous.coldBrew?.stage === 'ground' && current.coldBrew?.tool) closePanel()
+    if (
+      action.type === 'drip-tool' &&
+      current.drip[action.temperature]?.stage === 'ground' &&
+      current.drip[action.temperature]?.tool
+    )
+      closePanel()
     if (action.type === 'start-cleaning' && !previous.cleaning && current.cleaning) {
       beginWork()
     }
@@ -368,6 +382,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   const { scene, sceneReady, graphicsError } = useCafeScene(store, host, {
     getState: store.getSnapshot,
     mouseSensitivity: () => preferencesRef.current.mouseSensitivity,
+    touchControls: () => touchControlsRef.current,
     isRunning: () =>
       flags.current.mode === 'play' &&
       flags.current.started &&
@@ -565,6 +580,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     sceneReady,
     hasLock,
     mouseMode,
+    touchControls,
+    moveTouch: (sideways: number, forward: number, running: boolean) =>
+      scene.current?.moveTouch(sideways, forward, running),
     confirmNew,
     setConfirmNew,
     started,

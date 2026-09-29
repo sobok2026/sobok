@@ -15,11 +15,8 @@ import type { ActiveInput } from '../simulation/work-context'
 
 const PosPanel = lazy(() => import('../features/service/PosPanel'))
 const DripPanel = lazy(() => import('../features/drip-coffee/DripPanel'))
+const GrinderPanel = lazy(() => import('../features/grinder/GrinderPanel'))
 
-/**
- * A station panel opens only where there is a choice to make. It sizes to its content and keeps the one current
- * action at the top, in step with the order rail.
- */
 export default function StationPanel({
   state,
   activeInput,
@@ -61,12 +58,13 @@ export default function StationPanel({
     <div className="pointer-events-none absolute inset-0 z-8 bg-[linear-gradient(90deg,#263c281f,transparent_60%)]">
       <section
         className={clsx(
-          'pointer-events-auto absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] w-100 flex-col',
+          'pointer-events-auto absolute top-6 left-6 flex max-h-[calc(100%-3rem)] w-100 flex-col',
           'data-[wide=true]:w-144',
           'overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent]',
           'rounded-2xl border border-white/60 bg-surface p-6 shadow-panel',
-          'compact:top-4 compact:max-h-[calc(100dvh-2rem)] compact:p-5',
-          'max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]',
+          'compact:top-4 compact:max-h-[calc(100%-2rem)] compact:p-5',
+          'max-tablet:left-3 max-tablet:max-w-[calc(100%-1.5rem)]',
+          'touch:top-3 touch:left-3 touch:max-h-[calc(100%-1.5rem)] touch:max-w-[calc(100%-1.5rem)]',
         )}
         aria-label={STATIONS[panel].name}
         data-wide={panel === 'cups'}
@@ -75,7 +73,7 @@ export default function StationPanel({
           <h2 className="text-2xl font-semibold tracking-tight">{STATIONS[panel].name}</h2>
           <button
             type="button"
-            className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-2xl text-muted"
+            className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-2xl text-muted touch:size-11"
             onClick={() => closePanel()}
             aria-label={`${STATIONS[panel].name} 닫기`}
           >
@@ -87,6 +85,11 @@ export default function StationPanel({
         {panel === 'stock' && <StoragePanel key="stock" state={state} act={act} goal={goal} place="stock" />}
         {panel === 'prep' && <PreparationPanel state={state} act={act} goal={goal} />}
         {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}
+        {panel === 'grinder' && (
+          <Suspense fallback={<p role="status">그라인더 작업을 불러오고 있어요.</p>}>
+            <GrinderPanel state={state} activeInput={activeInput} act={act} />
+          </Suspense>
+        )}
         {panel === 'urn' && (
           <Suspense fallback={<p role="status">URN 작업을 불러오고 있어요.</p>}>
             <DripPanel state={state} activeInput={activeInput} act={act} />

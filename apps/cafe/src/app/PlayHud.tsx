@@ -8,6 +8,7 @@ import { craftingAt } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import PreparationHud from '../features/preparation/PreparationHud'
+import { preparationStation } from '../features/preparation/rules'
 import { washDestination } from '../features/washing/rules'
 import WashingHud from '../features/washing/WashingHud'
 import type { Action } from '../simulation/actions'
@@ -15,6 +16,7 @@ import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
 import type { ActiveInput } from '../simulation/work-context'
 import type { GuideSide } from '../world/scene'
+import MovementStick from './MovementStick'
 import OrderRail from './OrderRail'
 import { stationPrompt } from './session/station-prompt'
 
@@ -36,6 +38,8 @@ export default function PlayHud({
   tool,
   confirm,
   pause,
+  touchControls,
+  moveTouch,
 }: {
   state: GameState
   activeInput: ActiveInput
@@ -54,13 +58,16 @@ export default function PlayHud({
   tool: (station: StationId) => void
   confirm: (station: StationId) => void
   pause: (mode?: 'pause' | 'overview') => void
+  touchControls: boolean
+  moveTouch: (sideways: number, forward: number, running: boolean) => void
 }) {
   const goal = objective(state)
   const heldBatch = carriedBatch(state)
   const carrying = !!heldBatch || !!state.cupDelivery || !!state.supplyDelivery
   const lastMessage = state.messages.at(-1)
 
-  const showPreparation = !carrying && !!state.preparation && target === 'prep'
+  const showPreparation =
+    !carrying && !!state.preparation && preparationStation(state.preparation) === 'prep' && target === 'prep'
   const showColdBrew = !carrying && !!state.coldBrew && target === 'cold-prep'
   const showWashing =
     !carrying &&
@@ -83,6 +90,7 @@ export default function PlayHud({
 
   return (
     <>
+      {!panel && touchControls && <MovementStick onMove={moveTouch} />}
       {!panel && (
         <OrderRail state={state} goal={goal} now={focusedWork && target === goal.station} openLabel={openLabel} />
       )}
@@ -90,7 +98,7 @@ export default function PlayHud({
         <>
           <div
             className={clsx(
-              'pointer-events-none absolute top-1/2 left-1/2 size-1.25 -translate-1/2',
+              'pointer-events-none fixed top-1/2 left-1/2 size-1.25 -translate-1/2',
               'rounded-full border border-[#36472c55] bg-white/60',
               'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-amber-100',
               'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
@@ -128,13 +136,14 @@ export default function PlayHud({
       {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId && !errorInWorkCard && (
         <div
           className={clsx(
-            'absolute top-1/2 left-1/2 z-15 -translate-x-1/2 translate-y-22',
+            'pointer-events-auto absolute top-1/2 left-1/2 z-15 -translate-x-1/2 translate-y-22',
             'flex w-max max-w-[min(30rem,calc(100%-3rem))] items-center gap-2.5',
             'rounded-xl border border-danger/30 bg-orange-100 py-2.5 pr-3 pl-4 shadow-toast',
             'animate-appear text-body leading-relaxed text-danger',
             'data-[pos=true]:top-6 data-[pos=true]:translate-y-0',
             'data-[work=true]:top-32 data-[work=true]:translate-y-0',
             'motion-reduce:animate-none max-tablet:max-w-[85vw]',
+            'touch:top-20 touch:translate-y-0 touch:data-[work=true]:top-20 touch:compact:max-w-[calc(100%-2rem)]',
           )}
           data-pos={panel === 'pos'}
           data-work={focusedWork}
@@ -145,7 +154,7 @@ export default function PlayHud({
           <span aria-hidden="true">!</span>
           {lastMessage.text}
           <button
-            className="grid size-7 shrink-0 place-items-center border-0 bg-transparent text-xl text-inherit"
+            className="grid size-7 shrink-0 place-items-center border-0 bg-transparent text-xl text-inherit touch:size-11"
             type="button"
             aria-label="알림 닫기"
             onClick={() => setDismissedMessageId(lastMessage.id)}
@@ -160,8 +169,9 @@ export default function PlayHud({
             type="button"
             onClick={() => pause()}
             className={clsx(
-              'absolute right-6 bottom-6 z-10 max-w-64',
+              'pointer-events-auto absolute right-6 bottom-6 z-10 max-w-64',
               'rounded-xl border border-danger/30 bg-surface px-4 py-3 text-sm text-danger',
+              'touch:top-20 touch:right-3 touch:bottom-auto',
             )}
           >
             저장 실패 · 메뉴에서 백업
@@ -184,8 +194,10 @@ function ReticlePrompt({
   openPanel: (station: StationId) => void
 }) {
   const pill = clsx(
-    'absolute top-1/2 left-1/2 z-6 -translate-x-1/2 translate-y-7',
+    'pointer-events-auto absolute top-1/2 left-1/2 z-6 -translate-x-1/2 translate-y-7',
     'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 shadow-hud whitespace-nowrap',
+    'touch:top-auto touch:right-4 touch:bottom-7 touch:left-auto touch:w-44 touch:max-w-[calc(100%-11.5rem)]',
+    'touch:translate-none touch:flex-col touch:items-start touch:gap-1 touch:rounded-2xl touch:whitespace-normal',
   )
 
   if (needsStaffAccess) {
@@ -211,12 +223,20 @@ function ReticlePrompt({
   }
 
   return (
-    <button type="button" className={clsx(pill, 'py-2 pr-5 pl-2 text-left')} onClick={() => openPanel(target)}>
+    <button
+      type="button"
+      className={clsx(
+        pill,
+        'py-2 pr-5 pl-2 text-left',
+        'touch:min-h-20 touch:border-brand touch:bg-brand touch:p-4 touch:text-on-brand',
+      )}
+      onClick={() => openPanel(target)}
+    >
       <kbd className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-on-brand">
         E
       </kbd>
       <span className="text-lg font-semibold">{prompt.verb}</span>
-      <span className="text-body text-muted">{prompt.object}</span>
+      <span className="text-body text-muted touch:text-white/80">{prompt.object}</span>
     </button>
   )
 }
@@ -227,6 +247,7 @@ function EdgeGuide({ side, station }: { side: 'left' | 'right'; station: Station
       className={clsx(
         'pointer-events-none absolute top-1/2 z-6 flex -translate-y-1/2 items-center gap-2.5',
         'data-[side=left]:left-6 data-[side=right]:right-6 data-[side=right]:flex-row-reverse',
+        'touch:data-[side=left]:left-3 touch:data-[side=right]:right-3 touch:gap-1.5',
       )}
       data-side={side}
     >

@@ -26,6 +26,7 @@ export function Button({ variant = 'primary', size = 'regular', className, ...pr
         'flex w-full items-center justify-between gap-3 rounded-xl border text-left leading-relaxed',
         buttonColors[variant],
         buttonSizes[size],
+        'touch:min-h-11',
         className,
       )}
     />
@@ -40,6 +41,7 @@ export function TextButton({ danger = false, className, ...props }: ComponentPro
       className={clsx(
         'min-h-9 border-0 bg-transparent px-0 py-2 text-sm hover:underline underline-offset-4',
         danger ? 'text-danger' : 'text-muted',
+        'touch:min-h-11',
         className,
       )}
     />

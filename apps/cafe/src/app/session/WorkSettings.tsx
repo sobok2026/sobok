@@ -18,7 +18,7 @@ export default function WorkSettings({
   return (
     <section className="mt-5 text-sm" aria-label="조작·작업음 설정">
       <label className="flex items-center justify-between gap-3" htmlFor="mouse-sensitivity">
-        마우스 감도 <span className="text-sm text-muted">{Math.round(preferences.mouseSensitivity * 100)}%</span>
+        시점 감도 <span className="text-sm text-muted">{Math.round(preferences.mouseSensitivity * 100)}%</span>
       </label>
       <input
         id="mouse-sensitivity"

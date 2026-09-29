@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ComponentProps, type ReactNode, useEffect, useEffectEvent, useState } from 'react'
+import { type ComponentProps, type ReactNode, useEffect, useEffectEvent, useRef, useState } from 'react'
 
 const HOLD_MS = 800
 
@@ -8,10 +8,14 @@ export function WorkHud({ children, ...props }: Omit<ComponentProps<'section'>, 
     <section
       {...props}
       className={clsx(
-        'absolute bottom-8 left-1/2 z-6 -translate-x-1/2',
-        'max-h-[calc(100dvh-12rem)] w-140 max-w-[calc(100%-2rem)] overflow-y-auto [scrollbar-width:thin]',
+        'pointer-events-auto absolute bottom-8 left-1/2 z-6 -translate-x-1/2',
+        'max-h-[calc(100%-12rem)] w-140 max-w-[calc(100%-2rem)] overflow-y-auto overscroll-contain [scrollbar-width:thin]',
         'rounded-panel border border-white/70 bg-surface/97 px-6 py-5 shadow-hud',
         'compact:bottom-4 compact:px-5 compact:py-4',
+        'touch:right-3 touch:bottom-3 touch:left-auto touch:w-88 touch:max-w-[calc(100%-12rem)]',
+        'touch:max-h-[calc(100%-5rem)] touch:translate-x-0 touch:px-4 touch:py-3',
+        'touch:portrait:bottom-44 touch:portrait:left-3 touch:portrait:w-auto touch:portrait:max-w-none',
+        'touch:portrait:max-h-[calc(100%-20rem)]',
       )}
     >
       {children}
@@ -32,7 +36,6 @@ export function WorkNote({ children }: { children: ReactNode }) {
   return <p className="-mt-1 mb-3 text-body text-muted compact:mb-2">{children}</p>
 }
 
-/** A fault is a mistake to undo and reads red. Work that must come first reads as a plain next task. */
 export function WorkBlocker({ reason, fix, fault = false }: { reason: string; fix: string; fault?: boolean }) {
   return (
     <div
@@ -50,11 +53,7 @@ export function WorkBlocker({ reason, fix, fault = false }: { reason: string; fi
 
 export type GaugeTick = { at: number; label: string | null; minor?: boolean }
 
-/**
- * Liquid height in the vessel, from the bottom to the rim. The end of the bar is the rim, never the target, and
- * nothing changes when the target is reached: the ticks are the lines the vessel really carries and reading them
- * is the player's job.
- */
+/** Reading the vessel's real marks is the player's job, so the gauge must not reveal the recipe target. */
 export function WorkGauge({
   label,
   fill,
@@ -112,7 +111,12 @@ export function WorkGauge({
       </div>
       {reading}
       <div className={clsx('relative', ticks.length ? 'pt-6' : 'pt-1')} aria-hidden="true">
-        <div className="relative h-4 overflow-hidden rounded bg-control shadow-[inset_0_0_0_1px_var(--color-control-line)]">
+        <div
+          className={clsx(
+            'relative h-4 overflow-hidden rounded bg-control',
+            'shadow-[inset_0_0_0_1px_var(--color-control-line)]',
+          )}
+        >
           <i className="absolute inset-y-0 left-0 bg-brand/55" style={{ width: `${level}%` }} />
         </div>
         {ticks
@@ -197,10 +201,6 @@ export type WorkChoiceGroup = {
   picked: string | undefined
 }
 
-/**
- * Settings the recipe fixes, such as the steam temperature or the lid. Every option looks the same until picked;
- * the card never marks the answer. Number keys pick options in reading order.
- */
 export function WorkChoices({
   groups,
   locked,
@@ -249,7 +249,7 @@ export function WorkChoices({
                   className={clsx(
                     'flex min-h-10 items-center gap-2 rounded-lg border border-control-line bg-control px-3 text-body',
                     'aria-pressed:border-brand aria-pressed:bg-brand/10 aria-pressed:font-semibold',
-                    'disabled:opacity-60',
+                    'disabled:opacity-60 touch:min-h-11',
                   )}
                   aria-pressed={group.picked === option.value}
                   onClick={() => onPick(group.key, option.value)}
@@ -276,17 +276,14 @@ export function WorkLinks({ children }: { children: ReactNode }) {
 
 export function WorkLink({ shortcut, children, onUse }: { shortcut?: string; children: ReactNode; onUse: () => void }) {
   return (
-    <button type="button" className="flex min-h-9 items-center gap-2 text-sm text-muted" onClick={onUse}>
+    <button type="button" className="flex min-h-9 items-center gap-2 text-sm text-muted touch:min-h-11" onClick={onUse}>
       {shortcut && <kbd className="rounded border border-current/40 px-1.5 text-sm">{shortcut}</kbd>}
       {children}
     </button>
   )
 }
 
-/**
- * Destructive actions sit behind a hold so they never share a key with confirmation. Panels with several of them
- * turn the Q shortcut off so one key press cannot reach every row.
- */
+/** Panels with several hold actions disable Q so one key press cannot reach every row. */
 export function HoldAction({
   children,
   onConfirm,
@@ -297,6 +294,7 @@ export function HoldAction({
   shortcut?: boolean
 }) {
   const [holding, setHolding] = useState(false)
+  const pointerId = useRef<number | null>(null)
   const confirm = useEffectEvent(onConfirm)
 
   useEffect(() => {
@@ -312,11 +310,14 @@ export function HoldAction({
   }, [holding])
 
   useEffect(() => {
-    if (!shortcut) {
-      return
-    }
     const press = (event: KeyboardEvent) => {
-      if (event.code !== 'KeyQ' || event.repeat || event.defaultPrevented || event.target instanceof HTMLInputElement) {
+      if (
+        !shortcut ||
+        event.code !== 'KeyQ' ||
+        event.repeat ||
+        event.defaultPrevented ||
+        event.target instanceof HTMLInputElement
+      ) {
         return
       }
       event.preventDefault()
@@ -327,36 +328,69 @@ export function HoldAction({
         setHolding(false)
       }
     }
-    const release = () => setHolding(false)
+    const release = () => {
+      pointerId.current = null
+      setHolding(false)
+    }
+    const hidden = () => {
+      if (document.hidden) release()
+    }
 
     window.addEventListener('keydown', press)
     window.addEventListener('keyup', lift)
     window.addEventListener('blur', release)
+    window.addEventListener('resize', release)
+    document.addEventListener('visibilitychange', hidden)
 
     return () => {
       window.removeEventListener('keydown', press)
       window.removeEventListener('keyup', lift)
       window.removeEventListener('blur', release)
+      window.removeEventListener('resize', release)
+      document.removeEventListener('visibilitychange', hidden)
     }
   }, [shortcut])
 
   return (
     <button
       type="button"
-      className="group/hold relative flex min-h-9 touch-none items-center gap-2 text-sm text-danger select-none"
+      className={clsx(
+        'group/hold relative flex min-h-9 touch-none items-center gap-2 text-sm text-danger select-none',
+        '[-webkit-touch-callout:none] touch:min-h-11',
+      )}
       data-holding={holding}
+      onContextMenu={(event) => event.preventDefault()}
       onPointerDown={(event) => {
-        if (event.button !== 0) {
+        if (event.button !== 0 || pointerId.current !== null) {
           return
         }
         event.preventDefault()
+        pointerId.current = event.pointerId
         event.currentTarget.setPointerCapture(event.pointerId)
         setHolding(true)
       }}
-      onPointerUp={() => setHolding(false)}
-      onPointerCancel={() => setHolding(false)}
-      onLostPointerCapture={() => setHolding(false)}
-      onBlur={() => setHolding(false)}
+      onPointerUp={(event) => {
+        if (pointerId.current === event.pointerId) {
+          pointerId.current = null
+          setHolding(false)
+        }
+      }}
+      onPointerCancel={(event) => {
+        if (pointerId.current === event.pointerId) {
+          pointerId.current = null
+          setHolding(false)
+        }
+      }}
+      onLostPointerCapture={(event) => {
+        if (pointerId.current === event.pointerId) {
+          pointerId.current = null
+          setHolding(false)
+        }
+      }}
+      onBlur={() => {
+        pointerId.current = null
+        setHolding(false)
+      }}
       onKeyDown={(event) => {
         if (['Space', 'Enter'].includes(event.code)) {
           event.preventDefault()
@@ -395,42 +429,82 @@ type WorkButtonProps = {
 } & ({ hold: true; onStop: () => void } | { hold?: false; onStop?: never })
 
 export function WorkButton(props: WorkButtonProps) {
+  const pointerId = useRef<number | null>(null)
+  const [pressed, setPressed] = useState(false)
+
+  function stop() {
+    pointerId.current = null
+    setPressed(false)
+    props.onStop?.()
+  }
+
+  const stopFromWindow = useEffectEvent(stop)
+
+  useEffect(() => {
+    const hidden = () => {
+      if (document.hidden) stopFromWindow()
+    }
+
+    window.addEventListener('blur', stopFromWindow)
+    window.addEventListener('resize', stopFromWindow)
+    document.addEventListener('visibilitychange', hidden)
+
+    return () => {
+      window.removeEventListener('blur', stopFromWindow)
+      window.removeEventListener('resize', stopFromWindow)
+      document.removeEventListener('visibilitychange', hidden)
+      if (pointerId.current !== null) stopFromWindow()
+    }
+  }, [])
+
+  function release(event: { pointerId: number }) {
+    if (pointerId.current !== event.pointerId) return
+    stop()
+  }
+
   return (
     <button
       type="button"
       className={clsx(
         'flex min-h-12 w-full min-w-0 grow basis-36 touch-none items-center justify-center gap-2.5 select-none',
+        '[-webkit-touch-callout:none]',
         'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-lg font-medium text-ink',
         'data-[primary=true]:border-brand data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
         'data-[active=true]:ring-2 data-[active=true]:ring-brand/40 data-[active=true]:ring-offset-2',
       )}
       data-primary={props.primary && !props.disabled}
-      data-active={props.active && !props.disabled}
-      aria-pressed={props.hold ? !!props.active : undefined}
+      data-active={(props.active ?? pressed) && !props.disabled}
+      aria-pressed={props.hold ? (props.active ?? pressed) : undefined}
       disabled={props.disabled}
+      onContextMenu={(event) => {
+        if (props.hold) event.preventDefault()
+      }}
       onClick={props.hold ? undefined : props.onUse}
       onPointerDown={
         props.hold
           ? (event) => {
-              if (event.button !== 0) {
+              if (event.button !== 0 || pointerId.current !== null) {
                 return
               }
               event.preventDefault()
+              pointerId.current = event.pointerId
               event.currentTarget.setPointerCapture(event.pointerId)
+              setPressed(true)
               props.onUse()
             }
           : undefined
       }
-      onPointerUp={props.onStop}
-      onPointerCancel={props.onStop}
-      onLostPointerCapture={props.onStop}
-      onBlur={props.onStop}
+      onPointerUp={release}
+      onPointerCancel={release}
+      onLostPointerCapture={release}
+      onBlur={stop}
       onKeyDown={
         props.hold
           ? (event) => {
               if (['Space', 'Enter'].includes(event.code)) {
                 event.preventDefault()
                 if (!event.repeat) {
+                  setPressed(true)
                   props.onUse()
                 }
               }
@@ -441,7 +515,7 @@ export function WorkButton(props: WorkButtonProps) {
         props.hold
           ? (event) => {
               if (['Space', 'Enter'].includes(event.code)) {
-                props.onStop()
+                stop()
               }
             }
           : undefined

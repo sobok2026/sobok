@@ -22,6 +22,7 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
           scene.current = createCafeScene(host.current, {
             getState: store.getSnapshot,
             mouseSensitivity: () => latest.current.mouseSensitivity(),
+            touchControls: () => latest.current.touchControls(),
             isRunning: () => latest.current.isRunning(),
             canMove: () => latest.current.canMove(),
             activeStation: () => latest.current.activeStation(),
