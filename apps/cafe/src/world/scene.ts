@@ -32,6 +32,7 @@ import type { GameState } from '../simulation/state'
 import { stairGuide } from './floors'
 import { createShopInterior } from './interior'
 import { createPlayerControls } from './player-controls'
+import { prepareScene } from './prepare-scene'
 
 export type MouseMode = 'look' | 'cursor' | 'fallback'
 export type GuideSide = 'left' | 'right' | null
@@ -56,6 +57,7 @@ export type SceneOptions = {
 }
 
 export type CafeScene = {
+  ready: Promise<void>
   lock: () => void
   unlock: () => void
   unlockForCraft: () => void
@@ -177,6 +179,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     '1인칭 카페 매장. 터치는 왼손 스틱으로 이동하고 빈 화면을 밀어 시점을 돌립니다. 키보드는 WASD 이동, Shift 달리기, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
   )
   renderer.domElement.tabIndex = 0
+  renderer.domElement.style.visibility = 'hidden'
   container.appendChild(renderer.domElement)
   scene.add(new THREE.HemisphereLight('#f4f1e7', '#77776b', 1.25))
   const sunlight = new THREE.DirectionalLight('#ffe5b5', 2.4)
@@ -282,6 +285,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   let frame = 0
   let lastTime = performance.now()
   let disposed = false
+  const preparation = new AbortController()
 
   const contextLost = (event: Event) => {
     event.preventDefault()
@@ -407,6 +411,11 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       camera.updateProjectionMatrix()
     }
 
+    updateVisuals(state, dt, running)
+    renderer.render(scene, camera)
+  }
+
+  function updateVisuals(state: GameState, dt: number, running: boolean) {
     craftVisuals.update(
       state,
       options.activeStation() !== null && options.activeStation() === craftWorkStation(state),
@@ -432,12 +441,19 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       })
 
     customerVisuals?.update(state, dt, running)
-    renderer.render(scene, camera)
   }
 
-  frame = requestAnimationFrame(animate)
+  updateVisuals(options.getState(), 0, false)
+  guideMarker.visible = false
+  const ready = prepareScene(renderer, scene, camera, preparation.signal).then(() => {
+    if (disposed) return
+    renderer.domElement.style.visibility = ''
+    lastTime = performance.now()
+    frame = requestAnimationFrame(animate)
+  })
 
   return {
+    ready,
     lock: controls.lock,
     unlock: controls.unlock,
     unlockForCraft: controls.unlockForCraft,
@@ -452,6 +468,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     ],
     dispose: () => {
       disposed = true
+      preparation.abort()
       cancelAnimationFrame(frame)
       observer.disconnect()
       controls.dispose()

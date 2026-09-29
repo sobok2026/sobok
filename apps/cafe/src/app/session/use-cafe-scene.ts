@@ -13,13 +13,16 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
 
   useEffect(() => {
     let cancelled = false
+    let current: CafeScene | null = null
+    setSceneReady(false)
+    setGraphicsError('')
     void import('../../world/scene')
-      .then(({ createCafeScene }) => {
+      .then(async ({ createCafeScene }) => {
         if (cancelled || !host.current) {
           return
         }
         try {
-          scene.current = createCafeScene(host.current, {
+          current = createCafeScene(host.current, {
             getState: store.getSnapshot,
             mouseSensitivity: () => latest.current.mouseSensitivity(),
             touchControls: () => latest.current.touchControls(),
@@ -36,12 +39,24 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
             onMouseMode: (mode) => latest.current.onMouseMode(mode),
             onUnlock: () => latest.current.onUnlock(),
             onError: (message) => {
+              if (cancelled) return
+              current?.dispose()
+              scene.current = null
+              current = null
+              setSceneReady(false)
               setGraphicsError(message)
               latest.current.onError(message)
             },
           })
+          scene.current = current
+          await current.ready
+          if (cancelled || !current) return
           setSceneReady(true)
         } catch {
+          if (cancelled) return
+          current?.dispose()
+          scene.current = null
+          current = null
           setGraphicsError('3D 화면을 열지 못했어요. WebGL 2를 지원하는 브라우저와 그래픽 가속 설정을 확인해주세요.')
         }
       })
@@ -54,8 +69,8 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
     return () => {
       cancelled = true
       store.stopActiveInput()
-      scene.current?.dispose()
-      scene.current = null
+      current?.dispose()
+      if (scene.current === current) scene.current = null
     }
   }, [store, host])
 
