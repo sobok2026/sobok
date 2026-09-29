@@ -44,6 +44,8 @@
   --spacing-safe-right: env(safe-area-inset-right, 0px);
   --spacing-safe-bottom: env(safe-area-inset-bottom, 0px);
   --spacing-safe-left: env(safe-area-inset-left, 0px);
+  /* Older Home Screen icons keep an opaque status bar and report no top inset. */
+  --spacing-app-view: min(100lvh, calc(100dvh + env(safe-area-inset-top, 0px)));
 
   --animate-nudge: nudge 260ms ease;
   @keyframes nudge {
@@ -71,6 +73,16 @@
 @custom-variant pos-compact (@media (height <= 50rem));
 
 @custom-variant compact (@media (height <= 40.625rem));
+
+/* Legacy iOS Home Screen apps expose navigator.standalone without matching display-mode. */
+@custom-variant standalone {
+  &:where([data-standalone='true'], [data-standalone='true'] *) {
+    @slot;
+  }
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    @slot;
+  }
+}
 
 @custom-variant touch (&:where([data-touch-controls='true'], [data-touch-controls='true'] *));
 

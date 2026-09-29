@@ -98,10 +98,11 @@ export default function PlayHud({
         <>
           <div
             className={clsx(
-              'pointer-events-none fixed top-1/2 left-1/2 size-1.25 -translate-1/2',
+              'pointer-events-none fixed top-[50dvh] left-1/2 size-1.25 -translate-1/2',
               'rounded-full border border-[#36472c55] bg-white/60',
               'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-amber-100',
               'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
+              'standalone:top-[calc(var(--spacing-app-view)/2)]',
             )}
             data-focused={!!target}
           />

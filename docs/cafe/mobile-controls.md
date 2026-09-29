@@ -15,7 +15,9 @@
 
 ## 화면
 
-- `viewport-fit=cover`와 `100dvh`로 3D 화면을 가득 채운다. Canvas와 조준점은 전체 화면을 기준으로 한다.
+- `viewport-fit=cover`를 사용하며 일반 브라우저에서는 `100dvh`로 3D 화면을 채운다. 홈 화면 웹앱은 `navigator.standalone`과 `display-mode`를 함께 지원하고 `min(100lvh, 100dvh + 상단 safe-area)` 높이를 사용한다. iOS 26.4 시뮬레이터에서 투명 상태 표시줄을 사용해도 `innerHeight`는 812px, 전체 화면은 874px로 측정됐다. 상단 여백이 0인 이전 아이콘이나 `dvh`가 이미 전체 높이인 환경에는 여백을 중복으로 더하지 않는다.
+- 루트 화면은 문서 흐름에 둔다. iOS 홈 화면 웹앱에서 `position: fixed`인 루트는 전체 높이를 지정해도 하단이 잘리는 것을 확인했다. 조준점은 Canvas 높이의 절반에 두고, 대화상자 배경은 HUD의 네 방향 safe-area만큼 바깥으로 확장한다.
+- iOS 홈 화면 웹앱에는 `apple-mobile-web-app-capable=yes`와 `apple-mobile-web-app-status-bar-style=black-translucent`를 함께 선언한다. `viewport-fit=cover`만으로는 기본 상태 표시줄 아래에서 페이지가 시작하므로 상단 배경이 끊긴다. HUD의 safe-area 여백은 그대로 유지한다.
 - HUD·작업대·설정·도움말·POS는 네 방향의 `env(safe-area-inset-*)`를 적용한 영역을 기준으로 배치한다. 짧은 화면의 패널 높이도 그 영역을 넘지 않는다.
 - 이동 스틱은 왼쪽 아래, 가능한 작업 버튼은 오른쪽 아래, 메뉴·시계는 오른쪽 위에 둔다. 터치 기기에서 상단 도움말·매장 바로가기는 메뉴 안에서 접근한다.
 - 세로 화면은 주문과 메뉴가 겹치지 않도록 폭을 나눈다. 주문 상세·커스텀은 기존 라벨 보기에서 확인한다.
@@ -41,8 +43,11 @@
 
 - [Apple Game controls](https://developer.apple.com/design/human-interface-guidelines/game-controls): safe-area, 엄지 도달 범위, 44pt 주요 버튼, 상황별 노출, 왼손 이동·직접 드래그 시점. 웹 구현에서는 CSS px로 터치 영역을 확보한다.
 - [WebKit · Designing Websites for iPhone X](https://webkit.org/blog/7929/designing-websites-for-iphone-x/): `viewport-fit=cover`와 네 방향의 safe-area inset.
+- [Apple · Supported Meta Tags](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html): 홈 화면 웹앱의 전체 화면 설정과 상태 표시줄 뒤까지 그리는 `black-translucent` 모드.
 - [토스 · 디자이너가 제품에만 집중할 수 있는 방법](https://toss.tech/article/toss-design-system): 화면 크기와 긴 텍스트 대응, 공통 컴포넌트의 일관된 경험, 눌림 피드백과 접근성.
 - [Blizzard · Updated UI and HUD](https://news.blizzard.com/en-gb/article/23837944/get-into-the-grid-of-things-with-the-updated-ui-and-hud): 시야를 가리는 요소를 줄이는 HUD 구성.
 - [PUBG Mobile · What are the controls?](https://pubgmobile.helpshift.com/hc/en/3-pubg-mobile/faq/37-what-are-the-controls/): 왼손 이동, 버튼이 없는 화면 드래그, 스틱을 이용한 달리기.
 
-브라우저의 모바일 화면·멀티터치 에뮬레이션과 safe-area 여백을 넣어 배치와 입력을 확인한다. 실제 iOS Safari의 브라우저 바·홈 제스처, Android 기기별 동작 및 모바일 GPU 성능은 별도 기기 확인이 필요하다. 기존 데스크톱 성능 수치를 모바일 성능 보장으로 사용하지 않는다.
+브라우저의 모바일 화면·멀티터치 에뮬레이션과 safe-area 여백을 넣어 배치와 입력을 확인했다. 2026-09-29에는 iPhone 17 Pro·iOS 26.4 시뮬레이터에서 홈 화면 웹앱의 상단 흰 띠를 재현하고, 수정 후 세로 화면의 상하단 배경·조준점·HUD·일시정지 배경을 확인했다. 실제 기기의 홈 제스처, Android 기기별 동작 및 모바일 GPU 성능은 별도 기기 확인 범위다. 기존 데스크톱 성능 수치를 모바일 성능 보장으로 사용하지 않는다.
+
+홈 화면 아이콘은 추가 당시 상태 표시줄 설정을 보관한다. 수정 전 아이콘은 페이지가 갱신돼도 이전 설정을 유지하는 것을 시뮬레이터에서 확인했다. 수정본 배포 후 Safari에서 홈 화면에 새로 추가한다. 진행 중인 기록은 기존 웹앱의 `메뉴 → 저장 관리 → 백업 내보내기`로 보관하고 새 아이콘에서 불러온다.

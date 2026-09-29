@@ -16,6 +16,8 @@ import type { Preferences } from './session/preferences'
 import { type CafeSessionProps, useCafeSession } from './session/use-cafe-session'
 import WorkSettings from './session/WorkSettings'
 
+const standalone = 'standalone' in navigator && navigator.standalone === true
+
 function CupIcon() {
   return (
     <svg className="inline-block shrink-0" width={40} height={40} viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -75,7 +77,10 @@ export default function App() {
   return boot ? (
     <CafeGame {...boot} />
   ) : (
-    <div className="flex h-dvh flex-col items-center justify-center gap-5">
+    <div
+      className="flex h-dvh flex-col items-center justify-center gap-5 standalone:h-app-view"
+      data-standalone={standalone}
+    >
       <CupIcon />
       <p className="mb-4 text-body text-muted">불러오는 중…</p>
     </div>
@@ -123,7 +128,12 @@ function CafeGame(props: CafeSessionProps) {
   const canStart = sceneReady && hasLock === true && !graphicsError
 
   return (
-    <main className="relative h-dvh overflow-hidden" data-mouse-mode={mouseMode} data-touch-controls={touchControls}>
+    <main
+      className="relative h-dvh overflow-hidden standalone:h-app-view"
+      data-mouse-mode={mouseMode}
+      data-touch-controls={touchControls}
+      data-standalone={standalone}
+    >
       <div
         ref={host}
         className="absolute inset-0 [&_canvas]:block [&_canvas]:size-full [&_canvas]:touch-none [&_canvas]:outline-none"

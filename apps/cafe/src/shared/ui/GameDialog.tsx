@@ -36,7 +36,13 @@ export default function GameDialog({
         'touch:p-3',
       )}
     >
-      <div className="pointer-events-none fixed inset-0 bg-ink/35 backdrop-blur-sm" aria-hidden="true" />
+      <div
+        className={clsx(
+          'pointer-events-none absolute -top-safe-top -right-safe-right -bottom-safe-bottom -left-safe-left',
+          'bg-ink/35 backdrop-blur-sm',
+        )}
+        aria-hidden="true"
+      />
       <section
         ref={surface}
         role="dialog"
