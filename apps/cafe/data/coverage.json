@@ -1,6 +1,6 @@
 {
   "source": "Starbucks Spharos Academy 음료 제조 목록",
-  "scope": "영상의 레시피 표에서 OCR로 추출한 제조법과 사용자가 제공한 부재료 제조표·확인 내용. 영상 표 미검출 이력은 유지하며 별도 제공 자료로 보완한 문서는 supplementalDocuments에 기록한다.",
+  "scope": "영상의 레시피 표에서 OCR로 추출한 제조법과 사용자 제공 제조표·확인 내용, 사용자가 허용한 공개 보조 자료. 아카데미와 충돌하는 공개 자료는 적용하지 않는다. 영상 표 미검출 이력은 유지하며 별도 자료로 추가한 문서는 supplementalDocuments에 기록한다.",
   "catalogEntries": 231,
   "videosWithRecipeCards": 205,
   "recipeCardCount": 241,
@@ -11,7 +11,9 @@
     "espresso-chips",
     "signature-chocolate-premix",
     "half-and-half",
-    "whipped-cream"
+    "whipped-cream",
+    "double-black-tea-base",
+    "espresso-whipped-cream"
   ],
   "withoutDetectedRecipeCard": [
     {

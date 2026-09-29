@@ -20,6 +20,13 @@
       "unit": "hours"
     }
   },
+  "vanilla-cream-base": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 2,
+      "unit": "days"
+    }
+  },
   "glaze": {
     "storage": "fridge",
     "lifetime": {
@@ -42,6 +49,13 @@
     }
   },
   "cold-brew": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 7,
+      "unit": "days"
+    }
+  },
+  "reserve-cold-brew": {
     "storage": "fridge",
     "lifetime": {
       "amount": 7,
@@ -121,6 +135,13 @@
       "unit": "hours"
     }
   },
+  "double-black-tea-base": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 12,
+      "unit": "hours"
+    }
+  },
   "double-strength-mint-tea": {
     "storage": "room",
     "lifetime": {
@@ -143,6 +164,13 @@
     }
   },
   "whipped-cream": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "espresso-whipped-cream": {
     "storage": "fridge",
     "lifetime": {
       "amount": 24,

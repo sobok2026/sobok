@@ -1,0 +1,145 @@
+{
+  "id": "double-black-tea-base",
+  "name": "더블 블랙 티 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "brew-tea",
+          "label": "티 추출",
+          "instructions": [
+            "믹싱 피처에 블랙 아이스티 1개와 얼 그레이 티백 2개를 넣는다. 온수를 500ml 선까지 붓고 5분 우린 뒤 티백을 제거한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "black-iced-tea",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "earl-grey-tea-bag",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 500,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "mixing-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "black-iced-tea",
+              "from": "mixing-pitcher",
+              "dispose": false
+            },
+            {
+              "action": "remove",
+              "itemId": "earl-grey-tea-bag",
+              "from": "mixing-pitcher",
+              "dispose": false
+            }
+          ]
+        },
+        {
+          "id": "pump-classic-syrup",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 3펌프 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "add-ice",
+          "label": "얼음 추가",
+          "instructions": ["Tall 얼음 스쿱으로 1스쿱 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "store",
+          "label": "보관",
+          "instructions": ["제조 후 실온 보관하며 12시간 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "room"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "배합·보관 기준은 사용자 승인으로 Quizlet 공개 보조 자료를 반영했다. 아카데미 자료와 충돌하면 아카데미를 우선한다.",
+        "배합·기한 출처: https://quizlet.com/kr/887853940/",
+        "배합·믹싱 피처 출처: https://quizlet.com/kr/855763105/",
+        "아카데미 얼 그레이 밀크 티 베이스 제조의 티 추출부터 얼음 추가까지와 동일하다는 설명 및 해당 단계의 재료·수량과 대조했다.",
+        "더블 스트랭스 블랙 티와 별도 배합이다. 얼음 추가 후 물로 1L 선을 맞추는 단계는 없다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "double-black-tea-base",
+        "amount": null,
+        "description": "공개 자료에 완성 부피는 미기재. 게임 산출량은 별도 운영값을 사용한다."
+      }
+    }
+  ]
+}

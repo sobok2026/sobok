@@ -16,7 +16,9 @@
           "notes": ["그라인더 마스터 15 / G3 그라인더 26(Coarse) / 디팅 그라인더 9."],
           "operations": [
             {
-              "action": "add",
+              "action": "grind",
+              "equipmentId": "bunn-g3-grinder",
+              "setting": "COARSE",
               "materialId": "cold-brew-beans",
               "into": "brew-container",
               "amount": {

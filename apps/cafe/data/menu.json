@@ -74,9 +74,9 @@
     "recipeId": "matcha-glazed-tea-latte",
     "variantId": "iced",
     "prices": {
-      "tall": 6500,
-      "grande": 7300,
-      "venti": 8100
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
     },
     "color": "#927653"
   },

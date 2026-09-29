@@ -1,109 +1,44 @@
 # 카페 코드 아키텍처
 
-업무의 생애주기와 공통 제조 실행을 분리한 구조다. 한 업무의 규칙·행동·화면·도움말·3D 표현을 같은 기능 폴더에서 찾고, 전체 게임 상태와 실행 순서는 한 곳에서 조정한다.
+Vite·React·Three.js·Tailwind·IndexedDB를 사용하는 브라우저 전용 정적 앱이다. 2026-09-25 사용자 합의로 업무 중심 구조를 선택했다.
 
-Vite·React·Three.js·Tailwind·IndexedDB를 사용한다. 플레이 규칙, 저장 필드와 검증 조건, 단일 탭 정책은 기존 설계를 따른다. 제품 요구는 [게임 설계](./design.md), 화면의 정보 노출 기준은 [HUD 설계](./hud.md), 미확정 수치는 [임시 규칙](./prototype-rules.md)을 참조한다.
+## 책임과 참조 원칙
 
-## 디렉터리와 책임
+- 한 업무의 규칙·행동·화면·도움말·3D 표현은 같은 기능 폴더에 둔다. 모든 기능에 같은 파일 목록을 만들거나 폴더 깊이를 맞추지 않는다.
+- 전체 게임 상태와 발행 지점은 하나로 유지한다. 업무 함수는 발행 전 복사본을 수정하고, React가 읽은 이전 snapshot은 변경하지 않는다. UI와 3D는 행동 콜백으로 상태 변경을 요청한다.
+- 영속 상태와 타입은 Zod 스키마에서 함께 정의한다. 여러 업무를 가로지르는 수량 보존·점유·작업 연결도 같은 상태 경계에서 검증한다.
+- 업무 규칙과 행동은 React·Three.js·DOM·IndexedDB에 의존하지 않는다. 상태 스키마가 읽는 규칙에서 상태 타입이 필요하면 `import type`으로 참조한다.
+- HUD·패널의 계약은 필요한 데이터와 콜백으로 명시한다. 세션 훅의 반환 타입이나 구체적인 저장소 구현에 결합하지 않는다.
+- 앱과 월드는 기능별 화면·시각 표현을 조합한다. 업무 내용은 해당 기능에, 렌더링에만 필요한 값은 시각 표현에 둔다.
+- 여러 기능이 사용하는 업무 로직도 소유 기능에 남긴다. 실제로 반복되는 UI·3D 자산만 `shared`로 옮기며, 다른 앱과 재사용할 때 공용 패키지를 검토한다.
+- 직접 import를 사용한다. 규칙·UI·3D를 한 `index.ts`에서 재노출하지 않으며 3D는 `app/session/use-cafe-scene.ts`의 동적 import를 진입점으로 유지한다.
+- 새 기능은 기존 상태·앱·장면 조합부에 직접 연결한다. 범용 등록 시스템이나 기능별 저장소, 별도 제조 엔진은 도입하지 않는다.
 
-```text
-apps/cafe/src/
-├── app/                 앱 시작과 화면·브라우저 자원 연결
-│   ├── session/         모드 전환, 작업대 입력, 3D 연결, 사용자 설정
-│   ├── persistence/     IndexedDB·JSON 백업·탭 잠금
-│   ├── audio/           녹음 로딩·재생·작업음 선택
-│   └── guide/           도움말 우선순위와 업무별 안내 조합
-├── simulation/          전체 상태·행동·게임 시간과 상태 발행
-├── features/
-│   ├── service/         손님 이동·주문 접수·음료 전달·POS
-│   ├── production/      원문 단계의 공통 계량·도구·장비·조건 실행
-│   ├── crafting/        음료 제조·계량·도구·컵 내용물
-│   ├── preparation/     부재료 배합·가공·완성
-│   ├── cold-brew/       콜드 브루 계량·추출·회수
-│   ├── recipe-library/  H 도움말의 전체 제조 자료실
-│   ├── inventory/       원재료·배치·컵·소모품의 재고와 운반
-│   ├── washing/         용기 세척·운반·보관대 반납
-│   ├── cleaning/        표면 청소·사용한 컵 회수·쓰레기
-│   └── shift/           접수 마감·결산·다음 날·운영 기록
-├── world/               전체 3D 장면·매장·플레이어 이동
-├── content/             작업대·재료 정의, 제조 스키마·카탈로그·실행 계획
-└── shared/              실제로 반복 사용하는 UI·3D 자산과 작은 값 처리
-    ├── ui/
-    └── visuals/
-```
+파일은 줄 수보다 책임을 기준으로 나눈다. 브라우저 자원을 다루는 훅은 설정과 정리를 함께 소유하고, GPU 자원은 장면 수명에 맞춰 해제한다. [코드 리뷰 기준](https://google.github.io/eng-practices/review/reviewer/looking-for.html), [React 외부 저장소](https://react.dev/reference/react/useSyncExternalStore), [Three.js 자원 정리](https://threejs.org/manual/en/cleanup.html)
 
-`main.tsx`는 앱을 시작하고, `style.css`는 Tailwind 테마와 기본 스타일을 정의한다. 기능별 스타일은 해당 JSX에 둔다. 모든 기능에 같은 파일 목록을 만들거나 폴더 깊이를 맞추지는 않는다.
+제조 원문·판매 조건·재고 추정의 경계와 작성 규칙은 [제조 자료 운영](./recipe-data.md)을 따른다.
 
-세척은 [rules.ts](../../apps/cafe/src/features/washing/rules.ts), [actions.ts](../../apps/cafe/src/features/washing/actions.ts), [WashingHud.tsx](../../apps/cafe/src/features/washing/WashingHud.tsx), [WashingPanel.tsx](../../apps/cafe/src/features/washing/WashingPanel.tsx), [help.ts](../../apps/cafe/src/features/washing/help.ts), [visuals.ts](../../apps/cafe/src/features/washing/visuals.ts)에서 함께 찾는다. 입력·화면 조합이나 공통 컵 재고를 바꾸는 경우에만 해당 소유 모듈까지 확인한다.
+## 시간 처리
 
-## 상태의 소유와 갱신
+예정 작업은 자신의 완료 시각으로 처리한 뒤 현재 시각의 만료를 확인한다. 순서를 바꾸면 이미 정상 완료했어야 할 배합을 폐기할 수 있다. 다음 날 처리도 이 기준을 따르며 저장소의 `dispatch`나 `tick`을 재귀 호출하지 않는다.
 
-[simulation/state.ts](../../apps/cafe/src/simulation/state.ts)의 Zod 스키마가 영속 상태와 추론 타입의 단일 정의다. 컵 수량 보존, 한 번에 들 수 있는 물건, 배합 용기와 작업의 연결처럼 여러 업무를 가로지르는 검증도 여기에 둔다. 기능마다 별도의 저장소나 동일 상태의 복사본을 만들지 않는다.
+입력 시작·해제와 행동 직전에 경과 시간을 정산해 애니메이션 프레임 사이의 짧은 입력도 반영한다. 누르고 있는 입력은 저장하지 않는다. 게임 시간의 진행·정지 기준은 [게임 설계](./design.md#시간)를 따른다.
 
-[simulation/store.ts](../../apps/cafe/src/simulation/store.ts)가 상태 복사와 snapshot 발행을 담당한다. 업무의 `actions.ts`는 전달받은 `WorkContext.state` 복사본만 수정한다. 재료 소비는 `inventory/inventory.ts`의 `consume`을 사용하며, UI와 3D 표현은 상태를 직접 변경하지 않는다. 화면에서는 전달받은 행동 콜백을 호출한다.
+## 저장과 탭 정책
 
-한 행동으로 여러 영역이 바뀔 수 있다. POS의 전액 결제는 주문·손님·매출을 함께 변경하고, 음료 전달은 해당 항목의 전달 수량·컵·손님을 함께 변경한다. 세척은 진행 상태와 용기 재고를 함께 변경한다. 업무 함수의 처리가 끝난 뒤 저장소가 한 번 상태를 발행하므로 중간 상태가 화면에 노출되지 않는다.
+- 게임 진행은 IndexedDB에 현재 형식으로 저장하고 JSON 백업을 제공한다. 사용자 설정은 게임 저장과 별도로 관리한다.
+- 저장 데이터·자료에 버전, 마이그레이션, 누락 필드 보완, 구형 형식 변환을 두지 않는다. 현재 구조와 맞지 않는 저장은 같은 스키마로 이전 정상 저장본을 확인하거나 새 근무를 시작한다.
+- 이전 정상 저장본 복구는 손상 복구다. IndexedDB의 `upgradeneeded`는 최초 object store 생성에도 필요하므로 이전 형식 변환과 구분한다.
+- Web Locks로 앱 로딩 시 한 탭이 실행·저장 잠금을 갖는다. 시작 화면의 잠금 보유도 유지한다. 다른 탭은 기존 탭을 닫고 새로고침해 진행한다.
+- 탭 동기화·상태 병합·자동 인계·강제 가져오기·시작 버튼으로 잠금 시점을 옮기는 변경은 사용자 결정으로 제외했다. 중복 실행을 풀면 다른 탭의 오래된 상태가 저장을 덮어쓸 수 있고, 실시간 동기화는 필요한 플레이 경험을 거의 늘리지 않는다.
+- Web Locks 미지원 환경에서는 중복 제한이 보장되지 않는다. 별도 호환 계층은 추가하지 않는다.
 
-지속 입력은 `WorkContext.input`에, 메뉴·도움말·패널 상태는 `app/session`에, 프레임별 카메라와 입력 상태는 `world`에 둔다. 저장 시에는 장면의 현재 위치를 게임 snapshot에 합친다. 사용자 설정은 기존처럼 게임 저장과 별도 키로 관리한다.
+## UI 스타일
 
-## 시간과 행동 처리 순서
+- Tailwind 테마와 기본 요소 규칙은 `src/style.css`, 화면 스타일은 해당 JSX에 둔다. 화면별 전역 클래스나 `@apply` 기반 컴포넌트 스타일은 두지 않는다.
+- 클래스 이름 일부를 동적으로 이어 붙이지 않는다. 상태는 완전한 클래스 문자열이나 `data-*`·`group` 변형으로 표현한다.
+- 계산된 게이지 너비·위치만 인라인 스타일로 전달하고 정적인 배치와 장식은 Tailwind로 관리한다.
+- 공용 버튼의 색상·크기는 명시적인 variant·size로 고르고 호출부의 `className`은 배치에 사용한다.
+- 키보드 `focus-visible`과 동작 줄이기 설정을 반영한다. 정보 노출·판정·읽기 기준은 [HUD 설계](./hud.md)를 따른다.
 
-- 행동 처리: 기존 지속 입력 해제 → 상태 복사 → 예정 작업 완료 → 준비 중 재료 만료 확인 → 공통 점유 조건 확인 → 업무별 행동 → 배치 정리 → 상태 발행.
-- 게임 tick: 상태 복사 → 경과 시간 반영 → 예정 작업 완료 → 준비 중 재료 만료 확인 → 지속 입력 진행 → 손님 진행 → 상태 발행.
-- 다음 날: `features/shift/actions.ts`에서 시계·근무·고객·집계를 갱신하고, 건너뛴 시간의 예정 작업을 완료한 뒤 기존 행동 처리 경로에서 상태를 발행한다.
-
-예정 작업은 자신의 완료 시각으로 처리한다. 현재 시각의 만료 판정을 먼저 실행해 이미 정상 완료했어야 할 배합을 폐기하지 않는다. `features/shift`가 작업 완료 함수를 호출할 수 있지만 저장소의 `dispatch`나 `tick`을 재귀 호출하지 않는다.
-
-브라우저의 경과 시간은 `app/session`에서 입력 시작·해제와 행동 직전에 정산한다. 지속 입력 중에는 애니메이션 프레임마다, 대기 중에는 손님 이동·시계에 필요한 간격으로 tick을 보낸다. `store.ts`의 비영속 누름 시간이 `active-work.ts`의 계량 유량을 정하고, 입력 해제 시 초기화한다. 작업 HUD는 진행 상태와 별도로 현재 지속 입력을 구독해 손을 뗀 상태를 바로 표시한다.
-
-## 참조 방향
-
-1. 기능의 `rules.ts`, `actions.ts`와 상태 조회 함수는 React·Three.js·DOM·IndexedDB에 의존하지 않는다. 필요한 정의, 상태 타입, 공통 점유 조건과 다른 업무의 명시적인 계산 함수를 참조할 수 있다.
-2. `simulation/state.ts`는 검증에 필요한 기능의 규칙·상수를 읽는다. 그 규칙에서 상태가 필요하면 `import type`으로만 참조해 런타임 순환을 만들지 않는다. 전체 상태 제어의 진입점은 계속 `store.ts` 하나다.
-3. HUD·패널은 필요한 데이터와 콜백을 props로 명시한다. `useCafeSession` 반환 타입이나 구체적인 `CafeStore` 구현을 화면 계약으로 사용하지 않는다.
-4. `app/StationPanel.tsx`, `app/PlayHud.tsx`, `app/guide`는 어느 업무를 보여줄지 선택하고 기능별 화면을 조합한다. 준비 수량·세척 대기·마감 조건 등 업무 내용은 기능 폴더에 둔다.
-5. `world/scene.ts`는 각 기능의 `visuals.ts`를 조합한다. 용기 위치처럼 렌더링에만 필요한 값은 기능의 시각 표현과 함께 둔다. 공통 작업대 위치·접근 기준은 `content/stations.ts`를 사용한다.
-6. 여러 기능에서 쓰는 업무 로직은 소유 기능에 남긴다. 예를 들어 재료 소비·배치 상태·컵 재고는 `inventory`가 담당한다. 공통 3D 컵 자산은 컵 종류 같은 정의를 읽을 수 있지만 업무의 행동 처리나 저장소를 호출하지 않는다.
-7. 직접 import를 사용한다. 규칙·UI·3D를 한 `index.ts`에서 재노출하지 않는다. [use-cafe-scene.ts](../../apps/cafe/src/app/session/use-cafe-scene.ts)의 동적 import를 3D 실행 진입점으로 유지하고, UI에서 장면 타입이 필요하면 `import type`을 사용한다.
-
-## 변경할 때 찾는 곳
-
-| 바꾸는 내용                   | 주된 위치                                                                                          | 함께 확인할 연결                             |
-| ----------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| 음료 종류·제조 수량·판매 가격 | `data/recipes`, `data/menu.json`, `content/recipe-plan.ts`, `features/crafting`                    | 판매 사이즈·가격, 조건별 제조 계획           |
-| 원재료 규격·기한              | `data/materials.json`, `data/shop/inventory.json`, `content/ingredients.ts`, `content/lifetime.ts` | 재고 소비·배합의 원재료 기한                 |
-| 재고 계산용 추정              | `data/shop/stock-rules.json`, `content/stock-amounts.ts`                                           | 제조 원문의 계량값과 분리                    |
-| 부재료 준비·콜드 브루         | 해당 기능의 규칙·행동·HUD·시각 표현                                                                | `simulation/jobs.ts`, 배치 재고              |
-| 컵 회수·세척                  | `features/cleaning`, `features/washing`                                                            | `features/inventory/cups.ts`, 전체 수량 검증 |
-| 손님·POS·음료 전달            | `features/service`                                                                                 | 제조 완료 판정, 공통 재고·집계               |
-| 마감·다음 날·운영 기록        | `features/shift`                                                                                   | 전체 시계와 예정 작업 완료                   |
-| 작업대 버튼·도움말            | 기능의 패널·`help.ts`·`Guide.tsx`                                                                  | 앱의 표시·도움말 선택 순서                   |
-| 단축키·화면 전환              | `app/session`                                                                                      | `world/player-controls.ts`, 공통 대화상자    |
-| 매장 조형물·이동·그래픽 자원  | `world`                                                                                            | `content/stations.ts`, 기능별 `visuals.ts`   |
-| 저장·복구·탭 정책             | `app/persistence`                                                                                  | `simulation/state.ts`, 세션의 저장 시점      |
-
-새 행동은 기능의 처리 함수와 `simulation/actions.ts`, `simulation/store.ts`의 라우팅을 함께 연결한다. 새 UI나 시각 표현은 필요한 앱·장면 조합부에 직접 연결한다. 범용 등록 시스템이나 기능별 저장소는 도입하지 않는다.
-
-## 제조 자료의 경계
-
-`data/recipes`는 제조 사실, `data/menu.json`은 판매 가격, `data/shop`은 게임 재고와 제공 용기를 소유한다. 원문과 운영값을 섞지 않는다. 제조 순서·표시 목표는 원문을 사용하고, 재고 계산만 운영 환산값을 읽는다.
-
-`recipe-schema.ts` → `recipe-catalog.ts` → `recipe-plan.ts`가 구조·연결·주문 조건을 처리한다. `production-plans.ts`는 명확한 계량법과 부재료의 전체 준비 경로를 확인한다. `playable-menu.ts`는 가격·사이즈·이용 방식·제조 가능성이 갖춰진 조합만 발행한다. 손님·POS·주문 검증·매출이 이 결과를 함께 사용한다.
-
-`features/production/workflow.ts`는 원문 행동을 작업대와 조작, 플레이어가 고를 장비 설정(`choices`)으로 연결하고, `runtime.ts`는 계량·소비·확인 시 판정·배경 장비 작업·관찰 조건을 처리한다. `crafting`은 주문 컵과 보조 용기의 위치(`places`), 주문 스티커, 전달 전 완료를, `preparation`은 준비 배치와 산출물·라벨·보관을 소유한다. 두 기능은 별도 제조 엔진이나 음료별 상태 분기를 만들지 않는다. 콜드 브루 추출대는 장시간 추출 장비의 생애주기를 소유한다.
-
-용기 내부의 수량 이동은 `stock-amounts.ts`가 계산한다. 표현용 컵 높이·모델 크기를 재고 수량에 사용하지 않는다. 3D와 HUD는 공통 작업 상태를 읽으며 같은 원문 목표를 보여준다.
-
-`catalog.ts`는 전체 자료를 한 번 읽는다. 자료실의 화면 코드는 필요할 때 불러오지만 제조 데이터의 별도 복사본은 만들지 않는다. 월간 갱신은 JSON 수정 후 `check:recipes`·타입 검사·빌드로 확인한다. 원본 이미지·영상, 레시피 DB, 카탈로그 버전·마이그레이션·호환 계층은 추가하지 않는다. 상세 운영은 [제조 자료 운영](./recipe-data.md)을 따른다.
-
-## POS 주문 상태
-
-2026-09-26 사용자 확인으로 `sale`의 주문 항목·수량·커스텀·결제 내역을 저장한다. `paidAt`이 있는 주문에서 다음 미전달 항목을 계산해 제조한다. 원본 레시피에 커스텀을 적용한 계획을 기존 공통 제조 실행이 사용한다. 2026-09-27에는 결제 시점의 상품·가격·결제수단을 보존하는 `transactions`를 같은 게임 상태에 추가했다. 현재 주문을 비우거나 다음 날로 넘어가도 거래 기록과 식별번호 끝 네 자리만 가진 현금영수증 이력은 유지한다.
-
-사용자가 확인한 일반 휘핑·로스트 제조법은 기존 준비 경로를 사용한다. 미기재 토핑 계량은 `data/shop/pos-customizations.json` 및 재고 운영값으로 처리한다. 원본 레시피를 덮어쓰지 않으며 `productionPlan`에서 승인된 미기재 토핑만 보완한다. 화면·가격 근거·여러 컵·영수증과 커스텀의 상세 규칙은 [POS 구현](./pos.md)을 따른다.
-
-## URN Digital
-
-2026-09-28 `features/drip-coffee`에 HOT·ICED 배치 준비·5분 추출·HOT 보온·ICED 회수와 COW 설정을 연결했다. 기존 `stateSchema`·`jobs`·재고·제조 실행을 사용한다. 완성 HOT의 배치 위치는 `urn`, ICED는 배치별 실온·냉장 보관 방식 선택과 라벨 작성을 거쳐 바 실온 선반 또는 냉장고의 재고 경로를 따른다. 주문 행과 제조 상태의 원두를 원두별 재고 소비에 전달해 COW 변경 후에도 접수한 주문을 보존한다. 세부 규칙은 [URN Digital](./digital-urn-proposal.md)을 따른다.
-
-2026-09-28 부재료 제조표 반영으로 재료의 보관별 기한과 마감 보관 조건은 `quality.json`, 선택한 보관 방식과 원재료 만료 상한은 기존 배치 상태에 둔다. 재고 기능이 라벨·운반·기한을 처리하고 근무 기능이 시그니처 초코의 마감 냉장을 확인한다.
+참고: [Tailwind 클래스 탐색](https://tailwindcss.com/docs/detecting-classes-in-source-files), [스타일 작성](https://tailwindcss.com/docs/styling-with-utility-classes), [키보드 포커스 표시](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html).

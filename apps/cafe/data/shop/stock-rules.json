@@ -276,7 +276,7 @@
     },
     "mocha-powder": {
       "millilitersPerStockUnit": 600,
-      "gramsPerStockUnit": 500,
+      "gramsPerStockUnit": 885,
       "counts": {
         "piece": 0.00833333,
         "bag": 1,
@@ -8420,6 +8420,16 @@
     "charge": 1
   },
   "preparationOutputs": {
+    "double-black-tea-base/standard": {
+      "materialId": "double-black-tea-base",
+      "amount": 1000,
+      "stockUnit": "ml"
+    },
+    "espresso-whipped-cream/canister": {
+      "materialId": "espresso-whipped-cream",
+      "amount": 500,
+      "stockUnit": "ml"
+    },
     "whipped-cream/canister": {
       "materialId": "whipped-cream",
       "amount": 500,

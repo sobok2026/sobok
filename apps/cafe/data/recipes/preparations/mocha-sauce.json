@@ -13,7 +13,7 @@
           "id": "powder",
           "label": "바모카 원팩",
           "instructions": ["바모카 원팩 1봉을 넣는다."],
-          "notes": [],
+          "notes": ["사용자가 허용한 Quizlet 공개 보조 자료에서 원팩 1봉의 무게 885g을 보완했다."],
           "operations": [
             {
               "action": "add",
