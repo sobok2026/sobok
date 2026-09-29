@@ -1,6 +1,17 @@
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { canAccessStation, isCupSurface, isTable, STATIONS, type StationId, stationIds } from '../content/stations'
+import {
+  canAccessStation,
+  FLOOR_HEIGHT,
+  isCupSurface,
+  isEspressoStation,
+  isSteamStation,
+  isTable,
+  STAIRCASE,
+  STATIONS,
+  type StationId,
+  stationIds,
+} from '../content/stations'
 import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visuals'
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
 import { craftingAt, craftWorkStation } from '../features/crafting/rules'
@@ -57,10 +68,10 @@ function pickWidth(id: StationId) {
   if (id === 'printer') {
     return 0.22
   }
-  if (id === 'espresso') {
+  if (isEspressoStation(id)) {
     return 0.6
   }
-  if (id === 'steam') {
+  if (isSteamStation(id)) {
     return 0.66
   }
   if (isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf') {
@@ -80,7 +91,7 @@ function pickDepth(id: StationId) {
 function pickHeight(id: StationId) {
   if (id === 'grinder') return 1.25
   if (id === 'urn') return 1.5
-  if (id === 'espresso' || id === 'water') {
+  if (isEspressoStation(id) || id === 'water') {
     return 1.12
   }
   return isTable(id) ? 1 : 0.8
@@ -90,7 +101,7 @@ function markerHeight(id: StationId) {
   if (id === 'grinder') return 2.23
   if (id === 'condiment') return 1.85
   if (id === 'urn') return 2.45
-  if (id === 'espresso' || id === 'water') {
+  if (isEspressoStation(id) || id === 'water') {
     return 1.9
   }
   return isTable(id) || id === 'trash' ? 1.2 : 1.42
@@ -123,8 +134,8 @@ function offscreenSide(point: THREE.Vector3, scratch: THREE.Vector3, camera: THR
 export function createCafeScene(container: HTMLDivElement, options: SceneOptions): CafeScene {
   const scene = new THREE.Scene()
   scene.background = new THREE.Color('#c3cec8')
-  scene.fog = new THREE.Fog('#c3cec8', 32, 90)
-  const camera = new THREE.PerspectiveCamera(62, 1, 0.08, 100)
+  scene.fog = new THREE.Fog('#c3cec8', 55, 140)
+  const camera = new THREE.PerspectiveCamera(62, 1, 0.08, 170)
   camera.rotation.order = 'YXZ'
   let previousPlacement: Placement = null
   let previousPreparation: string | null = null
@@ -133,9 +144,9 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   let needsRender = true
   let customerVisuals: ReturnType<typeof createCustomerVisuals> | undefined
 
-  const reset = ([x, z, yaw, pitch]: GameState['position']) => {
+  const reset = ([x, z, yaw, pitch, elevation]: GameState['position']) => {
     needsRender = true
-    camera.position.set(x, 1.65, z)
+    camera.position.set(x, elevation + 1.65, z)
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
     const state = options.getState()
     previousPlacement = placementOf(state)
@@ -310,7 +321,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     raycaster.setFromCamera(new THREE.Vector2(0, 0), camera)
     const found = options.canMove() ? raycaster.intersectObjects(pickObjects, false)[0] : undefined
     const pointed = (found?.object.userData.station as StationId | undefined) ?? null
-    const blocked = pointed !== null && !canAccessStation(pointed, camera.position.z)
+    const blocked = pointed !== null && !canAccessStation(pointed, camera.position.z, camera.position.y - 1.65)
     const target = blocked ? null : pointed
     controls.setTarget(target)
 
@@ -330,6 +341,10 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     if (guideStation) {
       const anchor = STATIONS[guideStation]
       guidePoint.set(anchor.x, markerHeight(guideStation) + Math.sin(animationTime / 600) * 0.03, anchor.z)
+      if (camera.position.y - 1.65 >= FLOOR_HEIGHT - 0.2) {
+        const floor = Math.floor((camera.position.y - 1.45) / FLOOR_HEIGHT) * FLOOR_HEIGHT
+        guidePoint.set(STAIRCASE.rightX, floor + 0.75, STAIRCASE.startZ - 0.4)
+      }
     }
 
     guideMarker.position.copy(guidePoint)
@@ -390,7 +405,13 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     unlockForCraft: controls.unlockForCraft,
     moveTouch: controls.moveTouch,
     reset,
-    capture: () => [camera.position.x, camera.position.z, camera.rotation.y, camera.rotation.x],
+    capture: () => [
+      camera.position.x,
+      camera.position.z,
+      camera.rotation.y,
+      camera.rotation.x,
+      THREE.MathUtils.clamp(camera.position.y - 1.65, 0, FLOOR_HEIGHT * 2),
+    ],
     dispose: () => {
       disposed = true
       cancelAnimationFrame(frame)

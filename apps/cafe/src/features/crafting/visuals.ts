@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { recipeCatalog } from '../../content/catalog'
 import { RECIPES } from '../../content/recipes'
-import { STATIONS, type StationId, staffFacingZ } from '../../content/stations'
+import { isEspressoStation, isSteamStation, STATIONS, type StationId } from '../../content/stations'
 import { vesselProfile } from '../../content/stock-amounts'
 import { CUP_DIMENSIONS, cupFillY } from '../../shared/visuals/cup-visual'
 import { createPumpVisual, operationPump } from '../../shared/visuals/pump-visual'
@@ -24,16 +24,17 @@ import {
   type WorkVesselShape,
   workVesselShape,
 } from './drink-visual'
-import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
+import { espressoOutlet, steamPitcherSpot } from './espresso-machine'
 import { cupRecipe, operationFor, stepVessels, vesselPlace } from './rules'
 import { WATER_OUTLET } from './station-equipment'
 
 function vesselSpot(station: StationId, shape: WorkVesselShape, index: number): THREE.Vector3 {
-  if (station === 'steam' && shape === 'pitcher') {
-    return new THREE.Vector3(...STEAM_PITCHER_SPOT)
+  if (isSteamStation(station) && shape === 'pitcher') {
+    return new THREE.Vector3(...steamPitcherSpot(station))
   }
-  if (station === 'espresso' && shape === 'shot') {
-    return new THREE.Vector3(ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2])
+  if (isEspressoStation(station) && shape === 'shot') {
+    const outlet = espressoOutlet(station)
+    return new THREE.Vector3(outlet[0], 1.11, outlet[2])
   }
   if (station === 'blender' && shape === 'blender') {
     return new THREE.Vector3(...BLENDER_JAR_SPOT)
@@ -158,7 +159,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         index++
       }
 
-      if (craft.location === 'espresso' && currentVessel !== servingId && positions.has(currentVessel ?? '')) {
+      if (
+        craft.location !== 'hand' &&
+        isEspressoStation(craft.location) &&
+        currentVessel !== servingId &&
+        positions.has(currentVessel ?? '')
+      ) {
         bench.root.position.x += 0.48
         bench.root.position.z -= 0.06
         bench.root.position.y = 1.075
@@ -212,7 +218,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       if (station && (pouring || adding || extraction || dispensing)) {
         start.set(spot.x + 0.09, spot.y + 0.44, spot.z)
         if (extraction) {
-          start.fromArray(ESPRESSO_OUTLET)
+          start.fromArray(espressoOutlet(craft.espressoStation))
         }
         if (dispensing || (station === 'water' && !step?.tool)) {
           start.fromArray(WATER_OUTLET)
@@ -243,13 +249,15 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'urn') return [URN_HOT_OUTLET[0], 1.099, URN_HOT_OUTLET[2]]
   if (station === 'pickup') {
-    return [6.1, 1.1, -1.48]
+    return [STATIONS.pickup.x, 1.1, STATIONS.pickup.z - 0.08]
   }
-  if (station === 'espresso') {
-    return [ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2]]
+  if (isEspressoStation(station)) {
+    const outlet = espressoOutlet(station)
+    return [outlet[0], 1.11, outlet[2]]
   }
-  if (station === 'steam') {
-    return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
+  if (isSteamStation(station)) {
+    const spot = steamPitcherSpot(station)
+    return [spot[0] + 0.28, spot[1], spot[2]]
   }
   if (station === 'brew') {
     return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
@@ -260,5 +268,5 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'prep' || station === 'blender') {
     return [STATIONS[station].x + 0.75, 1.105, STATIONS[station].z + 0.15]
   }
-  return [STATIONS[station].x, 1.075, staffFacingZ(-0.62)]
+  return [STATIONS[station].x, 1.075, STATIONS[station].z - 0.08]
 }

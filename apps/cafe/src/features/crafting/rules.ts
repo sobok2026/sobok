@@ -11,6 +11,8 @@ import { createProductionState, type WorkStep } from '../production/workflow'
 export const craftStations: StationId[] = [
   'espresso',
   'steam',
+  'espresso-2',
+  'steam-2',
   'brew',
   'urn',
   'water',
@@ -25,12 +27,22 @@ export const craftStations: StationId[] = [
 type Cup = NonNullable<GameState['cup']>
 export type VesselPlace = StationId | 'hand'
 
-export const cupRecipe = (cup: Cup) =>
-  recipeFor(cup.recipe, cup.craft.size, cupService(cup.craft.kind), cup.craft.customizations)
+function machineSteps(steps: WorkStep[], craft: CraftState) {
+  return steps.map((step) => {
+    if (step.station === 'espresso') return { ...step, station: craft.espressoStation }
+    if (step.station === 'steam') return { ...step, station: craft.steamStation }
+    return step
+  })
+}
+
+export function cupRecipe(cup: Cup) {
+  const recipe = recipeFor(cup.recipe, cup.craft.size, cupService(cup.craft.kind), cup.craft.customizations)
+  return { ...recipe, steps: machineSteps(recipe.steps, cup.craft) }
+}
 
 export function operationFor(recipe: RecipeId, craft: CraftState): WorkStep | null {
   const plan = recipeFor(recipe, craft.size, cupService(craft.kind), craft.customizations).steps
-  return currentWorkStep(plan, craft) ?? null
+  return currentWorkStep(machineSteps(plan, craft), craft) ?? null
 }
 
 export function createCraft(
@@ -44,6 +56,8 @@ export function createCraft(
     kind,
     size,
     location: 'hand',
+    espressoStation: 'espresso',
+    steamStation: 'steam',
     places: {},
     lidded: false,
     sticker: false,

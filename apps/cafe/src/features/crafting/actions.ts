@@ -1,5 +1,5 @@
 import { recipeCup } from '../../content/recipes'
-import { STATIONS, type StationId } from '../../content/stations'
+import { isEspressoStation, isSteamStation, STATIONS, type StationId } from '../../content/stations'
 import { josa } from '../../shared/format'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
@@ -157,6 +157,8 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
     } else {
       session.places[held] = action.station
     }
+    if (isEspressoStation(action.station)) session.espressoStation = action.station
+    if (isSteamStation(action.station)) session.steamStation = action.station
     say(s, `${josa(vesselName(cup, held), '을', '를')} 내려놓았어요.`)
     return
   }

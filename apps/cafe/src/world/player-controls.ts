@@ -4,6 +4,7 @@ import { craftWorkStation } from '../features/crafting/rules'
 import { carriedBatch } from '../features/inventory/batches'
 import { cupCount } from '../features/inventory/cups'
 import { washDestination } from '../features/washing/rules'
+import { floorElevation } from './floors'
 import type { Obstacle } from './interior'
 import type { SceneOptions } from './scene'
 
@@ -21,12 +22,18 @@ export function createPlayerControls(
   let mousePointer: number | null = null
   let lookPointer: { id: number; x: number; y: number } | null = null
   let touchMovement = { sideways: 0, forward: 0, running: false }
-  const collides = (x: number, z: number) =>
+  const collides = (x: number, z: number, elevation: number) =>
     x < SHOP_BOUNDS.minX + 0.45 ||
     x > SHOP_BOUNDS.maxX - 0.45 ||
     z < SHOP_BOUNDS.minZ + 0.45 ||
     z > SHOP_BOUNDS.maxZ - 0.55 ||
-    obstacles.some((o) => Math.abs(x - o.x) < o.width / 2 + 0.22 && Math.abs(z - o.z) < o.depth / 2 + 0.22)
+    obstacles.some(
+      (o) =>
+        elevation < (o.maxY ?? 3.85) - 0.03 &&
+        elevation + 1.6 > (o.minY ?? 0) + 0.03 &&
+        Math.abs(x - o.x) < o.width / 2 + 0.22 &&
+        Math.abs(z - o.z) < o.depth / 2 + 0.22,
+    )
 
   function keydown(event: KeyboardEvent) {
     if (event.defaultPrevented) {
@@ -324,9 +331,14 @@ export function createPlayerControls(
     },
     update(dt: number) {
       if (options.canMove()) {
-        if (collides(camera.position.x, camera.position.z)) {
-          const [x, z] = staffStartPosition()
-          camera.position.set(x, camera.position.y, z)
+        let elevation = camera.position.y - 1.65
+        if (
+          collides(camera.position.x, camera.position.z, elevation) ||
+          floorElevation(camera.position.x, camera.position.z, elevation) === null
+        ) {
+          const [x, z, , , y] = staffStartPosition()
+          camera.position.set(x, y + 1.65, z)
+          elevation = y
         }
         camera.rotation.y += ((keys.has('ArrowLeft') ? 1 : 0) - (keys.has('ArrowRight') ? 1 : 0)) * dt * 1.4
         camera.rotation.x = THREE.MathUtils.clamp(
@@ -351,12 +363,17 @@ export function createPlayerControls(
         const speed = dt * 2.9 * (running ? 2 : 1)
         const dx = (-Math.sin(yaw) * forward + Math.cos(yaw) * sideways) * speed
         const dz = (-Math.cos(yaw) * forward - Math.sin(yaw) * sideways) * speed
-        if (!collides(camera.position.x + dx, camera.position.z)) {
+        const across = floorElevation(camera.position.x + dx, camera.position.z, elevation)
+        if (across !== null && !collides(camera.position.x + dx, camera.position.z, across)) {
           camera.position.x += dx
+          elevation = across
         }
-        if (!collides(camera.position.x, camera.position.z + dz)) {
+        const forwardElevation = floorElevation(camera.position.x, camera.position.z + dz, elevation)
+        if (forwardElevation !== null && !collides(camera.position.x, camera.position.z + dz, forwardElevation)) {
           camera.position.z += dz
+          elevation = forwardElevation
         }
+        camera.position.y = elevation + 1.65
       } else if (keys.size || using || dragging || lookPointer || touchMovement.forward || touchMovement.sideways) {
         clear()
       }

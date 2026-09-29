@@ -1,4 +1,4 @@
-import { STATIONS } from '../../content/stations'
+import { isEspressoStation, isSteamStation, STATIONS } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { CraftState, GameState } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
@@ -45,14 +45,21 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
     const station = nextVesselStation(cup, held) ?? step.station
     return {
       title: `${vesselName(cup, held)}를 내려놓으세요`,
-      action: `${STATIONS[station].name}를 보고 작업 버튼을 누르세요.`,
+      action:
+        isEspressoStation(station) || isSteamStation(station)
+          ? '1번 또는 2번 머신의 해당 작업대에 놓으세요. 놓은 머신에서 이어서 작업해요.'
+          : `${STATIONS[station].name}를 보고 작업 버튼을 누르세요.`,
       reason: '용기는 한 번에 하나만 들 수 있어요.',
     }
   }
   if (craft.location === 'hand') {
+    const station = nextCupStation(cup)
     return {
-      title: `${STATIONS[nextCupStation(cup)].name} 쪽으로 이동하세요`,
-      action: '작업대를 보고 컵을 내려놓으세요.',
+      title: `${STATIONS[station].name} 쪽으로 이동하세요`,
+      action:
+        isEspressoStation(station) || isSteamStation(station)
+          ? '1번 또는 2번 머신의 해당 작업대에 컵을 놓으세요. 놓은 머신에서 이어서 작업해요.'
+          : '작업대를 보고 컵을 내려놓으세요.',
       reason: '컵이 필요 없는 단계는 그 용기로 진행해요. 우유 계량과 스팀은 스팀 완드의 피처로 해요.',
     }
   }

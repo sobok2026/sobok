@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { type EspressoStation, STATIONS, type SteamStation } from '../../content/stations'
 import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
@@ -10,13 +11,21 @@ import {
 } from '../../shared/visuals/equipment-geometry'
 
 // Front is local +Z. The employee-facing machine is turned around on the main bar.
-export const ESPRESSO_OUTLET: [number, number, number] = [-2.27, 1.48, -1.48]
-export const STEAM_PITCHER_SPOT: [number, number, number] = [-2.94, 1.11, -1.46]
+export const espressoOutlet = (station: EspressoStation): [number, number, number] => [
+  STATIONS[station].x,
+  1.48,
+  STATIONS[station].z - 0.08,
+]
+export const steamPitcherSpot = (station: SteamStation): [number, number, number] => [
+  STATIONS[station].x,
+  1.11,
+  STATIONS[station].z - 0.06,
+]
 
-export function createEspressoMachine(scene: THREE.Scene) {
+export function createEspressoMachine(scene: THREE.Scene, station: EspressoStation = 'espresso') {
   const root = new THREE.Group()
-  root.name = 'Mastrena II inspired espresso machine'
-  root.position.set(-2.5, 1.06, -0.99)
+  root.name = `${STATIONS[station].name} · Mastrena II`
+  root.position.set(STATIONS[station].x - 0.23, 1.06, STATIONS[station].z + 0.41)
   root.rotation.y = Math.PI
   scene.add(root)
   const steel = material({ color: '#c6cbcd', metalness: 0.94, roughness: 0.24 })
@@ -225,11 +234,13 @@ export function createEspressoMachine(scene: THREE.Scene) {
     ctx.stroke()
   })
 
+  box(root, [0.92, 0.37, 0.022], [0, 0.285, -0.224], copper, 0.012)
+  box(root, [0.94, 0.025, 0.023], [0, 0.486, -0.224], chrome, 0.003)
   instances(
     root,
-    new THREE.BoxGeometry(0.005, 0.12, 0.002),
-    rubber,
-    Array.from({ length: 15 }, (_, i) => [-0.2 + i * 0.029, 0.35, -0.217]),
+    new THREE.BoxGeometry(0.86, 0.003, 0.002),
+    black,
+    Array.from({ length: 5 }, (_, i) => [0, 0.15 + i * 0.063, -0.237]),
   )
   return root
 }

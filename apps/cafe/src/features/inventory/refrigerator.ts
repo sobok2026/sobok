@@ -8,6 +8,22 @@ import {
   equipmentPanel as panel,
 } from '../../shared/visuals/equipment-geometry'
 
+export function createBarRefrigerator(scene: THREE.Scene) {
+  const root = new THREE.Group()
+  root.name = 'Under-counter bar refrigerator'
+  root.position.set(STATIONS['bar-fridge'].x, 0, STATIONS['bar-fridge'].z - 0.4)
+  scene.add(root)
+  const steel = material({ color: '#b9bdb9', metalness: 0.86, roughness: 0.42 })
+  const dark = material({ color: '#202724', roughness: 0.8 })
+  box(root, [1.45, 0.88, 0.82], [0, 0.51, 0], steel, 0.006)
+  box(root, [1.38, 0.12, 0.025], [0, 0.14, 0.42], dark, 0.002)
+  for (const x of [-0.35, 0.35]) {
+    box(root, [0.68, 0.68, 0.025], [x, 0.57, 0.43], steel, 0.004)
+    box(root, [0.2, 0.025, 0.03], [x, 0.83, 0.46], dark, 0.004)
+  }
+  return root
+}
+
 export function createRefrigerator(scene: THREE.Scene, position: { x: number; z: number } = STATIONS.fridge) {
   const root = new THREE.Group()
   root.name = 'Commercial reach-in refrigerator'

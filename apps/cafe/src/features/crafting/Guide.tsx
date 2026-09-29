@@ -7,6 +7,7 @@ import { cupService } from '../inventory/cups'
 import { operationNotes } from '../production/presentation'
 import type { WorkStep } from '../production/workflow'
 import { currentTicket } from '../service/orders'
+import { cupRecipe } from './rules'
 
 export function RecipeGuide({ state }: { state: GameState }) {
   const ticket = currentTicket(state)
@@ -16,7 +17,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
   if (!recipe || !size || !service) {
     return <p className="text-body text-muted">제조 중인 음료가 없어요.</p>
   }
-  const steps = recipeFor(recipe, size, service, state.cup?.craft.customizations ?? ticket?.customizations).steps
+  const steps = state.cup ? cupRecipe(state.cup).steps : recipeFor(recipe, size, service, ticket?.customizations).steps
   const cursor = state.cup?.craft.cursor ?? -1
   const groups = steps.reduce<{ id: string; instruction: string; steps: { step: WorkStep; index: number }[] }[]>(
     (list, step, index) => {

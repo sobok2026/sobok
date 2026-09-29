@@ -11,7 +11,7 @@ import {
   equipmentTube as tube,
 } from '../../shared/visuals/equipment-geometry'
 
-export const COLD_BREW_OUTLET: [number, number, number] = [0, 1.555, -1.33]
+export const COLD_BREW_OUTLET: [number, number, number] = [STATIONS.brew.x, 1.555, STATIONS.brew.z + 0.14]
 export const COLD_BREW_COLLECTION_SPOT: [number, number, number] = [
   STATIONS['cold-prep'].x - 0.16,
   1.1,
@@ -159,8 +159,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
 export function createColdBrewDispenser(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Cold brew service tap'
-  root.position.set(0, 1.065, -0.99)
-  root.rotation.y = Math.PI
+  root.position.set(STATIONS.brew.x, 1.065, STATIONS.brew.z - 0.2)
   scene.add(root)
   const steel = material({ color: '#c2cbcd', metalness: 0.95, roughness: 0.22 })
   const black = material({ color: '#141c1e', roughness: 0.57 })

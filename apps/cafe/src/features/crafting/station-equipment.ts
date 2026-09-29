@@ -16,12 +16,12 @@ import { createPumpVisual, operationPump, pumpSpec } from '../../shared/visuals/
 import type { GameState } from '../../simulation/state'
 import { operationFor, vesselPlace } from './rules'
 
-export const WATER_OUTLET: [number, number, number] = [1.1, 1.62, -1.48]
+export const WATER_OUTLET: [number, number, number] = [STATIONS.water.x, 1.62, STATIONS.water.z - 0.08]
 
 export function createWaterStation(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Marco MIX three-button font'
-  root.position.set(1.1, 1.065, -1.285)
+  root.position.set(STATIONS.water.x, 1.065, STATIONS.water.z + 0.115)
   root.rotation.y = Math.PI
   scene.add(root)
   const steel = material({ color: '#c6c9cb', metalness: 0.96, roughness: 0.25 })
@@ -162,7 +162,7 @@ export function createIceBin(scene: THREE.Scene) {
 export function createSyrupStation(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'Glass syrup bottles and shallow sauce jars'
-  root.position.set(3.1, 1.067, -0.93)
+  root.position.set(STATIONS.sauce.x, 1.067, STATIONS.sauce.z + 0.47)
   root.rotation.y = Math.PI
   scene.add(root)
   const steel = material({ color: '#acb9c0', metalness: 0.9, roughness: 0.3 })

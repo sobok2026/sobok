@@ -15,7 +15,7 @@ import { createDigitalUrn } from '../features/drip-coffee/equipment'
 import { BAR_BATCH_CAPACITY } from '../features/inventory/batches'
 import { cupKinds, cupRow, cupRows, cupSize, rowCupKinds } from '../features/inventory/cups'
 import { createDryStorage } from '../features/inventory/dry-storage'
-import { createRefrigerator } from '../features/inventory/refrigerator'
+import { createBarRefrigerator, createRefrigerator } from '../features/inventory/refrigerator'
 import { createBlender } from '../features/preparation/blender'
 import { createRegister } from '../features/service/register'
 import { createWashingEquipment } from '../features/washing/equipment'
@@ -26,7 +26,7 @@ import { addVesselLabel } from '../shared/visuals/vessel-label'
 import { createCoffeehouse } from './coffeehouse'
 import { createMenuBoards } from './menu-board'
 
-export type Obstacle = { x: number; z: number; width: number; depth: number }
+export type Obstacle = { x: number; z: number; width: number; depth: number; minY?: number; maxY?: number }
 
 export function createShopInterior(scene: THREE.Scene) {
   const materials = new Map<string, THREE.MeshStandardMaterial>()
@@ -222,9 +222,10 @@ export function createShopInterior(scene: THREE.Scene) {
   box(-5, 1.05, -9.56, 0.84, 0.09, 0.28, '#b9c4bb')
   box(-5, 1.05, -8.74, 0.84, 0.09, 0.08, '#b9c4bb')
   obstacles.push({ x: -2.9, z: -9.2, width: 5.6, depth: 1 })
-  box(-2.5, 0.5, -5.2, 4.7, 1, 0.9, '#e1d5bb')
-  box(-2.5, 1.05, -5.2, 4.8, 0.09, 1, '#c8bda5')
-  obstacles.push({ x: -2.5, z: -5.2, width: 4.8, depth: 1 })
+  box(-0.675, 0.5, -5.2, 8.75, 1, 0.9, '#a9aaa2')
+  box(5.85, 0.5, -5.2, 1.1, 1, 0.9, '#a9aaa2')
+  box(0.675, 1.05, -5.2, 11.45, 0.09, 1, finishes.counter)
+  obstacles.push({ x: 0.675, z: -5.2, width: 11.45, depth: 1 })
   box(STATIONS.rack.x, 1.4, STATIONS.rack.z, 0.95, 0.04, 0.72, '#adb9ac')
   for (const x of [STATIONS.rack.x - 0.42, STATIONS.rack.x + 0.42]) {
     box(x, 1.24, STATIONS.rack.z - 0.3, 0.04, 0.32, 0.04, '#adb9ac')
@@ -257,17 +258,18 @@ export function createShopInterior(scene: THREE.Scene) {
     }
   })
   createEspressoMachine(scene)
+  createEspressoMachine(scene, 'espresso-2')
   const digitalUrn = createDigitalUrn(scene)
-  const milkCarton = box(-3.23, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
+  const milkCarton = box(STATIONS.steam.x - 0.28, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
   createColdBrewDispenser(scene)
   createWaterStation(scene)
   createIceBin(scene)
   const syrupStation = createSyrupStation(scene)
-  box(4.1, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
-  const foamContainer = cylinder(4.95, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
+  box(STATIONS.mix.x, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
+  const foamContainer = cylinder(STATIONS.topping.x - 0.15, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
   addVesselLabel(foamContainer, '폼', '#527f66', 0.19, 0.1, -0.015, 0.145)
-  const powderContainer = cylinder(5.3, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
+  const powderContainer = cylinder(STATIONS.topping.x + 0.2, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
   addVesselLabel(powderContainer, '파우더', '#886628', 0.16, 0.08, 0, 0.112)
   box(6.1, 0.5, BAR_CENTER_Z, 1.1, 1, 1.2, finishes.oak)
   box(6.1, 1.05, BAR_CENTER_Z, 1.15, 0.08, 1.35, finishes.counter)
@@ -278,7 +280,7 @@ export function createShopInterior(scene: THREE.Scene) {
   const blender = createBlender(scene, 'blender')
   const prepBlender = createBlender(scene, 'prep')
   createRefrigerator(scene)
-  createRefrigerator(scene, STATIONS['bar-fridge'])
+  createBarRefrigerator(scene)
   for (const station of [STATIONS.fridge, STATIONS['bar-fridge']]) {
     obstacles.push({ x: station.x, z: station.z - 0.4, width: 1.4, depth: 1.1 })
   }
@@ -288,9 +290,6 @@ export function createShopInterior(scene: THREE.Scene) {
   storageSign.position.set(6.75, 2.15, STATIONS.stock.z)
   storageSign.rotation.y = -Math.PI / 2
   scene.add(storageSign)
-  box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
-  box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
-  obstacles.push({ x: 3, z: -5.2, width: 2, depth: 0.95 })
   const shelfSign = sign(`바 실온 재료 · 품목별 ${BAR_BATCH_CAPACITY}개`, 1.3, 0.14, '#d9d3c3', '#344238')
   shelfSign.position.set(3, 0.83, -4.758)
   scene.add(shelfSign)

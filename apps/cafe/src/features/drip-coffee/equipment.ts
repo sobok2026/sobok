@@ -17,13 +17,16 @@ import { DRIP, DRIP_BEANS, type DripTemperature, dripRemaining } from './rules'
 // Dimensions fit the existing bar; the model is not a calibrated drawing of a particular installation.
 // Cup models are enlarged for first-person work, so the docking stand leaves room for a Venti cup.
 const STAND_LIFT = 0.23
-export const URN_HOT_OUTLET: [number, number, number] = [STATIONS.urn.x + 0.148, 1.319 + STAND_LIFT, -1.257]
+export const URN_HOT_OUTLET: [number, number, number] = [
+  STATIONS.urn.x - 0.148,
+  1.319 + STAND_LIFT,
+  STATIONS.urn.z + 0.087,
+]
 
 export function createDigitalUrn(scene: THREE.Scene) {
   const root = new THREE.Group()
   root.name = 'URN Digital · BUNN twin Soft Heat inspired brewer'
-  root.position.set(STATIONS.urn.x, 1.06, -1.02)
-  root.rotation.y = Math.PI
+  root.position.set(STATIONS.urn.x, 1.06, STATIONS.urn.z - 0.15)
   scene.add(root)
   const steel = material({ color: '#bac2c5', metalness: 0.92, roughness: 0.29 })
   const chrome = material({ color: '#e1e6e8', metalness: 1, roughness: 0.16 })
