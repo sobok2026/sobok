@@ -8,11 +8,13 @@ import {
   WorkBlocker,
   WorkButton,
   WorkHeader,
+  WorkHoldStatus,
   WorkMeter,
   WorkNote,
 } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import type { DripBrew, GameState } from '../../simulation/state'
+import type { ActiveInput } from '../../simulation/work-context'
 import BatchWork from '../inventory/BatchWork'
 import { available } from '../inventory/inventory'
 import { currentTicket } from '../service/orders'
@@ -29,7 +31,15 @@ import {
   dripRemaining,
 } from './rules'
 
-export default function DripPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
+export default function DripPanel({
+  state,
+  activeInput,
+  act,
+}: {
+  state: GameState
+  activeInput: ActiveInput
+  act: (action: Action) => void
+}) {
   const ticket = currentTicket(state)
   const [temperature, setTemperature] = useState<DripTemperature>(dripMenuTemperature(ticket?.recipe ?? '') ?? 'hot')
   const [bean, setBean] = useState<DripBean>(ticket?.dripBean ?? state.cow[temperature])
@@ -91,7 +101,16 @@ export default function DripPanel({ state, act }: { state: GameState; act: (acti
           <Button onClick={() => act({ type: 'drip-prepare', temperature, bean })}>배치 준비</Button>
         </>
       )}
-      {brew && <DripWork key={brew.id} state={state} brew={brew} temperature={temperature} act={act} />}
+      {brew && (
+        <DripWork
+          key={brew.id}
+          state={state}
+          brew={brew}
+          temperature={temperature}
+          active={activeInput?.kind === 'drip' && activeInput.temperature === temperature}
+          act={act}
+        />
+      )}
     </div>
   )
 }
@@ -100,11 +119,13 @@ function DripWork({
   state,
   brew,
   temperature,
+  active,
   act,
 }: {
   state: GameState
   brew: DripBrew
   temperature: DripTemperature
+  active: boolean
   act: (action: Action) => void
 }) {
   const batch = state.batches.find((batch) => batch.id === brew.batchId)
@@ -121,7 +142,17 @@ function DripWork({
       {brew.bean !== state.cow[temperature] && (
         <WorkNote>현재 COW와 다른 원두예요. 배치의 원두는 변경되지 않아요.</WorkNote>
       )}
-      {brew.fault && <WorkBlocker reason="배치를 다시 준비해주세요" fix={brew.fault} fault />}
+      {brew.fault && (
+        <>
+          {measuring && (
+            <WorkHeader
+              title={brew.stage === 'beans' ? '분쇄 원두 계량' : '얼음 계량'}
+              value={`${formatDecimal(amount)}g`}
+            />
+          )}
+          <WorkBlocker reason="배치를 다시 준비해주세요" fix={brew.fault} fault />
+        </>
+      )}
       {!brew.fault && brew.stage === 'filter' && (
         <Button onClick={() => act({ type: 'drip-filter', temperature })}>새 필터 넣기</Button>
       )}
@@ -137,6 +168,7 @@ function DripWork({
               fix="백룸 창고에서 원두를 개봉·라벨 처리하고 바 실온 선반에 보충하세요."
             />
           )}
+          {brew.tool && !shortage && <WorkHoldStatus active={active} started={amount > 0} pouring />}
           <WorkActions>
             <Button onClick={() => act({ type: 'drip-tool', temperature })}>
               {tool} {brew.tool ? '놓기' : '집기'}
@@ -146,6 +178,7 @@ function DripWork({
                 shortcut="Space"
                 hold
                 primary
+                active={active}
                 disabled={shortage}
                 onUse={() => act({ type: 'drip-use', temperature })}
                 onStop={() => act({ type: 'drip-stop' })}

@@ -13,12 +13,14 @@ import WashingHud from '../features/washing/WashingHud'
 import type { Action } from '../simulation/actions'
 import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
+import type { ActiveInput } from '../simulation/work-context'
 import type { GuideSide } from '../world/scene'
 import OrderRail from './OrderRail'
 import { stationPrompt } from './session/station-prompt'
 
 export default function PlayHud({
   state,
+  activeInput,
   panel,
   target,
   needsStaffAccess,
@@ -36,6 +38,7 @@ export default function PlayHud({
   pause,
 }: {
   state: GameState
+  activeInput: ActiveInput
   panel: StationId | null
   target: StationId | null
   needsStaffAccess: boolean
@@ -70,6 +73,13 @@ export default function PlayHud({
     !!state.cleaning &&
     (target === state.cleaning.station || (target === 'wash' && cupCount(state.cleaning.heldCups) > 0))
   const focusedWork = !panel && (showPreparation || showColdBrew || showWashing || showCrafting || showCleaning)
+  const errorInWorkCard =
+    focusedWork &&
+    [
+      showCrafting && state.cup?.craft.fault,
+      showPreparation && state.preparation?.fault,
+      showColdBrew && state.coldBrew?.fault,
+    ].some((fault) => fault && fault === lastMessage?.text)
 
   return (
     <>
@@ -94,13 +104,16 @@ export default function PlayHud({
       {!panel && showCleaning && <CleaningHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showWashing && !showCleaning && <WashingHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showPreparation && !showWashing && !showCleaning && (
-        <PreparationHud state={state} target={target} act={act} stop={stopUse} />
+        <PreparationHud state={state} target={target} active={activeInput?.kind === 'prep'} act={act} stop={stopUse} />
       )}
-      {!panel && showColdBrew && <ColdBrewHud state={state} act={act} stop={stopUse} />}
+      {!panel && showColdBrew && (
+        <ColdBrewHud state={state} active={activeInput?.kind === 'cold'} act={act} stop={stopUse} />
+      )}
       {!panel && showCrafting && !showPreparation && !showWashing && !showCleaning && (
         <CraftingHud
           state={state}
           target={target}
+          active={activeInput?.kind === 'drink'}
           onUse={use}
           onStop={stopUse}
           onTool={tool}
@@ -112,7 +125,7 @@ export default function PlayHud({
           onDiscard={() => act({ type: 'discard-cup' })}
         />
       )}
-      {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId && (
+      {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId && !errorInWorkCard && (
         <div
           className={clsx(
             'absolute top-1/2 left-1/2 z-15 -translate-x-1/2 translate-y-22',
@@ -120,9 +133,11 @@ export default function PlayHud({
             'rounded-xl border border-danger/30 bg-orange-100 py-2.5 pr-3 pl-4 shadow-toast',
             'animate-appear text-body leading-relaxed text-danger',
             'data-[pos=true]:top-6 data-[pos=true]:translate-y-0',
+            'data-[work=true]:top-32 data-[work=true]:translate-y-0',
             'motion-reduce:animate-none max-tablet:max-w-[85vw]',
           )}
           data-pos={panel === 'pos'}
+          data-work={focusedWork}
           role="status"
           aria-live="polite"
           key={lastMessage.id}

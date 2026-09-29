@@ -8,17 +8,26 @@ import { preparationStep } from '../features/preparation/rules'
 import { WASH_STEPS } from '../features/washing/rules'
 import type { WorkContext } from './work-context'
 
-export function advanceWork(work: WorkContext, dt: number) {
+/** Integrate flow over the hold so short taps do not depend on animation-frame boundaries. */
+function pouredSeconds(held: number) {
+  const gentle = Math.min(held, 0.25) * 0.25
+  const ramp = Math.min(0.25, Math.max(0, held - 0.25))
+  return gentle + ramp * 0.25 + (0.75 * ramp * ramp) / 0.5 + Math.max(0, held - 0.5)
+}
+
+export function advanceWork(work: WorkContext, dt: number, heldSeconds: number) {
+  const seconds = Math.min(dt, 0.15)
+  const pouring = pouredSeconds(heldSeconds + seconds) - pouredSeconds(heldSeconds)
   const s = work.state
   if (work.input?.kind === 'drip') {
-    applyDrip(work, Math.min(dt, 0.15))
+    applyDrip(work, pouring)
   } else if (work.input?.kind === 'clean') {
     const cleaning = s.cleaning
     if (!cleaning || cleaning.id !== work.input.cleaningId || cleaning.stage === 'collect') {
       work.input = null
     } else {
       const duration = CLEANING_SECONDS[cleaning.stage]
-      cleaning.progress = Math.min(duration, cleaning.progress + Math.min(dt, 0.15))
+      cleaning.progress = Math.min(duration, cleaning.progress + seconds)
       if (cleaning.progress >= duration) {
         work.input = null
       }
@@ -28,9 +37,9 @@ export function advanceWork(work: WorkContext, dt: number) {
     if (!washing || washing.id !== work.input.washingId || washing.stage !== work.input.stage) {
       work.input = null
     } else {
-      const seconds = WASH_STEPS[work.input.stage].seconds
-      washing.progress = Math.min(seconds, washing.progress + Math.min(dt, 0.15))
-      if (washing.progress >= seconds) {
+      const duration = WASH_STEPS[work.input.stage].seconds
+      washing.progress = Math.min(duration, washing.progress + seconds)
+      if (washing.progress >= duration) {
         work.input = null
       }
     }
@@ -46,7 +55,7 @@ export function advanceWork(work: WorkContext, dt: number) {
     } else {
       const step = preparationStep(prep)
       if (step) {
-        applyPreparation(work, step, Math.min(dt, 0.15) * step.rate)
+        applyPreparation(work, step, (step.kind === 'pour' ? pouring : seconds) * step.rate)
       } else {
         work.input = null
       }
@@ -55,7 +64,7 @@ export function advanceWork(work: WorkContext, dt: number) {
     if (s.coldBrew?.id !== work.input.preparationId || s.coldBrew.step !== work.input.step) {
       work.input = null
     } else {
-      applyColdBrew(work, Math.min(dt, 0.15))
+      applyColdBrew(work, pouring)
     }
   } else if (work.input?.kind === 'drink') {
     const c = s.cup
@@ -69,7 +78,7 @@ export function advanceWork(work: WorkContext, dt: number) {
     ) {
       work.input = null
     } else {
-      applyCraft(work, op, Math.min(dt, 0.15) * op.rate)
+      applyCraft(work, op, (op.kind === 'pour' ? pouring : seconds) * op.rate)
     }
   }
 }

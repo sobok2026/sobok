@@ -21,6 +21,7 @@ export class CafeStore {
   private state: GameState
   private listeners = new Set<() => void>()
   private input: ActiveInput = null
+  private heldSeconds = 0
 
   constructor(state: GameState) {
     this.state = state
@@ -35,6 +36,7 @@ export class CafeStore {
 
   replace(state: GameState) {
     this.input = null
+    this.heldSeconds = 0
     this.state = state
     this.emit()
   }
@@ -42,7 +44,10 @@ export class CafeStore {
   getActiveInput = () => this.input
 
   stopActiveInput = () => {
+    if (!this.input) return
     this.input = null
+    this.heldSeconds = 0
+    this.emit()
   }
 
   private emit() {
@@ -51,6 +56,7 @@ export class CafeStore {
 
   dispatch(action: Action) {
     this.input = null
+    this.heldSeconds = 0
     if (this.state.phase === 'summary' && action.type !== 'next-day') {
       return
     }
@@ -186,10 +192,11 @@ export class CafeStore {
     completeJobs(work)
     expirePreparation(work, work.state.time)
     expireDrink(work, work.state.time)
-    advanceWork(work, dt)
+    advanceWork(work, dt, this.heldSeconds)
     settleDrip(work.state)
     advanceCustomer(work, dt)
     this.input = work.input
+    this.heldSeconds = work.input ? this.heldSeconds + Math.min(dt, 0.15) : 0
     this.state = work.state
     this.emit()
   }

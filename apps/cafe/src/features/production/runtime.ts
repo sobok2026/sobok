@@ -274,15 +274,21 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     }
   }
 
-  delta = Math.min(delta, Math.max(0, progressCap(step) - session.progress))
+  const effect = step.mixesMaterialId ? null : stockEffect(session, step)
+  const target = session.stepStart?.stepId === step.id ? session.stepStart.target : step.target
+  const transfer = effect?.transfer
+  const sourceCap =
+    transfer && transfer.movedMilliliters > PRODUCTION_EPSILON
+      ? (target * transfer.availableMilliliters) / transfer.movedMilliliters
+      : Infinity
+  const cap = Math.min(progressCap(step), sourceCap)
+  delta = Math.min(delta, Math.max(0, cap - session.progress))
 
   if (delta <= PRODUCTION_EPSILON) {
     work.input = null
     return
   }
 
-  const effect = step.mixesMaterialId ? null : stockEffect(session, step)
-  const target = session.stepStart?.stepId === step.id ? session.stepStart.target : step.target
   const nextStock = effect
     ? projectStockEffect(
         session,
@@ -328,6 +334,7 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
   if (Math.abs(session.progress - (step.maximum ?? Infinity)) < PRODUCTION_EPSILON) {
     session.progress = step.maximum ?? session.progress
   }
+  if (session.progress + PRODUCTION_EPSILON >= cap) work.input = null
 }
 
 /**

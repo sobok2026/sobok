@@ -55,44 +55,138 @@ export type GaugeTick = { at: number; label: string | null; minor?: boolean }
  * nothing changes when the target is reached: the ticks are the lines the vessel really carries and reading them
  * is the player's job.
  */
-export function WorkGauge({ label, fill, ticks }: { label: string; fill: number; ticks: GaugeTick[] }) {
-  const level = Math.round(Math.min(1, Math.max(0, fill)) * 1000) / 10
+export function WorkGauge({
+  label,
+  fill,
+  ticks,
+  startFill,
+  overview = false,
+  minimum = 0,
+  edgeLabels = ['바닥', '테두리'],
+}: {
+  label: string
+  fill: number
+  ticks: GaugeTick[]
+  startFill?: number
+  overview?: boolean
+  minimum?: number
+  edgeLabels?: [string, string]
+}) {
+  const position = (value: number) => ((value - minimum) / (1 - minimum)) * 100
+  const level = Math.min(100, Math.max(0, position(fill)))
+  const start = startFill !== undefined && startFill > minimum && startFill < 1 ? position(startFill) : null
+  const reading = (
+    <meter className="sr-only" min={0} max={100} value={Math.min(1, Math.max(0, fill)) * 100} aria-label={label}>
+      바닥에서 테두리까지 중 {Math.round(fill * 1000) / 10}% 높이
+    </meter>
+  )
+
+  if (overview) {
+    return (
+      <div className="mb-5 flex items-center gap-3 compact:mb-4">
+        <span className="shrink-0 text-sm text-muted">{label}</span>
+        {reading}
+        <div className="relative h-1.5 grow rounded bg-control" aria-hidden="true">
+          <span className="absolute inset-y-0 left-0 rounded bg-brand/55" style={{ width: `${level}%` }} />
+          {start !== null && (
+            <span
+              className="absolute -inset-y-0.5 -translate-x-1/2 border-l-2 border-dashed border-ink/70"
+              style={{ left: `${start}%` }}
+            />
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mb-4 compact:mb-3">
-      <meter className="sr-only" min={0} max={100} value={level} aria-label={label}>
-        바닥에서 테두리까지 중 {level}% 높이
-      </meter>
-      <div className="relative pt-6" aria-hidden="true">
-        <div className="relative h-3 overflow-hidden rounded-md bg-control shadow-[inset_0_0_0_1px_var(--color-control-line)]">
-          <i
-            className="absolute inset-y-0 left-0 bg-brand/55 transition-[width] duration-90 ease-linear motion-reduce:transition-none"
-            style={{ width: `${level}%` }}
-          />
-        </div>
-        {ticks.map((tick) => (
-          <span
-            key={`${tick.label}:${tick.at}`}
-            className={clsx(
-              'absolute top-5 bottom-0 w-0.5 -translate-x-1/2 bg-ink/75',
-              'data-[minor=true]:top-7 data-[minor=true]:w-px data-[minor=true]:bg-ink/50',
-            )}
-            style={{ left: `${tick.at * 100}%` }}
-            data-minor={!!tick.minor}
-          >
-            {tick.label && (
-              <span className="absolute bottom-full left-1/2 -translate-x-1/2 text-sm leading-5 text-muted tabular-nums">
-                {tick.label}
-              </span>
-            )}
+      <div className="mb-1 flex items-center justify-between gap-3 text-sm text-muted">
+        <span>{label}</span>
+        {start !== null && (
+          <span className="flex items-center gap-1.5">
+            <i className="h-3 border-l-2 border-dashed border-ink/70" aria-hidden="true" />
+            시작 수위
           </span>
-        ))}
+        )}
+      </div>
+      {reading}
+      <div className={clsx('relative', ticks.length ? 'pt-6' : 'pt-1')} aria-hidden="true">
+        <div className="relative h-4 overflow-hidden rounded bg-control shadow-[inset_0_0_0_1px_var(--color-control-line)]">
+          <i className="absolute inset-y-0 left-0 bg-brand/55" style={{ width: `${level}%` }} />
+        </div>
+        {ticks
+          .filter((tick) => tick.at >= minimum && tick.at <= 1)
+          .map((tick) => (
+            <span
+              key={`${tick.label}:${tick.at}`}
+              className={clsx(
+                'absolute top-5 bottom-0 w-0.5 -translate-x-1/2 bg-ink/75',
+                'data-[minor=true]:top-7 data-[minor=true]:w-px data-[minor=true]:bg-ink/50',
+              )}
+              style={{ left: `${position(tick.at)}%` }}
+              data-minor={!!tick.minor}
+            >
+              {tick.label && (
+                <span
+                  className={clsx(
+                    'absolute bottom-full left-1/2 -translate-x-1/2 text-sm leading-5 text-muted tabular-nums',
+                    'data-[at-start=true]:left-0 data-[at-start=true]:translate-x-0',
+                    'data-[at-end=true]:-translate-x-full',
+                  )}
+                  data-at-start={tick.at === minimum}
+                  data-at-end={tick.at === 1}
+                >
+                  {tick.label}
+                </span>
+              )}
+            </span>
+          ))}
+        {start !== null && (
+          <span
+            className={clsx(
+              'absolute -bottom-1 -translate-x-1/2 border-l-2 border-dashed border-ink/70',
+              ticks.length ? 'top-5' : 'top-0',
+            )}
+            style={{ left: `${start}%` }}
+          />
+        )}
+        {fill >= minimum && (
+          <span
+            className={clsx(
+              'absolute -bottom-1 w-0.5 -translate-x-1/2 bg-brand',
+              'after:absolute after:-top-0.5 after:left-1/2 after:size-1.5 after:-translate-x-1/2',
+              'after:rounded-full after:bg-brand',
+              ticks.length ? 'top-5' : 'top-0',
+            )}
+            style={{ left: `${level}%` }}
+          />
+        )}
       </div>
       <div className="mt-1 flex justify-between text-sm text-muted" aria-hidden="true">
-        <span>바닥</span>
-        <span>테두리</span>
+        <span>{edgeLabels[0]}</span>
+        <span>{edgeLabels[1]}</span>
       </div>
     </div>
+  )
+}
+
+export function WorkHoldStatus({
+  active,
+  started,
+  pouring = false,
+}: {
+  active: boolean
+  started: boolean
+  pouring?: boolean
+}) {
+  let text = started ? '멈춤' : '조작 대기'
+  if (active) text = pouring ? '붓는 중' : '진행 중'
+
+  return (
+    <p className="sr-only" role="status">
+      {text}
+    </p>
   )
 }
 
@@ -173,7 +267,7 @@ export function WorkChoices({
 }
 
 export function WorkActions({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap gap-2">{children}</div>
+  return <div className="flex flex-wrap gap-3">{children}</div>
 }
 
 export function WorkLinks({ children }: { children: ReactNode }) {
@@ -296,6 +390,7 @@ type WorkButtonProps = {
   children: ReactNode
   primary?: boolean
   disabled?: boolean
+  active?: boolean
   onUse: () => void
 } & ({ hold: true; onStop: () => void } | { hold?: false; onStop?: never })
 
@@ -305,10 +400,13 @@ export function WorkButton(props: WorkButtonProps) {
       type="button"
       className={clsx(
         'flex min-h-12 w-full min-w-0 grow basis-36 touch-none items-center justify-center gap-2.5 select-none',
-        'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-base font-medium text-ink',
+        'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-lg font-medium text-ink',
         'data-[primary=true]:border-brand data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
+        'data-[active=true]:ring-2 data-[active=true]:ring-brand/40 data-[active=true]:ring-offset-2',
       )}
       data-primary={props.primary && !props.disabled}
+      data-active={props.active && !props.disabled}
+      aria-pressed={props.hold ? !!props.active : undefined}
       disabled={props.disabled}
       onClick={props.hold ? undefined : props.onUse}
       onPointerDown={

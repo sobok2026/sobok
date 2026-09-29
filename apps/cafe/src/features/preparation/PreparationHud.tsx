@@ -6,12 +6,20 @@ import { cupHandsBusy } from '../../simulation/hands'
 import type { GameState, Preparation } from '../../simulation/state'
 import BatchWork from '../inventory/BatchWork'
 import { ProductionControls } from '../production/ProductionControls'
+import { ProductionGauge } from '../production/ProductionGauge'
+import { workReading, workTitle } from '../production/presentation'
 import type { WorkStep } from '../production/workflow'
 import { PREPARATIONS, preparationStep } from './rules'
 
-type Props = { state: GameState; target: StationId | null; act: (action: Action) => void; stop: () => void }
+type Props = {
+  state: GameState
+  target: StationId | null
+  active: boolean
+  act: (action: Action) => void
+  stop: () => void
+}
 
-export default function PreparationHud({ state, target, act, stop }: Props) {
+export default function PreparationHud({ state, target, active, act, stop }: Props) {
   const prep = state.preparation
   if (!prep || target !== 'prep') {
     return null
@@ -19,7 +27,7 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
 
   return (
     <WorkHud aria-label="부재료 직접 준비">
-      <PreparationWork state={state} prep={prep} act={act} stop={stop} />
+      <PreparationWork state={state} prep={prep} active={active} act={act} stop={stop} />
     </WorkHud>
   )
 }
@@ -27,11 +35,13 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
 function PreparationWork({
   state,
   prep,
+  active,
   act,
   stop,
 }: {
   state: GameState
   prep: Preparation
+  active: boolean
   act: (action: Action) => void
   stop: () => void
 }) {
@@ -48,7 +58,11 @@ function PreparationWork({
   if (prep.fault) {
     return (
       <>
-        <WorkHeader title={definition.name} />
+        <WorkHeader
+          title={step ? workTitle(step) : definition.name}
+          value={step ? (workReading(step, prep.progress) ?? undefined) : undefined}
+        />
+        {step && <ProductionGauge session={prep} step={step} />}
         <WorkBlocker reason="다시 준비해야 해요" fix={prep.fault} fault />
         {discard('배합 폐기')}
       </>
@@ -88,6 +102,7 @@ function PreparationWork({
       <ProductionControls
         session={prep}
         step={step}
+        active={active}
         blocker={workBlocker(state, prep, step)}
         onTool={() => act({ type: 'prep-tool' })}
         onUse={() => act({ type: 'prep-use' })}

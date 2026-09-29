@@ -23,6 +23,7 @@ export type CafeSessionProps = { store: CafeStore; hasSave: boolean; notice: str
 
 export function useCafeSession({ store, notice, preferences: initialPreferences }: CafeSessionProps) {
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot)
+  const activeInput = useSyncExternalStore(store.subscribe, store.getActiveInput)
   const { preferences, preferencesRef, preferencesError, soundStatus, sounds, updatePreferences } =
     useWorkPreferences(initialPreferences)
   const focused = useRef(true)
@@ -59,6 +60,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   const host = useRef<HTMLDivElement>(null)
   const input = useRef<HTMLInputElement>(null)
   const flags = useRef({ mode, panel, started, hasLock, confirmNew, mouseMode })
+  const lastTick = useRef<number | null>(null)
 
   flags.current = { mode, panel, started, hasLock, confirmNew, mouseMode }
 
@@ -88,6 +90,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
   function closeReference() {
     const previous = referenceReturn.current
+    lastTick.current = performance.now()
     flags.current.mode = previous.mode
     flags.current.panel = previous.panel
     setMode(previous.mode)
@@ -117,6 +120,31 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
           )
         : null,
     )
+  }
+
+  /** Settle elapsed input before every press, release and action, including taps between animation frames. */
+  function advanceTime(now = performance.now()) {
+    const previousTime = lastTick.current
+    lastTick.current = now
+    if (
+      previousTime === null ||
+      flags.current.mode !== 'play' ||
+      !flags.current.started ||
+      !flags.current.hasLock ||
+      document.hidden ||
+      !focused.current
+    ) {
+      return
+    }
+    const seconds = (now - previousTime) / 1000
+    if (seconds <= 0) return
+    const wasUsing = !!store.getActiveInput()
+    const previous = store.getSnapshot()
+    store.tick(seconds)
+    const feedback = tickSound(previous, store.getSnapshot())
+    if (feedback) sounds.current?.play(feedback)
+    updateSoundLoop()
+    if (wasUsing && !store.getActiveInput()) void persist()
   }
 
   function capture(): GameState {
@@ -191,6 +219,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   function resume() {
+    lastTick.current = performance.now()
     focused.current = true
     void sounds.current?.unlock()
     flags.current.mode = 'play'
@@ -201,6 +230,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   function start(fresh = false) {
+    lastTick.current = performance.now()
     focused.current = true
     void sounds.current?.unlock()
 
@@ -223,6 +253,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     if (!flags.current.hasLock) {
       return
     }
+    advanceTime()
     const previous = store.getSnapshot()
     store.dispatch(action)
     const current = store.getSnapshot()
@@ -314,6 +345,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   function stopUse() {
+    advanceTime()
     if (!store.getActiveInput()) {
       return
     }
@@ -372,34 +404,24 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   })
 
   useEffect(() => {
-    let last = performance.now()
-    const tick = window.setInterval(() => {
+    lastTick.current = performance.now()
+    let frame = 0
+    const tick = () => {
       const now = performance.now()
-      const seconds = (now - last) / 1000
+      const seconds = (now - (lastTick.current ?? now)) / 1000
       updateSoundLoop()
-      if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) {
-        return
+      if (
+        flags.current.mode !== 'play' ||
+        !focused.current ||
+        store.getActiveInput() ||
+        (customerWalking(store.getSnapshot().customer) && seconds >= 0.1) ||
+        seconds >= 0.5
+      ) {
+        advanceTime(now)
       }
-      last = now
-
-      if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
-        const wasUsing = !!store.getActiveInput()
-        const previous = store.getSnapshot()
-        store.tick(seconds)
-
-        if (focused.current) {
-          const feedback = tickSound(previous, store.getSnapshot())
-          if (feedback) {
-            sounds.current?.play(feedback)
-          }
-        }
-
-        updateSoundLoop()
-        if (wasUsing && !store.getActiveInput()) {
-          void persist()
-        }
-      }
-    }, 100)
+      frame = window.requestAnimationFrame(tick)
+    }
+    frame = window.requestAnimationFrame(tick)
     const save = window.setInterval(() => {
       void persist()
     }, 8000)
@@ -408,7 +430,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       if (document.hidden && flags.current.started) {
         pause()
       }
-      last = performance.now()
+      lastTick.current = performance.now()
     }
 
     const keyboard = (event: KeyboardEvent) => {
@@ -479,12 +501,13 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     document.addEventListener('visibilitychange', hidden)
 
     const blur = () => {
-      focused.current = false
       stopUse()
+      focused.current = false
       sounds.current?.stop()
     }
 
     const focus = () => {
+      lastTick.current = performance.now()
       focused.current = true
     }
 
@@ -493,7 +516,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     window.addEventListener('focus', focus)
 
     return () => {
-      clearInterval(tick)
+      window.cancelAnimationFrame(frame)
       clearInterval(save)
       document.removeEventListener('visibilitychange', hidden)
       window.removeEventListener('keydown', keyboard)
@@ -527,6 +550,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
   return {
     state,
+    activeInput,
     preferences,
     preferencesError,
     soundStatus,

@@ -11,6 +11,7 @@ import WashingPanel from '../features/washing/WashingPanel'
 import type { Action } from '../simulation/actions'
 import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
+import type { ActiveInput } from '../simulation/work-context'
 
 const PosPanel = lazy(() => import('../features/service/PosPanel'))
 const DripPanel = lazy(() => import('../features/drip-coffee/DripPanel'))
@@ -21,11 +22,13 @@ const DripPanel = lazy(() => import('../features/drip-coffee/DripPanel'))
  */
 export default function StationPanel({
   state,
+  activeInput,
   panel,
   act,
   closePanel,
 }: {
   state: GameState
+  activeInput: ActiveInput
   panel: StationId | null
   act: (action: Action) => void
   closePanel: (lock?: boolean) => void
@@ -86,7 +89,7 @@ export default function StationPanel({
         {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}
         {panel === 'urn' && (
           <Suspense fallback={<p role="status">URN 작업을 불러오고 있어요.</p>}>
-            <DripPanel state={state} act={act} />
+            <DripPanel state={state} activeInput={activeInput} act={act} />
           </Suspense>
         )}
         {panel === 'wash' && <WashingPanel state={state} act={act} />}

@@ -16,6 +16,8 @@ import { craftBlocker } from '../../simulation/guidance'
 import type { GameState } from '../../simulation/state'
 import { isReusableCup } from '../inventory/cups'
 import { ProductionControls } from '../production/ProductionControls'
+import { ProductionGauge } from '../production/ProductionGauge'
+import { workReading, workTitle } from '../production/presentation'
 import { PRODUCTION_EPSILON, type WorkStep } from '../production/workflow'
 import { CUSTOMER_STATUS } from '../service/customer'
 import {
@@ -32,6 +34,7 @@ import {
 type Props = {
   state: GameState
   target: StationId | null
+  active: boolean
   onUse: (station: StationId) => void
   onStop: () => void
   onTool: (station: StationId) => void
@@ -60,6 +63,7 @@ function CraftingWork({
   state,
   cup,
   station,
+  active,
   onUse,
   onStop,
   onTool,
@@ -76,7 +80,11 @@ function CraftingWork({
   if (craft.fault) {
     return (
       <>
-        <WorkHeader title="다시 만들어야 해요" />
+        <WorkHeader
+          title={step ? workTitle(step) : '다시 만들어야 해요'}
+          value={step ? (workReading(step, craft.progress) ?? undefined) : undefined}
+        />
+        {step && <ProductionGauge session={craft} step={step} />}
         <WorkBlocker reason={craft.fault} fix="Q를 길게 눌러 정리하고 새 컵으로 시작하세요." fault />
         <WorkLinks>
           <HoldAction onConfirm={onDiscard}>{isReusableCup(craft.kind) ? '비우고 세척 대기로' : '컵 폐기'}</HoldAction>
@@ -114,6 +122,7 @@ function CraftingWork({
         <ProductionControls
           session={craft}
           step={step}
+          active={active}
           blocker={stepBlocker(state, cup, step)}
           onTool={() => onTool(station)}
           onUse={() => onUse(station)}

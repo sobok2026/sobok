@@ -1,13 +1,13 @@
-import { formatDecimal } from '@sobok/std/format/number'
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import { batchDate } from '../../shared/format'
+import { batchDate, formatQuantity } from '../../shared/format'
 import {
   HoldAction,
   WorkActions,
   WorkBlocker,
   WorkButton,
   WorkHeader,
+  WorkHoldStatus,
   WorkHud,
   WorkLinks,
   WorkMeter,
@@ -23,10 +23,12 @@ const handsBusy = { reason: '손이 비어 있지 않아요', fix: '컵과 다�
 
 export default function ColdBrewHud({
   state,
+  active,
   act,
   stop,
 }: {
   state: GameState
+  active: boolean
   act: (action: Action) => void
   stop: () => void
 }) {
@@ -37,7 +39,7 @@ export default function ColdBrewHud({
 
   return (
     <WorkHud aria-label="콜드 브루 직접 준비">
-      <ColdBrewWork state={state} brew={brew} act={act} stop={stop} />
+      <ColdBrewWork state={state} brew={brew} active={active} act={act} stop={stop} />
     </WorkHud>
   )
 }
@@ -45,11 +47,13 @@ export default function ColdBrewHud({
 function ColdBrewWork({
   state,
   brew,
+  active,
   act,
   stop,
 }: {
   state: GameState
   brew: ColdBrew
+  active: boolean
   act: (action: Action) => void
   stop: () => void
 }) {
@@ -69,7 +73,7 @@ function ColdBrewWork({
   if (brew.fault) {
     return (
       <>
-        <WorkHeader title={step.label} />
+        <WorkHeader title={step.label} value={formatQuantity(brew.progress, step.unit)} />
         <WorkBlocker reason="다시 준비해야 해요" fix={brew.fault} fault />
         {discard('배치 폐기')}
       </>
@@ -128,12 +132,13 @@ function ColdBrewWork({
   const holding = brew.tool === step.tool
   const measuring = brew.step < 2
   // The bag and the jug read what went in so far; the recipe amount stays in the help.
-  const value = measuring ? `${formatDecimal(brew.progress)}${step.unit}` : undefined
+  const value = measuring ? formatQuantity(brew.progress, step.unit) : undefined
 
   return (
     <>
       <WorkHeader title={step.label} value={value} />
       {handsFull && <WorkBlocker {...handsBusy} />}
+      {!handsFull && holding && measuring && <WorkHoldStatus active={active} started={started} pouring />}
       {!handsFull && (
         <WorkActions>
           {(step.tool || brew.tool) && (
@@ -147,7 +152,14 @@ function ColdBrewWork({
             </WorkButton>
           )}
           {holding && measuring && (
-            <WorkButton shortcut="Space" hold primary onUse={() => act({ type: 'cold-use' })} onStop={stop}>
+            <WorkButton
+              shortcut="Space"
+              hold
+              primary
+              active={active}
+              onUse={() => act({ type: 'cold-use' })}
+              onStop={stop}
+            >
               누르고 {brew.step === 0 ? '원두 담기' : '물 붓기'}
             </WorkButton>
           )}

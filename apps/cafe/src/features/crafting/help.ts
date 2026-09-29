@@ -133,6 +133,9 @@ function stepAction(craft: CraftState, step: WorkStep) {
   if (backgroundWork(step)) {
     return 'Space로 시작하면 장비가 스스로 멈춰요.'
   }
+  if (step.kind === 'pour') {
+    return 'Space를 길게 눌러 붓고 짧게 눌러 조금씩 보충하세요. 도구를 내려놓고 F로 확인하면 판정해요.'
+  }
   if (continuousWork(step)) {
     return 'Space를 누른 채 진행하고 알맞은 양에서 손을 떼세요. 도구를 내려놓고 F로 확인하면 판정해요.'
   }

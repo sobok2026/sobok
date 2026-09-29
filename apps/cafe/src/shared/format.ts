@@ -1,3 +1,5 @@
+import { formatDecimal } from '@sobok/std/format/number'
+
 export function batchDate(time: number | null, withSeconds = false) {
   return time === null
     ? '—'
@@ -14,6 +16,14 @@ export function batchDate(time: number | null, withSeconds = false) {
 
 export function money(value: number) {
   return `${Math.round(value).toLocaleString('ko-KR')}원`
+}
+
+export function formatQuantity(value: number, unit: string) {
+  if ((unit === 'l' || unit === 'L') && value < 1) {
+    return `${formatDecimal(value * 1000)}ml`
+  }
+
+  return `${formatDecimal(value)}${unit}`
 }
 
 /** Picks the particle form by the last syllable's final consonant; Latin endings read as open syllables. */

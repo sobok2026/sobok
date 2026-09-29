@@ -154,7 +154,7 @@ export function createWhippingDispenser(parent: THREE.Object3D) {
     ctx.fillStyle = '#838a8d'
     ctx.font = canvasFont(h * 0.4)
     ctx.textAlign = 'center'
-    ctx.fillText('max.  0.5 L', w / 2, h * 0.5)
+    ctx.fillText('max.  500 ml', w / 2, h * 0.5)
     ctx.fillRect(w * 0.22, h * 0.76, w * 0.56, h * 0.035)
   })
   const liquidMaterial = material({ color: '#f4ecdc', roughness: 0.65 })

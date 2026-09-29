@@ -3,6 +3,7 @@ import { recipeCatalog } from '../../content/catalog'
 import type { ResolvedOperation } from '../../content/recipe-plan'
 import type { RecipeAmount, RecipeTemperature } from '../../content/recipe-schema'
 import { toward } from '../../content/stations'
+import { formatQuantity } from '../../shared/format'
 import { continuousWork } from './runtime'
 import { itemName, portionNames } from './step-labels'
 import type { WorkStep } from './workflow'
@@ -208,7 +209,10 @@ export function workTitle(step: WorkStep): string {
       return `${vesselLabel(op.into)}에 ${nameOf(op.materialId)} ${verb}`
     }
     case 'transfer':
-      return `${vesselLabel(op.from)}에서 ${toward(vesselLabel(op.into))} 붓기`
+      if (op.portion === 'foam') return `${vesselLabel(op.into)}에 거품 올리기`
+      if (op.from.startsWith('steam-pitcher') && op.portion === 'liquid')
+        return `${vesselLabel(op.into)}에 스팀 우유 붓기`
+      return `${vesselLabel(op.into)}에 붓기`
     case 'strain':
       return `${vesselLabel(op.from)}에서 ${toward(vesselLabel(op.into))} 걸러 붓기`
     case 'espresso':
@@ -250,7 +254,7 @@ export function workReading(step: WorkStep, progress: number): string | null {
     return step.unit === '초' ? `${formatDecimal(progress)}초` : null
   }
   if (step.kind === 'pour' && amount && (amount.kind === 'amount' || amount.kind === 'amount-range')) {
-    return `${formatDecimal(progress)}${amount.unit}`
+    return formatQuantity(progress, amount.unit)
   }
   // A drizzle counts the turns of the hand, not the height in the cup.
   const turns = amount && countUnit(amount)
@@ -259,7 +263,7 @@ export function workReading(step: WorkStep, progress: number): string | null {
 
 const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {
   add: '담기',
-  transfer: '옮기기',
+  transfer: '붓기',
   strain: '걸러 옮기기',
   mix: '젓기',
   shake: '흔들기',
@@ -311,6 +315,9 @@ export function workUseLabel(step: WorkStep): string {
   }
 
   const operation = step.operation
+  if (operation.action === 'transfer' && operation.portion === 'foam') {
+    return continuousWork(step) ? '누르고 거품 올리기' : '거품 올리기'
+  }
   const unit =
     operation.action === 'add' && (operation.amount.kind === 'count' || operation.amount.kind === 'count-range')
       ? operation.amount.unit

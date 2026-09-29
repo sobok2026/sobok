@@ -1,17 +1,15 @@
 import type { ReactNode } from 'react'
-import { recipeCatalog } from '../../content/catalog'
-import { vesselProfile } from '../../content/stock-amounts'
 import { Button } from '../../shared/ui/Button'
 import {
-  type GaugeTick,
   WorkActions,
   WorkBlocker,
   WorkButton,
   WorkChoices,
-  WorkGauge,
   WorkHeader,
+  WorkHoldStatus,
   WorkNote,
 } from '../../shared/ui/WorkControls'
+import { ProductionGauge } from './ProductionGauge'
 import { workReading, workTitle, workUseLabel } from './presentation'
 import { continuousWork } from './runtime'
 import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workflow'
@@ -19,6 +17,7 @@ import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workf
 type Props = {
   session: ProductionState
   step: WorkStep
+  active: boolean
   title?: ReactNode
   blocker?: { reason: string; fix: string; fault?: boolean } | null
   onTool: () => void
@@ -29,46 +28,10 @@ type Props = {
   onObserve?: (id: string, value: boolean) => void
 }
 
-const RIM_TICKS_MM = [5, 10, 15, 20]
-
-/** Where the liquid stands now, including a pour past the recipe amount that the stock model stops counting. */
-function liquidFill(session: ProductionState, step: WorkStep, id: string) {
-  const actual = session.vessels[id]?.fill ?? 0
-  const start = session.stepStart?.stepId === step.id ? session.stepStart : null
-  const from = start?.fills[id]
-  const to = start?.effect.targetFills[id]
-  if (!start || from === undefined || to === undefined || session.progress <= start.target) {
-    return actual
-  }
-  return Math.min(1, from + ((to - from) * session.progress) / start.target)
-}
-
-/** A held pour into a vessel whose target is a line or a gap reads on the height gauge; amounts read as numbers. */
-function heightGauge(session: ProductionState, step: WorkStep) {
-  const operation = step.operation
-  if (step.kind !== 'pour' || workReading(step, session.progress) !== null || !('into' in operation)) {
-    return null
-  }
-  const amount = 'amount' in operation ? operation.amount : undefined
-  const named = amount?.kind === 'mark' ? amount.label : undefined
-  const profile = vesselProfile(recipeCatalog, operation.into, step.stockContext, named)
-  const ticks: GaugeTick[] = profile.marks.map((mark) => ({ at: mark.fill, label: mark.label }))
-  if (profile.cup) {
-    // Cups carry no scale near the rim, so a pocket ruler stands in for the barista's eye.
-    for (const millimeters of RIM_TICKS_MM) {
-      ticks.push({
-        at: 1 - millimeters / profile.shape.heightMillimeters,
-        label: millimeters % 10 === 0 ? String(millimeters) : null,
-        minor: true,
-      })
-    }
-  }
-  return { fill: liquidFill(session, step, operation.into), ticks }
-}
-
 export function ProductionControls({
   session,
   step,
+  active,
   title,
   blocker,
   onTool,
@@ -115,8 +78,7 @@ export function ProductionControls({
   const halted = !!blocker || !!session.fault
   const canUse = rightTool && !halted && !serving
   const showTool = !!session.tool || (!!step.tool && !halted)
-  const canConfirm = !session.tool && !halted && (started || serving)
-  const gauge = heightGauge(session, step)
+  const canConfirm = !active && !session.tool && !halted && (started || serving)
   const needsTool = !!step.tool && !session.tool
 
   return (
@@ -130,17 +92,27 @@ export function ProductionControls({
           onPick={onChoose}
         />
       )}
-      {!halted && gauge && <WorkGauge label="수위" fill={gauge.fill} ticks={gauge.ticks} />}
+      <ProductionGauge session={session} step={step} />
+      {canUse && continuousWork(step) && (
+        <WorkHoldStatus active={active} started={started} pouring={step.kind === 'pour'} />
+      )}
       <WorkActions>
         {showTool && (
-          <WorkButton shortcut="G" primary={needsTool || !rightTool} onUse={onTool}>
+          <WorkButton shortcut="G" primary={!canConfirm && (needsTool || !rightTool)} onUse={onTool}>
             {session.tool
               ? `${session.tool === step.tool?.id ? step.tool.name : '도구'} 놓기`
               : `${step.tool!.name} 집기`}
           </WorkButton>
         )}
         {canUse && continuousWork(step) && (
-          <WorkButton shortcut="Space" primary={!!session.tool || !started} hold onUse={onUse} onStop={onStop}>
+          <WorkButton
+            shortcut="Space"
+            primary={active || !!session.tool || !started}
+            active={active}
+            hold
+            onUse={onUse}
+            onStop={onStop}
+          >
             {workUseLabel(step)}
           </WorkButton>
         )}

@@ -225,7 +225,9 @@ function CafeGame(props: CafeSessionProps) {
 
       {mode === 'overview' && <ShiftOverview state={state} onClose={resume} />}
 
-      {running && panel && <StationPanel state={state} panel={panel} act={act} closePanel={closePanel} />}
+      {running && panel && (
+        <StationPanel state={state} activeInput={session.activeInput} panel={panel} act={act} closePanel={closePanel} />
+      )}
 
       {mode === 'guide' && (
         <GameDialog title="도움말" onClose={closeReference} wide>

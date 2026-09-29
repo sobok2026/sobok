@@ -33,7 +33,11 @@
   {
     "recipeId": "glazed-foam-black-tea",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6300,
+      "grande": 7100,
+      "venti": 7900
+    },
     "color": "#927653"
   },
   {
@@ -59,7 +63,11 @@
   {
     "recipeId": "matcha-glazed-tea-latte",
     "variantId": "hot",
-    "prices": {},
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
     "color": "#927653"
   },
   {
@@ -75,7 +83,9 @@
   {
     "recipeId": "pure-hojicha",
     "variantId": "hot",
-    "prices": {},
+    "prices": {
+      "tall": 5100
+    },
     "color": "#967345"
   },
   {
@@ -91,7 +101,11 @@
   {
     "recipeId": "pure-matcha",
     "variantId": "hot",
-    "prices": {},
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500
+    },
     "color": "#568438"
   },
   {
@@ -107,7 +121,9 @@
   {
     "recipeId": "gwanghwamun-mixato",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "single": 12000
+    },
     "color": "#927653"
   },
   {
@@ -262,7 +278,9 @@
   {
     "recipeId": "lemon-chamomile-blendy-tea",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6900
+    },
     "color": "#927653"
   },
   {
@@ -276,7 +294,9 @@
   {
     "recipeId": "roasted-macadamia-latte",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6500
+    },
     "color": "#927653"
   },
   {
@@ -496,7 +516,9 @@
   {
     "recipeId": "byeoldabang-vanilla-latte",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "grande": 6100
+    },
     "color": "#927653"
   },
   {
@@ -585,7 +607,11 @@
   {
     "recipeId": "blueberry-delight-yogurt-blended",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6700,
+      "grande": 7300,
+      "venti": 8100
+    },
     "color": "#927653"
   },
   {
@@ -705,7 +731,9 @@
   {
     "recipeId": "snow-matcha-latte",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 7900
+    },
     "color": "#927653"
   },
   {
@@ -832,7 +860,10 @@
   {
     "recipeId": "steamed-milk",
     "variantId": "kids",
-    "prices": {},
+    "prices": {
+      "short": 3600,
+      "tall": 4100
+    },
     "color": "#927653"
   },
   {
@@ -848,7 +879,11 @@
   {
     "recipeId": "signature-hot-chocolate",
     "variantId": "kids",
-    "prices": {},
+    "prices": {
+      "tall": 5900,
+      "grande": 6500,
+      "venti": 7300
+    },
     "color": "#927653"
   },
   {
@@ -992,25 +1027,37 @@
   {
     "recipeId": "iced-full-leaf-tea",
     "variantId": "black-tea",
-    "prices": {},
+    "prices": {
+      "tall": 4500,
+      "venti": 6100
+    },
     "color": "#927653"
   },
   {
     "recipeId": "iced-full-leaf-tea",
     "variantId": "herbal-tea",
-    "prices": {},
+    "prices": {
+      "tall": 4500,
+      "venti": 6100
+    },
     "color": "#927653"
   },
   {
     "recipeId": "iced-full-leaf-tea",
     "variantId": "white-tea",
-    "prices": {},
+    "prices": {
+      "tall": 4500,
+      "venti": 6100
+    },
     "color": "#927653"
   },
   {
     "recipeId": "iced-full-leaf-tea",
     "variantId": "green-tea",
-    "prices": {},
+    "prices": {
+      "tall": 5300,
+      "venti": 6900
+    },
     "color": "#927653"
   },
   {
@@ -1086,7 +1133,9 @@
   {
     "recipeId": "espresso-macchiato",
     "variantId": "doppio",
-    "prices": {},
+    "prices": {
+      "single": 4500
+    },
     "color": "#927653"
   },
   {
@@ -1125,7 +1174,11 @@
   {
     "recipeId": "espresso-cream-french-vanilla-latte",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
     "color": "#927653"
   },
   {
@@ -1195,7 +1248,9 @@
   {
     "recipeId": "whiskey-infused-cold-brew",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "single": 14000
+    },
     "color": "#927653"
   },
   {
@@ -1409,7 +1464,11 @@
   {
     "recipeId": "castella-sweet-potato-latte",
     "variantId": "hot",
-    "prices": {},
+    "prices": {
+      "tall": 6900,
+      "grande": 7700,
+      "venti": 8500
+    },
     "color": "#927653"
   },
   {
@@ -1475,13 +1534,21 @@
   {
     "recipeId": "cappuccino",
     "variantId": "dry",
-    "prices": {},
+    "prices": {
+      "tall": 5200,
+      "grande": 5800,
+      "venti": 6600
+    },
     "color": "#927653"
   },
   {
     "recipeId": "cappuccino",
     "variantId": "wet",
-    "prices": {},
+    "prices": {
+      "tall": 5200,
+      "grande": 5800,
+      "venti": 6600
+    },
     "color": "#927653"
   },
   {
@@ -1655,7 +1722,9 @@
   {
     "recipeId": "pure-matcha-mojito",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "single": 15900
+    },
     "color": "#927653"
   },
   {
@@ -1671,7 +1740,9 @@
   {
     "recipeId": "friends-cinnamon-dolce-foam-cappuccino",
     "variantId": "iced",
-    "prices": {},
+    "prices": {
+      "tall": 6500
+    },
     "color": "#927653"
   },
   {

@@ -2,6 +2,113 @@
 
 공개 자료로 확인한 가격을 메뉴별로 정리했다. 과거 메뉴판의 가격은 현재 매장 가격이라고 단정하지 않는다. 앱에는 각 제공 규격의 가격 한 개만 저장한다. 확인하지 못한 가격은 비워 두며 사이즈 차액으로 만들어내지 않는다.
 
+2026-09-29 사용자 결정으로 키즈 스팀 우유·키즈 시그니처 핫 초콜릿과 드라이·웻 카푸치노는 기본 음료의 같은 사이즈 가격을 적용한다. 이 네 제조 옵션 외의 HOT/ICED 가격은 각각 공개 자료로 확인한다.
+
+## 글레이즈드 폼 블랙 티 · ICED
+
+tall 6,300원 / grande 7,100원 / venti 7,900원
+
+- [스타벅스 2026 Autumn 공식 행사](https://www.starbucks.co.kr/whats_new/campaign_view.do?pro_seq=3557)
+- [글레이즈드 폼 블랙 티 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2026/wn_autumn_promotion_260928_03.jpg) (2026-09-28)
+- 공식 이미지의 T6.3/G7.1/V7.9 천원 표기를 직접 확인했다.
+
+## 말차 글레이즈드 티 라떼 · HOT
+
+tall 6,700원 / grande 7,500원 / venti 8,300원
+
+- [스타벅스 2026 Autumn 공식 행사](https://www.starbucks.co.kr/whats_new/campaign_view.do?pro_seq=3557)
+- [HOT 말차 글레이즈드 티 라떼 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2026/wn_autumn_promotion_260928_02.jpg) (2026-09-28)
+- HOT 머그 이미지와 해당 HOT 상품 링크가 연결된 가격표의 T6.7/G7.5/V8.3을 직접 확인했다. 아래 ICED 항목의 2025년 가격과는 자료 시점이 다르므로 온도에 따른 차액으로 해석하지 않는다.
+
+## 광화문 믹사토 · ICED
+
+single 12,000원
+
+- [스타벅스 공식 리저브 광화문 오픈 안내](https://www.starbucks.co.kr/whats_new/newsView.do?seq=6109) (2025-08-27)
+- [광화문 믹사토·퓨어 말차 모히토 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2025/wn_reservegwanghwamun_03_250828.jpg)
+- 해당 매장 전용 칵테일의 12.0 천원 단일 제공가를 확인했다. 가격표에 Short 표기는 없으므로 원문 제조 규격은 그대로 두고 판매 규격은 `single`로 연결한다.
+
+## 퓨어 말차 모히토 · ICED
+
+single 15,900원
+
+- [스타벅스 공식 리저브 광화문 오픈 안내](https://www.starbucks.co.kr/whats_new/newsView.do?seq=6109) (2025-08-27)
+- [광화문 믹사토·퓨어 말차 모히토 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2025/wn_reservegwanghwamun_03_250828.jpg)
+- 해당 매장 전용 칵테일의 15.9 천원 단일 제공가를 확인했다. 가격표에 Short 표기는 없으므로 원문 제조 규격은 그대로 두고 판매 규격은 `single`로 연결한다.
+
+## 위스키 인퓨즈드 콜드브루 · ICED
+
+single 14,000원
+
+- [스타벅스 공식 리저브 도산 오픈 안내](https://www.starbucks.co.kr/whats_new/newsView.do?seq=5949) (2025-04-28)
+- [리저브 도산 음료 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2025/wn_reserve_dosan_250428_04.jpg)
+- BAR MIXATO 항목의 위스키 인퓨즈드 콜드 브루 14.0 천원·One Size 표기를 직접 확인했다. 원문 제조 규격은 유지하고 판매 규격은 `single`로 연결한다.
+
+## 에스프레소 크림 프렌치 바닐라 라떼 · ICED
+
+tall 6,700원 / grande 7,500원 / venti 8,300원
+
+- [스타벅스 2026 NEW YEAR 2 공식 행사](https://www.starbucks.co.kr/whats_new/campaign_view.do?pro_seq=3261)
+- [ICED 에스프레소 크림 프렌치 바닐라 라떼 공식 가격 이미지](https://image.istarbucks.co.kr/img/event/2026/wn_newYear2_promotion_260203_01.jpg) (2026-02-03)
+- 아이스 음료 이미지 옆에 명시된 T6.7/G7.5/V8.3 천원 표기를 직접 확인했다. 사이즈업 행사 할인가는 사용하지 않았다.
+
+## 로스티드 마카다미아 라떼 · ICED
+
+tall 6,500원
+
+- [ICED Tall 가격을 명시한 로스티드 마카다미아 라떼 주문 후기](https://earth-archiving.com/entry/스타벅스-로스티드-마카다미아-라떼-솔직-후기-칼로리-커스텀-추천-아쉬운-점) (2025-07-21)
+- 해당 시즌의 ICED Tall 기본가다. Grande/Venti 가격은 확인하지 못했다.
+
+## 별다방 바닐라 라떼 · ICED
+
+grande 6,100원
+
+- [이마트 역삼점의 별다방 바닐라 라떼 ICED Grande 사이렌 오더 픽업 후기](https://fotolife.tistory.com/entry/1961) (2021-01-25)
+- 본문에서 아이스·Grande 단일 사이즈·기본가 6,100원을 함께 확인했다. BOGO와 무료 샷 추가 적용 전 음료 가격이며, 해당 시점의 딜리버리 전용 메뉴 가격이다.
+
+## 블루베리 딜라이트 요거트 블렌디드 · ICED
+
+tall 6,700원 / grande 7,300원 / venti 8,100원
+
+- [과천DT점 블루베리 딜라이트 요거트 블렌디드 후기의 사이즈별 가격](https://www.diningcode.com/profile.php?rid=s8XBkY0MF7M6) (2026-09-29 확인)
+- [원문 주문 후기](https://blog.naver.com/mokkacookie/224384068792)
+- 다이닝코드에 수록된 후기에서 T/G/V 기본가를 각각 확인했다. Grande를 6,700원에 주문한 내역은 사이즈업 쿠폰 적용가이므로 기본가와 구분한다.
+
+## 에스프레소 마키아또 · 도피오
+
+single 4,500원
+
+- [Solo/Doppio를 구분한 2024 스타벅스 가격표](https://priceon.tistory.com/entry/2024-스타벅스-메뉴-가격-총정리) (2024-04-17)
+- 일반 에스프레소 메뉴 표의 Solo 4,000원·Doppio 4,500원을 확인했다. 리저브 메뉴의 동명 음료와 구분하며, 2024년 공개 가격을 현행가로 표현하지 않는다.
+
+## 스팀 우유 · 키즈
+
+short 3,600원 / tall 4,100원
+
+- 2026-09-29 사용자 결정으로 기본 스팀 우유와 같은 사이즈 가격을 적용한다. 키즈는 레시피의 스팀 온도 54°C를 유지한다.
+- 기본 가격의 공개 출처와 적용 시점은 아래 스팀 우유 HOT 항목을 따른다.
+
+## 시그니처 핫 초콜릿 · 키즈
+
+tall 5,900원 / grande 6,500원 / venti 7,300원
+
+- 2026-09-29 사용자 결정으로 기본 시그니처 핫 초콜릿과 같은 사이즈 가격을 적용한다. 키즈는 레시피의 스팀 온도 54°C를 유지한다.
+- 기본 가격의 공개 출처와 적용 시점은 아래 시그니처 핫 초콜릿 HOT 항목을 따른다. 기본 음료에서 미확인인 Short는 비워 둔다.
+
+## 카푸치노 · 드라이 카푸치노
+
+tall 5,200원 / grande 5,800원 / venti 6,600원
+
+- 2026-09-29 사용자 결정으로 기본 카푸치노와 같은 사이즈 가격을 적용한다. 우유·거품 비율은 드라이 제조법을 따른다.
+- 기본 가격의 공개 출처와 적용 시점은 아래 카푸치노 HOT 항목을 따른다. 기본 음료에서 미확인인 Short는 비워 둔다.
+
+## 카푸치노 · 웻 카푸치노
+
+tall 5,200원 / grande 5,800원 / venti 6,600원
+
+- 2026-09-29 사용자 결정으로 기본 카푸치노와 같은 사이즈 가격을 적용한다. 우유·거품 비율은 웻 제조법을 따른다.
+- 기본 가격의 공개 출처와 적용 시점은 아래 카푸치노 HOT 항목을 따른다. 기본 음료에서 미확인인 Short는 비워 둔다.
+
 ## 블랙 글레이즈드 라떼 · HOT
 
 tall 6,700원 / grande 7,500원 / venti 8,300원
