@@ -375,7 +375,7 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
     )
     .map((job) => ({
       job,
-      distance: Math.hypot(position[0] - STATIONS[job.station].x, position[1] - STATIONS[job.station].z),
+      distance: Math.hypot(position[0] - STATIONS[job.station].x, position[1] - STATIONS[job.station].z, position[4]),
     }))
     .filter((item) => item.distance <= 3.5)
     .sort((a, b) => a.distance - b.distance)[0]

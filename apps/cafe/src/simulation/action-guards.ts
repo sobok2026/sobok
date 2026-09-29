@@ -92,7 +92,7 @@ export function canDispatch(work: WorkContext, action: Action) {
       'close',
     ].includes(action.type)
   ) {
-    fail('콜드 브루 계량 도구를 G로 먼저 내려놓아주세요.')
+    fail('콜드 브루 계량 도구를 먼저 내려놓아주세요.')
     return false
   }
 
@@ -135,7 +135,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     fail(
       cupCount(s.cleaning!.heldCups)
         ? '회수한 컵을 세척대에 먼저 내려놓아주세요.'
-        : `${STATIONS[s.cleaning!.station].name}에서 G로 청소용 천을 내려놓아주세요.`,
+        : `${STATIONS[s.cleaning!.station].name}에서 청소용 천을 내려놓아주세요.`,
     )
     return false
   }
@@ -183,7 +183,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     fail(
       s.washing?.stage === 'carrying'
         ? '씻은 용기를 제자리에 먼저 놓아주세요.'
-        : '세척대에서 G로 스펀지를 먼저 내려놓아주세요.',
+        : '세척대에서 스펀지를 먼저 내려놓아주세요.',
     )
     return false
   }

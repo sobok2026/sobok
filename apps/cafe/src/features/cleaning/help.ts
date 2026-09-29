@@ -8,14 +8,14 @@ export function cleaningTip(work: Cleaning): Tip {
   if (cupCount(work.heldCups)) {
     return {
       title: '회수한 컵을 세척대로 옮기세요',
-      action: '세척대로 가져가 E로 내려놓으세요.',
+      action: '세척대로 가져가 내려놓으세요.',
       reason: '얼룩이 남아 있으면 원래 자리로 돌아가 닦아주세요.',
     }
   }
   if (work.stage === 'collect') {
     return {
       title: '사용한 컵을 회수하세요',
-      action: `${STATIONS[work.station].name}에서 E로 컵을 집으세요.`,
+      action: `${STATIONS[work.station].name}에서 컵을 집으세요.`,
       reason: '컵을 모두 세척대로 옮긴 뒤 얼룩을 닦아요.',
     }
   }
@@ -30,10 +30,10 @@ export function cleaningTip(work: Cleaning): Tip {
 
 function cleaningAction(work: Cleaning, ready: boolean) {
   if (ready) {
-    return work.clothHeld ? 'G로 천을 놓고 F로 정리를 확인하세요.' : 'F로 정리를 마치세요.'
+    return work.clothHeld ? '천을 놓고 확인 버튼으로 정리를 확인하세요.' : '확인 버튼으로 정리를 마치세요.'
   }
   if (work.stage === 'wipe' && !work.clothHeld) {
-    return 'G로 청소용 천을 집으세요.'
+    return '청소용 천을 집으세요.'
   }
-  return 'Space나 작업 버튼을 누르고 있으면 진행돼요.'
+  return '작업 버튼을 누르고 있으면 진행돼요.'
 }

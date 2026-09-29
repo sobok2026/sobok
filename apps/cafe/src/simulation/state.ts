@@ -4,7 +4,7 @@ import { drinkSizeIds } from '../content/drink-sizes'
 import { INGREDIENTS, ingredientIds, ingredientLifetime } from '../content/ingredients'
 import { expiryAt } from '../content/lifetime'
 import { recipeCup, recipeFor, recipeIds } from '../content/recipes'
-import { isCupSurface, SHOP_BOUNDS, stationIds, tableIds } from '../content/stations'
+import { FLOOR_HEIGHT, isCupSurface, SHOP_BOUNDS, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/cold-brew/rules'
 import {
@@ -308,6 +308,8 @@ const craftSchema = productionStateSchema
     kind: z.enum(cupKinds),
     size: z.enum(drinkSizeIds),
     location: place,
+    espressoStation: z.enum(['espresso', 'espresso-2']),
+    steamStation: z.enum(['steam', 'steam-2']),
     places: z.record(z.string().max(100), place),
     lidded: z.boolean(),
     sticker: z.boolean(),
@@ -493,6 +495,10 @@ export const stateSchema = z
       z.number().min(SHOP_BOUNDS.minZ).max(SHOP_BOUNDS.maxZ),
       z.number(),
       z.number(),
+      z
+        .number()
+        .min(0)
+        .max(FLOOR_HEIGHT * 2),
     ]),
   })
   .refine((state) => {

@@ -112,7 +112,7 @@ export function handleCleaningActions(
       }
 
       if (cleaning.stage === 'wipe' && !cleaning.clothHeld) {
-        fail('G로 청소용 천을 먼저 집어주세요.')
+        fail('청소용 천을 먼저 집어주세요.')
         break
       }
 
@@ -126,7 +126,7 @@ export function handleCleaningActions(
       }
 
       if (cleaning.clothHeld) {
-        fail('G로 청소용 천을 내려놓은 뒤 확인해주세요.')
+        fail('청소용 천을 내려놓은 뒤 확인해주세요.')
         break
       }
 

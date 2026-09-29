@@ -441,6 +441,7 @@ export function WorkButton(props: WorkButtonProps) {
   const stopFromWindow = useEffectEvent(stop)
 
   useEffect(() => {
+    if (!props.hold) return
     const hidden = () => {
       if (document.hidden) stopFromWindow()
     }
@@ -455,7 +456,7 @@ export function WorkButton(props: WorkButtonProps) {
       document.removeEventListener('visibilitychange', hidden)
       if (pointerId.current !== null) stopFromWindow()
     }
-  }, [])
+  }, [props.hold])
 
   function release(event: { pointerId: number }) {
     if (pointerId.current !== event.pointerId) return

@@ -21,6 +21,7 @@ export default function OrderRail({
   const ticket = currentTicket(state)
   const waiting = ticket ? state.sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) - 1 : 0
   const jobs = state.jobs.filter((job) => job.kind === 'production' && job.cupId && job.cupId === state.cup?.id)
+  if (now && !ticket && !jobs.length) return null
 
   return (
     <aside

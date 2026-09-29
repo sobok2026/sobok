@@ -61,7 +61,7 @@ export function handleWashingActions(
       }
 
       if (washing.stage === 'scrub' && !washing.spongeHeld) {
-        fail('G로 스펀지를 먼저 집어주세요.')
+        fail('스펀지를 먼저 집어주세요.')
         break
       }
 
@@ -80,7 +80,7 @@ export function handleWashingActions(
       }
 
       if (washing.spongeHeld) {
-        fail('G로 스펀지를 내려놓은 뒤 확인해주세요.')
+        fail('스펀지를 내려놓은 뒤 확인해주세요.')
         break
       }
 

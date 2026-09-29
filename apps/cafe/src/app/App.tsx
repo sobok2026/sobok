@@ -134,7 +134,9 @@ function CafeGame(props: CafeSessionProps) {
       <div
         className={clsx(
           'pointer-events-none absolute inset-0',
-          'bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]',
+          mode === 'welcome'
+            ? 'bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)] max-tablet:bg-surface/60'
+            : 'bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]',
         )}
       />
       <div className="pointer-events-none absolute top-safe-top right-safe-right bottom-safe-bottom left-safe-left">
@@ -161,10 +163,19 @@ function CafeGame(props: CafeSessionProps) {
               'touch:top-3 touch:right-3',
             )}
           >
-            <time className="mr-2 text-body font-semibold tabular-nums">{clock(state.time)}</time>
-            {state.phase === 'closing' && (
-              <span className="mr-1 rounded-full bg-brand/10 px-2.5 py-1 text-sm font-medium text-brand">마감 중</span>
-            )}
+            <div className="mr-2 flex items-center gap-2 touch:flex-col touch:items-start touch:gap-0">
+              <time className="text-body font-semibold tabular-nums">{clock(state.time)}</time>
+              {state.phase === 'closing' && (
+                <span
+                  className={clsx(
+                    'rounded-full bg-brand/10 px-2.5 py-1 text-sm font-medium text-brand',
+                    'touch:bg-transparent touch:p-0',
+                  )}
+                >
+                  마감 중
+                </span>
+              )}
+            </div>
             <nav className="flex items-center" aria-label="게임 메뉴">
               {state.day === 1 && (
                 <div className="flex touch:hidden">
@@ -184,12 +195,7 @@ function CafeGame(props: CafeSessionProps) {
         )}
 
         {mode === 'welcome' && (
-          <div
-            className={clsx(
-              'pointer-events-auto absolute inset-0 flex items-center overflow-y-auto bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)]',
-              'max-tablet:bg-surface/60',
-            )}
-          >
+          <div className="pointer-events-auto absolute inset-0 flex items-center overflow-y-auto">
             <section className="my-auto ml-[8%] w-72 max-w-[80%] py-6 touch:compact:py-4">
               <div className="mb-5 text-brand">
                 <CupIcon />

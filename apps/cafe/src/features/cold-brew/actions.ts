@@ -116,7 +116,7 @@ export function handleColdBrewActions(
       const step = coldBrewStep(brew)
 
       if (brew.tool !== step.tool) {
-        fail('G로 필요한 도구를 집거나 내려놓아주세요.')
+        fail('필요한 도구를 집거나 내려놓아주세요.')
         break
       }
 
@@ -136,7 +136,7 @@ export function handleColdBrewActions(
       }
 
       if (brew.tool) {
-        fail('G로 계량 도구를 내려놓은 뒤 확인해주세요.')
+        fail('계량 도구를 내려놓은 뒤 확인해주세요.')
         break
       }
 
