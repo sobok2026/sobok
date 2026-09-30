@@ -17,6 +17,7 @@ import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visual
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
 import { craftingAt, craftWorkStation } from '../features/crafting/rules'
 import { createCraftVisuals, cupSpot } from '../features/crafting/visuals'
+import { createFoodVisuals } from '../features/food/visuals'
 import { createGrinder, GRINDER_CATCH_SPOT } from '../features/grinder/equipment'
 import { createBatchVisuals } from '../features/inventory/batch-visuals'
 import { carriedBatch } from '../features/inventory/batches'
@@ -26,6 +27,7 @@ import { preparationStation } from '../features/preparation/rules'
 import { createPreparationVisuals, PREP_SPOT } from '../features/preparation/visuals'
 import { createStickerPrinter } from '../features/service/sticker-printer'
 import { createCustomerVisuals } from '../features/service/visuals'
+import { createWaitingVisuals } from '../features/service/waiting-visuals'
 import { createWashingVisuals, WASH_SPOT } from '../features/washing/visuals'
 import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
@@ -200,6 +202,9 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     createShopInterior(scene)
   const stickerPrinter = createStickerPrinter(scene)
   customerVisuals = createCustomerVisuals(scene)
+  const waitingVisuals = createWaitingVisuals(scene)
+  const foodVisuals = createFoodVisuals(scene, camera)
+  obstacles.push(foodVisuals.obstacle)
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
@@ -207,6 +212,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     let y = id === 'urn' ? 1.65 : 1.2
     if (id === 'bar-fridge') y = 0.58
     if (id === 'rack') y = 1.65
+
     if (isTable(id)) {
       geometry.dispose()
       const table = TABLES[id]
@@ -216,12 +222,14 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
           : new THREE.BoxGeometry(table.width, 0.16, table.depth)
       y = stationElevation(id) + table.height
     }
+
     const mesh = new THREE.Mesh(geometry, pickMaterial)
     mesh.position.set(station.x, y, station.z)
     mesh.userData.station = id
     scene.add(mesh)
     return mesh
   })
+
   for (const obstacle of obstacles) {
     if (!obstacle.blocksSight) continue
     const bottom = obstacle.minY ?? 0,
@@ -236,6 +244,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     scene.add(blocker)
     occluders.push(blocker)
   }
+
   const pickObjects = [...targets, ...occluders]
   const guideMarker = new THREE.Mesh(
     new THREE.ConeGeometry(0.1, 0.2, 4),
@@ -269,6 +278,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     if (!(object instanceof THREE.Mesh)) {
       return
     }
+
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (material instanceof THREE.MeshStandardMaterial && material.userData.equipment) {
         material.envMap = equipmentEnvironment.texture
@@ -335,15 +345,19 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     }
     const placement = placementOf(state)
     const placed = placedStation(previousPlacement, placement)
+
     if (placed) {
       const spot = cupSpot(placed)
       camera.lookAt(spot[0], spot[1] + 0.16, spot[2])
     }
+
     previousPlacement = placement
+
     if (state.preparation && state.preparation.id !== previousPreparation) {
       const spot = preparationStation(state.preparation) === 'grinder' ? GRINDER_CATCH_SPOT : PREP_SPOT
       camera.lookAt(spot[0], spot[1] + 0.17, spot[2])
     }
+
     previousPreparation = state.preparation?.id ?? null
     if (state.washing && state.washing.id !== previousWashing && state.washing.stage !== 'carrying') {
       camera.lookAt(WASH_SPOT[0], WASH_SPOT[1] + 0.13, WASH_SPOT[2])
@@ -398,6 +412,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       guideSide = side
       options.onGuideSide(side)
     }
+
     const benchFocused =
       craftingAt(state, target) ||
       (state.preparation && !carriedBatch(state) && target === 'prep') ||
@@ -441,6 +456,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       })
 
     customerVisuals?.update(state, dt, running)
+    waitingVisuals.update(state)
+    foodVisuals.update(state)
   }
 
   updateVisuals(options.getState(), 0, false)
@@ -481,6 +498,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
         if (object instanceof THREE.InstancedMesh) {
           object.dispose()
         }
+
         if (object instanceof THREE.Mesh) {
           geometries.add(object.geometry)
           for (const m of Array.isArray(object.material) ? object.material : [object.material]) usedMaterials.add(m)
@@ -495,6 +513,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
           if (property instanceof THREE.Texture && property !== equipmentEnvironment.texture) {
             usedTextures.add(property)
           }
+
         value.dispose()
       }
 

@@ -44,6 +44,7 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
       !custom.milkAmount &&
       !custom.milkFoam &&
       !custom.milkTemperature &&
+      !custom.lid &&
       custom.roast === null &&
       custom.javaChips === null &&
       !Object.keys(custom.toppings).length &&

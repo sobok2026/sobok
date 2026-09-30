@@ -42,6 +42,7 @@ export const customizationSchema = z.strictObject({
   milkAmount: z.enum(['less', 'extra']).nullable(),
   milkFoam: z.enum(['none', 'less', 'extra']).nullable(),
   milkTemperature: z.enum(['standard', 'x-hot']).nullable(),
+  lid: z.enum(['with', 'without']).nullable(),
 })
 export type Customizations = z.infer<typeof customizationSchema>
 
@@ -58,6 +59,7 @@ export const noCustomizations = (): Customizations => ({
   milkAmount: null,
   milkFoam: null,
   milkTemperature: null,
+  lid: null,
 })
 
 export function countAmount(step: PlannedStep) {
@@ -93,6 +95,7 @@ export function customizationLabels(plan: PlannedStep[], custom: Customizations)
   if (custom.milkFoam)
     labels.push(`우유 거품 ${custom.milkFoam === 'none' ? '없이' : amountLevelNames[custom.milkFoam]}`)
   if (custom.milkTemperature) labels.push(`우유 온도 ${custom.milkTemperature === 'x-hot' ? 'X-Hot' : '기본'}`)
+  if (custom.lid) labels.push(custom.lid === 'with' ? '리드 있음' : '리드 없이')
   if (custom.roast !== null) labels.push(`프라푸치노 로스트 ${custom.roast}펌프`)
   if (custom.javaChips) labels.push(`자바칩 ${custom.javaChips.scoops}스쿱 · ${chipModeNames[custom.javaChips.mode]}`)
 
@@ -161,6 +164,7 @@ export function customizationPrice(plan: PlannedStep[], custom: Customizations):
       total += customizationRules.extraPrice
     }
   }
+
   if (custom.roast !== null && custom.roast > baseRoastPumps(plan)) total += customizationRules.extraPrice
   if (custom.javaChips && custom.javaChips.scoops > 0 && baseChipScoops(plan) === 0)
     total += customizationRules.extraPrice
@@ -218,6 +222,8 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
       return []
     }
     let operation = { ...step.operation }
+    if (operation.action === 'serve' && custom.lid)
+      operation = { ...operation, lid: custom.lid === 'with' ? 'always' : 'none' }
     const count = custom.quantities[step.id]
 
     if (
@@ -239,6 +245,7 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
       if (ristretto && custom.coffee === 'decaf') method = 'decaf-ristretto'
       operation = { ...operation, method }
     }
+
     if (operation.action === 'add' && operation.materialId === 'milk' && custom.milk) {
       operation = { ...operation, materialId: custom.milk }
     }

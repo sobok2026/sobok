@@ -8,19 +8,38 @@ import type { Action } from '../../simulation/actions'
 import type { GameState, OrderItem, OrderLine } from '../../simulation/state'
 import CowSettings from '../drip-coffee/CowSettings'
 import { dripMenuName } from '../drip-coffee/rules'
+import { FOODS } from '../food/catalog'
+import type { FoodOrder } from '../food/model'
+import { foodDescription, foodOrderAvailable } from '../food/rules'
 import { SERVICE_NAMES, type ServiceMode } from '../inventory/cups'
 import ShiftControls from '../shift/ShiftControls'
 import ShiftLedger from '../shift/ShiftLedger'
+import { defaultOrderOptions, packagingNames } from './checkout-model'
 import { CUSTOMER_STATUS } from './customer'
-import { currentTicket, itemCustomizations, itemPrice, salePaid, saleQuantity, saleTotal } from './orders'
+import { orderUnserved } from './order-flow'
+import { currentTicket, itemCustomizations, orderMatchesRequest, salePaid, saleQuantity, saleTotal } from './orders'
 import { PosCheckout } from './PosCheckout'
 import { NumericPad, PosButton, PosDialog } from './PosControls'
 import { PosCustomize } from './PosCustomize'
+import { PosFoodMenu } from './PosFoodMenu'
 import { PosMenu, temperatureVariant } from './PosMenu'
+import { HeldOrders, PosBulkOptions, PosOrderOptions } from './PosOrderOptions'
+import { quoteSale } from './pricing'
 import { TransactionHistory } from './TransactionHistory'
 
 type View = 'order' | 'custom' | 'checkout'
-type Dialog = 'request' | 'quantity' | 'clear' | 'store' | 'calculator' | 'transactions' | 'management' | null
+type Dialog =
+  | 'request'
+  | 'quantity'
+  | 'clear'
+  | 'store'
+  | 'calculator'
+  | 'transactions'
+  | 'management'
+  | 'options'
+  | 'bulk'
+  | 'held'
+  | null
 
 export default function PosPanel({
   state,
@@ -34,7 +53,7 @@ export default function PosPanel({
   onEscape: () => void
 }) {
   const [view, setView] = useState<View>(
-    state.sale?.payments.length || state.sale?.paidAt != null ? 'checkout' : 'order',
+    state.sale?.payments.length || state.sale?.acceptedAt != null ? 'checkout' : 'order',
   )
   const [dialog, setDialog] = useState<Dialog>(null)
   const [selectedId, setSelectedId] = useState<string | null>('new')
@@ -42,18 +61,37 @@ export default function PosPanel({
   const [size, setSize] = useState<DrinkSize>('tall')
   const [service, setService] = useState<ServiceMode>('dine-in')
   const [quantity, setQuantity] = useState('1')
+  const [catalog, setCatalog] = useState<'drink' | 'food'>('drink')
   const screen = useRef<HTMLElement>(null)
   const list = useRef<HTMLFieldSetElement>(null)
 
   const sale = state.sale
+  const selectedFood =
+    selectedId === 'food-new' ? sale?.foodLines.at(-1) : sale?.foodLines.find((line) => line.id === selectedId)
   const selected =
-    selectedId === 'new'
+    selectedId === 'new' || selectedFood
       ? null
       : (sale?.lines.find((line) => line.id === selectedId) ?? currentTicket(state) ?? sale?.lines.at(-1) ?? null)
   const paid = !!sale && sale.paidAt !== null
-  const editable = state.phase === 'open' && state.customer?.stage === 'ordering' && !paid && !sale?.payments.length
+  const accepted = !!sale && sale.acceptedAt !== null
+  const editable = state.phase === 'open' && state.customer?.stage === 'ordering' && !accepted && !sale?.payments.length
+  const quote = quoteSale(sale)
+  const linePrice = (id: string) => quote.lines.find((line) => line.id === id)
   const total = saleTotal(sale)
   const count = saleQuantity(sale)
+  const foodCount = sale?.foodLines.reduce((sum, line) => sum + line.quantity, 0) ?? 0
+  const activeLine = selected ?? selectedFood
+
+  function updateQuantity(quantity: number) {
+    if (selected) update(selected, selected, quantity)
+    if (selectedFood) act({ type: 'pos-food-update', id: selectedFood.id, item: { ...selectedFood, quantity } })
+  }
+
+  function addFood(item: FoodOrder) {
+    act({ type: 'pos-food-add', item })
+    setSelectedId('food-new')
+    requestAnimationFrame(() => list.current?.scrollTo({ top: list.current.scrollHeight }))
+  }
 
   useEffect(() => {
     screen.current?.focus()
@@ -73,7 +111,13 @@ export default function PosPanel({
   function add(recipe: RecipeId, chosenSize: DrinkSize, chosenService: ServiceMode) {
     act({
       type: 'pos-add',
-      item: { recipe, size: chosenSize, service: chosenService, customizations: noCustomizations() },
+      item: {
+        recipe,
+        size: chosenSize,
+        service: chosenService,
+        customizations: noCustomizations(),
+        options: defaultOrderOptions(),
+      },
     })
     setSelectedId(null)
     setSize(chosenSize)
@@ -84,7 +128,7 @@ export default function PosPanel({
   const availableSizes = selected ? recipeSizes(selected.recipe, selected.service) : drinkSizeIds
   const shownTemperature = selected ? RECIPES[selected.recipe].temperature : temperature
   const shownSize = selected?.size ?? size
-  const shownService = selected?.service ?? service
+  const shownService = selected?.service ?? selectedFood?.service ?? service
   const nextTemperature = shownTemperature === 'hot' ? 'iced' : 'hot'
   const otherTemperature = selected ? temperatureVariant(selected.recipe, nextTemperature) : null
   const date = new Date(state.time * 1000).toISOString().slice(5, 10).replace('-', '.')
@@ -113,6 +157,7 @@ export default function PosPanel({
           if (event.key === 'Escape') {
             event.preventDefault()
             event.stopPropagation()
+
             if (view !== 'order' && !paid) {
               setView('order')
             } else {
@@ -124,6 +169,7 @@ export default function PosPanel({
                 'button:not(:disabled), input:not(:disabled), summary',
               ),
             ].filter((item) => item.checkVisibility())
+
             if (
               event.shiftKey &&
               (document.activeElement === controls[0] || document.activeElement === screen.current)
@@ -175,6 +221,11 @@ export default function PosPanel({
                   {itemCustomizations(item).length ? ` · ${itemCustomizations(item).join(', ')}` : ''}
                 </p>
               ))}
+              {state.customer.foodItems.map((item, index) => (
+                <p key={index} className="mt-1 leading-relaxed">
+                  {foodDescription(item)} · {SERVICE_NAMES[item.service]} {item.quantity}개
+                </p>
+              ))}
             </div>
           )}
           <fieldset
@@ -218,7 +269,7 @@ export default function PosPanel({
                       {SERVICE_NAMES[line.service]}
                     </span>
                     <strong className="text-sm tabular-nums">
-                      {(itemPrice(line) * line.quantity).toLocaleString('ko-KR')}
+                      {(linePrice(line.id)?.net ?? 0).toLocaleString('ko-KR')}
                     </strong>
                   </div>
                   {itemCustomizations(line).map((label) => (
@@ -226,7 +277,12 @@ export default function PosPanel({
                       {label}
                     </p>
                   ))}
-                  {paid && (
+                  {linePrice(line.id)?.discounts.map((detail) => (
+                    <p key={detail.label} className="mt-1 pl-6 text-xs">
+                      {detail.label} −{money(detail.amount)}
+                    </p>
+                  ))}
+                  {accepted && (
                     <p className="mt-2 text-xs">
                       전달 {line.served} / {line.quantity}잔 {line.served === line.quantity ? '✓' : ''}
                     </p>
@@ -245,6 +301,56 @@ export default function PosPanel({
                 )}
               </div>
             ))}
+            {sale?.foodLines.map((line, index) => (
+              <div
+                key={line.id}
+                className={clsx(
+                  'rounded border p-2.5',
+                  selectedFood?.id === line.id
+                    ? 'border-pos-active bg-pos-active text-white'
+                    : 'border-pos-soft bg-white',
+                )}
+              >
+                <button
+                  type="button"
+                  aria-pressed={selectedFood?.id === line.id}
+                  className="w-full text-left"
+                  onClick={() => {
+                    setSelectedId(line.id)
+                    setCatalog('food')
+                    setView('order')
+                  }}
+                >
+                  <span className="flex justify-between gap-2 text-sm font-semibold">
+                    <span>
+                      {String((sale?.lines.length ?? 0) + index + 1).padStart(2, '0')} · {FOODS[line.productId].name}
+                    </span>
+                    <span>{line.quantity}개</span>
+                  </span>
+                  <span className="mt-2 flex justify-between gap-2 text-xs">
+                    <span>
+                      {line.warmed ? '데워서' : '그대로'} · {SERVICE_NAMES[line.service]} ·{' '}
+                      {packagingNames[line.options.packaging]}
+                    </span>
+                    <strong>{(linePrice(line.id)?.net ?? 0).toLocaleString('ko-KR')}</strong>
+                  </span>
+                  {accepted && (
+                    <span className="mt-2 block text-xs">
+                      전달 {line.served}/{line.quantity}개
+                    </span>
+                  )}
+                </button>
+                {selectedFood?.id === line.id && editable && (
+                  <button
+                    type="button"
+                    className="mt-2 rounded bg-white/90 px-2 py-1 text-xs text-pos-ink"
+                    onClick={() => act({ type: 'pos-remove', id: line.id })}
+                  >
+                    항목 삭제 ×
+                  </button>
+                )}
+              </div>
+            ))}
             {!sale && (
               <p className="flex h-full items-center justify-center text-sm text-pos-panel">선택된 메뉴가 없습니다.</p>
             )}
@@ -256,8 +362,8 @@ export default function PosPanel({
               삭제
             </PosButton>
             <PosButton
-              disabled={!editable || !selected || selected.quantity < 2}
-              onClick={() => selected && act({ type: 'pos-split', id: selected.id })}
+              disabled={!editable || !activeLine || activeLine.quantity < 2}
+              onClick={() => activeLine && act({ type: 'pos-split', id: activeLine.id })}
               className="px-1 text-xs"
             >
               수량
@@ -265,9 +371,9 @@ export default function PosPanel({
               나누기
             </PosButton>
             <PosButton
-              disabled={!editable || !selected}
+              disabled={!editable || !activeLine}
               onClick={() => {
-                setQuantity(String(selected?.quantity ?? 1))
+                setQuantity(String(activeLine?.quantity ?? 1))
                 setDialog('quantity')
               }}
               className="px-1 text-xs"
@@ -278,16 +384,16 @@ export default function PosPanel({
             </PosButton>
             <div className="grid gap-1">
               <PosButton
-                disabled={!editable || !selected || selected.quantity >= 99}
-                onClick={() => selected && update(selected, selected, selected.quantity + 1)}
+                disabled={!editable || !activeLine || activeLine.quantity >= 99}
+                onClick={() => activeLine && updateQuantity(activeLine.quantity + 1)}
                 className="min-h-8 py-1 text-lg"
                 aria-label="수량 늘리기"
               >
                 +
               </PosButton>
               <PosButton
-                disabled={!editable || !selected || selected.quantity <= 1}
-                onClick={() => selected && update(selected, selected, selected.quantity - 1)}
+                disabled={!editable || !activeLine || activeLine.quantity <= 1}
+                onClick={() => activeLine && updateQuantity(activeLine.quantity - 1)}
                 className="min-h-8 py-1 text-lg"
                 aria-label="수량 줄이기"
               >
@@ -315,10 +421,11 @@ export default function PosPanel({
           </div>
           <div className="flex shrink-0 justify-between gap-2 py-3 text-sm">
             <span>
-              총계 <strong className="ml-2 tabular-nums">{total.toLocaleString('ko-KR')}</strong>
+              총계{' '}
+              <strong className="ml-2 tabular-nums">{(quote.gross + quote.deposit).toLocaleString('ko-KR')}</strong>
             </span>
             <span>
-              할인 <span className="ml-1 text-pos-hot">0</span>
+              할인 <span className="ml-1 text-pos-hot">{quote.discount.toLocaleString('ko-KR')}</span>
             </span>
           </div>
           <PosButton
@@ -329,6 +436,11 @@ export default function PosPanel({
           >
             <span className="rounded bg-white px-2 py-3 text-sm text-pos-ink">
               음료 <strong>{count}잔</strong>
+              {foodCount > 0 && (
+                <span className="block">
+                  푸드 <strong>{foodCount}개</strong>
+                </span>
+              )}
             </span>
             <span className="text-lg tabular-nums">{checkoutButtonLabel(paid, view, total)}</span>
           </PosButton>
@@ -341,12 +453,11 @@ export default function PosPanel({
             )}
           >
             <span>
-              제조중{' '}
-              <strong className="ml-2">
-                {paid ? sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) : 0}
-              </strong>
+              제조중 <strong className="ml-2">{accepted ? orderUnserved(sale) : 0}</strong>
             </span>
-            <span className="text-xs text-white/75">{orderStatus(paid, salePaid(sale), total)}</span>
+            <span className="text-xs text-white/75">
+              {accepted && !paid ? '선제공 · 정산 필요' : orderStatus(paid, salePaid(sale), total)}
+            </span>
             <PosButton tone="dark" onClick={onClose} aria-label="POS 닫기" className="min-h-9">
               ×
             </PosButton>
@@ -356,10 +467,10 @@ export default function PosPanel({
               <PosCheckout state={state} act={act} onBack={() => setView('order')} onClose={onClose} />
             ) : (
               <>
-                {view === 'order' && (
+                {view === 'order' && catalog === 'drink' && (
                   <nav
                     className={clsx(
-                      'flex w-22 shrink-0 flex-col gap-1',
+                      'flex w-22 shrink-0 flex-col gap-1 overflow-y-auto',
                       'touch:portrait:w-auto touch:portrait:flex-row touch:portrait:flex-wrap',
                     )}
                     aria-label="주문 규격"
@@ -441,14 +552,29 @@ export default function PosPanel({
                     ))}
                   </nav>
                 )}
-                {view === 'custom' ? (
+                {view === 'custom' && (
                   <PosCustomize
                     onBack={() => setView('order')}
                     line={selected}
                     disabled={!editable}
                     onChange={(customizations) => selected && update(selected, { ...selected, customizations })}
                   />
-                ) : (
+                )}
+                {view !== 'custom' && catalog === 'food' && (
+                  <PosFoodMenu
+                    state={state}
+                    service={shownService}
+                    disabled={!editable}
+                    onAdd={addFood}
+                    onDrinks={() => setCatalog('drink')}
+                    onService={(service) => {
+                      setService(service)
+                      if (selectedFood)
+                        act({ type: 'pos-food-update', id: selectedFood.id, item: { ...selectedFood, service } })
+                    }}
+                  />
+                )}
+                {view !== 'custom' && catalog === 'drink' && (
                   <PosMenu
                     cow={state.cow}
                     temperature={shownTemperature}
@@ -456,6 +582,10 @@ export default function PosPanel({
                     service={shownService}
                     disabled={!editable}
                     onAdd={add}
+                    onFood={() => {
+                      setCatalog('food')
+                      setSelectedId('new')
+                    }}
                   />
                 )}
               </>
@@ -479,12 +609,34 @@ export default function PosPanel({
               </PosButton>
             </nav>
           </div>
+          <div className="grid shrink-0 grid-cols-4 gap-1">
+            <PosButton
+              tone="dark"
+              disabled={!editable || !sale || !orderMatchesRequest(state) || !foodOrderAvailable(state)}
+              onClick={() => {
+                act({ type: 'pos-accept' })
+                onClose()
+              }}
+            >
+              선제공
+            </PosButton>
+            <PosButton tone="dark" disabled={!editable || !sale?.lines.length} onClick={() => setDialog('bulk')}>
+              모두 변경
+            </PosButton>
+            <PosButton tone="dark" disabled={!editable || !activeLine} onClick={() => setDialog('options')}>
+              컵 · 포장선택
+            </PosButton>
+            <PosButton tone="dark" onClick={() => setDialog('held')}>
+              주문보류 {state.waitingOrders.length > 0 && `(${state.waitingOrders.length})`}
+            </PosButton>
+          </div>
           <footer className="grid min-h-14 shrink-0 grid-cols-6 gap-1 touch:portrait:grid-cols-3">
             <PosButton
               tone="dark"
               disabled={!editable}
               onClick={() => {
                 setSelectedId('new')
+                setCatalog('drink')
                 setView('order')
               }}
             >
@@ -535,6 +687,11 @@ export default function PosPanel({
                 <p className="mt-2 text-sm">{itemCustomizations(item).join(' · ') || '기본 레시피'}</p>
               </div>
             )) ?? <p>응대 중인 손님이 없습니다.</p>}
+            {state.customer?.foodItems.map((item, index) => (
+              <p key={index} className="border-b border-pos-soft py-3">
+                {foodDescription(item)} · {SERVICE_NAMES[item.service]} {item.quantity}개
+              </p>
+            ))}
           </PosDialog>
         )}
         {dialog === 'store' && (
@@ -550,7 +707,9 @@ export default function PosPanel({
         )}
         {dialog === 'clear' && (
           <PosDialog title="주문 전체 삭제" onClose={closeDialog}>
-            <p className="mb-6">담은 음료 {count}잔을 모두 삭제할까요?</p>
+            <p className="mb-6">
+              담은 음료 {count}잔·푸드 {foodCount}개를 모두 삭제할까요?
+            </p>
             <div className="grid grid-cols-2 gap-2">
               <PosButton onClick={closeDialog}>취소</PosButton>
               <PosButton
@@ -566,7 +725,7 @@ export default function PosPanel({
             </div>
           </PosDialog>
         )}
-        {dialog === 'quantity' && selected && (
+        {dialog === 'quantity' && activeLine && (
           <PosDialog title="수량 변경" onClose={closeDialog}>
             <input
               aria-label="주문 수량"
@@ -584,7 +743,7 @@ export default function PosPanel({
               onChange={setQuantity}
               onConfirm={() => {
                 if (Number(quantity) >= 1 && Number(quantity) <= 99) {
-                  update(selected, selected, Number(quantity))
+                  updateQuantity(Number(quantity))
                   closeDialog()
                 }
               }}
@@ -594,6 +753,21 @@ export default function PosPanel({
         {dialog === 'calculator' && (
           <PosDialog title="계산기" onClose={closeDialog}>
             <PosCalculator />
+          </PosDialog>
+        )}
+        {dialog === 'options' && activeLine && (
+          <PosDialog title="컵 · 포장선택" onClose={closeDialog}>
+            <PosOrderOptions key={activeLine.id} line={activeLine} act={act} onDone={closeDialog} />
+          </PosDialog>
+        )}
+        {dialog === 'bulk' && (
+          <PosDialog title="모두 변경" onClose={closeDialog}>
+            <PosBulkOptions state={state} act={act} onDone={closeDialog} />
+          </PosDialog>
+        )}
+        {dialog === 'held' && (
+          <PosDialog title="보류 주문" onClose={closeDialog}>
+            <HeldOrders state={state} act={act} editable={editable} />
           </PosDialog>
         )}
       </section>

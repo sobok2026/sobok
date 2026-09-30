@@ -22,7 +22,9 @@ import type { GameState } from '../../simulation/state'
 export type Interaction = Action | 'work' | 'panel' | null
 
 export function interactionAt(current: GameState, id: StationId): Interaction {
+  if (id === 'food-case' || id === 'food-oven' || (id === 'pickup' && current.foodWork)) return 'panel'
   const carrying = carriedBatch(current)
+
   if (carrying && id !== 'pos') {
     if (isSealed(carrying)) {
       return id === 'fridge' || id === 'stock' ? { type: 'shelve-pack', station: id } : null
@@ -33,6 +35,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
     }
     return null
   }
+
   if (current.cupDelivery && (id === 'cups' || id === 'stock')) {
     return { type: id === 'cups' ? 'place-cups' : 'return-cups' }
   }
@@ -45,12 +48,14 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
   if (id === current.cleaning?.station) {
     return current.cleaning.stage === 'collect' ? { type: 'collect-cup' } : 'work'
   }
+
   if (id === 'wash' && current.washing) {
     if (current.washing.stage === 'ready') {
       return { type: 'take-washed', item: current.washing.item }
     }
     return current.washing.stage === 'carrying' ? { type: 'leave-wash' } : 'work'
   }
+
   if (current.washing?.stage === 'carrying' && id === washDestination(current.washing.item)) {
     return { type: 'store-washed', station: id }
   }
@@ -68,6 +73,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
     if (current.coldBrew.stage === 'finished') {
       return { type: 'collect-cold-brew' }
     }
+
     return batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time
       ? { type: 'take-batch', id: batch.id, station: id }
       : 'work'
@@ -77,6 +83,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
   if (id === 'printer') {
     return cup?.craft.location === 'hand' && !cup.craft.sticker ? { type: 'attach-sticker' } : null
   }
+
   if (cup && craftStations.includes(id)) {
     if (cup.craft.location === 'hand') {
       return { type: 'place-cup', station: id }
@@ -94,6 +101,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
       return 'work'
     }
   }
+
   return stationDefault(current, id)
 }
 
@@ -165,6 +173,8 @@ export function toolAt(state: GameState, station: StationId): Action {
 }
 
 export function confirmationAt(state: GameState, station: StationId): Action | null {
+  if (state.foodWork?.location === 'pickup' && state.foodWork.stage === 'packed' && station === 'pickup')
+    return { type: 'food-serve' }
   if (station === state.cleaning?.station) {
     return { type: 'clean-confirm' }
   }

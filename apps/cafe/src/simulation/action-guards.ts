@@ -13,13 +13,12 @@ export function canDispatch(work: WorkContext, action: Action) {
   const s = work.state
   const fail = (text: string) => say(s, text, 'error')
 
-  if (
-    action.type === 'pos-cash-receipt' ||
-    action.type === 'pos-print-receipt' ||
-    action.type === 'set-cow' ||
-    action.type === 'drip-stop'
-  )
-    return true
+  if (action.type.startsWith('pos-') || action.type === 'set-cow' || action.type === 'drip-stop') return true
+
+  if (s.foodWork?.location === 'hand' && !action.type.startsWith('food-') && action.type !== 'close') {
+    fail('들고 있는 푸드를 오븐이나 픽업대에 먼저 내려놓아주세요.')
+    return false
+  }
 
   if (
     dripHandsBusy(s) &&

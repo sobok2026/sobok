@@ -2,6 +2,8 @@ import { handleCleaningActions } from '../features/cleaning/actions'
 import { handleColdBrewActions } from '../features/cold-brew/actions'
 import { expireDrink, handleCraftActions } from '../features/crafting/actions'
 import { handleDripActions, settleDrip } from '../features/drip-coffee/actions'
+import { handleFoodActions } from '../features/food/actions'
+import { settleFood } from '../features/food/rules'
 import { grindSettingSchema } from '../features/grinder/rules'
 import { handleStockActions } from '../features/inventory/actions'
 import { expirePreparation, handlePreparationActions } from '../features/preparation/actions'
@@ -64,6 +66,7 @@ export class CafeStore {
     const work: WorkContext = { state: structuredClone(this.state), input: null }
     const s = work.state
     completeJobs(work)
+    settleFood(s)
     expirePreparation(work, s.time)
     expireDrink(work, s.time)
 
@@ -91,6 +94,15 @@ export class CafeStore {
           handleReceiptActions(work, action)
           break
         case 'pos-add':
+        case 'pos-accept':
+        case 'pos-hold':
+        case 'pos-resume':
+        case 'pos-benefits':
+        case 'pos-complete':
+        case 'pos-credit-payment':
+        case 'pos-food-add':
+        case 'pos-food-update':
+        case 'pos-bulk':
         case 'pos-update':
         case 'pos-remove':
         case 'pos-split':
@@ -98,6 +110,18 @@ export class CafeStore {
         case 'pos-pay':
         case 'pos-void':
           handlePosActions(work, action)
+          break
+        case 'food-buy':
+        case 'food-display':
+        case 'food-return':
+        case 'food-discard':
+        case 'food-pick':
+        case 'food-move':
+        case 'food-heat':
+        case 'food-pack':
+        case 'food-serve':
+        case 'food-discard-work':
+          handleFoodActions(work, action)
           break
         case 'serve':
           handleOrderActions(work, action)
@@ -179,6 +203,7 @@ export class CafeStore {
           throw new Error(`Unknown cafe action: ${unhandled}`)
         }
       }
+
       s.batches = s.batches.filter((batch) => batch.amount > 0 || batch.openedAt === null)
       settleDrip(s)
     }
@@ -197,6 +222,7 @@ export class CafeStore {
     work.state.time += dt
     // Finish scheduled work at its own timestamp before checking expiry at the current time.
     completeJobs(work)
+    settleFood(work.state)
     expirePreparation(work, work.state.time)
     expireDrink(work, work.state.time)
     advanceWork(work, dt, this.heldSeconds)

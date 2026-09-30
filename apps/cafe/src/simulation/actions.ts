@@ -2,10 +2,12 @@ import type { IngredientId } from '../content/ingredients'
 import type { StationId } from '../content/stations'
 import type { CleaningStation } from '../features/cleaning/rules'
 import type { DripBean, DripTemperature } from '../features/drip-coffee/rules'
+import type { FoodOrder } from '../features/food/model'
 import type { GrindSetting } from '../features/grinder/rules'
 import type { CupKind, DisposableCupKind } from '../features/inventory/cups'
 import type { SupplyId } from '../features/inventory/supplies'
 import type { PreparationId } from '../features/preparation/rules'
+import type { PaymentInput, SaleBenefits } from '../features/service/checkout-model'
 import type { WashItem } from '../features/washing/rules'
 import type { OrderItem } from './state'
 
@@ -33,8 +35,25 @@ export type PosAction =
   | { type: 'pos-remove'; id: string }
   | { type: 'pos-split'; id: string }
   | { type: 'pos-clear' }
-  | { type: 'pos-pay'; id: string; method: 'cash' | 'card'; tendered: number }
+  | ({ type: 'pos-pay' } & PaymentInput)
   | { type: 'pos-void'; id: string }
+  | { type: 'pos-accept' }
+  | { type: 'pos-hold' }
+  | { type: 'pos-resume'; customerId: string }
+  | { type: 'pos-benefits'; benefits: SaleBenefits }
+  | { type: 'pos-complete' }
+  | { type: 'pos-credit-payment'; transactionId: string; payment: PaymentInput }
+  | { type: 'pos-food-add'; item: FoodOrder }
+  | { type: 'pos-food-update'; id: string; item: FoodOrder }
+  | { type: 'pos-bulk'; items: Array<{ id: string; item: OrderItem }> }
+
+export type FoodAction =
+  | { type: 'food-buy'; productId: string }
+  | { type: 'food-display' | 'food-return' | 'food-discard'; batchId: string; quantity: number }
+  | { type: 'food-pick'; batchId: string }
+  | { type: 'food-move'; location: 'hand' | 'food-oven' | 'pickup' }
+  | { type: 'food-heat' | 'food-serve' | 'food-discard-work' }
+  | { type: 'food-pack'; packaging: FoodOrder['options']['packaging'] }
 
 export type ReceiptAction =
   | {
@@ -48,6 +67,7 @@ export type ReceiptAction =
 
 export type Action =
   | DripAction
+  | FoodAction
   | PosAction
   | ReceiptAction
   | { type: 'grinder-setting'; setting: GrindSetting }

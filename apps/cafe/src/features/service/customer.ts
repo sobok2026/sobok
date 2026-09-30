@@ -15,12 +15,17 @@ import { recipeFor, recipeServices, recipeSizes } from '../../content/recipes'
 import { CUSTOMER_ENTRANCE, FLOOR_HEIGHT, STAIRCASE, STATIONS, type TableId } from '../../content/stations'
 import { PUBLIC_AISLE_X, PUBLIC_AISLE_Z, TABLES } from '../../content/tables'
 import type { Customer, GameState } from '../../simulation/state'
+import { foodProducts } from '../food/catalog'
+import { defaultOrderOptions } from './checkout-model'
+import { memberIds, presentedPaperCoupons } from './members'
 
 export const customerStages = [
   'entering',
   'ordering',
   'to-pickup',
   'pickup',
+  'to-payment',
+  'payment',
   'to-condiment',
   'condiment',
   'to-table',
@@ -48,6 +53,8 @@ export const CUSTOMER_STATUS: Record<CustomerStage, string> = {
   ordering: '주문 대기',
   'to-pickup': '픽업대로 이동 중',
   pickup: '픽업 대기',
+  'to-payment': 'POS로 정산하러 이동 중',
+  payment: '선제공 정산 대기',
   'to-condiment': '컨디먼트 바로 이동 중',
   condiment: '소모품 이용 중',
   'to-table': '테이블로 이동 중',
@@ -111,6 +118,7 @@ function customizationCandidates(plan: PlannedStep[], size: DrinkSize): Customiz
   const candidates: Customizations[] = []
   const step = plan.find((step) => {
     const op = step.operation
+
     return (
       op.action === 'espresso' ||
       (op.action === 'add' &&
@@ -177,7 +185,7 @@ function customizationCandidates(plan: PlannedStep[], size: DrinkSize): Customiz
   return candidates
 }
 
-export function createCustomer(orderNumber: number): Customer | null {
+export function createCustomer(orderNumber: number, time = Date.UTC(2026, 8, 1, 9) / 1000): Customer | null {
   if (!orderSequence.length) {
     return null
   }
@@ -205,13 +213,34 @@ export function createCustomer(orderNumber: number): Customer | null {
       }
     }
 
-    return { recipe, service, size, quantity: orderNumber % 3 === 0 ? 2 : 1, customizations }
+    const options = defaultOrderOptions()
+
+    if (index === 0 && orderNumber % 4 === 0 && recipeFor(recipe, size, service).vesselId === 'serving-cup') {
+      options.personalCup = true
+      customizations = { ...customizations, lid: 'without' }
+    }
+
+    return { recipe, service, size, quantity: orderNumber % 3 === 0 ? 2 : 1, customizations, options }
   })
 
   return {
     id: crypto.randomUUID(),
     orderNumber,
     items,
+    foodItems:
+      foodProducts.length && orderNumber % 2 === 0
+        ? [
+            {
+              productId: foodProducts[(Math.floor(orderNumber / 2) - 1) % foodProducts.length].id,
+              service: preferredService,
+              quantity: 1,
+              warmed: foodProducts[(Math.floor(orderNumber / 2) - 1) % foodProducts.length].heatingSeconds > 0,
+              options: defaultOrderOptions(),
+            },
+          ]
+        : [],
+    memberId: memberIds[(orderNumber - 1) % memberIds.length],
+    paperCoupons: presentedPaperCoupons(orderNumber, time),
     stage: 'entering',
     position: [...ENTRY_SPOT],
     yaw: Math.PI,
@@ -235,6 +264,10 @@ export function customerWait(customer: Customer, stage: CustomerStage) {
 
 export function customerToPickup(customer: Customer) {
   customerPath(customer, 'to-pickup', [[ORDER_SPOT[0], 0.85, 0], [PICKUP_SPOT[0], 0.85, 0], [...PICKUP_SPOT]])
+}
+
+export function customerToSettlement(customer: Customer) {
+  customerPath(customer, 'to-payment', [[PICKUP_SPOT[0], 0.85, 0], [ORDER_SPOT[0], 0.85, 0], [...ORDER_SPOT]])
 }
 
 export function customerToCondiment(customer: Customer) {
@@ -268,6 +301,7 @@ export function customerToReturn(customer: Customer) {
 export function customerLeave(customer: Customer) {
   const [x, z, elevation] = customer.position
   const path: CustomerPoint[] = []
+
   if (customer.stage === 'drinking' && customer.visit?.table) path.push(...fromTable(customer.visit.table))
   else if (!(Math.abs(x - CUSTOMER_ENTRANCE.x) < 0.1 && z >= CUSTOMER_AISLE_Z)) {
     path.push([x, CUSTOMER_AISLE_Z, elevation])
@@ -319,6 +353,7 @@ export function customerSitting(customer: Customer) {
     return 0
   }
   const seat = customerSeat(customer.visit.table)
+
   return Math.max(
     0,
     1 - Math.hypot(customer.position[0] - seat[0], customer.position[1] - seat[1], customer.position[2] - seat[2]),

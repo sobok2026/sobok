@@ -2,7 +2,9 @@ import { formatDecimal } from '@sobok/std/format/number'
 import { INGREDIENTS, ingredientIds } from '../../content/ingredients'
 import { money } from '../../shared/format'
 import type { GameState } from '../../simulation/state'
+import { FOODS } from '../food/catalog'
 import { SUPPLIES, supplyIds } from '../inventory/supplies'
+import { outstandingCredit } from '../service/payments'
 
 export default function ShiftLedger({ state }: { state: GameState }) {
   const { totals } = state
@@ -15,6 +17,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
   if (totals.coldBrewPurchases) {
     purchases.push({ name: '콜드 브루 원두', amount: totals.coldBrewPurchases })
   }
+  if (totals.foodPurchases) purchases.push({ name: '푸드', amount: totals.foodPurchases })
 
   for (const id of supplyIds)
     if (totals.supplyPurchases[id]) {
@@ -33,8 +36,14 @@ export default function ShiftLedger({ state }: { state: GameState }) {
           ['시작 잔액', totals.openingCash],
           ['현금 판매', totals.cashSales],
           ['카드 판매', totals.cardSales],
+          ['기타 수단 판매', totals.otherSales],
+          ['외상 판매', totals.creditSales],
+          ['외상 회수', totals.creditCollected],
+          ['미수금 잔액', state.transactions.reduce((sum, transaction) => sum + outstandingCredit(transaction), 0)],
+          ['할인', totals.discounts],
+          ['컵보증금', totals.deposits],
           ['입고 지출', spent],
-          ['운영 자금 증감', totals.revenue - spent],
+          ['운영 자금 증감', state.cash - totals.openingCash],
           ['현재 잔액', state.cash],
         ].map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 py-3 last:font-semibold">
@@ -43,6 +52,19 @@ export default function ShiftLedger({ state }: { state: GameState }) {
           </div>
         ))}
       </dl>
+      {Object.keys(totals.foodDisposed).length > 0 && (
+        <details className="border-b border-line py-4">
+          <summary className="text-muted">푸드 폐기 내역</summary>
+          <dl className="mt-3 space-y-2">
+            {Object.entries(totals.foodDisposed).map(([id, amount]) => (
+              <div key={id} className="flex justify-between gap-4">
+                <dt>{FOODS[id]?.name ?? id}</dt>
+                <dd>{amount}개</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
+      )}
       {purchases.length > 0 && (
         <details className="border-b border-line py-4">
           <summary className="text-muted">입고 내역 · {purchases.length}</summary>

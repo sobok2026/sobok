@@ -16,6 +16,8 @@ export const staffFacingZ = (z: number) => 2 * BAR_CENTER_Z - z
 const WORK_STATIONS = {
   pos: { name: 'POS', x: -3.2, z: -1.4 },
   printer: { name: '스티커 프린터', x: -2.7, z: -1.4 },
+  'food-case': { name: '푸드 쇼케이스', x: -4.28, z: -3.15 },
+  'food-oven': { name: '푸드 오븐', x: 8.85, z: -2.05 },
   cups: { name: '컵 보관대', x: -1.8, z: -1.4 },
   espresso: { name: '에스프레소 머신 1', x: -0.22, z: -1.4 },
   steam: { name: '스팀 완드 1', x: -0.89, z: -1.4 },
@@ -64,6 +66,7 @@ export const isCupSurface = (station: StationId): station is CupSurfaceId => isT
 
 export function canAccessStation(station: StationId, playerZ: number, elevation: number) {
   if (isTable(station)) return Math.abs(elevation - stationElevation(station)) < 0.25
+
   return (
     elevation < 0.25 &&
     (isCupSurface(station) || station === 'supplies' || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z)

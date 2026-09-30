@@ -1,0 +1,53 @@
+{
+  "note": "게임용 푸드 카탈로그. 4개 단위 입고·매입가 50%·냉장 48시간·진열 당일 마감·가열 30/30/60초는 사용자 승인 운영값. 베이글·샌드위치 가격은 공식 모닝 세트 가격과 할인액에서 Tall 아메리카노 4,700원을 뺀 값이며 현행 단품 가격 보장은 아님.",
+  "products": [
+    {
+      "id": "plain-bagel",
+      "name": "탕종 플레인 베이글",
+      "category": "bread",
+      "price": 3300,
+      "purchaseQuantity": 4,
+      "purchasePrice": 6600,
+      "storageHours": 48,
+      "heatingSeconds": 30,
+      "color": "#bd864b",
+      "source": "https://www.shinsegaegroupnewsroom.com/starbucks-morning-set-sandwich-expansion/"
+    },
+    {
+      "id": "classic-scone",
+      "name": "클래식 스콘",
+      "category": "bread",
+      "price": 3300,
+      "purchaseQuantity": 4,
+      "purchasePrice": 6600,
+      "storageHours": 48,
+      "heatingSeconds": 30,
+      "color": "#d6b072",
+      "source": "https://www.ssg.com/item/itemView.ssg?itemId=2097001083956"
+    },
+    {
+      "id": "bacon-cheddar-sandwich",
+      "name": "베이컨 체다 오믈렛 샌드위치",
+      "category": "sandwich",
+      "price": 5900,
+      "purchaseQuantity": 4,
+      "purchasePrice": 11800,
+      "storageHours": 48,
+      "heatingSeconds": 60,
+      "color": "#d5a268",
+      "source": "https://www.shinsegaegroupnewsroom.com/starbucks-morning-set-sandwich-expansion/"
+    },
+    {
+      "id": "cheesecake",
+      "name": "치즈케이크",
+      "category": "cake",
+      "price": 6900,
+      "purchaseQuantity": 4,
+      "purchasePrice": 13800,
+      "storageHours": 48,
+      "heatingSeconds": 0,
+      "color": "#f0d5a1",
+      "source": "2026-09-30 사용자 승인 게임 가격: 6,900원. 공식 단품 가격으로 검증한 값이 아님."
+    }
+  ]
+}

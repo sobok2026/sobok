@@ -5,9 +5,10 @@ export function PosButton({
   tone = 'soft',
   className,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: 'soft' | 'dark' | 'active' | 'key' | 'hot' | 'iced' }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: 'soft' | 'dark' | 'active' | 'key' | 'hot' | 'iced' | 'white' }) {
   const colors = {
     soft: 'bg-pos-soft text-pos-ink',
+    white: 'bg-white text-pos-ink',
     dark: 'bg-pos-panel text-white',
     active: 'bg-pos-active text-white',
     key: 'bg-ink text-white',
@@ -93,6 +94,7 @@ export function PosDialog({
                 'button:not(:disabled), input:not(:disabled), select:not(:disabled), summary',
               ),
             ].filter((item) => item.checkVisibility())
+
             if (event.shiftKey && (document.activeElement === items[0] || document.activeElement === dialog.current)) {
               event.preventDefault()
               items.at(-1)?.focus()

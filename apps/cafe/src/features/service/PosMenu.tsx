@@ -33,6 +33,7 @@ export function PosMenu({
   service,
   disabled,
   onAdd,
+  onFood,
 }: {
   cow: GameState['cow']
   temperature: 'hot' | 'iced'
@@ -40,6 +41,7 @@ export function PosMenu({
   service: ServiceMode
   disabled: boolean
   onAdd: (recipe: RecipeId, size: DrinkSize, service: ServiceMode) => void
+  onFood: () => void
 }) {
   const [category, setCategory] = useState<Category>('all')
   const [query, setQuery] = useState('')
@@ -47,6 +49,7 @@ export function PosMenu({
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const stored = JSON.parse(localStorage.getItem('cafe-pos-favorites') ?? '[]')
+
       return Array.isArray(stored)
         ? stored.filter((id: unknown): id is string => typeof id === 'string' && !!RECIPES[id])
         : []
@@ -107,6 +110,7 @@ export function PosMenu({
         >
           음료
         </PosButton>
+        <PosButton onClick={onFood}>푸드</PosButton>
       </div>
       <fieldset className="grid grid-cols-4 gap-1" aria-label="음료 분류">
         {(Object.entries(posCategories) as Array<[Category, string]>)
@@ -129,7 +133,7 @@ export function PosMenu({
       </fieldset>
       <fieldset
         className={clsx(
-          'grid min-h-0 flex-1 grid-cols-5 grid-rows-5 gap-1.5',
+          'grid min-h-0 flex-1 grid-cols-5 grid-rows-[repeat(5,minmax(6rem,1fr))] gap-1.5 overflow-y-auto',
           'touch:auto-rows-min touch:grid-cols-3 touch:grid-rows-none touch:overflow-y-auto touch:portrait:max-h-100',
         )}
         aria-label="상품 목록"

@@ -3,8 +3,8 @@ import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import { completeJobs } from '../../simulation/jobs'
 import type { WorkContext } from '../../simulation/work-context'
-import { createCustomer, customerLeave } from '../service/customer'
-import { currentTicket } from '../service/orders'
+import { customerLeave } from '../service/customer'
+import { nextCustomer } from '../service/order-flow'
 import { closingTasks, emptyTotals } from './rules'
 
 export function handleShiftActions(
@@ -16,6 +16,10 @@ export function handleShiftActions(
 
   switch (action.type) {
     case 'close':
+      if (s.waitingOrders.length || (s.sale?.acceptedAt != null && s.sale.paidAt === null)) {
+        fail('보류 주문과 선제공 미정산 주문을 먼저 처리해주세요.')
+        break
+      }
       if (s.sale?.paidAt === null && s.sale.payments.length) {
         fail('진행 중인 결제를 완료하거나 취소한 뒤 마감해주세요.')
         break
@@ -23,7 +27,7 @@ export function handleShiftActions(
 
       s.phase = 'closing'
 
-      if (s.customer && !s.customer.visit && !currentTicket(s)) {
+      if (s.customer && !s.customer.visit && s.sale?.acceptedAt == null) {
         s.sale = null
         customerLeave(s.customer)
       }
@@ -52,8 +56,8 @@ export function handleShiftActions(
       s.day++
       s.time = Math.max(next, s.time + 3600)
       s.phase = 'open'
-      s.customer = createCustomer(s.orderNumber)
       s.sale = null
+      nextCustomer(s)
       s.totals = emptyTotals(s.cash)
       s.position = staffStartPosition()
       s.batches = s.batches.filter((b) => b.amount > 0)

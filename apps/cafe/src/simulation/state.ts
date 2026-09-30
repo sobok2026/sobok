@@ -15,6 +15,8 @@ import {
   dripMenuTemperature,
   dripTemperatures,
 } from '../features/drip-coffee/rules'
+import { FOODS, SHOWCASE_CAPACITY } from '../features/food/catalog'
+import { foodBatchSchema, foodLineSchema, foodOrderSchema, foodWorkSchema } from '../features/food/model'
 import { grindSettingSchema } from '../features/grinder/rules'
 import { BAR_BATCH_CAPACITY, isSealed, packStorage } from '../features/inventory/batches'
 import {
@@ -31,8 +33,19 @@ import {
 import { SUPPLY_CAPACITY, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationIds, preparationStation } from '../features/preparation/rules'
 import { productionStateSchema } from '../features/production/workflow'
+import {
+  couponSchema,
+  discountDetailSchema,
+  memberSchema,
+  orderOptionsSchema,
+  paymentAllowsChange,
+  paymentReceiptAmount,
+  paymentSchema,
+  saleBenefitsSchema,
+} from '../features/service/checkout-model'
 import { customerStages } from '../features/service/customer'
 import { currentTicket, customerCupCounts, orderMatchesRequest, salePaid, saleTotal } from '../features/service/orders'
+import { couponAmount } from '../features/service/pricing'
 import { washItems } from '../features/washing/rules'
 
 const quantity = z.number().min(0).max(100000000)
@@ -63,6 +76,7 @@ const orderItemSchema = z.object({
   service: z.enum(serviceModes),
   size: z.enum(drinkSizeIds),
   customizations: customizationSchema,
+  options: orderOptionsSchema,
 })
 
 const requestedItemSchema = orderItemSchema.extend({ quantity: z.number().int().min(1).max(99) })
@@ -78,13 +92,6 @@ const orderLineSchema = requestedItemSchema
     '드립 주문의 원두가 없거나 메뉴와 맞지 않아요.',
   )
 
-const paymentSchema = z.object({
-  id: z.string().min(1).max(100),
-  method: z.enum(['cash', 'card']),
-  amount: z.number().int().positive().max(100000000),
-  tendered: z.number().int().positive().max(100000000),
-})
-
 const cashReceiptSchema = z
   .object({
     id: z.string().min(1).max(100),
@@ -94,6 +101,7 @@ const cashReceiptSchema = z
       .regex(/^\d{4}$/)
       .nullable(),
     issuedAt: timestamp,
+    amount: quantity.int(),
   })
   .refine(
     (receipt) => (receipt.kind === 'unissued' ? receipt.lastFour === null : receipt.lastFour !== null),
@@ -116,18 +124,27 @@ const transactionSchema = z
           customizations: z.array(z.string().max(200)).max(100),
           quantity: z.number().int().min(1).max(99),
           unitPrice: z.number().int().positive().max(100000000),
+          discount: quantity.int(),
+          deposit: quantity.int(),
+          discounts: z.array(discountDetailSchema).max(100),
         }),
       )
       .min(1)
       .max(50),
-    payments: z.array(paymentSchema).min(1).max(20),
+    payments: z.array(paymentSchema).max(20),
+    settlements: z.array(paymentSchema.extend({ at: timestamp })).max(100),
+    memberId: z.string().max(100).nullable(),
+    creditName: z.string().max(80).nullable(),
     cashReceipts: z.array(cashReceiptSchema),
     printCount: z.number().int().min(0).max(100000),
     lastPrintedAt: timestamp.nullable(),
   })
   .superRefine((transaction, context) => {
     const invalid = (message: string) => context.addIssue({ code: 'custom', message })
-    const total = transaction.lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0)
+    const total = transaction.lines.reduce(
+      (sum, line) => sum + line.unitPrice * line.quantity - line.discount + line.deposit,
+      0,
+    )
     const paid = transaction.payments.reduce((sum, payment) => sum + payment.amount, 0)
 
     if (total !== paid) invalid('거래 내역의 주문 금액과 결제 금액이 달라요.')
@@ -143,53 +160,112 @@ const transactionSchema = z
     if (
       transaction.payments.some(
         (payment) =>
-          payment.tendered < payment.amount || (payment.method === 'card' && payment.tendered !== payment.amount),
+          payment.tendered < payment.amount ||
+          (!paymentAllowsChange(payment.method) && payment.tendered !== payment.amount),
       )
     ) {
       invalid('거래 내역의 받은 금액을 확인해주세요.')
     }
-    if (transaction.cashReceipts.length && !transaction.payments.some((payment) => payment.method === 'cash')) {
+    if (
+      transaction.cashReceipts.length &&
+      ![...transaction.payments, ...transaction.settlements].some((payment) => paymentReceiptAmount(payment) > 0)
+    ) {
       invalid('현금 결제가 없는 거래에는 현금영수증을 발행할 수 없어요.')
     }
     if ((transaction.printCount === 0) !== (transaction.lastPrintedAt === null)) {
       invalid('영수증 출력 이력을 확인해주세요.')
     }
+    if (
+      transaction.lines.some(
+        (line) =>
+          line.discount > line.unitPrice * line.quantity ||
+          line.discounts.reduce((sum, detail) => sum + detail.amount, 0) !== line.discount,
+      )
+    )
+      invalid('상품 할인 금액이 맞지 않아요.')
+    const credit = transaction.payments.reduce(
+      (sum, payment) => sum + (payment.method === 'credit' ? payment.amount : 0),
+      0,
+    )
+    if (
+      transaction.settlements.some((payment) => payment.method === 'credit') ||
+      transaction.settlements.reduce((sum, payment) => sum + payment.amount, 0) > credit
+    )
+      invalid('외상 정산 금액을 확인해주세요.')
+    if (new Set(transaction.settlements.map((payment) => payment.id)).size !== transaction.settlements.length)
+      invalid('외상 정산 내역이 중복됩니다.')
   })
 export type Transaction = z.infer<typeof transactionSchema>
 
 const saleSchema = z
   .object({
     customerId: z.string().min(1).max(100),
-    lines: z.array(orderLineSchema).min(1).max(50),
+    lines: z.array(orderLineSchema).max(50),
+    foodLines: z.array(foodLineSchema).max(50),
+    benefits: saleBenefitsSchema,
+    benefitsCheckedAt: timestamp.nullable(),
+    acceptedAt: timestamp.nullable(),
     payments: z.array(paymentSchema).max(20),
     paidAt: timestamp.nullable(),
   })
   .superRefine((sale, context) => {
     const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+
     try {
       for (const line of sale.lines) recipeFor(line.recipe, line.size, line.service, line.customizations)
-      if (new Set(sale.lines.map((line) => line.id)).size !== sale.lines.length) {
+      const lines = [...sale.lines, ...sale.foodLines]
+      if (!lines.length || lines.length > 50) invalid('주문 항목 수를 확인해주세요.')
+      if (new Set(lines.map((line) => line.id)).size !== lines.length) {
         invalid('주문 항목이 중복됩니다.')
       }
       if (new Set(sale.payments.map((payment) => payment.id)).size !== sale.payments.length) {
         invalid('결제 내역이 중복됩니다.')
       }
-      if (sale.lines.some((line) => line.served > line.quantity || (sale.paidAt === null && line.served > 0))) {
+      if (lines.some((line) => line.served > line.quantity || (sale.acceptedAt === null && line.served > 0))) {
         invalid('전달 수량을 확인해주세요.')
       }
       if (
         sale.payments.some(
           (payment) =>
-            payment.tendered < payment.amount || (payment.method === 'card' && payment.tendered !== payment.amount),
+            payment.tendered < payment.amount ||
+            (!paymentAllowsChange(payment.method) && payment.tendered !== payment.amount),
         )
       ) {
         invalid('받은 금액을 확인해주세요.')
       }
+      const benefits = sale.benefits
+      if (new Set(benefits.coupons.map((item) => item.coupon.id)).size !== benefits.coupons.length)
+        invalid('주문의 쿠폰이 중복됩니다.')
+
+      for (const applied of benefits.coupons) {
+        const line = lines.find((line) => line.id === applied.lineId)
+        if (
+          !line ||
+          !couponAmount(applied.coupon, line) ||
+          benefits.coupons.filter((item) => item.lineId === line.id).length > line.quantity
+        )
+          invalid('주문의 쿠폰과 대상 상품이 맞지 않아요.')
+      }
+
+      if (
+        benefits.manual &&
+        (!benefits.manual.value ||
+          (benefits.manual.kind === 'percent' && benefits.manual.value > 100) ||
+          (benefits.manual.lineId && !lines.some((line) => line.id === benefits.manual?.lineId)))
+      )
+        invalid('금액/메뉴 할인을 확인해주세요.')
+      if (benefits.telecom && !sale.lines.some((line) => line.id === benefits.telecom?.lineId))
+        invalid('통신사 제휴 대상 음료가 없어요.')
+      if ((sale.payments.length > 0 || sale.paidAt !== null) !== (sale.benefitsCheckedAt !== null))
+        invalid('결제한 주문의 혜택 확인 시각이 맞지 않아요.')
+      if (benefits.freeExtra && sale.payments.some((payment) => payment.method !== 'starbucks-card'))
+        invalid('Free Extra와 결제수단이 맞지 않아요.')
       const total = saleTotal(sale),
         paid = salePaid(sale)
-      if (paid > total || (sale.paidAt === null ? paid >= total : paid !== total)) {
+      if (paid > total || (sale.paidAt === null ? total > 0 && paid >= total : paid !== total)) {
         invalid('주문 금액과 결제 상태가 맞지 않아요.')
       }
+      if (sale.paidAt !== null && sale.acceptedAt === null) invalid('결제한 주문의 접수 시각이 없어요.')
     } catch {
       invalid('주문할 수 없는 커스텀이나 메뉴가 포함되어 있어요.')
     }
@@ -199,7 +275,10 @@ const customerSchema = z
   .object({
     id: z.string().max(100),
     orderNumber: z.number().int().min(1).max(100000),
-    items: z.array(requestedItemSchema).min(1).max(50),
+    items: z.array(requestedItemSchema).max(50),
+    foodItems: z.array(foodOrderSchema).max(50),
+    memberId: z.string().max(100).nullable(),
+    paperCoupons: z.array(couponSchema).max(50),
     stage: z.enum(customerStages),
     position: customerPoint,
     yaw: z.number(),
@@ -298,6 +377,14 @@ const totalsSchema = z.object({
   revenue: quantity,
   cashSales: quantity,
   cardSales: quantity,
+  otherSales: quantity,
+  creditSales: quantity,
+  creditCollected: quantity,
+  discounts: quantity,
+  deposits: quantity,
+  foodPurchases: quantity,
+  foodDisposed: z.record(z.string().max(100), quantity.int()),
+  foodServed: quantity.int(),
   wastedCups: quantity,
   cleaned: quantity,
   washed: quantity,
@@ -317,6 +404,7 @@ const craftSchema = productionStateSchema
     places: z.record(z.string().max(100), place),
     lidded: z.boolean(),
     sticker: z.boolean(),
+    personalCup: z.boolean(),
   })
   .refine(
     (craft) => [craft.location, ...Object.values(craft.places)].filter((item) => item === 'hand').length <= 1,
@@ -432,8 +520,15 @@ export const stateSchema = z
     phase: z.enum(['open', 'closing', 'summary']),
     cash: quantity,
     orderNumber: z.number().int().min(1).max(100000),
+    nextOrderNumber: z.number().int().min(1).max(100001),
     customer: customerSchema.nullable(),
     sale: saleSchema.nullable(),
+    waitingOrders: z
+      .array(z.object({ customer: customerSchema, sale: saleSchema.nullable(), heldAt: timestamp }))
+      .max(10),
+    members: z.array(memberSchema).max(100),
+    foodBatches: z.array(foodBatchSchema).max(1000),
+    foodWork: foodWorkSchema.nullable(),
     transactions: z
       .array(transactionSchema)
       .refine(
@@ -475,7 +570,10 @@ export const stateSchema = z
           return false
         }
       }, '메뉴·용기·제조 단계가 올바르지 않아요.')
-      .refine((cup) => !isReusableCup(cup.craft.kind) || !cup.craft.lidded, '매장용 잔의 리드 상태가 올바르지 않아요.')
+      .refine(
+        (cup) => cup.craft.personalCup || !isReusableCup(cup.craft.kind) || !cup.craft.lidded,
+        '매장용 잔의 리드 상태가 올바르지 않아요.',
+      )
       .nullable(),
     batches: z.array(batchSchema).max(5000),
     jobs: z.array(jobSchema).max(30),
@@ -518,6 +616,7 @@ export const stateSchema = z
       JSON.stringify(state.cup.craft.customizations) === JSON.stringify(ticket.customizations) &&
       state.cup.craft.size === ticket.size &&
       state.cup.craft.dripBean === ticket.dripBean &&
+      state.cup.craft.personalCup === ticket.options.personalCup &&
       state.cup.craft.kind === recipeCup(ticket.recipe, ticket.size, ticket.service)
     )
   }, '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.')
@@ -530,8 +629,8 @@ export const stateSchema = z
   .refine(
     (state) =>
       !state.sale ||
-      (state.sale.paidAt === null
-        ? state.customer?.stage === 'ordering'
+      (state.sale.acceptedAt === null
+        ? ['entering', 'ordering'].includes(state.customer?.stage ?? '')
         : orderMatchesRequest(state) && !['entering', 'ordering'].includes(state.customer?.stage ?? '')),
     '결제 상태와 손님 주문이 맞지 않아요.',
   )
@@ -547,21 +646,164 @@ export const stateSchema = z
   .refine(
     (state) =>
       !state.customer?.visit ||
-      (!!state.sale && state.sale.paidAt !== null && state.sale.lines.every((line) => line.served === line.quantity)),
+      (!!state.sale &&
+        state.sale.paidAt !== null &&
+        [...state.sale.lines, ...state.sale.foodLines].every((line) => line.served === line.quantity)),
     '모든 음료를 전달한 뒤 손님이 매장을 이용할 수 있어요.',
   )
+  .superRefine((state, context) => {
+    const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+    const customers = [
+      ...(state.customer ? [state.customer] : []),
+      ...state.waitingOrders.map((order) => order.customer),
+    ]
+    if (
+      new Set(customers.map((customer) => customer.id)).size !== customers.length ||
+      new Set(customers.map((customer) => customer.orderNumber)).size !== customers.length
+    )
+      invalid('응대 중인 손님이나 주문 번호가 중복됩니다.')
+    if (
+      customers.some(
+        (customer) =>
+          customer.orderNumber >= state.nextOrderNumber || (!customer.items.length && !customer.foodItems.length),
+      )
+    )
+      invalid('손님 주문 번호 또는 상품 수가 올바르지 않아요.')
+    if (
+      state.waitingOrders.some(
+        (order) =>
+          order.customer.visit !== null ||
+          (order.sale &&
+            (order.sale.customerId !== order.customer.id ||
+              order.sale.acceptedAt !== null ||
+              order.sale.payments.length > 0)),
+      )
+    )
+      invalid('보류 주문에는 결제·제조를 시작하지 않은 손님의 주문만 보관할 수 있어요.')
+    const cards = state.members.flatMap((member) => member.cards)
+    const coupons = state.members.flatMap((member) => member.coupons)
+    if (
+      new Set(state.members.map((member) => member.id)).size !== state.members.length ||
+      new Set(cards.map((card) => card.id)).size !== cards.length ||
+      new Set(coupons.map((coupon) => coupon.id)).size !== coupons.length
+    )
+      invalid('회원·카드·쿠폰 정보가 중복됩니다.')
+    if (
+      customers.some(
+        (customer) => customer.memberId !== null && !state.members.some((member) => member.id === customer.memberId),
+      )
+    )
+      invalid('손님의 회원 정보를 찾을 수 없어요.')
+    const orders = [
+      ...(state.customer && state.sale ? [{ customer: state.customer, sale: state.sale }] : []),
+      ...state.waitingOrders.filter((order) => order.sale !== null),
+    ]
+    const couponIds: string[] = []
+
+    for (const order of orders) {
+      const sale = order.sale!
+      const member = state.members.find((member) => member.id === sale.benefits.memberId)
+      if (sale.benefits.memberId && sale.benefits.memberId !== order.customer.memberId)
+        invalid('주문의 회원과 손님이 다릅니다.')
+      if (sale.benefits.employee && !member?.employee) invalid('임직원 할인의 인증 정보가 맞지 않아요.')
+
+      for (const applied of sale.benefits.coupons) {
+        const sources = applied.coupon.source === 'sr' ? (member?.coupons ?? []) : order.customer.paperCoupons
+        const source = sources.find((coupon) => coupon.id === applied.coupon.id)
+        if (
+          !source ||
+          JSON.stringify({ ...source, usedAt: null }) !== JSON.stringify({ ...applied.coupon, usedAt: null }) ||
+          source.usedAt !== sale.paidAt
+        )
+          invalid('쿠폰의 소유자 또는 사용 내역이 맞지 않아요.')
+        couponIds.push(applied.coupon.id)
+      }
+
+      if (sale.benefitsCheckedAt !== null && sale.benefitsCheckedAt > state.time)
+        invalid('혜택 확인 시각은 현재 시각을 넘을 수 없어요.')
+    }
+
+    if (new Set(couponIds).size !== couponIds.length) invalid('같은 쿠폰을 여러 주문에 적용할 수 없어요.')
+    const foodItems = [
+      ...customers.flatMap((customer) => customer.foodItems),
+      ...(state.sale?.foodLines ?? []),
+      ...state.waitingOrders.flatMap((order) => order.sale?.foodLines ?? []),
+    ]
+    if (
+      foodItems.some(
+        (item) =>
+          !FOODS[item.productId] ||
+          (item.warmed && !FOODS[item.productId].heatingSeconds) ||
+          item.options.personalCup ||
+          item.options.cupDeposit,
+      )
+    )
+      invalid('푸드의 상품·가열·포장 정보가 맞지 않아요.')
+    if (new Set(state.foodBatches.map((batch) => batch.id)).size !== state.foodBatches.length)
+      invalid('푸드 재고가 중복됩니다.')
+    if (
+      state.foodBatches.some(
+        (batch) =>
+          !FOODS[batch.productId] ||
+          (batch.location === 'showcase' && batch.displayedAt === null) ||
+          batch.expiresAt <= batch.receivedAt ||
+          (batch.displayedAt !== null && batch.displayedAt < batch.receivedAt),
+      )
+    )
+      invalid('푸드 재고의 상품과 기한을 확인해주세요.')
+    if (
+      state.foodBatches
+        .filter((batch) => batch.location === 'showcase')
+        .reduce((sum, batch) => sum + batch.quantity, 0) > SHOWCASE_CAPACITY
+    )
+      invalid('푸드 쇼케이스 진열량을 초과했어요.')
+
+    if (state.foodWork) {
+      const food = state.foodWork
+      const line = state.sale?.foodLines.find(
+        (line) => line.id === food.lineId && line.productId === food.productId && line.served < line.quantity,
+      )
+      if (!line || state.sale?.acceptedAt == null) invalid('준비 중인 푸드와 주문이 연결되지 않았어요.')
+      if (
+        (food.stage === 'heating') !== (food.heatingEndsAt !== null) ||
+        (food.stage === 'heating' && food.location !== 'food-oven')
+      )
+        invalid('푸드의 가열 상태가 올바르지 않아요.')
+      if (food.stage === 'packed' && (food.packaging === null || food.packaging !== line?.options.packaging))
+        invalid('푸드 포장이 주문과 맞지 않아요.')
+      if (
+        food.location === 'hand' &&
+        (state.cup?.craft.location === 'hand' ||
+          state.cup?.craft.tool ||
+          Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
+          state.preparation?.tool ||
+          state.cupDelivery ||
+          state.supplyDelivery ||
+          state.batches.some((batch) => batch.location === 'hand') ||
+          state.washing?.spongeHeld ||
+          state.washing?.stage === 'carrying' ||
+          state.cleaning?.clothHeld ||
+          state.coldBrew?.tool ||
+          Object.values(state.drip).some((brew) => brew?.tool) ||
+          cupCount(state.cleaning?.heldCups))
+      )
+        invalid('푸드와 다른 물건을 동시에 들 수 없어요.')
+    }
+  })
   .refine(
     (state) => !state.preparation || state.cup?.craft.location !== preparationStation(state.preparation),
     '준비대에는 음료와 부재료 작업을 동시에 놓을 수 없어요.',
   )
   .refine((state) => {
     const counts = new Map<string, number>()
+
     for (const batch of state.batches) {
       if (batch.location !== 'bar' || batch.amount <= 0) continue
       const count = (counts.get(batch.ingredient) ?? 0) + 1
       if (count > BAR_BATCH_CAPACITY) return false
       counts.set(batch.ingredient, count)
     }
+
     return true
   }, `바에는 재료 품목별로 ${BAR_BATCH_CAPACITY}용기까지 보관할 수 있어요.`)
   .refine(
@@ -672,17 +914,21 @@ export const stateSchema = z
           state.washing?.spongeHeld ||
           state.washing?.stage === 'carrying' ||
           state.cleaning?.clothHeld ||
+          state.coldBrew?.tool ||
+          Object.values(state.drip).some((brew) => brew?.tool) ||
           cupCount(state.cleaning?.heldCups)))
     )
       invalid('URN 도구와 다른 물건을 동시에 들 수 없어요.')
 
     for (const { temperature, brew } of owners) {
       const jobs = state.jobs.filter((job) => job.kind === 'drip-coffee' && job.preparationId === brew.id)
+
       if (brew.stage === 'extracting' && !brew.fault) {
         if (jobs.length !== 1 || jobs[0].station !== 'urn' || jobs[0].endsAt - jobs[0].startedAt !== DRIP.brewSeconds) {
           invalid('URN 추출 작업의 시간과 상태가 맞지 않아요.')
         }
       } else if (jobs.length) invalid('추출 중이 아닌 URN에 진행 작업이 남아 있어요.')
+
       if (brew.tool && (!['beans', 'ice', 'ground'].includes(brew.stage) || brew.fault))
         invalid('URN 계량 도구 상태가 맞지 않아요.')
       if (brew.beans > dripDose(temperature) * 1.5 + 1e-9 || brew.ice > DRIP.icedIceGrams * 1.5 + 1e-9)
@@ -692,6 +938,7 @@ export const stateSchema = z
       if (['ice', 'mix', 'ready'].includes(brew.stage) !== (brew.completedAt !== null))
         invalid('URN 추출 완료 시각이 맞지 않아요.')
       const batch = state.batches.find((batch) => batch.id === brew.batchId)
+
       if (brew.stage === 'ready') {
         if (
           !batch ||
@@ -706,6 +953,7 @@ export const stateSchema = z
           invalid('URN과 완성 배치가 연결되지 않았어요.')
       } else if (brew.batchId !== null) invalid('완성되지 않은 URN에 배치가 연결되어 있어요.')
     }
+
     if (
       state.jobs.some((job) => job.kind === 'drip-coffee' && !owners.some(({ brew }) => brew.id === job.preparationId))
     )
@@ -715,6 +963,7 @@ export const stateSchema = z
         if ((batch.ingredient === 'todays-coffee' || batch.ingredient === 'iced-coffee') !== (batch.dripBean !== null))
           return true
         if (batch.ingredient === 'todays-coffee' && batch.location !== 'urn') return true
+
         return (
           (batch.location === 'urn' || batch.carryFrom === 'urn') &&
           !owners.some(({ brew }) => brew.batchId === batch.id)
@@ -739,7 +988,7 @@ export const stateSchema = z
             customer +
             surfaces +
             (state.cleaning?.heldCups[kind] ?? 0) +
-            (state.cup?.craft.kind === kind ? 1 : 0) ===
+            (state.cup?.craft.kind === kind && !state.cup.craft.personalCup ? 1 : 0) ===
           REUSABLE_CUPS_PER_KIND
         )
       }),

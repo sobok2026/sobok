@@ -18,6 +18,22 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   const cup = state.cup
   const carrying = carriedBatch(state)
 
+  if (panel === 'food-case' || panel === 'food-oven' || state.foodWork) {
+    return {
+      title: '주문한 푸드를 준비하세요',
+      action:
+        '냉장고에서 진열한 푸드를 쇼케이스에서 집고, 가열 요청이면 오븐에 넣으세요. 픽업대에서 포장해 전달하세요.',
+      reason: '기한이 지난 푸드는 제공할 수 없어요. 냉장고로 돌려놓아도 진열한 푸드의 기한은 늘어나지 않아요.',
+    }
+  }
+  if (state.customer?.stage === 'payment' || state.customer?.stage === 'to-payment') {
+    return {
+      title: '선제공 주문을 정산하세요',
+      action: 'POS에서 남은 금액을 결제하세요.',
+      reason: '선제공한 상품도 정산을 마쳐야 매출과 영수증에 반영돼요.',
+    }
+  }
+
   if (carrying?.openedAt === null) {
     return {
       title: '입고한 원팩을 보관하세요',
@@ -25,8 +41,10 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       reason: '냉장 보관 재료는 냉장고, 실온 보관 재료는 창고에 둬요. 잘못 넣으면 다시 넣어야 해요.',
     }
   }
+
   if (carrying) {
     const expired = carrying.expiresAt !== null && carrying.expiresAt <= state.time
+
     return {
       title: expired ? '기한이 지난 용기예요' : '배합 용기를 보관하세요',
       action: expired
@@ -127,6 +145,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       reason: '손님 요청과 주문표는 별개예요. 카운터 안쪽에서 주문을 받아요.',
     }
   }
+
   return {
     title: '주문에 맞는 컵을 고르세요',
     action: '컵 보관대에서 작업 버튼을 누르고 주문의 매장·포장, 온도, 사이즈를 보고 컵을 고르세요.',

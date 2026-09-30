@@ -3,7 +3,10 @@ import { money } from '../../shared/format'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 import { CashReceiptForm } from './CashReceiptForm'
+import { type PaymentMethod, paymentNames } from './checkout-model'
+import { PaymentForm } from './PaymentForm'
 import { PosButton, PosDialog } from './PosControls'
+import { outstandingCredit } from './payments'
 import { Receipt, ReceiptPreview } from './Receipt'
 import {
   cashReceiptLabel,
@@ -18,7 +21,8 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
   const [today, setToday] = useState(true)
   const [query, setQuery] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [form, setForm] = useState<'cash-receipt' | 'print' | null>(null)
+  const [form, setForm] = useState<'cash-receipt' | 'print' | 'credit' | null>(null)
+  const [creditMethod, setCreditMethod] = useState<PaymentMethod>('cash')
 
   const transactions = [...state.transactions]
     .reverse()
@@ -73,6 +77,11 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
                 <span className="mt-1 block text-xs">{receiptTime(transaction.paidAt)}</span>
                 <span className="mt-2 block text-right tabular-nums">{money(transactionTotal(transaction))}</span>
                 <span className="mt-1 block text-xs">{cashReceiptLabel(transaction)}</span>
+                {outstandingCredit(transaction) > 0 && (
+                  <span className="mt-1 block text-xs text-pos-hot">
+                    미수금 {money(outstandingCredit(transaction))}
+                  </span>
+                )}
               </PosButton>
             ))}
           </section>
@@ -80,6 +89,11 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
             <div className="max-h-96 overflow-auto rounded border border-pos-soft">
               <Receipt transaction={selected} />
             </div>
+            {outstandingCredit(selected) > 0 && (
+              <PosButton tone="active" className="mt-3 w-full" onClick={() => setForm('credit')}>
+                미수금 {money(outstandingCredit(selected))} 정산
+              </PosButton>
+            )}
             <div className="mt-3 grid grid-cols-2 gap-2">
               <PosButton tone="dark" onClick={() => setForm('print')}>
                 영수증 {selected.printCount ? '재출력' : '출력'}
@@ -96,6 +110,7 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
                     <span>
                       {{ personal: '소득공제', business: '지출증빙', unissued: '미발행' }[receipt.kind]}{' '}
                       {receipt.lastFour && `**** ${receipt.lastFour}`}
+                      {` · ${money(receipt.amount)}`}
                     </span>
                     <span>{receiptTime(receipt.issuedAt)}</span>
                   </p>
@@ -116,6 +131,30 @@ export function TransactionHistory({ state, act }: { state: GameState; act: (act
       )}
       {selected && form === 'print' && (
         <ReceiptPreview transaction={selected} act={act} onClose={() => setForm(null)} />
+      )}
+      {selected && form === 'credit' && (
+        <PosDialog title="외상 정산" onClose={() => setForm(null)}>
+          <div className="mb-4 grid grid-cols-3 gap-2">
+            {(['cash', 'card', 'starbucks-card'] as const).map((method) => (
+              <PosButton key={method} aria-pressed={creditMethod === method} onClick={() => setCreditMethod(method)}>
+                {paymentNames[method]}
+              </PosButton>
+            ))}
+          </div>
+          <PaymentForm
+            key={creditMethod}
+            state={state}
+            method={creditMethod}
+            memberId={selected.memberId}
+            remaining={outstandingCredit(selected)}
+            creditSettlement
+            onBack={() => setForm(null)}
+            onPay={(payment) => {
+              act({ type: 'pos-credit-payment', transactionId: selected.id, payment })
+              setForm(null)
+            }}
+          />
+        </PosDialog>
       )}
     </div>
   )

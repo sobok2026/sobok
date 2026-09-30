@@ -61,12 +61,14 @@ const blocked = (blocker: Blocker): Objective => ({ station: blocker.station, pa
 
 function materialStation(state: GameState, ingredient: IngredientId, area: StockArea, amount: number): StationId {
   if (ingredient === 'todays-coffee') return 'urn'
+
   if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) {
     const batch = state.batches.find(
       (item) => item.ingredient === ingredient && item.location === 'bar' && item.amount > 0,
     )!
     return batchHome(batch)!
   }
+
   const source = materialSource(state, ingredient, area, amount, state.cup?.craft.dripBean ?? null)
   if (source) return batchHome(source) ?? 'stock'
   if (isDripIngredient(ingredient)) return 'urn'
@@ -366,6 +368,27 @@ function plannedObjective(state: GameState): Objective {
 }
 
 export function objective(state: GameState): Objective {
+  if (state.foodWork) {
+    const food = state.foodWork
+    const line = state.sale?.foodLines.find((line) => line.id === food.lineId)
+    if (food.expiresAt <= state.time)
+      return at(food.location === 'food-oven' ? 'food-oven' : 'pickup', '기한 지난 푸드 폐기')
+    if (food.location === 'hand')
+      return at(line?.warmed && food.stage === 'picked' ? 'food-oven' : 'pickup', '들고 있는 푸드 내려놓기')
+    if (food.stage === 'picked' && line?.warmed) return at('food-oven', '푸드 가열 시작')
+    if (food.stage === 'heated' && food.location === 'food-oven') return at('food-oven', '가열한 푸드 집기')
+    if (food.location === 'pickup') return at('pickup', food.stage === 'packed' ? '푸드 전달' : '푸드 포장·제공 준비')
+  }
+
+  if (
+    !currentTicket(state) &&
+    state.sale?.acceptedAt != null &&
+    state.sale.foodLines.some((line) => line.served < line.quantity) &&
+    !state.foodWork
+  )
+    return at('food-case', '주문한 푸드 집기')
+  if (state.customer?.stage === 'payment' || state.customer?.stage === 'to-payment')
+    return at('pos', '선제공 주문 정산')
   const heldDrip = dripTemperatures.map((id) => state.drip[id]).find((brew) => brew?.tool)
   if (heldDrip) {
     return at(
