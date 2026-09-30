@@ -16,6 +16,7 @@ import {
   dripTemperatures,
 } from '../features/drip-coffee/rules'
 import { grindSettingSchema } from '../features/grinder/rules'
+import { ICE } from '../features/ice/rules'
 import { BAR_BATCH_CAPACITY, isSealed, packStorage } from '../features/inventory/batches'
 import {
   CUP_SUPPLY,
@@ -33,7 +34,7 @@ import { PREPARATIONS, preparationIds, preparationStation } from '../features/pr
 import { productionStateSchema } from '../features/production/workflow'
 import { customerStages } from '../features/service/customer'
 import { currentTicket, customerCupCounts, orderMatchesRequest, salePaid, saleTotal } from '../features/service/orders'
-import { washItems } from '../features/washing/rules'
+import { DISHWASHER, rackCount, rackSpace, washItems } from '../features/washing/rules'
 
 const quantity = z.number().min(0).max(100000000)
 const reusableCounts = z.record(z.enum(reusableCupKinds), quantity.int())
@@ -273,7 +274,7 @@ const batchSchema = z
 
 const jobSchema = z.object({
   id: z.string().max(100),
-  kind: z.enum(['production', 'cold-brew', 'drip-coffee']),
+  kind: z.enum(['production', 'cold-brew', 'drip-coffee', 'dishwasher']),
   station: z.enum(stationIds),
   label: z.string().max(200),
   startedAt: timestamp,
@@ -446,6 +447,22 @@ export const stateSchema = z
     drip: z.object({ hot: dripBrewSchema.nullable(), iced: dripBrewSchema.nullable() }),
     grindSetting: grindSettingSchema,
     washing: washingSchema.nullable(),
+    dishwasher: z.object({
+      hoodOpen: z.boolean(),
+      clean: z.boolean(),
+      rack: z.partialRecord(z.enum(washItems), z.number().int().min(1).max(DISHWASHER.capacity)),
+    }),
+    ice: z.object({
+      enabled: z.boolean(),
+      stored: z.number().min(0).max(ICE.capacity),
+      bar: z.number().min(0).max(ICE.barCapacity),
+      bucket: z.number().min(0).max(ICE.bucketCapacity),
+      bucketHeld: z.boolean(),
+      cycleStartedAt: timestamp.nullable(),
+      produced: quantity,
+      used: quantity,
+      discarded: quantity,
+    }),
     cleaning: cleaningSchema.nullable(),
     condiment: z.object({ cups: reusableCounts, dirty: z.boolean() }),
     supplies: z.record(
@@ -504,6 +521,64 @@ export const stateSchema = z
         .min(0)
         .max(FLOOR_HEIGHT * 2),
     ]),
+  })
+  .superRefine((state, context) => {
+    const invalid = (message: string) => context.addIssue({ code: 'custom', message })
+    const machine = state.dishwasher
+    const jobs = state.jobs.filter((job) => job.kind === 'dishwasher')
+    if (rackSpace(machine.rack) > DISHWASHER.capacity || (machine.clean && !rackCount(machine.rack))) {
+      invalid('세척기 랙의 적재량과 상태가 맞지 않아요.')
+    }
+    if (
+      jobs.length > 1 ||
+      (jobs.length > 0 &&
+        (machine.hoodOpen ||
+          machine.clean ||
+          !rackCount(machine.rack) ||
+          jobs[0].station !== 'dishwasher' ||
+          jobs[0].endsAt - jobs[0].startedAt !== DISHWASHER.cycleSeconds))
+    )
+      invalid('세척기 후드·운전·랙 상태가 맞지 않아요.')
+
+    const ice = state.ice
+    if (!ice.bucketHeld && ice.bucket > 0) invalid('운반통에 얼음이 있는데 운반 상태가 아니에요.')
+    if (
+      Math.abs(
+        ice.stored +
+          ice.bar +
+          ice.bucket +
+          ice.used +
+          ice.discarded -
+          ICE.initialStored -
+          ICE.initialBar -
+          ice.produced,
+      ) > 0.01
+    ) {
+      invalid('생산·보관·운반·사용한 얼음의 수량이 맞지 않아요.')
+    }
+    if (
+      (ice.enabled && ice.stored < ICE.capacity) !== (ice.cycleStartedAt !== null) ||
+      (ice.cycleStartedAt !== null && ice.cycleStartedAt > state.time)
+    ) {
+      invalid('제빙기의 가동 상태와 생산 시작 시각이 맞지 않아요.')
+    }
+    if (
+      ice.bucketHeld &&
+      (state.cupDelivery ||
+        state.supplyDelivery ||
+        state.batches.some((batch) => batch.location === 'hand') ||
+        state.cup?.craft.location === 'hand' ||
+        state.cup?.craft.tool ||
+        Object.values(state.cup?.craft.places ?? {}).includes('hand') ||
+        state.preparation?.tool ||
+        state.coldBrew?.tool ||
+        dripTemperatures.some((temperature) => state.drip[temperature]?.tool) ||
+        state.washing?.spongeHeld ||
+        state.washing?.stage === 'carrying' ||
+        state.cleaning?.clothHeld ||
+        cupCount(state.cleaning?.heldCups))
+    )
+      invalid('얼음통과 다른 물건을 동시에 들 수 없어요.')
   })
   .refine((state) => {
     if (!state.cup) {
@@ -728,6 +803,7 @@ export const stateSchema = z
       reusableCupKinds.every((kind) => {
         const stock = state.reusableCups[kind]
         const washing = state.washing?.item === kind && state.washing.stage !== 'ready' ? 1 : 0
+        const dishwasher = state.dishwasher.rack[kind] ?? 0
         const customer = customerCupCounts(state)[kind]
         const surfaces = state.condiment.cups[kind] + tableIds.reduce((sum, id) => sum + state.tables[id].cups[kind], 0)
 
@@ -736,6 +812,7 @@ export const stateSchema = z
             stock.dirty +
             stock.washed +
             washing +
+            dishwasher +
             customer +
             surfaces +
             (state.cleaning?.heldCups[kind] ?? 0) +

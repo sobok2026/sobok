@@ -19,6 +19,13 @@ import { CUP_NAMES, type CupKind, isReusableCup } from './cups'
 import type { StockArea } from './inventory'
 
 export function materialTip(state: GameState, ingredient: IngredientId, area: StockArea = 'bar', needed = 0): Tip {
+  if (ingredient === 'ice') {
+    return {
+      title: '바 아이스 빈에 얼음을 보충하세요',
+      action: '컵과 스쿱을 놓고 백룸 제빙기에서 얼음통을 집어 바 아이스 빈까지 운반하세요.',
+      reason: '제빙기를 켜면 저장고에 얼음이 쌓여요. 아이스 빈에 부은 얼음만 제조에 사용할 수 있어요.',
+    }
+  }
   const definition = INGREDIENTS[ingredient]
   if (area === 'bar' && barBatchCount(state, ingredient) >= BAR_BATCH_CAPACITY) {
     const batch = state.batches.find(
@@ -102,6 +109,7 @@ export function materialTip(state: GameState, ingredient: IngredientId, area: St
 export function cupRestockAction(state: GameState, kind: CupKind) {
   if (isReusableCup(kind)) {
     const cups = state.reusableCups[kind]
+    if (state.dishwasher.rack[kind]) return '세척기가 끝나면 랙을 꺼내고, 건조대의 컵을 컵 보관대에 돌려놓으세요.'
     if (cups.washed > 0) {
       return `세척대에서 씻은 ${josa(CUP_NAMES[kind], '을', '를')} 집어 컵 보관대에 놓으세요.`
     }

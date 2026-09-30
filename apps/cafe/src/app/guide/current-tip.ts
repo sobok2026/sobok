@@ -18,6 +18,28 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   const cup = state.cup
   const carrying = carriedBatch(state)
 
+  if (state.ice.bucketHeld && state.ice.bucket === 0) {
+    return {
+      title: '빈 얼음통을 돌려놓으세요',
+      action: '백룸 제빙기 옆에 얼음통을 걸어주세요.',
+      reason: '빈 통까지 정리하면 다시 다른 도구를 집을 수 있어요.',
+    }
+  }
+  if (state.ice.bucketHeld || panel === 'ice-machine' || panel === 'ice') {
+    return {
+      title: state.ice.bucketHeld ? '얼음통을 바에 운반하세요' : '제빙기와 바 아이스 빈',
+      action: '제빙기에서 얼음통에 담고, 바 아이스 빈을 보고 작업 버튼을 눌러 보충하세요.',
+      reason: '바에 부은 얼음만 음료와 ICED 드립에 사용해요. 남은 얼음은 제빙기 옆 배수구에 비우고 통을 걸어요.',
+    }
+  }
+  if (panel === 'dishwasher') {
+    return {
+      title: '랙에 담아 세척하세요',
+      action: '후드 올리기 → 랙 적재 → 후드 내리고 운전 → 완료 후 건조대에 꺼내기 순서예요.',
+      reason: '꺼낸 용기는 건조대에서 집어 피처는 도구 선반, 컵은 컵 보관대로 옮겨요.',
+    }
+  }
+
   if (carrying?.openedAt === null) {
     return {
       title: '입고한 원팩을 보관하세요',

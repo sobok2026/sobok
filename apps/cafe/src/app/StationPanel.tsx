@@ -3,10 +3,12 @@ import { lazy, Suspense } from 'react'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import ColdBrewPanel from '../features/cold-brew/ColdBrewPanel'
+import IcePanel from '../features/ice/IcePanel'
 import CupRack from '../features/inventory/CupRack'
 import ShelfPanel from '../features/inventory/ShelfPanel'
 import StoragePanel from '../features/inventory/StoragePanel'
 import PreparationPanel from '../features/preparation/PreparationPanel'
+import DishwasherPanel from '../features/washing/DishwasherPanel'
 import WashingPanel from '../features/washing/WashingPanel'
 import type { Action } from '../simulation/actions'
 import { objective } from '../simulation/guidance'
@@ -96,6 +98,9 @@ export default function StationPanel({
           </Suspense>
         )}
         {panel === 'wash' && <WashingPanel state={state} act={act} />}
+        {panel === 'drying' && <WashingPanel state={state} act={act} drying />}
+        {panel === 'dishwasher' && <DishwasherPanel state={state} act={act} />}
+        {(panel === 'ice-machine' || panel === 'ice') && <IcePanel state={state} act={act} bar={panel === 'ice'} />}
         {(panel === 'shelf' || panel === 'bar-fridge') && <ShelfPanel state={state} act={act} place={panel} />}
       </section>
     </div>

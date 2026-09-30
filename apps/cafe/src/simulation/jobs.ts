@@ -1,5 +1,6 @@
 import { finishDripJob, settleDrip } from '../features/drip-coffee/actions'
 import { finishPreparation } from '../features/preparation/actions'
+import { rackCount } from '../features/washing/rules'
 import { say } from './feedback'
 import type { WorkContext } from './work-context'
 
@@ -9,7 +10,11 @@ export function completeJobs(work: WorkContext) {
   s.jobs = s.jobs.filter((job) => job.endsAt > s.time)
 
   for (const job of finished) {
-    if (job.kind === 'drip-coffee') {
+    if (job.kind === 'dishwasher') {
+      s.dishwasher.clean = true
+      s.totals.washed += rackCount(s.dishwasher.rack)
+      say(s, '식기 세척이 끝났어요. 후드를 올리고 랙을 건조대에 꺼내주세요.', 'success')
+    } else if (job.kind === 'drip-coffee') {
       finishDripJob(s, job)
     } else if (job.kind === 'cold-brew') {
       const brew = s.coldBrew

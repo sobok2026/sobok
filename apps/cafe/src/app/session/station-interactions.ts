@@ -22,6 +22,11 @@ import type { GameState } from '../../simulation/state'
 export type Interaction = Action | 'work' | 'panel' | null
 
 export function interactionAt(current: GameState, id: StationId): Interaction {
+  if (current.ice.bucketHeld && id !== 'pos') {
+    if (id === 'ice' && current.ice.bucket > 0) return { type: 'ice-fill' }
+    if (id !== 'ice-machine') return null
+    return current.ice.bucket > 0 ? 'panel' : { type: 'ice-return' }
+  }
   const carrying = carriedBatch(current)
   if (carrying && id !== 'pos') {
     if (isSealed(carrying)) {
@@ -54,6 +59,7 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
   if (current.washing?.stage === 'carrying' && id === washDestination(current.washing.item)) {
     return { type: 'store-washed', station: id }
   }
+  if (id === 'drying' && current.washing?.stage === 'carrying') return { type: 'leave-wash' }
 
   if (current.preparation && id === preparationStation(current.preparation)) {
     const batch = current.batches.find((item) => item.id === current.preparation?.batchId)
@@ -98,6 +104,9 @@ export function interactionAt(current: GameState, id: StationId): Interaction {
 }
 
 const panelStations: StationId[] = [
+  'dishwasher',
+  'ice-machine',
+  'ice',
   'pos',
   'cups',
   'fridge',
@@ -119,6 +128,11 @@ function stationDefault(state: GameState, id: StationId): Interaction {
   }
   if (id === 'wash') {
     return washInteraction(state)
+  }
+  if (id === 'drying') {
+    const items = washQueue(state, null).flatMap(({ washedItem }) => (washedItem ? [washedItem] : []))
+    if (items.length > 1) return 'panel'
+    return items[0] ? { type: 'take-washed', item: items[0] } : null
   }
   return null
 }

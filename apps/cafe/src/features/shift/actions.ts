@@ -3,6 +3,7 @@ import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import { completeJobs } from '../../simulation/jobs'
 import type { WorkContext } from '../../simulation/work-context'
+import { settleIce } from '../ice/rules'
 import { createCustomer, customerLeave } from '../service/customer'
 import { currentTicket } from '../service/orders'
 import { closingTasks, emptyTotals } from './rules'
@@ -58,6 +59,7 @@ export function handleShiftActions(
       s.position = staffStartPosition()
       s.batches = s.batches.filter((b) => b.amount > 0)
       completeJobs(work)
+      settleIce(s)
       say(s, '새 근무일이에요. 냉장고의 라벨 기한과 준비된 재료를 확인해주세요.', 'success')
       break
     }

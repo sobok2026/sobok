@@ -274,6 +274,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       closePanel()
     }
     if (action.type === 'take-cups' && current.cupDelivery) closePanel()
+    if (action.type === 'ice-take' && current.ice.bucketHeld) closePanel()
     if ((action.type === 'take-batch' || action.type === 'buy') && carriedBatch(current)) {
       closePanel()
     }

@@ -63,7 +63,7 @@ export default function PlayHud({
 }) {
   const goal = objective(state)
   const heldBatch = carriedBatch(state)
-  const carrying = !!heldBatch || !!state.cupDelivery || !!state.supplyDelivery
+  const carrying = !!heldBatch || !!state.cupDelivery || !!state.supplyDelivery || state.ice.bucketHeld
   const lastMessage = state.messages.at(-1)
 
   const showPreparation =

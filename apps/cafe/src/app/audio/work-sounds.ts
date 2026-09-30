@@ -295,6 +295,8 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
   if (newError(previous, current)) {
     return null
   }
+  if ((action.type === 'ice-take' || action.type === 'ice-fill') && current.ice.bucket !== previous.ice.bucket)
+    return 'ice'
   if (current.totals.served > previous.totals.served) {
     return 'serve'
   }

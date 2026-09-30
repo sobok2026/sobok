@@ -3,12 +3,13 @@ import { cupSurfaceIds, STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { cupSurface } from '../cleaning/rules'
 import { DRIP_BEANS, dripStation, dripTemperatures } from '../drip-coffee/rules'
+import { iceKilograms } from '../ice/rules'
 import { batchHome, carriedBatch, deliveryDestination, isSealed } from '../inventory/batches'
 import { CUP_NAMES, cupCount } from '../inventory/cups'
 import { SUPPLIES } from '../inventory/supplies'
 import { PREPARATIONS, preparationStation } from '../preparation/rules'
 import { CUSTOMER_STATUS } from '../service/customer'
-import { WASH_NAMES, washDestination, washItems, washStock } from '../washing/rules'
+import { dishwasherJob, rackCount, WASH_NAMES, washDestination, washItems, washStock } from '../washing/rules'
 
 export type ShiftTask = { place: string; task: string; count?: string }
 
@@ -16,6 +17,14 @@ const taskLabel = ({ place, task, count }: ShiftTask) => `${place} · ${task}${c
 
 export function shiftTasks(state: GameState): ShiftTask[] {
   const tasks: ShiftTask[] = []
+  if (state.ice.bucketHeld)
+    tasks.push({ place: STATIONS.ice.name, task: '얼음통 비우기', count: iceKilograms(state.ice.bucket) })
+  if (rackCount(state.dishwasher.rack) && !dishwasherJob(state)) {
+    tasks.push({
+      place: STATIONS.dishwasher.name,
+      task: state.dishwasher.clean ? '세척한 랙 꺼내기' : '세척 운전 또는 랙 비우기',
+    })
+  }
   const unserved = state.sale?.paidAt != null ? state.sale.lines.reduce((sum, l) => sum + l.quantity - l.served, 0) : 0
   if (unserved || state.cup) {
     tasks.push({ place: '주문', task: '음료 제조', count: unserved ? `${unserved}잔 남음` : undefined })

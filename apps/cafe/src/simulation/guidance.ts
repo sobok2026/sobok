@@ -14,6 +14,7 @@ import {
   vesselName,
 } from '../features/crafting/rules'
 import { dripStation, dripTemperatures, isDripIngredient } from '../features/drip-coffee/rules'
+import { ICE, iceKilograms } from '../features/ice/rules'
 import {
   BAR_BATCH_CAPACITY,
   barBatchCount,
@@ -38,7 +39,7 @@ import { workTitle } from '../features/production/presentation'
 import { missingInput, readyWork, requiredInput } from '../features/production/runtime'
 import type { WorkStep } from '../features/production/workflow'
 import { currentTicket } from '../features/service/orders'
-import { WASH_NAMES, washDestination, washItems, washStock } from '../features/washing/rules'
+import { dishwasherJob, rackCount, WASH_NAMES, washDestination, washItems, washStock } from '../features/washing/rules'
 import { craftingHandsBusy, cupHandsBusy } from './hands'
 import type { Cleaning, CraftState, GameState, Preparation } from './state'
 
@@ -76,6 +77,13 @@ function materialStation(state: GameState, ingredient: IngredientId, area: Stock
 }
 
 function materialBlocker(state: GameState, ingredient: IngredientId, area: StockArea = 'bar', amount = 0): Blocker {
+  if (ingredient === 'ice') {
+    return {
+      station: 'ice-machine',
+      reason: '바 아이스 빈에 얼음 보충 필요',
+      fix: '제빙기에서 얼음통을 집어 바 아이스 빈에 비우세요. 제빙기가 꺼져 있으면 자동 제빙을 켜세요.',
+    }
+  }
   const place = area === 'bar' ? '바' : '백룸'
 
   return {
@@ -87,6 +95,13 @@ function materialBlocker(state: GameState, ingredient: IngredientId, area: Stock
 }
 
 function toolBlocker(state: GameState): Blocker {
+  if (state.dishwasher.rack.pitcher) {
+    return {
+      station: 'dishwasher',
+      reason: '피처가 세척기 랙에 있어요',
+      fix: '세척을 마친 뒤 랙을 꺼내고, 건조대에서 피처를 집어 바 도구 선반에 놓으세요.',
+    }
+  }
   return {
     station: 'wash',
     reason: '깨끗한 작업 용기 없음',
@@ -135,13 +150,16 @@ function surfaceTask(cups: number, dirty: boolean) {
 }
 
 function chore(state: GameState): Objective | null {
+  if (rackCount(state.dishwasher.rack) && !dishwasherJob(state)) {
+    return at('dishwasher', state.dishwasher.clean ? '세척한 랙 꺼내기' : '후드 내리고 세척 운전')
+  }
   const dirtyItem = washItems.find((item) => washStock(state, item).dirty)
   if (dirtyItem) {
     return at('wash', `${WASH_NAMES[dirtyItem]} 세척`)
   }
   const washedItem = washItems.find((item) => washStock(state, item).washed)
   if (washedItem) {
-    return at('wash', `씻은 ${WASH_NAMES[washedItem]} 정리`)
+    return at('drying', `씻은 ${WASH_NAMES[washedItem]} 정리`)
   }
   const table = tableIds.find((id) => state.tables[id].dirty || cupCount(state.tables[id].cups))
   if (table) {
@@ -293,6 +311,11 @@ function closingObjective(state: GameState): Objective | null {
 }
 
 function plannedObjective(state: GameState): Objective {
+  if (state.ice.bucketHeld) {
+    return state.ice.bar >= ICE.barCapacity || state.ice.bucket === 0
+      ? to('ice-machine', '얼음통 돌려놓기')
+      : to('ice', `얼음 ${iceKilograms(state.ice.bucket)} 보충`)
+  }
   const carrying = carriedBatch(state)
   if (carrying && isSealed(carrying)) {
     // Choosing the right storage is the player's call, so the guide does not point at it.

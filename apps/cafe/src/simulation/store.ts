@@ -3,6 +3,8 @@ import { handleColdBrewActions } from '../features/cold-brew/actions'
 import { expireDrink, handleCraftActions } from '../features/crafting/actions'
 import { handleDripActions, settleDrip } from '../features/drip-coffee/actions'
 import { grindSettingSchema } from '../features/grinder/rules'
+import { handleIceActions } from '../features/ice/actions'
+import { settleIce } from '../features/ice/rules'
 import { handleStockActions } from '../features/inventory/actions'
 import { expirePreparation, handlePreparationActions } from '../features/preparation/actions'
 import { handleOrderActions } from '../features/service/actions'
@@ -11,6 +13,7 @@ import { handlePosActions } from '../features/service/pos-actions'
 import { handleReceiptActions } from '../features/service/receipt-actions'
 import { handleShiftActions } from '../features/shift/actions'
 import { handleWashingActions } from '../features/washing/actions'
+import { handleDishwasherActions } from '../features/washing/dishwasher-actions'
 import { canDispatch } from './action-guards'
 import type { Action } from './actions'
 import { advanceWork } from './active-work'
@@ -64,11 +67,23 @@ export class CafeStore {
     const work: WorkContext = { state: structuredClone(this.state), input: null }
     const s = work.state
     completeJobs(work)
+    settleIce(s)
     expirePreparation(work, s.time)
     expireDrink(work, s.time)
 
     if (canDispatch(work, action)) {
       switch (action.type) {
+        case 'ice-toggle':
+        case 'ice-take':
+        case 'ice-fill':
+        case 'ice-return':
+          handleIceActions(work, action)
+          break
+        case 'dishwasher-hood':
+        case 'dishwasher-load':
+        case 'dishwasher-unload':
+          handleDishwasherActions(work, action)
+          break
         case 'grinder-setting':
           if (grindSettingSchema.safeParse(action.setting).success) s.grindSetting = action.setting
           break
@@ -197,6 +212,7 @@ export class CafeStore {
     work.state.time += dt
     // Finish scheduled work at its own timestamp before checking expiry at the current time.
     completeJobs(work)
+    settleIce(work.state)
     expirePreparation(work, work.state.time)
     expireDrink(work, work.state.time)
     advanceWork(work, dt, this.heldSeconds)

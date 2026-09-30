@@ -3,7 +3,7 @@ import { STATIONS } from '../../content/stations'
 import { CUP_DIMENSIONS, createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { reusableCupKinds } from '../inventory/cups'
-import { DRYING_LEVEL, WASH_OUTLET, WASHING_SPOT } from './equipment'
+import { DIRTY_SPOT, DRYING_LEVEL, WASH_OUTLET, WASHED_SPOT, WASHING_SPOT } from './equipment'
 import { WASH_STEPS, type WashItem, washItems, washStock } from './rules'
 
 export function createWashingVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -52,16 +52,16 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
   const dirtyQueue = Array.from({ length: 4 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(STATIONS.wash.x - 0.53, 1.117, STATIONS.wash.z - 0.32 + i * 0.16)
+    value.group.position.set(DIRTY_SPOT[0], DIRTY_SPOT[1], DIRTY_SPOT[2] - 0.25 + i * 0.16)
     return value
   })
   const washedQueue = Array.from({ length: 6 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
     value.group.position.set(
-      STATIONS.wash.x + 0.85 + (i % 3) * 0.25,
-      1.132,
-      STATIONS.wash.z - 0.22 + Math.floor(i / 3) * 0.29,
+      WASHED_SPOT[0] - 0.26 + (i % 3) * 0.25,
+      WASHED_SPOT[1] + 0.03,
+      WASHED_SPOT[2] - 0.19 + Math.floor(i / 3) * 0.29,
     )
     value.stain.visible = false
     return value

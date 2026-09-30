@@ -226,10 +226,14 @@ export function createPlayerControls(
       options.onInteract(hovered)
       return
     }
+    if (options.getState().ice.bucketHeld && (hovered === 'ice' || hovered === 'ice-machine')) {
+      options.onInteract(hovered)
+      return
+    }
 
     if (
       options.getState().washing?.stage === 'carrying' &&
-      (hovered === washDestination(options.getState().washing!.item) || hovered === 'wash')
+      (hovered === washDestination(options.getState().washing!.item) || hovered === 'wash' || hovered === 'drying')
     ) {
       options.onInteract(hovered)
       return

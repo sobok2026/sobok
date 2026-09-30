@@ -50,6 +50,9 @@ export type Action =
   | DripAction
   | PosAction
   | ReceiptAction
+  | { type: 'dishwasher-hood' | 'dishwasher-unload' }
+  | { type: 'dishwasher-load'; item: WashItem }
+  | { type: 'ice-toggle' | 'ice-take' | 'ice-fill' | 'ice-return' }
   | { type: 'grinder-setting'; setting: GrindSetting }
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }

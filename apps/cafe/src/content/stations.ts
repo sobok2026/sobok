@@ -7,6 +7,7 @@ export const SHOP_BOUNDS = { minX: -12, maxX: 12, minZ: -10, maxZ: 20 } as const
 export const CUSTOMER_ENTRANCE = { x: -0.8, z: 19.86 } as const
 export const BACKROOM_FRONT_Z = -5.85
 export const BACKROOM_DOOR = { x: 7.9, width: 1.5 } as const
+export const BACKROOM_BOUNDS = { minX: -5.7, maxX: 9.3, minZ: -9.78, maxZ: -5.94, ceiling: 2.9 } as const
 export const CONDIMENT_BAR = { x: 6, z: BAR_CENTER_Z, width: 3.5, depth: 0.94, yaw: 0 } as const
 const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number, number] => [-3.1, -2.95, Math.PI, -0.17, 0]
@@ -31,13 +32,16 @@ const WORK_STATIONS = {
   pickup: { name: '픽업대', x: 4, z: -1.4 },
   blender: { name: '바 블렌더', x: 2.7, z: -5.1 },
   grinder: { name: 'BUNN G3 그라인더', x: -0.6, z: -5.1 },
-  prep: { name: '백룸 준비대', x: -2.7, z: -9.1 },
-  fridge: { name: '백룸 냉장고', x: 5.5, z: -8.8 },
+  prep: { name: '백룸 준비대', x: -0.8, z: -9.15 },
+  fridge: { name: '백룸 냉장고', x: -2.85, z: -8.85 },
   'bar-fridge': { name: '바 냉장고', x: 1.2, z: -4.8 },
-  stock: { name: '백룸 창고', x: 6.3, z: -7.3 },
+  stock: { name: '백룸 창고', x: -4.55, z: -9.16 },
   shelf: { name: '바 실온 선반', x: 8.95, z: -3.5 },
-  'cold-prep': { name: '백룸 콜드 브루 추출대', x: 1, z: -9.1 },
-  wash: { name: '백룸 세척대', x: -5.0, z: -9.1 },
+  'cold-prep': { name: '백룸 콜드 브루 추출대', x: 1.3, z: -9.15 },
+  wash: { name: '백룸 세척대', x: 6.5, z: -9.15 },
+  dishwasher: { name: '식기세척기', x: 4.85, z: -9.05 },
+  drying: { name: '건조대', x: 3.83, z: -9.15 },
+  'ice-machine': { name: '백룸 제빙기', x: 5.4, z: -7.04 },
   rack: { name: '도구 선반', x: 1.1, z: -5.1 },
   condiment: { name: '컨디먼트 바 · 컵 반납', x: CONDIMENT_BAR.x, z: CONDIMENT_BAR.z + 0.12 },
   supplies: { name: '컨디먼트 바 · 소모품', x: CONDIMENT_BAR.x - 1.15, z: CONDIMENT_BAR.z + 0.12 },

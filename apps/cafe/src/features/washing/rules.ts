@@ -10,6 +10,13 @@ import {
 
 export const washItems = ['pitcher', ...reusableCupKinds] as const
 export type WashItem = (typeof washItems)[number]
+export const DISHWASHER = { capacity: 16, cycleSeconds: 120 } as const
+export const rackSlots = (item: WashItem) => (item === 'pitcher' ? 4 : 1)
+export const rackCount = (rack: Partial<Record<WashItem, number>>) =>
+  Object.values(rack).reduce((sum, amount) => sum + (amount ?? 0), 0)
+export const rackSpace = (rack: Partial<Record<WashItem, number>>) =>
+  washItems.reduce((sum, item) => sum + (rack[item] ?? 0) * rackSlots(item), 0)
+export const dishwasherJob = (state: GameState) => state.jobs.find((job) => job.kind === 'dishwasher')
 
 export const WASH_NAMES = {
   pitcher: '피처',

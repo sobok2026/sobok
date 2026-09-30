@@ -185,7 +185,15 @@ export function stockAwareWorkStep(session: ProductionState, step: WorkStep): Wo
     return { ...step, inputRequirements }
   }
 
-  return { ...step, costs: stockEffect(session, step).costs }
+  const effect = stockEffect(session, step)
+  const ice =
+    step.operation.action === 'add' && step.operation.materialId === 'ice'
+      ? Object.values(effect.vessels)
+          .flatMap((vessel) => vessel.layers)
+          .reduce((sum, layer) => sum + (layer.materialId === 'ice' ? Math.max(0, layer.quantity) : 0), 0)
+      : 0
+
+  return { ...step, costs: ice > 0 ? { ...effect.costs, ice } : effect.costs }
 }
 
 function enoughToTransfer(work: WorkContext, session: ProductionState, step: WorkStep) {

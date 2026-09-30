@@ -14,6 +14,7 @@ import {
 import { createIceScoop, iceScoopScale, iceScoopSizes } from '../../shared/visuals/ice-scoop'
 import { createPumpVisual, operationPump, pumpSpec } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
+import { ICE } from '../ice/rules'
 import { operationFor, vesselPlace } from './rules'
 
 export const WATER_OUTLET: [number, number, number] = [STATIONS.water.x, 1.62, STATIONS.water.z + 0.18]
@@ -154,6 +155,14 @@ export function createIceBin(scene: THREE.Scene) {
       ctx.font = canvasFont(h * 0.6, 600)
       ctx.fillText(size[0].toUpperCase(), w / 2, h * 0.77)
     })
+  }
+
+  return {
+    update(state: GameState) {
+      ice.visible = state.ice.bar > 0
+      ice.position.y = -0.17 * (1 - Math.min(1, state.ice.bar / ICE.barCapacity))
+      ice.count = Math.ceil(48 * Math.min(1, state.ice.bar / 2000))
+    },
   }
 }
 

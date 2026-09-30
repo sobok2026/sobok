@@ -1,6 +1,7 @@
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition, type TableId, tableIds } from '../content/stations'
 import { defaultCow } from '../features/drip-coffee/rules'
+import { ICE } from '../features/ice/rules'
 import { packStorage } from '../features/inventory/batches'
 import {
   CUP_SUPPLY,
@@ -35,6 +36,18 @@ export function initialState(): GameState {
     drip: { hot: null, iced: null },
     grindSetting: 'drip',
     washing: null,
+    dishwasher: { hoodOpen: false, clean: false, rack: {} },
+    ice: {
+      enabled: true,
+      stored: ICE.initialStored,
+      bar: ICE.initialBar,
+      bucket: 0,
+      bucketHeld: false,
+      cycleStartedAt: START,
+      produced: 0,
+      used: 0,
+      discarded: 0,
+    },
     cleaning: null,
     batches: ingredientIds.flatMap((ingredient) => [
       ...(INGREDIENTS[ingredient].startingAmount > 0

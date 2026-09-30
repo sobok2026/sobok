@@ -10,6 +10,7 @@ import { uid } from '../../shared/id'
 import { say } from '../../simulation/feedback'
 import type { Batch, GameState } from '../../simulation/state'
 import { type DripBean, isDripIngredient } from '../drip-coffee/rules'
+import { consumeIce } from '../ice/rules'
 
 export type StockArea = 'bar' | 'backroom'
 
@@ -83,6 +84,7 @@ export function available(
   area: StockArea = 'bar',
   dripBean: DripBean | null = null,
 ) {
+  if (ingredient === 'ice') return state.ice.bar
   return usableBatches(state, ingredient, batchIds, area, dripBean).reduce((sum, batch) => sum + batch.amount, 0)
 }
 
@@ -124,7 +126,13 @@ export function consume(
     const ingredient = key as IngredientId
     if (available(state, ingredient, batchIds, area, dripBean) + (batchIds ? 1e-9 : 0.0001) < amount) {
       const place = area === 'bar' ? '바' : '백룸'
-      say(state, `${place}에 사용할 ${INGREDIENTS[ingredient].name}가 부족해요. 재고를 확인하고 보충해주세요.`, 'error')
+      say(
+        state,
+        ingredient === 'ice'
+          ? '바 아이스 빈에 얼음이 부족해요. 백룸 제빙기에서 얼음통으로 보충해주세요.'
+          : `${place}에 사용할 ${INGREDIENTS[ingredient].name}가 부족해요. 재고를 확인하고 보충해주세요.`,
+        'error',
+      )
       return null
     }
   }
@@ -132,6 +140,10 @@ export function consume(
   let earliestExpiry: number | null = null
 
   for (const [key, amount] of Object.entries(costs)) {
+    if (key === 'ice') {
+      consumeIce(state, amount)
+      continue
+    }
     let remaining = amount
     const batches = usableBatches(state, key as IngredientId, batchIds, area, dripBean).sort(
       (a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity),

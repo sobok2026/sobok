@@ -2,6 +2,7 @@ import { INGREDIENTS } from '../../content/ingredients'
 import { isCupSurface, STATIONS, type StationId } from '../../content/stations'
 import { cupSurface } from '../../features/cleaning/rules'
 import { craftStations, craftWorkStation, heldVessel, vesselName } from '../../features/crafting/rules'
+import { iceKilograms } from '../../features/ice/rules'
 import { carriedBatch, deliveryDestination, isSealed } from '../../features/inventory/batches'
 import { CUP_NAMES, cupCount } from '../../features/inventory/cups'
 import { SUPPLIES, supplyIds } from '../../features/inventory/supplies'
@@ -33,6 +34,10 @@ function actionPrompt(state: GameState, action: Action, target: StationId) {
   const heldName = held ? INGREDIENTS[held.ingredient].name : ''
 
   switch (action.type) {
+    case 'ice-fill':
+      return { verb: '얼음 보충', object: iceKilograms(state.ice.bucket) }
+    case 'ice-return':
+      return { verb: '빈 얼음통 걸기', object: station }
     case 'place-cup':
       return { verb: '컵 놓기', object: station }
     case 'pick-cup':
@@ -96,6 +101,8 @@ function cleaningNote(state: GameState, target: StationId) {
 }
 
 function stationStatus(state: GameState, target: StationId) {
+  if (state.ice.bucketHeld)
+    return state.ice.bucket > 0 ? '얼음통은 바 아이스 빈에 비워요' : '빈 얼음통은 제빙기 옆에 걸어요'
   const held = carriedBatch(state)
   if (state.cupDelivery) return '컵 묶음은 바 컵 보관대나 백룸 창고에 내려놓아요'
   if (state.supplyDelivery) return '소모품은 컨디먼트 바에 보충해요'
@@ -119,6 +126,7 @@ function stationStatus(state: GameState, target: StationId) {
   if (target === 'wash') {
     return '씻을 용기가 없어요'
   }
+  if (target === 'drying') return '건조대에 정리할 용기가 없어요'
   if (target === 'supplies') {
     const low = supplyIds.filter((id) => state.supplies[id].bar <= 5)
     if (low.length) return `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충 필요`

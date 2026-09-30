@@ -18,6 +18,7 @@ import { createColdBrewVisuals } from '../features/cold-brew/visuals'
 import { craftingAt, craftWorkStation } from '../features/crafting/rules'
 import { createCraftVisuals, cupSpot } from '../features/crafting/visuals'
 import { createGrinder, GRINDER_CATCH_SPOT } from '../features/grinder/equipment'
+import { createCarriedIce } from '../features/ice/equipment'
 import { createBatchVisuals } from '../features/inventory/batch-visuals'
 import { carriedBatch } from '../features/inventory/batches'
 import { cleanCupCount, cupCount } from '../features/inventory/cups'
@@ -69,6 +70,9 @@ export type CafeScene = {
 
 function pickWidth(id: StationId) {
   if (id === 'condiment' || id === 'supplies' || id === 'trash') return 1.04
+  if (id === 'stock') return 1.55
+  if (id === 'dishwasher') return 0.8
+  if (id === 'ice-machine') return 1.22
   if (id === 'shelf') return 0.65
   if (id === 'bar-fridge') return 1.3
   if (id === 'printer') {
@@ -93,7 +97,7 @@ function pickDepth(id: StationId) {
   if (id === 'condiment' || id === 'supplies' || id === 'trash') return 0.74
   if (id === 'shelf') return 1.5
   if (id === 'bar-fridge') return 0.3
-  return id === 'stock' ? 1.6 : 0.8
+  return id === 'stock' ? 0.72 : 0.8
 }
 
 function pickHeight(id: StationId) {
@@ -196,8 +200,19 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const fillLight = new THREE.DirectionalLight('#eee6d6', 0.85)
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
-  const { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn } =
-    createShopInterior(scene)
+  const {
+    obstacles,
+    occluders,
+    blender,
+    prepBlender,
+    register,
+    syrupStation,
+    cupStacks,
+    digitalUrn,
+    iceBin,
+    dishwasher,
+    iceMachine,
+  } = createShopInterior(scene)
   const stickerPrinter = createStickerPrinter(scene)
   customerVisuals = createCustomerVisuals(scene)
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
@@ -256,6 +271,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const cleaningVisuals = createCleaningVisuals(scene, camera)
   const supplyVisuals = createSupplyVisuals(scene, camera)
   const batchVisuals = createBatchVisuals(scene, camera)
+  const carriedIce = createCarriedIce(camera)
   const coldBrewVisuals = createColdBrewVisuals(scene, camera)
   const grinder = createGrinder(scene, camera)
   const environmentRoom = new RoomEnvironment()
@@ -430,6 +446,10 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     blender.update(state)
     prepBlender.update(state)
     digitalUrn.update(state)
+    iceBin.update(state)
+    iceMachine.update(state)
+    carriedIce.update(state)
+    dishwasher.update(state, dt)
     grinder.update(state, animationTime)
     register.update(state)
     stickerPrinter.update(state)

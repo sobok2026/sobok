@@ -216,6 +216,10 @@ export function applyDrip(work: WorkContext, seconds: number) {
     if (used.earliestExpiry !== null)
       brew.ingredientExpiresAt = Math.min(brew.ingredientExpiresAt ?? Infinity, used.earliestExpiry)
   } else {
+    if (!consume(work.state, { ice: delta })) {
+      work.input = null
+      return
+    }
     brew.ice += delta
   }
 }

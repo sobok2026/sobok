@@ -14,6 +14,15 @@ export function canDispatch(work: WorkContext, action: Action) {
   const fail = (text: string) => say(s, text, 'error')
 
   if (
+    s.ice.bucketHeld &&
+    !['ice-fill', 'ice-return', 'close'].includes(action.type) &&
+    !action.type.startsWith('pos-')
+  ) {
+    fail('얼음통을 바 아이스 빈에 비우거나 제빙기 옆에 돌려놓아주세요.')
+    return false
+  }
+
+  if (
     action.type === 'pos-cash-receipt' ||
     action.type === 'pos-print-receipt' ||
     action.type === 'set-cow' ||

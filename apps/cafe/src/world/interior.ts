@@ -15,15 +15,14 @@ import { createIceBin, createSyrupStation, createWaterStation } from '../feature
 import { createDigitalUrn } from '../features/drip-coffee/equipment'
 import { BAR_BATCH_CAPACITY } from '../features/inventory/batches'
 import { cupKinds, cupRow, cupRows, cupSize, rowCupKinds } from '../features/inventory/cups'
-import { createDryStorage } from '../features/inventory/dry-storage'
-import { createBarRefrigerator, createRefrigerator } from '../features/inventory/refrigerator'
+import { createBarRefrigerator } from '../features/inventory/refrigerator'
 import { createBlender } from '../features/preparation/blender'
 import { createRegister } from '../features/service/register'
-import { createWashingEquipment } from '../features/washing/equipment'
 import { canvasFont, paintTexture } from '../shared/visuals/canvas-text'
 import { createCondimentBar } from '../shared/visuals/condiment-bar'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
+import { createBackroom } from './backroom'
 import { createCoffeehouse } from './coffeehouse'
 import { createMenuBoards } from './menu-board'
 
@@ -44,6 +43,9 @@ export function createShopInterior(scene: THREE.Scene) {
   }
 
   const { materials, obstacles, occluders } = createCoffeehouse(scene)
+  const backroom = createBackroom(scene)
+  obstacles.push(...backroom.obstacles)
+  occluders.push(...backroom.occluders)
 
   function box(
     x: number,
@@ -140,7 +142,6 @@ export function createShopInterior(scene: THREE.Scene) {
     )
   }
 
-  box(0, 0.014, -7.87, 13.45, 0.02, 3.96, '#b7b9b2')
   box(0, 0.028, -3.82, 11.4, 0.025, 0.85, '#42443d')
   const doorLeft = BACKROOM_DOOR.x - BACKROOM_DOOR.width / 2
   const doorRight = BACKROOM_DOOR.x + BACKROOM_DOOR.width / 2
@@ -210,12 +211,6 @@ export function createShopInterior(scene: THREE.Scene) {
   const staffSign = sign('STAFF ONLY', 1.1, 0.2)
   staffSign.position.set(8.6, 2.6, -0.4)
   scene.add(staffSign)
-  box(-2.9, 0.5, -9.2, 5.5, 1, 0.9, '#d1d9cf')
-  box(-5.56, 1.05, -9.2, 0.28, 0.09, 1.0, '#b9c4bb')
-  box(-2.34, 1.05, -9.2, 4.48, 0.09, 1.0, '#b9c4bb')
-  box(-5, 1.05, -9.56, 0.84, 0.09, 0.28, '#b9c4bb')
-  box(-5, 1.05, -8.74, 0.84, 0.09, 0.08, '#b9c4bb')
-  obstacles.push({ x: -2.9, z: -9.2, width: 5.6, depth: 1 })
   for (const [left, right] of [
     [-3.6, 0.475],
     [1.925, 3.95],
@@ -234,16 +229,6 @@ export function createShopInterior(scene: THREE.Scene) {
   box(STATIONS.rack.x, 1.4, STATIONS.rack.z, 0.95, 0.04, 0.72, '#adb9ac')
   for (const x of [STATIONS.rack.x - 0.42, STATIONS.rack.x + 0.42]) {
     box(x, 1.24, STATIONS.rack.z - 0.3, 0.04, 0.32, 0.04, '#adb9ac')
-  }
-  for (const [label, x] of [
-    ['세척 · 건조', -4.5],
-    ['배치 준비', -2.2],
-    ['장시간 추출', 1],
-    ['예비 재고', 5.1],
-  ] as const) {
-    const marker = sign(label, 1.5, 0.28, '#e7e9df', '#345747')
-    marker.position.set(x, 2.6, -9.73)
-    scene.add(marker)
   }
   createMenuBoards(scene)
   const register = createRegister(scene)
@@ -273,7 +258,7 @@ export function createShopInterior(scene: THREE.Scene) {
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
   createColdBrewDispenser(scene)
   createWaterStation(scene)
-  createIceBin(scene)
+  const iceBin = createIceBin(scene)
   const syrupStation = createSyrupStation(scene)
   box(STATIONS.mix.x, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
   const foamContainer = cylinder(STATIONS.topping.x - 0.15, 1.24, STATIONS.topping.z + 0.1, 0.15, 0.13, 0.33, '#e9ddbc')
@@ -293,17 +278,10 @@ export function createShopInterior(scene: THREE.Scene) {
   scene.add(pickupSign)
   const blender = createBlender(scene, 'blender')
   const prepBlender = createBlender(scene, 'prep')
-  createRefrigerator(scene)
   createBarRefrigerator(scene)
-  for (const station of [STATIONS.fridge, STATIONS['bar-fridge']]) {
+  for (const station of [STATIONS['bar-fridge']]) {
     obstacles.push({ x: station.x, z: station.z - 0.4, width: 1.4, depth: 1.1 })
   }
-  createDryStorage(scene)
-  obstacles.push({ x: 6.34, z: STATIONS.stock.z, width: 0.5, depth: 1.7 })
-  const storageSign = sign('백룸 창고', 0.95, 0.24, '#eee5d1', '#344e3d')
-  storageSign.position.set(6.75, 2.15, STATIONS.stock.z)
-  storageSign.rotation.y = -Math.PI / 2
-  scene.add(storageSign)
   const shelfSign = sign(`바 실온 재료 · 품목별 ${BAR_BATCH_CAPACITY}개`, 1.3, 0.14, '#d9d3c3', '#344238')
   box(9.07, 0.5, STATIONS.shelf.z, 0.55, 1, 1.8, materials.oak)
   box(9.07, 1.05, STATIONS.shelf.z, 0.6, 0.09, 1.85, materials.counter)
@@ -311,15 +289,20 @@ export function createShopInterior(scene: THREE.Scene) {
   shelfSign.position.set(8.75, 0.83, STATIONS.shelf.z)
   shelfSign.rotation.y = -Math.PI / 2
   scene.add(shelfSign)
-  box(1, 0.5, -9.2, 1.55, 1, 0.85, '#a3b1a5')
-  box(1, 1.05, -9.2, 1.65, 0.09, 0.95, '#c4cec3')
-  obstacles.push({ x: 1, z: -9.2, width: 1.65, depth: 0.95 })
-  const extractionSign = sign('콜드 브루 추출대', 1.4, 0.3, '#eee5d1', '#344e3d')
-  extractionSign.position.set(1, 2.2, -9.7)
-  scene.add(extractionSign)
-  createWashingEquipment(scene)
   createCondimentBar(scene)
   obstacles.push({ ...CONDIMENT_BAR, minY: 0, maxY: 1.08, blocksSight: true })
 
-  return { obstacles, occluders, blender, prepBlender, register, syrupStation, cupStacks, digitalUrn }
+  return {
+    obstacles,
+    occluders,
+    blender,
+    prepBlender,
+    register,
+    syrupStation,
+    cupStacks,
+    digitalUrn,
+    iceBin,
+    dishwasher: backroom.dishwasher,
+    iceMachine: backroom.iceMachine,
+  }
 }
