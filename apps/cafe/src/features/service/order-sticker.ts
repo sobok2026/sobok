@@ -233,7 +233,7 @@ export function orderSticker(state: GameState, line: OrderLine, unit = line.serv
   }
 
   const total = saleQuantity(state.sale)
-  const time = new Date((state.sale?.paidAt ?? state.time) * 1000).toISOString().slice(11, 19)
+  const time = new Date((state.sale?.acceptedAt ?? state.time) * 1000).toISOString().slice(11, 19)
   const order = `A-${String(state.orderNumber).padStart(2, '0')}`
 
   return {
@@ -248,7 +248,7 @@ export function orderSticker(state: GameState, line: OrderLine, unit = line.serv
     beverage,
     time,
     sequence: `${sequence} of ${total} (Bev ${total})`,
-    service: SERVICE_NAMES[line.service],
+    service: line.options.personalCup ? `개인컵 · ${SERVICE_NAMES[line.service]}` : SERVICE_NAMES[line.service],
     description: [
       `${order} ${recipe.name} ${recipe.variant} ${DRINK_SIZES[line.size].name} ${SERVICE_NAMES[line.service]}`,
       ...summary,
@@ -259,7 +259,7 @@ export function orderSticker(state: GameState, line: OrderLine, unit = line.serv
 }
 
 export function waitingOrderStickers(state: GameState, limit: number): OrderSticker[] {
-  if (!state.sale || state.sale.paidAt === null) return []
+  if (!state.sale || state.sale.acceptedAt === null) return []
   const stickers: OrderSticker[] = []
 
   for (const line of state.sale.lines) {

@@ -24,6 +24,7 @@ export type VesselVisualState = {
 
 export type DrinkVisualState = {
   kind: CupKind
+  personalCup: boolean
   lidded: boolean
   vessel: VesselVisualState
   sticker: OrderSticker | null
@@ -181,6 +182,8 @@ export function createDrinkVisual(parent: THREE.Object3D, facing: 1 | -1 = 1) {
   parent.add(root)
   const bodies = new Map<CupKind, ReturnType<typeof createCupBody>>()
   const updateSticker = createSticker(root, facing)
+  const personalBand = cylinder(root, 0.092, 0.078, 0.07, standard('#668a81'), 0.09)
+  personalBand.visible = false
   const layers = Array.from({ length: 9 }, () => {
     const mesh = cylinder(root, 1, 1, 1, standard('#dfc29b'))
     return { mesh, vertices: new Float32Array(mesh.geometry.getAttribute('position').array), height: -1, fill: -1 }
@@ -203,12 +206,15 @@ export function createDrinkVisual(parent: THREE.Object3D, facing: 1 | -1 = 1) {
 
     for (const [kind, body] of bodies) {
       body.root.visible = kind === view.kind
-      body.lid.visible = !body.reusable && view.lidded
+      body.lid.visible = (!body.reusable || view.personalCup) && view.lidded
     }
 
     const kindChanged = previousKind !== view.kind
     previousKind = view.kind
     const scale = cupScale(view.kind)
+    personalBand.visible = view.personalCup
+    personalBand.scale.setScalar(scale)
+    personalBand.position.y = 0.09 * scale
     updateSticker(view.kind, view.sticker)
 
     const { floor, height: rim } = CUP_DIMENSIONS[view.kind]
@@ -218,6 +224,7 @@ export function createDrinkVisual(parent: THREE.Object3D, facing: 1 | -1 = 1) {
       const band = view.vessel.layers[index]
       const value = Math.min((band?.fill ?? 0) * (rim - floor - 0.02), Math.max(0, rim - 0.008 - height))
       layer.mesh.visible = value > 0.0001
+
       if (band) {
         ;(layer.mesh.material as THREE.MeshStandardMaterial).color.set(band.color)
       }
@@ -349,12 +356,15 @@ export function createWorkVesselVisual(parent: THREE.Object3D, shape: WorkVessel
       return
     }
     etchedFills = key
+
     for (const tick of ticks.splice(0)) {
       root.remove(tick)
       tick.geometry.dispose()
     }
+
     for (const fill of fills) {
       const wall = radius * (0.8 + 0.2 * fill) + 0.001
+
       for (const side of [1, -1]) {
         const tick = box(root, 0.03, 0.0016, 0.001, etched, 0, bottom + fill * (height - 0.04), side * wall)
         ticks.push(tick)
@@ -500,6 +510,7 @@ export function positionProductionTool(
   surfaceHeight = 0.3,
 ) {
   const model = visual.root
+
   if (!active && pulse <= 0) {
     model.position.set(0.26, visual.dispenser ? -0.46 : -0.25, -0.58)
     camera.localToWorld(model.position)

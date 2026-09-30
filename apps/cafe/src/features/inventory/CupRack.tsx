@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES, recipeCup } from '../../content/recipes'
 import { josa } from '../../shared/format'
+import { Button } from '../../shared/ui/Button'
 import { CUP_PROFILES, profileHeight, profileRadius, profileRim } from '../../shared/visuals/cup-profiles'
 import type { Action } from '../../simulation/actions'
 import type { GameState, OrderLine } from '../../simulation/state'
@@ -56,6 +57,18 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
   const ticket = currentTicket(state)
   const picking = !!ticket && !state.cup
 
+  if (ticket?.options.personalCup && picking) {
+    return (
+      <div className="grid gap-4">
+        <TicketLine line={ticket} wrong={[]} />
+        <p className="text-sm text-muted">손님이 맡긴 개인컵에 음료를 준비해주세요.</p>
+        <Button onClick={() => act({ type: 'take-cup', kind: recipeCup(ticket.recipe, ticket.size, ticket.service) })}>
+          개인컵 받기
+        </Button>
+      </div>
+    )
+  }
+
   const choose = (kind: CupKind) => {
     if (!ticket || !picking) {
       if (!isReusableCup(kind)) {
@@ -63,11 +76,14 @@ export default function CupRack({ state, act }: { state: GameState; act: Act }) 
       }
       return
     }
+
     const wrong = cupMismatch(kind, recipeCup(ticket.recipe, ticket.size, ticket.service))
+
     if (wrong.length || !cleanCupCount(state, kind)) {
       setVerdict({ kind, wrong, attempt: (verdict?.attempt ?? 0) + 1 })
       return
     }
+
     setVerdict(null)
     act({ type: 'take-cup', kind })
   }

@@ -81,23 +81,26 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
       return
     }
 
-    if (!cleanCupCount(s, kind)) {
+    if (!ticket.options.personalCup && !cleanCupCount(s, kind)) {
       fail('고른 컵이 비어 있어요. 컵 보관대에서 보충하거나 씻어 와주세요.')
       return
     }
 
-    if (isReusableCup(kind)) {
-      s.reusableCups[kind].clean--
-    } else {
-      s.disposableCups[kind].bar--
+    if (!ticket.options.personalCup) {
+      if (isReusableCup(kind)) s.reusableCups[kind].clean--
+      else s.disposableCups[kind].bar--
     }
     s.cup = {
       id: uid(),
       recipe: ticket.recipe,
       orderLineId: ticket.id,
-      craft: { ...createCraft(kind, ticket.size, ticket.customizations), dripBean: ticket.dripBean },
+      craft: {
+        ...createCraft(kind, ticket.size, ticket.customizations),
+        dripBean: ticket.dripBean,
+        personalCup: ticket.options.personalCup,
+      },
     }
-    say(s, `${josa(CUP_NAMES[kind], '을', '를')} 집었어요.`)
+    say(s, ticket.options.personalCup ? '손님의 개인컵을 받았어요.' : `${josa(CUP_NAMES[kind], '을', '를')} 집었어요.`)
     return
   }
 
@@ -113,7 +116,9 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
     releaseProductionTool(work, session)
     s.jobs = s.jobs.filter((job) => job.cupId !== cup.id)
 
-    if (isReusableCup(session.kind)) {
+    if (session.personalCup) {
+      say(s, '개인컵의 내용물을 비웠어요. 컵 보관대에서 다시 받아주세요.')
+    } else if (isReusableCup(session.kind)) {
       s.reusableCups[session.kind].dirty++
     } else {
       s.trash++
@@ -130,10 +135,12 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
       fail('이 컵에는 이미 스티커를 붙였어요.')
       return
     }
+
     if (session.location !== 'hand') {
       fail('컵을 들고 와서 스티커를 붙여주세요.')
       return
     }
+
     session.sticker = true
     say(s, '주문 스티커를 붙였어요.')
     return
@@ -148,15 +155,18 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
     if (!held || !craftStations.includes(action.station)) {
       return
     }
+
     if (occupied(action.station)) {
       fail('이 작업대를 사용 중이에요.')
       return
     }
+
     if (held === servingId) {
       session.location = action.station
     } else {
       session.places[held] = action.station
     }
+
     if (isEspressoStation(action.station)) session.espressoStation = action.station
     if (isSteamStation(action.station)) session.steamStation = action.station
     say(s, `${josa(vesselName(cup, held), '을', '를')} 내려놓았어요.`)
@@ -168,19 +178,23 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
     if (vesselPlace(cup, id, step) !== action.station || (id !== servingId && !session.places[id])) {
       return
     }
+
     if (vesselBusy(s, cup, id)) {
       fail('장비가 아직 작동 중이에요.')
       return
     }
+
     if (cupHandsBusy(cup) || s.preparation?.tool) {
       fail('들고 있는 것을 먼저 내려놓아주세요.')
       return
     }
+
     if (id === servingId) {
       session.location = 'hand'
     } else {
       session.places[id] = 'hand'
     }
+
     say(s, `${josa(vesselName(cup, id), '을', '를')} 집었어요.`)
     return
   }
@@ -207,12 +221,14 @@ export function handleCraftActions(work: WorkContext, action: CraftAction) {
   }
 
   const misplaced = misplacedVessels(cup, step)[0]
+
   if (misplaced) {
     fail(`${josa(vesselName(cup, misplaced.id), '을', '를')} ${STATIONS[step.station].name}에 먼저 놓아주세요.`)
     return
   }
 
   const busy = stepVessels(step, servingId).find((id) => vesselBusy(s, cup, id))
+
   if (busy) {
     fail(`${josa(vesselName(cup, busy), '이', '가')} 아직 장비에서 작동 중이에요.`)
     return

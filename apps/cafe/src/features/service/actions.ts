@@ -1,14 +1,13 @@
 import { CUSTOMER_HABITS } from '../../content/customers'
 import { type Costs, INGREDIENTS } from '../../content/ingredients'
 import { recipeCup, recipeFor } from '../../content/recipes'
-import { tableIds } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { nextStep } from '../crafting/rules'
 import { cupService } from '../inventory/cups'
 import { addAmounts } from '../inventory/inventory'
-import { customerToCondiment } from './customer'
+import { finishServing } from './order-flow'
 import { currentTicket } from './orders'
 
 export function handleOrderActions(work: WorkContext, action: Extract<Action, { type: 'serve' }>) {
@@ -64,6 +63,7 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         if (id === servingVessel) {
           continue
         }
+
         for (const layer of vessel.layers) {
           if (INGREDIENTS[layer.materialId]) {
             leftovers[layer.materialId] = (leftovers[layer.materialId] ?? 0) + layer.quantity
@@ -81,15 +81,6 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         break
       }
 
-      const dineIn = s.customer.items.some((item) => item.service === 'dine-in')
-      s.customer.visit = {
-        table: dineIn ? tableIds[Math.floor(Math.random() * tableIds.length)] : null,
-        returnCup: dineIn && Math.random() < CUSTOMER_HABITS.returnCup,
-        dirtyTable: dineIn && Math.random() < CUSTOMER_HABITS.stain,
-        dirtyReturn: dineIn && Math.random() < CUSTOMER_HABITS.stain,
-        usesSugar: Math.random() < CUSTOMER_HABITS.sugar,
-      }
-
       if (Math.random() < CUSTOMER_HABITS.stain) {
         s.dirtyBar = Math.min(3, s.dirtyBar + 1)
         if (s.cleaning?.station === 'mix') {
@@ -97,14 +88,7 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         }
       }
 
-      customerToCondiment(s.customer)
-      say(
-        s,
-        !dineIn
-          ? '포장 손님이 음료를 받았어요. 소모품을 챙긴 뒤 나가요.'
-          : '매장 손님이 음료를 받았어요. 소모품을 챙기고 테이블을 이용해요.',
-        'success',
-      )
+      finishServing(s)
       break
     }
   }

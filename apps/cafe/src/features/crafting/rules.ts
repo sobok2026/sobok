@@ -61,6 +61,7 @@ export function createCraft(
     places: {},
     lidded: false,
     sticker: false,
+    personalCup: false,
   }
 }
 
@@ -101,6 +102,7 @@ export function misplacedVessels(cup: Cup, step: WorkStep) {
 
 export function nextCupStation(cup: Cup): StationId {
   const { steps, vesselId } = cupRecipe(cup)
+
   return (
     steps.slice(cup.craft.cursor).find((step) => stepVessels(step, vesselId).includes(vesselId))?.station ?? 'pickup'
   )
@@ -146,6 +148,7 @@ export function craftingAt(state: GameState, station: StationId | null) {
   if (!cup || !station || cup.craft.location === 'hand' || heldVessel(cup)) {
     return false
   }
+
   return (
     craftWorkStation(state) === station ||
     state.jobs.some((job) => job.cupId === cup.id && job.station === station) ||

@@ -1,6 +1,7 @@
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition, type TableId, tableIds } from '../content/stations'
 import { defaultCow } from '../features/drip-coffee/rules'
+import { initialFoodBatches } from '../features/food/catalog'
 import { ICE } from '../features/ice/rules'
 import { packStorage } from '../features/inventory/batches'
 import {
@@ -13,6 +14,7 @@ import {
 import { newBatch } from '../features/inventory/inventory'
 import { SUPPLY_CAPACITY, SUPPLY_PACK } from '../features/inventory/supplies'
 import { createCustomer } from '../features/service/customer'
+import { initialMembers } from '../features/service/members'
 import { emptyTotals } from '../features/shift/rules'
 import { uid } from '../shared/id'
 import type { GameState } from './state'
@@ -26,8 +28,13 @@ export function initialState(): GameState {
     phase: 'open',
     cash: 50000,
     orderNumber: 1,
+    nextOrderNumber: 2,
     customer: createCustomer(1),
     sale: null,
+    waitingOrders: [],
+    members: initialMembers(START),
+    foodBatches: initialFoodBatches(START),
+    foodWork: null,
     transactions: [],
     cup: null,
     preparation: null,

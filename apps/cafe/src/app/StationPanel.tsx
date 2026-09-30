@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import ColdBrewPanel from '../features/cold-brew/ColdBrewPanel'
+import FoodPanel from '../features/food/FoodPanel'
 import IcePanel from '../features/ice/IcePanel'
 import CupRack from '../features/inventory/CupRack'
 import ShelfPanel from '../features/inventory/ShelfPanel'
@@ -83,7 +84,17 @@ export default function StationPanel({
           </button>
         </header>
         {panel === 'cups' && <CupRack state={state} act={act} />}
-        {panel === 'fridge' && <StoragePanel key="fridge" state={state} act={act} goal={goal} place="fridge" />}
+        {panel === 'fridge' && (
+          <>
+            <details className="mb-5 border-b border-line pb-4">
+              <summary className="mb-4 cursor-pointer font-semibold">푸드 냉장 재고 · 입고</summary>
+              <FoodPanel state={state} act={act} place="stock" />
+            </details>
+            <StoragePanel key="fridge" state={state} act={act} goal={goal} place="fridge" />
+          </>
+        )}
+        {panel === 'food-case' && <FoodPanel state={state} act={act} place="showcase" />}
+        {(panel === 'food-oven' || panel === 'pickup') && <FoodPanel state={state} act={act} place={panel} />}
         {panel === 'stock' && <StoragePanel key="stock" state={state} act={act} goal={goal} place="stock" />}
         {panel === 'prep' && <PreparationPanel state={state} act={act} goal={goal} />}
         {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}

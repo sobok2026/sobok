@@ -3,6 +3,8 @@ import { cupSurfaceIds, STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
 import { cupSurface } from '../cleaning/rules'
 import { DRIP_BEANS, dripStation, dripTemperatures } from '../drip-coffee/rules'
+import { FOODS } from '../food/catalog'
+import { currentFood, foodQuantity } from '../food/rules'
 import { iceKilograms } from '../ice/rules'
 import { batchHome, carriedBatch, deliveryDestination, isSealed } from '../inventory/batches'
 import { CUP_NAMES, cupCount } from '../inventory/cups'
@@ -25,10 +27,38 @@ export function shiftTasks(state: GameState): ShiftTask[] {
       task: state.dishwasher.clean ? '세척한 랙 꺼내기' : '세척 운전 또는 랙 비우기',
     })
   }
-  const unserved = state.sale?.paidAt != null ? state.sale.lines.reduce((sum, l) => sum + l.quantity - l.served, 0) : 0
+  const unserved =
+    state.sale?.acceptedAt != null ? state.sale.lines.reduce((sum, l) => sum + l.quantity - l.served, 0) : 0
   if (unserved || state.cup) {
     tasks.push({ place: '주문', task: '음료 제조', count: unserved ? `${unserved}잔 남음` : undefined })
   }
+  const food = currentFood(state)
+
+  if (state.foodWork) {
+    tasks.push({
+      place: state.foodWork.location === 'food-oven' ? '푸드 오븐' : '픽업대',
+      task: '푸드 준비·전달 마무리',
+    })
+  } else if (food) {
+    tasks.push({
+      place: foodQuantity(state, food.productId, 'showcase') > 0 ? '푸드 쇼케이스' : '백룸 냉장고',
+      task: `${FOODS[food.productId]?.name ?? '푸드'} 준비`,
+    })
+  }
+
+  for (const batch of state.foodBatches) {
+    if (
+      batch.quantity > 0 &&
+      (batch.expiresAt <= state.time || (state.phase === 'closing' && batch.displayedAt !== null))
+    ) {
+      tasks.push({
+        place: batch.location === 'showcase' ? '푸드 쇼케이스' : '백룸 냉장고',
+        task: `${FOODS[batch.productId]?.name ?? '푸드'} 폐기`,
+        count: `${batch.quantity}개`,
+      })
+    }
+  }
+
   if (state.preparation) {
     tasks.push({
       place: STATIONS[preparationStation(state.preparation)].name,
@@ -41,6 +71,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
       task: coldBrewTask(state.coldBrew.stage),
     })
   }
+
   for (const temperature of dripTemperatures) {
     const brew = state.drip[temperature]
     if (brew && brew.stage !== 'extracting')
@@ -71,6 +102,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
         : { place: STATIONS.wash.name, task: `${WASH_NAMES[state.washing.item]} 세척 마무리` },
     )
   }
+
   if (state.cleaning) {
     const held = cupCount(state.cleaning.heldCups)
     tasks.push(
@@ -79,6 +111,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
         : { place: STATIONS[state.cleaning.station].name, task: '청소 마무리' },
     )
   }
+
   if (state.supplyDelivery) {
     tasks.push({ place: STATIONS.supplies.name, task: `${SUPPLIES[state.supplyDelivery.supply].name} 채우기` })
   }
@@ -95,6 +128,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
     if (!home || batch.amount <= 0 || isSealed(batch)) {
       continue
     }
+
     if (batch.expiresAt !== null && batch.expiresAt <= state.time) {
       tasks.push({ place: STATIONS[home].name, task: `${INGREDIENTS[batch.ingredient].name} 폐기` })
     } else if (!batch.labelled) {
@@ -133,6 +167,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
       })
     }
   }
+
   if (state.dirtyBar) {
     tasks.push({ place: STATIONS.mix.name, task: '얼룩 닦기' })
   }
@@ -149,6 +184,7 @@ export function shiftTasks(state: GameState): ShiftTask[] {
       })
     }
   }
+
   return tasks
 }
 
@@ -166,6 +202,10 @@ function coldBrewTask(stage: keyof typeof coldBrewTasks | 'extracting') {
 
 export function closingTasks(state: GameState) {
   const tasks = shiftTasks(state)
+  if (state.waitingOrders.length)
+    tasks.push({ place: 'POS', task: '보류 주문 처리', count: `${state.waitingOrders.length}건` })
+  if (state.sale?.acceptedAt != null && state.sale.paidAt === null)
+    tasks.push({ place: 'POS', task: '선제공 주문 정산' })
   if (state.sale?.paidAt === null && state.sale.payments.length) {
     tasks.push({ place: 'POS', task: '진행 중인 결제 마무리 또는 취소' })
   }
@@ -188,6 +228,14 @@ export const emptyTotals = (openingCash: number): GameState['totals'] => ({
   revenue: 0,
   cashSales: 0,
   cardSales: 0,
+  otherSales: 0,
+  creditSales: 0,
+  creditCollected: 0,
+  discounts: 0,
+  deposits: 0,
+  foodPurchases: 0,
+  foodDisposed: {},
+  foodServed: 0,
   wastedCups: 0,
   cleaned: 0,
   washed: 0,

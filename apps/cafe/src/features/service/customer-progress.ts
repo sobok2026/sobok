@@ -8,7 +8,6 @@ import type { ReusableCupCounts } from '../inventory/cups'
 import { SUPPLIES, type SupplyId } from '../inventory/supplies'
 import {
   CUSTOMER_SECONDS,
-  createCustomer,
   customerLeave,
   customerToReturn,
   customerToTable,
@@ -16,6 +15,7 @@ import {
   customerWalking,
   moveCustomer,
 } from './customer'
+import { nextCustomer } from './order-flow'
 import { customerCupCounts } from './orders'
 
 function customerSurface(s: GameState, station: CupSurfaceId, cups: ReusableCupCounts | null, dirty: boolean) {
@@ -55,6 +55,11 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
         customer.yaw = Math.PI
         say(s, '손님이 픽업대에서 기다리고 있어요.')
         break
+      case 'to-payment':
+        customerWait(customer, 'payment')
+        customer.yaw = Math.PI
+        say(s, '선제공 주문의 손님이 돌아왔어요. POS에서 정산해주세요.')
+        break
       case 'to-condiment':
         customerWait(customer, 'condiment')
         customer.yaw = Math.atan2(
@@ -74,11 +79,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
         )
         break
       case 'leaving':
-        if (customer.visit) {
-          s.orderNumber++
-        }
-        s.sale = null
-        s.customer = s.phase === 'open' ? createCustomer(s.orderNumber) : null
+        nextCustomer(s)
         say(s, nextCustomerMessage(s))
         break
     }
@@ -116,7 +117,8 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
     if (missing.length) {
       say(s, `컨디먼트 바에 ${missing.join('·')} 보충이 필요해요. 손님은 이용을 계속해요.`)
     }
-    if (customer.items.every((item) => item.service === 'takeout')) {
+
+    if ([...customer.items, ...customer.foodItems].every((item) => item.service === 'takeout')) {
       customerLeave(customer)
     } else {
       customerToTable(customer)
@@ -128,6 +130,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       customer.visit.returnCup ? null : customerCupCounts(s),
       customer.visit.dirtyTable,
     )
+
     if (customer.visit.returnCup) {
       customerToReturn(customer)
     } else {

@@ -132,6 +132,7 @@ function stationStatus(state: GameState, target: StationId) {
     if (low.length) return `${low.map((id) => SUPPLIES[id].name).join(' · ')} 보충 필요`
     return supplyIds.map((id) => `${SUPPLIES[id].name} ${state.supplies[id].bar}${SUPPLIES[id].unit}`).join(' · ')
   }
+
   return '정리할 것이 없어요'
 }
 
@@ -162,6 +163,7 @@ function panelVerb(state: GameState, target: StationId) {
 }
 
 function posAction(state: GameState) {
+  if (state.customer?.stage === 'payment') return '선제공 주문 정산'
   if (state.phase === 'closing') {
     return '마감 관리'
   }

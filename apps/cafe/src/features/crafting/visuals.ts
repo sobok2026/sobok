@@ -32,10 +32,12 @@ function vesselSpot(station: StationId, shape: WorkVesselShape, index: number): 
   if (isSteamStation(station) && shape === 'pitcher') {
     return new THREE.Vector3(...steamPitcherSpot(station))
   }
+
   if (isEspressoStation(station) && shape === 'shot') {
     const outlet = espressoOutlet(station)
     return new THREE.Vector3(outlet[0], 1.11, outlet[2])
   }
+
   if (station === 'blender' && shape === 'blender') {
     return new THREE.Vector3(...BLENDER_JAR_SPOT)
   }
@@ -97,7 +99,13 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const station = step?.station ?? null
       const jobs = state.jobs.filter((item) => item.kind === 'production' && item.cupId === cup.id)
       const view = craft.location === 'hand' ? held : bench
-      view.update({ kind: craft.kind, lidded: craft.lidded, vessel: serving, sticker: cupSticker(state) })
+      view.update({
+        kind: craft.kind,
+        personalCup: craft.personalCup,
+        lidded: craft.lidded,
+        vessel: serving,
+        sticker: cupSticker(state),
+      })
       held.root.rotation.z = Math.sin(now / 650) * 0.018
 
       if (craft.location !== 'hand') {
@@ -134,12 +142,14 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 
         if (place === 'hand') {
           let model = carried.get(shape)
+
           if (!model) {
             model = createWorkVesselVisual(camera, shape)
             model.root.position.set(0.3, -0.5, -0.66)
             model.root.scale.setScalar(0.8)
             carried.set(shape, model)
           }
+
           model.root.visible = true
           model.update(projectVessel(craft, id, color), options)
           continue
@@ -147,10 +157,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 
         const key = `${shape}:${index}`
         let model = auxiliaries.get(key)
+
         if (!model) {
           model = createWorkVesselVisual(scene, shape)
           auxiliaries.set(key, model)
         }
+
         model.root.visible = craft.tool !== `vessel:${id}`
         model.root.position.copy(vesselSpot(place, shape, index))
         model.root.rotation.z = blending ? Math.sin(now / 25) * 0.007 : 0
@@ -251,14 +263,17 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'pickup') {
     return [STATIONS.pickup.x, 1.1, STATIONS.pickup.z - 0.08]
   }
+
   if (isEspressoStation(station)) {
     const outlet = espressoOutlet(station)
     return [outlet[0], 1.11, outlet[2]]
   }
+
   if (isSteamStation(station)) {
     const spot = steamPitcherSpot(station)
     return [spot[0] + 0.28, spot[1], spot[2]]
   }
+
   if (station === 'brew') {
     return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
   }

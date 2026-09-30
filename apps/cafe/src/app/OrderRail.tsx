@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { DRINK_SIZES } from '../content/drink-sizes'
 import { RECIPES, recipeFor } from '../content/recipes'
 import { STATIONS } from '../content/stations'
+import { currentFood, foodDescription } from '../features/food/rules'
 import { SERVICE_NAMES } from '../features/inventory/cups'
 import { currentTicket, itemCustomizations } from '../features/service/orders'
 import type { Objective } from '../simulation/guidance'
@@ -19,9 +20,10 @@ export default function OrderRail({
   openLabel: () => void
 }) {
   const ticket = currentTicket(state)
+  const food = currentFood(state)
   const waiting = ticket ? state.sale!.lines.reduce((sum, line) => sum + line.quantity - line.served, 0) - 1 : 0
   const jobs = state.jobs.filter((job) => job.kind === 'production' && job.cupId && job.cupId === state.cup?.id)
-  if (now && !ticket && !jobs.length) return null
+  if (now && !ticket && !food && !jobs.length) return null
 
   return (
     <aside
@@ -34,6 +36,16 @@ export default function OrderRail({
       aria-label="주문과 다음 할 일"
     >
       {ticket && <ActiveDrink state={state} line={ticket} compact={now} openLabel={openLabel} />}
+      {!ticket && food && (
+        <p className="mb-3 text-lg font-semibold">
+          {foodDescription(food)} · {food.quantity - food.served}개
+        </p>
+      )}
+      {state.foodWork?.stage === 'heating' && (
+        <p className="mb-3 text-sm text-brand tabular-nums">
+          푸드 가열 · {Math.max(0, Math.ceil((state.foodWork.heatingEndsAt ?? state.time) - state.time))}초
+        </p>
+      )}
       {jobs.map((job) => (
         <JobChip key={job.id} job={job} time={state.time} />
       ))}

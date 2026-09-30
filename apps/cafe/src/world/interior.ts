@@ -174,10 +174,12 @@ export function createShopInterior(scene: THREE.Scene) {
   const strip = new THREE.Mesh(new THREE.BoxGeometry(8.6, 0.018, 0.018), materials.light)
   strip.position.set(-0.075, 0.936, -0.42)
   scene.add(strip)
+
   for (let x = -3.8; x < 4; x += 1.05) {
     box(x, 0.47, -1.655, 1, 0.83, 0.025, '#7c786e')
     box(x, 0.79, -1.679, 0.22, 0.024, 0.025, materials.charcoal, scene, 0.5)
   }
+
   obstacles.push({ x: -0.075, z: BAR_CENTER_Z, width: 8.65, depth: 1.35, minY: 0, maxY: 1.06, blocksSight: true })
 
   const showcase = new THREE.Group()
@@ -188,15 +190,12 @@ export function createShopInterior(scene: THREE.Scene) {
   box(0, 0.955, 0, 4, 0.07, 1.18, materials.counter, showcase)
   box(0, 1.24, 0.575, 3.94, 0.56, 0.022, materials.glass, showcase)
   for (const x of [-1.97, 1.97]) box(x, 1.25, 0, 0.035, 0.58, 1.17, materials.charcoal, showcase)
+
   for (const y of [1.01, 1.25, 1.54]) {
     box(0, y, 0, 3.94, 0.018, 1.16, materials.glass, showcase)
     box(0, y, 0.58, 3.94, 0.015, 0.02, materials.brass, showcase)
-    if (y > 1.4) continue
-    for (let i = 0; i < 9; i++) {
-      box(-1.72 + i * 0.43, y + 0.06, 0.23, 0.3, 0.1, 0.3, materials.linen, showcase)
-      cylinder(-1.72 + i * 0.43, y + 0.06, -0.2, 0.13, 0.13, 0.1, materials.leather, showcase)
-    }
   }
+
   obstacles.push({
     x: -4.9,
     z: -3.15,
@@ -211,25 +210,31 @@ export function createShopInterior(scene: THREE.Scene) {
   const staffSign = sign('STAFF ONLY', 1.1, 0.2)
   staffSign.position.set(8.6, 2.6, -0.4)
   scene.add(staffSign)
+
   for (const [left, right] of [
     [-3.6, 0.475],
     [1.925, 3.95],
     [4.45, 6.95],
   ])
     box((left + right) / 2, 0.48, -5.2, right - left, 0.96, 0.9, '#a9aaa2')
+
   box(4.2, 0.35, -5.2, 0.5, 0.7, 0.9, '#a9aaa2')
   for (const z of [-5.5925, -4.8075]) box(4.2, 0.48, z, 0.5, 0.96, 0.115, '#a9aaa2')
+
   for (const [left, right] of [
     [-3.65, 3.95],
     [4.45, 6.95],
   ])
     box((left + right) / 2, 1.05, -5.2, right - left, 0.09, 1, materials.counter)
+
   for (const z of [-5.6175, -4.7825]) box(4.2, 1.05, z, 0.5, 0.09, 0.165, materials.counter)
   obstacles.push({ x: 1.65, z: -5.2, width: 10.6, depth: 1, minY: 0, maxY: 1.095 })
   box(STATIONS.rack.x, 1.4, STATIONS.rack.z, 0.95, 0.04, 0.72, '#adb9ac')
+
   for (const x of [STATIONS.rack.x - 0.42, STATIONS.rack.x + 0.42]) {
     box(x, 1.24, STATIONS.rack.z - 0.3, 0.04, 0.32, 0.04, '#adb9ac')
   }
+
   createMenuBoards(scene)
   const register = createRegister(scene)
   // Stemmed glasses do not stack, so each dedicated vessel occupies its own rack slot.

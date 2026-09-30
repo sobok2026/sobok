@@ -18,9 +18,11 @@ export function handleReceiptActions({ state }: WorkContext, action: ReceiptActi
     say(state, '현금 결제가 있는 거래에서 발행해주세요.', 'error')
     return
   }
+
   if (transaction.cashReceipts.some((receipt) => receipt.id === action.id)) return
 
   const validLastFour = action.kind === 'unissued' ? action.lastFour === null : /^\d{4}$/.test(action.lastFour ?? '')
+
   if (!validLastFour || !action.id || action.id.length > 100) {
     say(state, '현금영수증 발행 정보를 확인해주세요.', 'error')
     return
@@ -31,5 +33,6 @@ export function handleReceiptActions({ state }: WorkContext, action: ReceiptActi
     kind: action.kind,
     lastFour: action.lastFour,
     issuedAt: state.time,
+    amount: transactionCash(transaction),
   })
 }
