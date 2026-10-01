@@ -27,6 +27,7 @@ import {
   GuardianStorageError,
   guardianPassItemForSku,
   guardianPassPaths,
+  listGuardianCards,
   readGuardianPassSession,
   readOrCreateGuardianCheckoutRequestId,
   readOrCreateGuardianViewerId,
@@ -48,25 +49,36 @@ export default function GuardianPassCheckout({ locale }: { locale: Locale }) {
     const session = readGuardianPassSession()
     if (!session) return
     if (session.payMethod) setPayMethod(session.payMethod)
-    if (session.accessExpiresAt && new Date(session.accessExpiresAt) > new Date()) {
-      window.location.replace(paths.tomorrow)
-      return
-    }
-
     let cancelled = false
     setConfirming(true)
-    void confirmGuardianPass(session)
-      .then((confirmation) => {
+
+    async function resume(session: GuardianPassSession) {
+      if (session.accessExpiresAt && new Date(session.accessExpiresAt) > new Date()) {
+        const library = await listGuardianCards(session.accessToken)
         if (cancelled) return
-        if (confirmation.status === 'paid' && new Date(confirmation.accessExpiresAt) > new Date()) {
-          completePurchase(session, confirmation, paths.tomorrow)
+        if (library.access.active) {
+          window.location.replace(paths.tomorrow)
           return
         }
-        if (confirmation.status === 'paid') {
-          storeGuardianPassSession({ ...session, accessExpiresAt: confirmation.accessExpiresAt })
-        }
-        if (confirmation.status !== 'pending') clearGuardianCheckoutRequestId()
-      })
+
+        storeGuardianPassSession({ ...session, accessExpiresAt: null })
+        clearGuardianCheckoutRequestId()
+        return
+      }
+
+      const confirmation = await confirmGuardianPass(session)
+      if (cancelled) return
+      if (confirmation.status === 'paid' && new Date(confirmation.accessExpiresAt) > new Date()) {
+        completePurchase(session, confirmation, paths.tomorrow)
+        return
+      }
+      if (confirmation.status === 'paid') {
+        storeGuardianPassSession({ ...session, accessExpiresAt: confirmation.accessExpiresAt })
+      }
+      if (confirmation.status !== 'pending') clearGuardianCheckoutRequestId()
+    }
+
+    void resume(session)
       .catch(() => {
         // A stale or interrupted pending checkout remains resumable through the form below.
       })
