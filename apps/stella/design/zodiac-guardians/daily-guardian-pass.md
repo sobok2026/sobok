@@ -1,4 +1,4 @@
-# Daily guardian and seven-day early-access pass
+# Daily guardian and fixed seven-card week
 
 ## 사용자 경험
 
@@ -10,34 +10,52 @@
   → 내일 행운 음식 티저
 
 /tomorrow
+  → 구매한 일주일의 날짜 7개 표시
+  → 날짜 선택 → 그날의 목소리 선택 → 카드 공개·보관
+  → 이미 열린 날짜는 같은 스냅샷 재열람
   → 내일 행운 음식·색상 무료 공개
-  → 내일의 테마 먼저 공개
-  → 필요한 목소리 선택
-  → 활성 7일권이면 내일 카드 공개·보관
-  → 없으면 7일권 checkout
+  → 구매가 없으면 일주일 카드 checkout
+  → 기존 V1 구매는 원래 내일 카드 선공개 흐름 유지
 ```
 
-오늘 카드는 그림, 한 줄 해석, 행동 문장, 회고 질문을 전부 보여 준다. 내일 카드는 자정이 지나 오늘 카드가
-되면 같은 내용으로 무료 공개된다. 사용자가 구매하는 것은 카드 자체가 아니라 168시간 동안의 선공개 권한이다.
+오늘 카드는 그림, 한 줄 해석, 행동 문장, 회고 질문을 전부 보여 준다. 일주일 화면은 날짜 선택 아래에 선택한
+한 장만 크게 표시한다. 카드가 처음 공개되면 스냅샷은 고정되며 오늘의 카드 및 보관함과 같은 날짜의 카드를
+공유한다. 신규 구매는 결제 다음 날부터 고정된 7개 날짜의 카드를 미리 여는 권한이다.
+
+공개된 카드는 수호령 이름을 제목으로 쓰고, 그림 아래에 한마디·작은 실천·나에게 묻기를 하나의 영역으로
+보여 준다. 수호령의 본문은 반말로, 서비스 안내는 존댓말로 쓴다. 작품명은 짧은 캡션으로 남기고 주제·말투·
+별자리 선정 기준은 접을 수 있는 카드 정보에 둔다. 선공개 이용권 만료 시각은 내일 카드 이동 버튼 아래에 둔다.
+
+## 콘텐츠 경계
+
+- 그림 제작 원고·승인 기록은 에디션과 원화의 관계를 관리한다.
+- `content/guardian-cards/guardian-daily-copy-ko.json`은 별자리·상황별 한마디와 질문, 주제·상황·말투별
+  실천을 관리한다. 그림 에디션별로 같은 본문을 복제하지 않는다.
+- `worker/guardian/manifest.ts`는 그림 선택에 필요한 런타임 목록을 읽는다.
+- `worker/guardian/daily-copy.ts`는 선택한 에디션에 맞는 본문을 찾고 목록의 누락·중복·미사용 문구를 검증한다.
+- `worker/guardian/daily-card.ts`는 그림과 본문을 카드 스냅샷으로 결합한다.
+- `GuardianCardReading.tsx`는 오늘·내일 공개 카드의 표시만 담당한다. 문구를 다시 작성하거나 추측하지 않는다.
 
 ## 상품
 
-| 필드             | 값                              |
-| ---------------- | ------------------------------- |
-| SKU              | `guardian-tomorrow-pass-7d-v1`  |
-| 상품명           | 수호령 내일 선공개 7일권        |
-| 가격             | 1,900 KRW, VAT 포함             |
-| 갱신             | 없음                            |
-| 기간             | 결제 승인 절대 시각부터 168시간 |
-| 지원 시장·콘텐츠 | KR, 한국어                      |
+| 필드             | 값                                        |
+| ---------------- | ----------------------------------------- |
+| SKU              | `guardian-fixed-week-7-cards-v2`          |
+| 상품명           | 수호령 일주일 카드 7장                    |
+| 가격             | 1,900 KRW, VAT 포함                       |
+| 갱신             | 없음                                      |
+| 기간             | 구매 다음 날부터 7번째 날짜 종료 자정까지 |
+| 지원 시장·콘텐츠 | KR, 한국어                                |
 
 ## 날짜와 시각
 
 - 브라우저의 IANA time zone에서 계산한 날짜가 사용자의 오늘·내일이다.
-- `/today`는 현지 date key, `/tomorrow`는 그 다음 date key를 요청한다.
-- 서버는 전달받은 IANA time zone으로 date key가 현재 surface와 일치하는지 다시 확인한다.
+- `/today`는 현지 date key를 요청한다. 일주일 범위는 구매의 `paidAt`과 `timeZone`에서 다음 날짜부터 7개를 계산한다.
+- 서버는 `week` 요청의 date key와 time zone을 해당 구매의 범위와 다시 비교한다.
+- PostgreSQL이 구매 시간대의 날짜에 8일을 더한 자정을 UTC 절대 만료 시각으로 변환한다. DST도 같은 계산을 따른다.
 - 결제 승인, 권한 시작·만료, 첫 유료 카드 열람은 timezone-aware timestamp로 저장한다.
-- 사용자가 여행하면 다음 요청부터 새 현지 날짜를 사용하되 이미 저장된 카드 스냅샷은 바꾸지 않는다.
+- 사용자가 여행해도 구매한 7개 날짜와 만료 시각은 바뀌지 않는다. 일주일 카드의 하늘은 구매 시간대의 날짜별 정오로 계산한다.
+- V1 SKU의 168시간 계산은 그대로 남겨 기존 구매·미완료 결제의 confirm과 webhook을 처리한다.
 
 ## 선택과 개인정보 경계
 
@@ -56,26 +74,28 @@
 
 ## API
 
-| 경로                                                   | 역할                                               |
-| ------------------------------------------------------ | -------------------------------------------------- |
-| `POST /api/guardian-daily/card`                        | 오늘 카드, 내일 테마 티저 또는 권한 카드 조회·보관 |
-| `POST /api/guardian-pass/checkouts`                    | 서버 가격의 일회 결제 준비                         |
-| `POST /api/guardian-pass/purchases/:paymentId/confirm` | PortOne 원격 상태 재조회와 권한 수렴               |
-| `GET /api/guardian-pass/library`                       | 게스트 또는 계정 카드와 최근 7장 요약              |
-| `POST /api/guardian-pass/collections/:publicId/claim`  | 게스트 capability를 계정 소유권으로 교환           |
-| `POST /api/guardian-pass/reopen/request`               | 구매 이메일로 일회용 복구 링크 요청                |
-| `POST /api/guardian-pass/reopen/exchange`              | 복구 링크를 새 게스트 capability로 교환            |
+| 경로                                                   | 역할                                                   |
+| ------------------------------------------------------ | ------------------------------------------------------ |
+| `POST /api/guardian-daily/card`                        | 오늘 카드, 내일 테마 티저 또는 권한 카드 조회·보관     |
+| `GET /api/guardian-pass/week`                          | 소유한 최신 일주일의 7개 날짜·테마·열린 카드·만료 조회 |
+| `POST /api/guardian-pass/checkouts`                    | 서버 가격의 일회 결제 준비                             |
+| `POST /api/guardian-pass/purchases/:paymentId/confirm` | PortOne 원격 상태 재조회와 권한 수렴                   |
+| `GET /api/guardian-pass/library`                       | 게스트 또는 계정 카드와 최근 7장 요약                  |
+| `POST /api/guardian-pass/collections/:publicId/claim`  | 게스트 capability를 계정 소유권으로 교환               |
+| `POST /api/guardian-pass/reopen/request`               | 구매 이메일로 일회용 복구 링크 요청                    |
+| `POST /api/guardian-pass/reopen/exchange`              | 복구 링크를 새 게스트 capability로 교환                |
 
 결제 브라우저 복귀, 검증된 payment event, 15분 reconciliation은 모두 같은 row-locked 결제 수렴 함수를
 사용한다. 가격·통화 불일치는 권한을 주지 않고 `review_required`로 남긴다.
 
-`guardian-daily/card`는 미결제 내일 요청에 `locked`와 테마만 반환한다. 활성 이용권의 아직 열지 않은
-내일 요청에는 `tone_required`를 반환하고, 사용자가 목소리를 확정해 다시 요청할 때만 카드 스냅샷과
-`firstUsedAt`을 만든다. 이미 열린 날짜는 `ready`로 같은 스냅샷을 반환한다.
+`guardian-pass/week`는 게스트 capability 또는 계정 소유권으로 구매를 확인한다. 카드가 없는 날짜는 테마만
+반환한다. `guardian-daily/card`의 `surface: week`는 해당 구매의 날짜 범위, 시간대, 현재 유효 권한을 확인한
+뒤 확정한 목소리의 카드 스냅샷과 `firstUsedAt`을 만든다. 카드 보관 트랜잭션에서도 같은 구매 ID와 날짜
+범위를 다시 확인한다. 이미 열린 날짜는 `ready`로 같은 스냅샷을 반환하며 만료 후에도 재열람할 수 있다.
 
 ## 환불과 보관
 
-- 첫 내일 카드 열람 시각을 기록한다.
+- 첫 유료 카드 열람 시각을 기록한다. 결제 직후 일주일 목록을 읽는 것만으로는 카드를 생성하지 않는다.
 - checkout은 만 14세, 이용약관, 개인정보, 디지털 콘텐츠 제공·청약철회 제한 동의를 모두 확인하고
   동의 시각과 각 정책 버전을 구매 원장에 기록한다.
 - 첫 선공개 카드를 열기 전에는 청약철회 요청을 처리할 수 있다.

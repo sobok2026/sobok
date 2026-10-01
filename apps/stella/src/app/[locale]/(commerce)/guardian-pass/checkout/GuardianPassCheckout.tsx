@@ -25,6 +25,7 @@ import {
   type GuardianPassSession,
   type GuardianPayMethod,
   GuardianStorageError,
+  guardianPassItemForSku,
   guardianPassPaths,
   readGuardianPassSession,
   readOrCreateGuardianCheckoutRequestId,
@@ -120,6 +121,7 @@ export default function GuardianPassCheckout({ locale }: { locale: Locale }) {
           session,
           {
             status: 'paid',
+            sku: response.payment.sku,
             grant: 'already-granted',
             accessExpiresAt: response.payment.accessExpiresAt,
             collectionPublicId: response.collection.publicId,
@@ -367,7 +369,7 @@ function completePurchase(
     transaction_id: session.paymentId,
     currency: GUARDIAN_CURRENCY,
     value: GUARDIAN_PASS_PRICE,
-    items: [GUARDIAN_PASS_ITEM],
+    items: [guardianPassItemForSku(confirmation.sku)],
   })
   window.location.replace(destination)
 }

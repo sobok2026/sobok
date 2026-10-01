@@ -9,18 +9,32 @@ export const GUARDIAN_PASS_DURATION_DAYS = 7
 export const GUARDIAN_PASS_DURATION_HOURS = GUARDIAN_PASS_DURATION_DAYS * 24
 export const GUARDIAN_PASS_DURATION_MS = GUARDIAN_PASS_DURATION_HOURS * 60 * 60 * 1000
 export const GUARDIAN_PASS_PRICE = 1_900
-export const GUARDIAN_PASS_NAME = { ko: '수호령 내일 선공개 7일권' } as const
-export const GUARDIAN_PASS_TERMS_VERSION = '3.0' as const
+export const GUARDIAN_PASS_NAME = { ko: '수호령 일주일 카드 7장' } as const
+export const GUARDIAN_PASS_TERMS_VERSION = '4.0' as const
 export const GUARDIAN_PASS_PRIVACY_VERSION = '3.0' as const
-export const GUARDIAN_PASS_REFUND_VERSION = '2.0' as const
+export const GUARDIAN_PASS_REFUND_VERSION = '3.0' as const
 
 // Product identifiers are immutable analytics and payment contracts and must never be repurposed.
-export const GUARDIAN_PASS_SKU = 'guardian-tomorrow-pass-7d-v1' as const
+export const GUARDIAN_LEGACY_PASS_SKU = 'guardian-tomorrow-pass-7d-v1' as const
+export const GUARDIAN_PASS_SKU = 'guardian-fixed-week-7-cards-v2' as const
+export const GUARDIAN_PASS_SKUS = [GUARDIAN_LEGACY_PASS_SKU, GUARDIAN_PASS_SKU] as const
+export type GuardianPassSku = (typeof GUARDIAN_PASS_SKUS)[number]
 
 export const GUARDIAN_PASS_ITEM = {
   item_id: GUARDIAN_PASS_SKU,
-  item_name: 'Guardian tomorrow pass (7 days)',
+  item_name: 'Guardian fixed week (7 cards)',
   item_category: 'astrology_reading',
   price: GUARDIAN_PASS_PRICE,
   quantity: 1,
 } as const
+
+export const GUARDIAN_LEGACY_PASS_ITEM = {
+  ...GUARDIAN_PASS_ITEM,
+  item_id: GUARDIAN_LEGACY_PASS_SKU,
+  item_name: 'Guardian tomorrow pass (7 days)',
+} as const
+
+export function guardianPassItemForSku(sku: GuardianPassSku) {
+  if (sku === GUARDIAN_LEGACY_PASS_SKU) return GUARDIAN_LEGACY_PASS_ITEM
+  return GUARDIAN_PASS_ITEM
+}

@@ -1,12 +1,14 @@
 import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
-import { withStellaSession } from '@stella-worker/auth'
+import { hasStellaSessionCookie, withStellaSession } from '@stella-worker/auth'
 import {
   claimGuardianCollection,
   latestGuardianPassExpiryForCollection,
+  latestGuardianWeekPurchase,
   latestOwnedGuardianPassExpiry,
   listGuardianDailyCardsForCollection,
+  listGuardianWeekCards,
   listOwnedGuardianDailyCards,
   prepareGuardianPassCheckout,
   resolveGuardianCollectionAccess,
@@ -16,7 +18,7 @@ import { exchangeGuardianReopenAccess } from '@stella-worker/db/queries/guardian
 import { withinRateLimits } from '@stella-worker/db/queries/rate-limit'
 import type { AppEnv } from '@stella-worker/env'
 import { problem } from '@stella-worker/errors'
-import { summarizeGuardianDailyCards } from '@stella-worker/guardian/daily-card'
+import { guardianDailyThemeForDate, summarizeGuardianDailyCards } from '@stella-worker/guardian/daily-card'
 import {
   GuardianAccessTokenSchema,
   GuardianCheckoutRequestIdSchema,
@@ -201,6 +203,7 @@ guardianPass.post('/purchases/:paymentId/confirm', async (c) => {
     return c.json(
       {
         status: 'paid',
+        sku: outcome.sku,
         grant: outcome.status,
         accessExpiresAt: outcome.accessExpiresAt.toISOString(),
         collectionPublicId: outcome.collectionPublicId,
@@ -222,6 +225,61 @@ guardianPass.post('/purchases/:paymentId/confirm', async (c) => {
   }
   if (outcome.status === 'purchase-not-found') return problem(403, 'forbidden')
   return problem(409, 'payment-conflict')
+})
+
+guardianPass.get('/week', async (c) => {
+  const rawToken = bearerToken(c)
+  const token = rawToken === null ? null : GuardianAccessTokenSchema.safeParse(rawToken)
+  if (token && !token.success) return problem(403, 'forbidden')
+  if (!token && !hasStellaSessionCookie(c.req.raw)) {
+    return c.json({ status: 'none' as const }, 200, NO_STORE_HEADERS)
+  }
+
+  const accessTokenHash = token?.success ? await sha256Hex(token.data) : undefined
+  const result = await withStellaSession(c, async (db, session) => {
+    const collection = await resolveGuardianCollectionAccess(db, {
+      accessTokenHash,
+      ownerUserId: session?.user.id,
+    })
+    if (!collection) return null
+    const purchase = await latestGuardianWeekPurchase(db, collection.id)
+    if (!purchase) return null
+    const cards = await listGuardianWeekCards(db, collection.id, purchase.dateKeys)
+    const cardByDate = new Map(cards.map((card) => [card.snapshot.dateKey, card]))
+    const days = await Promise.all(
+      purchase.dateKeys.map(async (dateKey) => {
+        const stored = cardByDate.get(dateKey)
+        const theme =
+          stored?.snapshot.theme ?? (await guardianDailyThemeForDate({ seedHash: collection.seedHash, dateKey }))
+        if (!stored) return { dateKey, theme, card: null }
+        const { artworkObjectKey, ...snapshot } = stored.snapshot
+
+        return {
+          dateKey,
+          theme,
+          card: {
+            ...snapshot,
+            source: stored.source,
+            artworkPath: guardianArtworkUrl(artworkObjectKey, c.env.STELLA_GUARDIAN_ASSET_ORIGIN),
+          },
+        }
+      }),
+    )
+    const now = new Date()
+
+    return {
+      status: 'ready' as const,
+      collectionPublicId: collection.publicId,
+      timeZone: purchase.timeZone,
+      days,
+      access: {
+        active: purchase.status === 'paid' && purchase.startsAt <= now && purchase.expiresAt > now,
+        expiresAt: purchase.expiresAt.toISOString(),
+      },
+    }
+  })
+
+  return c.json(result ?? { status: 'none' as const }, 200, NO_STORE_HEADERS)
 })
 
 guardianPass.get('/library', async (c) => {
@@ -354,8 +412,8 @@ guardianPass.post('/reopen/exchange', async (c) => {
 
 function validTimeZone(timeZone: string): boolean {
   try {
-    new Intl.DateTimeFormat('en-US', { timeZone }).format()
-    return true
+    const resolved = new Intl.DateTimeFormat('en-US', { timeZone }).resolvedOptions().timeZone
+    return /^[A-Za-z_]+(?:\/[A-Za-z0-9_+-]+)*$/.test(resolved)
   } catch {
     return false
   }

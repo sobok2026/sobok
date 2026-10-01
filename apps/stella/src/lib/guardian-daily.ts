@@ -8,8 +8,10 @@ import type {
   GuardianDailySummary,
   GuardianDailyTheme,
   GuardianDailyTone,
+  GuardianWeekResponse,
   GuardianZodiacSign,
 } from '../../worker/guardian/daily-contract'
+import type { GuardianPassSku } from '../../worker/guardian/offer'
 import {
   type GuardianPayMethod,
   type GuardianSdkPayMethod,
@@ -26,6 +28,7 @@ export {
   GUARDIAN_PASS_NAME,
   GUARDIAN_PASS_PRICE,
   GUARDIAN_PASS_SKU,
+  guardianPassItemForSku,
 } from '../../worker/guardian/offer'
 export { GUARDIAN_PAY_METHODS } from '../../worker/guardian/pay-method'
 export type {
@@ -38,6 +41,7 @@ export type {
   GuardianDailyTheme,
   GuardianDailyTone,
   GuardianPayMethod,
+  GuardianWeekResponse,
   GuardianZodiacSign,
 }
 
@@ -63,7 +67,7 @@ export type GuardianCheckoutPayment = {
   paymentId: string
   status: 'pending' | 'paid'
   accessExpiresAt: string | null
-  sku: string
+  sku: GuardianPassSku
   storeId: string
   channelKey: string
   payMethod: GuardianSdkPayMethod
@@ -80,7 +84,13 @@ export type GuardianPassCheckoutResponse = {
 
 export type GuardianPassConfirmation =
   | { status: 'pending' }
-  | { status: 'paid'; accessExpiresAt: string; collectionPublicId: string; grant: 'granted' | 'already-granted' }
+  | {
+      status: 'paid'
+      accessExpiresAt: string
+      collectionPublicId: string
+      sku: GuardianPassSku
+      grant: 'granted' | 'already-granted'
+    }
   | { status: 'failed' | 'cancelled' | 'refunded' }
 
 export type GuardianLibraryItem = GuardianDailyCardView & {
@@ -126,7 +136,7 @@ export class GuardianStorageError extends Error {
 }
 
 export function requestGuardianDailyCard(input: {
-  surface: 'today' | 'tomorrow'
+  surface: 'today' | 'tomorrow' | 'week'
   dateKey: string
   timeZone: string
   basis: GuardianDailyBasis
@@ -164,6 +174,12 @@ export function confirmGuardianPass(session: GuardianPassSession): Promise<Guard
 
 export function listGuardianCards(accessToken?: string): Promise<GuardianLibrary> {
   return requestJson('/api/guardian-pass/library', {
+    headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+  })
+}
+
+export function readGuardianWeek(accessToken?: string): Promise<GuardianWeekResponse> {
+  return requestJson('/api/guardian-pass/week', {
     headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
   })
 }

@@ -41,6 +41,7 @@
     "@swisseph/browser": "1.1.0",
     "@tanstack/react-query": "^5.101.1",
     "better-auth": "^1.6.23",
+    "clsx": "^2.1.1",
     "downshift": "^9.0.0",
     "drizzle-orm": "1.0.0-rc.4",
     "hono": "^4.12.27",

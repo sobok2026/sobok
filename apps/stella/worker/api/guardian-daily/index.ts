@@ -4,6 +4,7 @@ import {
   archiveGuardianDailyCard,
   findActiveGuardianPass,
   getGuardianDailyCard,
+  latestGuardianWeekPurchase,
   resolveGuardianCollectionAccess,
 } from '@stella-worker/db/queries/guardian'
 import type { AppEnv } from '@stella-worker/env'
@@ -32,7 +33,7 @@ import { z } from 'zod'
 const BODY_LIMIT_BYTES = 4 * 1024
 const CardBody = z
   .strictObject({
-    surface: z.enum(['today', 'tomorrow']),
+    surface: z.enum(['today', 'tomorrow', 'week']),
     locale: z.literal('ko'),
     dateKey: GuardianDateKeySchema,
     timeZone: GuardianTimeZoneSchema,
@@ -60,7 +61,7 @@ guardianDaily.post('/card', async (c) => {
   const localToday = dateKeyInTimeZone(new Date(), body.timeZone)
   if (!localToday) return problem(422, 'invalid-request')
   const expectedDate = body.surface === 'today' ? localToday : nextDateKey(localToday)
-  if (body.dateKey !== expectedDate) return problem(409, 'card-not-found')
+  if (body.surface !== 'week' && body.dateKey !== expectedDate) return problem(409, 'card-not-found')
 
   const rawToken = bearerToken(c)
   const parsedToken = rawToken === null ? null : GuardianAccessTokenSchema.safeParse(rawToken)
@@ -70,6 +71,7 @@ guardianDaily.post('/card', async (c) => {
   const hasSession = hasStellaSessionCookie(c.req.raw)
 
   if (!accessTokenHash && !hasSession) {
+    if (body.surface === 'week') return problem(403, 'forbidden')
     if (body.surface === 'tomorrow') {
       return c.json(
         {
@@ -103,10 +105,17 @@ guardianDaily.post('/card', async (c) => {
     })
     if (!collection) return { status: 'no-collection' as const }
 
-    const [existing, active] = await Promise.all([
+    const week = body.surface === 'week' ? await latestGuardianWeekPurchase(db, collection.id) : null
+    if (body.surface === 'week' && !week?.dateKeys.includes(body.dateKey)) {
+      return { status: 'card-not-found' as const }
+    }
+    if (week && body.timeZone !== week.timeZone) return { status: 'invalid-request' as const }
+
+    const [existing, collectionPass] = await Promise.all([
       getGuardianDailyCard(db, collection.id, body.dateKey),
       findActiveGuardianPass(db, collection.id, now),
     ])
+    const active = week && collectionPass?.purchaseId !== week.purchaseId ? null : collectionPass
     if (existing) {
       return {
         status: 'ready' as const,
@@ -117,13 +126,13 @@ guardianDaily.post('/card', async (c) => {
         collectionPublicId: collection.publicId,
       }
     }
-    if (body.surface === 'tomorrow' && !active) {
+    if (body.surface !== 'today' && !active) {
       return {
         status: 'locked' as const,
         theme: await guardianDailyThemeForDate({ seedHash: collection.seedHash, dateKey: body.dateKey }),
       }
     }
-    if (body.surface === 'tomorrow' && body.tone === undefined && active) {
+    if (body.surface !== 'today' && body.tone === undefined && active) {
       return {
         status: 'tone_required' as const,
         theme: await guardianDailyThemeForDate({ seedHash: collection.seedHash, dateKey: body.dateKey }),
@@ -133,7 +142,7 @@ guardianDaily.post('/card', async (c) => {
 
     const snapshot = await selectGuardianDailyCard({
       ...body,
-      tone: body.surface === 'tomorrow' ? body.tone : undefined,
+      tone: body.surface === 'today' ? undefined : body.tone,
       seedHash: collection.seedHash,
     })
     if (!active) {
@@ -150,7 +159,8 @@ guardianDaily.post('/card', async (c) => {
       collectionId: collection.id,
       dateKey: body.dateKey,
       snapshot,
-      source: body.surface === 'tomorrow' ? 'tomorrow_pass' : 'today_free',
+      source: body.surface === 'today' ? 'today_free' : 'tomorrow_pass',
+      ...(week ? { requiredPurchaseId: week.purchaseId } : {}),
       publicId: newGuardianPublicId(),
       now,
     })
@@ -170,6 +180,9 @@ guardianDaily.post('/card', async (c) => {
     }
   })
 
+  if (outcome.status === 'card-not-found') return problem(409, 'card-not-found')
+  if (outcome.status === 'invalid-request') return problem(422, 'invalid-request')
+
   if (outcome.status === 'locked') {
     return c.json({ status: 'locked' as const, theme: outcome.theme, access: inactiveAccess() }, 200, NO_STORE_HEADERS)
   }
@@ -185,6 +198,7 @@ guardianDaily.post('/card', async (c) => {
     )
   }
   if (outcome.status === 'no-collection') {
+    if (body.surface === 'week') return problem(403, 'forbidden')
     if (body.surface === 'tomorrow') {
       return c.json(
         {

@@ -16,21 +16,21 @@ export const TERMS: Record<Locale, LegalDoc> = {
   ko: {
     title: '이용약관',
     description: `로빈리뷰가 운영하는 별무리 서비스와 ${NAME_KO} 이용에 적용되는 약관입니다.`,
-    effectiveDate: '2026년 9월 4일',
-    updatedDate: '2026년 9월 4일',
+    effectiveDate: '2026년 10월 1일',
+    updatedDate: '2026년 10월 1일',
     version: GUARDIAN_PASS_TERMS_VERSION,
     sections: [
       {
         heading: '서비스 소개',
         body: [
           `별무리는 생년월일 등 이용자가 입력한 정보를 바탕으로 별자리와 운세 해석을 무료로 제공하고 ${NAME_KO}를 유료로 함께 제공하는 서비스이며 ${BUSINESS.legalName}이 운영합니다.`,
-          '오늘의 수호령 카드는 무료입니다. 유료 선공개권은 결제 시점부터 168시간 동안 내일의 수호령 카드를 현지 날짜보다 하루 먼저 열어 볼 수 있는 기간제 디지털 콘텐츠입니다.',
+          '오늘의 수호령 카드는 무료입니다. 일주일 카드 상품은 결제가 승인된 날짜의 다음 날부터 연속 7일에 해당하는 카드 7장을 구매 시점부터 열어 볼 수 있는 디지털 콘텐츠입니다.',
         ],
       },
       {
         heading: '용어와 계약의 성립',
         body: [
-          '서비스는 stella.sobok.cc에서 제공하는 무료 도구와 유료 선공개권 기능을 뜻합니다.',
+          '서비스는 stella.sobok.cc에서 제공하는 무료 도구와 유료 일주일 카드 상품 기능을 뜻합니다.',
           '이용자가 결제 화면에서 상품명과 가격, 이용 기간, 제공 방식, 청약철회 조건을 확인하고 필수 동의를 마친 뒤 결제를 완료하면 선공개권 이용 계약이 성립합니다.',
           '회원가입 없이 구매할 수 있으며 구매 이메일과 서버가 발급한 접근 권한으로 이용합니다. 정기결제나 자동 갱신 상품이 아닙니다.',
         ],
@@ -43,26 +43,26 @@ export const TERMS: Record<Locale, LegalDoc> = {
         ],
       },
       {
-        heading: '선공개권과 카드의 제공',
+        heading: '일주일 카드의 제공',
         body: [
-          '선공개권은 결제가 승인된 절대 시각부터 168시간 동안 유효합니다. 화면에는 이용자의 현지 시각으로 만료 시각을 표시하며 시간대를 바꾸어도 권한의 실제 길이는 달라지지 않습니다.',
+          '7개 날짜는 결제 승인 시각과 구매할 때 기록한 시간대를 기준으로 고정됩니다. 각 날짜의 말투는 카드를 열기 전에 따로 고를 수 있고, 한번 열린 카드의 말투와 내용은 바뀌지 않습니다. 새 카드를 열 수 있는 권한은 구매 시간대에서 7번째 날짜가 끝나는 자정에 만료되며 시간대를 바꾸어도 날짜 범위나 만료 시각은 바뀌지 않습니다. 기존 수호령 내일 선공개 7일권은 구매 당시의 168시간 조건을 유지합니다.',
           '오늘과 내일의 날짜 전환은 이용자의 현지 자정을 기준으로 합니다. 내일 카드도 자정이 지나 오늘 카드가 되면 무료로 공개됩니다.',
           '출생 차트가 있으면 태양 별자리와 그날의 하늘을 조합하고, 없으면 그날 달 별자리를 기준으로 카드를 선택합니다. 출생 원본 정보는 카드 선택을 위해 서버로 보내지 않습니다.',
           '자기이해·사랑·일·결정 테마는 사용자별 순서로 순환합니다. 사랑 카드의 그림 버전은 고정 가중치로 선택되지만 해석 분량이나 이용권 가치에는 차이가 없고, 별도 결제로 재추첨할 수 없습니다.',
-          '선공개권이 유효할 때 본 카드는 보관함에 저장됩니다. 게스트 보관함과 이메일 복구는 결제일부터 1년 동안 제공하고, 소복 계정에 귀속한 카드는 이용자가 삭제를 요청하거나 계정을 삭제할 때까지 제공합니다.',
+          '카드를 열 수 있는 기간에 본 카드는 보관함에 저장됩니다. 게스트 보관함과 이메일 복구는 결제일부터 1년 동안 제공하고, 소복 계정에 귀속한 카드는 이용자가 삭제를 요청하거나 계정을 삭제할 때까지 제공합니다.',
         ],
       },
       {
         heading: '청약철회와 환불',
         body: [
-          '청약철회와 환불에 관한 사항은 별도의 청약철회·환불 정책에서 정합니다. 내일 카드를 처음 열기 전에는 청약철회를 요청할 수 있고, 처음 연 뒤에는 디지털 콘텐츠 제공이 시작되어 청약철회가 제한될 수 있습니다.',
+          '청약철회와 환불에 관한 사항은 별도의 청약철회·환불 정책에서 정합니다. 구매한 유료 카드를 처음 열기 전에는 청약철회를 요청할 수 있고, 처음 연 뒤에는 디지털 콘텐츠 제공이 시작되어 청약철회가 제한될 수 있습니다.',
           '다만 표시·광고와 다르게 이행된 경우에는 카드를 연 뒤에도 법령에 따라 청약철회를 할 수 있습니다.',
         ],
       },
       {
         heading: '구매 자격과 연령 확인',
         body: [
-          '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 선공개권은 만 14세 이상만 구매할 수 있으며 이용자가 결제 화면에서 직접 확인해야 합니다. 회사는 이 과정에서 생년월일을 수집하지 않습니다.',
+          '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 일주일 카드 상품은 만 14세 이상만 구매할 수 있으며 이용자가 결제 화면에서 직접 확인해야 합니다. 회사는 이 과정에서 생년월일을 수집하지 않습니다.',
           '미성년자가 법정대리인의 동의 없이 맺은 계약은 미성년자 본인이나 법정대리인이 취소할 수 있습니다. 회사는 전자상거래법 제13조 제3항에 따라 이 사실을 결제 화면에서도 안내합니다.',
         ],
       },
@@ -132,37 +132,37 @@ export const TERMS: Record<Locale, LegalDoc> = {
 
   en: {
     title: 'Terms of Service',
-    description: `The terms that apply to Stella and its guardian early-access pass, operated by ${BUSINESS.legalName}.`,
-    effectiveDate: 'September 4, 2026',
-    updatedDate: 'September 4, 2026',
+    description: `The terms that apply to Stella and its guardian seven-card bundle, operated by ${BUSINESS.legalName}.`,
+    effectiveDate: 'October 1, 2026',
+    updatedDate: 'October 1, 2026',
     version: GUARDIAN_PASS_TERMS_VERSION,
     sections: [
       {
         heading: 'About the service',
         body: [
-          `Stella, operated by ${BUSINESS.legalName}, provides free astrological interpretations and a paid seven-day early-access pass for tomorrow’s guardian card.`,
-          'Today’s guardian card is free. The paid pass provides tomorrow’s card one local calendar day early for 168 hours after payment.',
+          `Stella, operated by ${BUSINESS.legalName}, provides free astrological interpretations and a paid fixed bundle of seven dated guardian cards.`,
+          'Today’s guardian card is free. The paid bundle contains cards for seven consecutive dates beginning the day after payment is approved, and all seven can be opened immediately.',
         ],
       },
       {
         heading: 'Definitions and formation of the contract',
         body: [
-          'The service means the free tools and paid early-access features offered at stella.sobok.cc.',
-          'The contract is formed when you confirm the product name, price, 168-hour duration, delivery method and withdrawal terms, give the required consents, and complete payment.',
+          'The service means the free tools and paid seven-card bundles offered at stella.sobok.cc.',
+          'The contract is formed when you confirm the product name, price, fixed seven-date range and opening deadline, delivery method and withdrawal terms, give the required consents, and complete payment.',
           'You may buy without an account. Access is recovered through the purchase email and a server-issued capability. This is not a subscription and does not auto-renew.',
         ],
       },
       {
         heading: 'Paid service and payment',
         body: [
-          `The guardian early-access pass is paid digital content priced at ${PRICE_INTL} including VAT. Payment is handled through PortOne using Toss Pay or a credit/debit card.`,
+          `The guardian seven-card bundle is paid digital content priced at ${PRICE_INTL} including VAT. Payment is handled through PortOne using Toss Pay or a credit/debit card.`,
           'Payment is settled in KRW. Whether a payment method issued outside Korea can be used depends on the issuer’s and payment processor’s policies, and the issuer may apply its own exchange rate and cross-border fees.',
         ],
       },
       {
         heading: 'Delivery of the pass and cards',
         body: [
-          'The pass lasts exactly 168 hours from the instant payment is approved. Dates and the displayed expiry use your local time; changing time zone does not change the entitlement length.',
+          'The seven dates are fixed using the payment approval date and the time zone recorded at purchase. A tone can be selected separately before each card is first opened, after which its tone and content are fixed. New cards may be opened until midnight after the seventh date in the purchase time zone. Changing time zone does not alter the range or deadline. Previously purchased tomorrow passes retain their original 168-hour terms.',
           'A card becomes today’s free card at local midnight. Cards viewed while the pass is active are saved to the archive.',
           'With a birth chart we use the Sun sign plus the day’s sky; without one we use the day’s Moon sign. Raw birth details are not sent to the server for card selection.',
           'Self, love, work and choice themes rotate in a user-specific order. Love-card artwork variants use fixed weights, but do not change the amount or value of the interpretation and cannot be redrawn through a separate purchase.',
@@ -172,7 +172,7 @@ export const TERMS: Record<Locale, LegalDoc> = {
       {
         heading: 'Withdrawal and refunds',
         body: [
-          'Withdrawal and refunds are governed by the separate Withdrawal & Refund Policy. You may request withdrawal before opening the first early card; after opening it, withdrawal may be limited because delivery of digital content has begun.',
+          'Withdrawal and refunds are governed by the separate Withdrawal & Refund Policy. You may request withdrawal before opening the first purchased card; after opening it, withdrawal may be limited because delivery of digital content has begun.',
           'Where the service differs from how it was described or advertised, statutory remedies remain available.',
         ],
       },
@@ -249,37 +249,37 @@ export const TERMS: Record<Locale, LegalDoc> = {
 
   ja: {
     title: '利用規約',
-    description: `${BUSINESS.legalName}が運営する星屑サービスおよび守護霊カード先行公開パスに適用される規約です。`,
-    effectiveDate: '2026年9月4日',
-    updatedDate: '2026年9月4日',
+    description: `${BUSINESS.legalName}が運営する星屑サービスおよび一週間の守護霊カード商品に適用される規約です。`,
+    effectiveDate: '2026年10月1日',
+    updatedDate: '2026年10月1日',
     version: GUARDIAN_PASS_TERMS_VERSION,
     sections: [
       {
         heading: 'サービスについて',
         body: [
-          `星屑は無料の占星術解釈と、明日の守護霊カードを一日早く見られる7日間の有料パスを提供し、${BUSINESS.legalName}が運営します。`,
-          '今日の守護霊カードは無料です。有料パスは決済時点から168時間、現地日付で明日のカードを先行公開するデジタルコンテンツです。',
+          `星屑は無料の占星術解釈と、翌日から固定された7日分の守護霊カード7枚の有料商品を提供し、${BUSINESS.legalName}が運営します。`,
+          '今日の守護霊カードは無料です。有料商品は決済承認日の翌日から連続する7日分のカード7枚で、すべて購入直後から開くことができます。',
         ],
       },
       {
         heading: '用語と契約の成立',
         body: [
-          'サービスとは stella.sobok.cc で提供する無料ツールと有料の先行公開機能を指します。',
-          '商品名・価格・168時間の利用期間・提供方法・契約解除条件を確認し、必要な同意と決済を完了した時点で契約が成立します。',
+          'サービスとは stella.sobok.cc で提供する無料ツールと有料の一週間カード商品を指します。',
+          '商品名・価格・固定された7日間の対象日と公開期限・提供方法・契約解除条件を確認し、必要な同意と決済を完了した時点で契約が成立します。',
           '会員登録なしで購入でき、購入メールとサーバー発行のアクセス権で利用します。定期決済や自動更新の商品ではありません。',
         ],
       },
       {
         heading: '有料サービスと決済',
         body: [
-          `守護霊カード先行公開パスは ${PRICE_INTL}（付加価値税込み）の有料デジタルコンテンツです。PortOneを通じたToss Payまたはクレジット・デビットカードで決済します。`,
+          `一週間の守護霊カード商品は ${PRICE_INTL}（付加価値税込み）の有料デジタルコンテンツです。PortOneを通じたToss Payまたはクレジット・デビットカードで決済します。`,
           '決済通貨は KRW です。海外で発行された決済手段の利用可否は発行会社と決済代行会社の方針により異なり、発行会社が独自の為替レートと海外決済手数料を適用する場合があります。',
         ],
       },
       {
         heading: 'パスとカードの提供',
         body: [
-          'パスは決済承認時点から正確に168時間有効です。日付と表示上の満了時刻は利用者の現地時刻を使用し、タイムゾーンを変更しても権利の長さは変わりません。',
+          '対象の7日間は決済承認日と購入時のタイムゾーンで固定されます。初めて開く前に日ごとの口調を選び、一度開いたカードの口調と内容は変更できません。新しいカードは購入時のタイムゾーンで7日目が終了する深夜まで開けます。タイムゾーンを変更しても対象日や期限は変わりません。以前購入した翌日先行公開パスは元の168時間の条件を維持します。',
           'カードは現地の深夜0時を過ぎて今日のカードになると無料公開されます。パス利用中に見たカードは保管箱に保存されます。',
           '出生チャートがあれば太陽星座と当日の空を、なければ当日の月星座を基準に選びます。出生情報そのものはカード選択のためサーバーへ送信しません。',
           '自己理解・恋愛・仕事・選択のテーマは利用者ごとの順序で循環します。恋愛カードの絵柄は固定ウェイトで選ばれますが、解釈の分量や利用権の価値に差はなく、別途購入して引き直すことはできません。',
@@ -289,7 +289,7 @@ export const TERMS: Record<Locale, LegalDoc> = {
       {
         heading: '契約解除と返金',
         body: [
-          '契約解除と返金は別途のポリシーで定めます。最初の先行カードを開く前は契約解除を申し込めますが、開いた後はデジタルコンテンツの提供開始により制限されることがあります。',
+          '契約解除と返金は別途のポリシーで定めます。最初の購入したカードを開く前は契約解除を申し込めますが、開いた後はデジタルコンテンツの提供開始により制限されることがあります。',
           '表示・広告と異なって履行された場合の法定の権利は維持されます。',
         ],
       },
@@ -366,37 +366,37 @@ export const TERMS: Record<Locale, LegalDoc> = {
 
   zh: {
     title: '服务条款',
-    description: `适用于 ${BUSINESS.legalName} 运营的星黛洛服务及守护灵卡片提前查看通行证的条款。`,
-    effectiveDate: '2026年9月4日',
-    updatedDate: '2026年9月4日',
+    description: `适用于 ${BUSINESS.legalName} 运营的星黛洛服务及一周守护灵卡片商品的条款。`,
+    effectiveDate: '2026年10月1日',
+    updatedDate: '2026年10月1日',
     version: GUARDIAN_PASS_TERMS_VERSION,
     sections: [
       {
         heading: '关于服务',
         body: [
-          `星黛洛提供免费占星解读，以及可提前一天查看明日守护灵卡片的7天付费通行证，由 ${BUSINESS.legalName} 运营。`,
-          '今日守护灵卡片免费。付费通行证自付款起168小时内，按用户当地日期提前展示明日卡片。',
+          `星黛洛提供免费占星解读，以及固定的7个日期、可购买后立即查看的7张守护灵卡片付费商品，由 ${BUSINESS.legalName} 运营。`,
+          '今日守护灵卡片免费。付费商品包含付款获批次日起连续7个日期的7张卡片，购买后即可全部打开。',
         ],
       },
       {
         heading: '定义与合同的成立',
         body: [
-          '服务指 stella.sobok.cc 提供的免费工具与付费提前查看功能。',
-          '用户确认商品名称、价格、168小时期限、提供方式与撤回条件并完成必要同意和付款后，合同成立。',
+          '服务指 stella.sobok.cc 提供的免费工具与付费一周卡片商品。',
+          '用户确认商品名称、价格、固定的7个日期和打开期限、提供方式与撤回条件并完成必要同意和付款后，合同成立。',
           '无需注册即可购买，通过购买邮箱与服务器签发的访问权限使用。本商品不是订阅，也不会自动续费。',
         ],
       },
       {
         heading: '付费服务与结算',
         body: [
-          `守护灵卡片提前查看通行证为 ${PRICE_INTL}（含增值税）的数字内容，通过 PortOne 使用 Toss Pay 或信用卡、借记卡付款。`,
+          `一周守护灵卡片商品为 ${PRICE_INTL}（含增值税）的数字内容，通过 PortOne 使用 Toss Pay 或信用卡、借记卡付款。`,
           '结算币种为 KRW。境外签发的支付方式能否使用取决于发卡机构与支付代理机构的政策，发卡机构可能适用其汇率与跨境手续费。',
         ],
       },
       {
         heading: '通行证与卡片的提供',
         body: [
-          '通行证自付款获批的绝对时点起准确持续168小时。日期与显示的到期时刻采用用户当地时间；更改时区不会改变权益长度。',
+          '7个日期按付款获批日和购买时记录的时区固定。每个日期的语气可在首次打开前单独选择，打开后语气和内容不再改变。新卡片可打开至购买时区第7个日期结束的午夜。更改时区不影响日期范围或截止时间。此前购买的明日提前查看通行证保留原有168小时条件。',
           '明日卡片在当地午夜成为今日卡片后免费公开。通行证有效期间查看的卡片会保存到收藏。',
           '有出生星盘时结合太阳星座与当天星空，没有时按当天月亮星座选卡。出生原始信息不会为选卡而发送至服务器。',
           '自我、爱情、工作与选择主题会按每位用户各自的顺序循环。爱情卡片的画面版本按固定权重选择，但不会改变解读篇幅或通行证价值，也不能通过另行付费重新抽取。',
@@ -406,7 +406,7 @@ export const TERMS: Record<Locale, LegalDoc> = {
       {
         heading: '撤回与退款',
         body: [
-          '撤回与退款由单独政策规定。打开第一张提前公开卡片前可申请撤回；打开后因数字内容已开始提供，撤回权可能受到限制。',
+          '撤回与退款由单独政策规定。打开第一张购买的卡片前可申请撤回；打开后因数字内容已开始提供，撤回权可能受到限制。',
           '若服务与标示或广告不符，法定救济权利不受影响。',
         ],
       },

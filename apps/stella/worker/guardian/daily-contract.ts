@@ -41,6 +41,16 @@ export interface GuardianDailyAccessView {
   expiresAt: string | null
 }
 
+export type GuardianWeekResponse =
+  | { status: 'none' }
+  | {
+      status: 'ready'
+      collectionPublicId: string
+      timeZone: string
+      days: { dateKey: string; theme: GuardianDailyTheme; card: GuardianDailyCardView | null }[]
+      access: GuardianDailyAccessView
+    }
+
 export type GuardianDailyCardResponse =
   | {
       status: 'ready'

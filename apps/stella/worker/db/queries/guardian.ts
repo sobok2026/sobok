@@ -4,15 +4,20 @@ import { and, asc, desc, eq, gt, inArray, isNotNull, lt, lte, or, sql } from 'dr
 import type { GuardianDailyCardSnapshot } from '../../guardian/daily-contract'
 import {
   GUARDIAN_CURRENCY,
+  GUARDIAN_LEGACY_PASS_SKU,
   GUARDIAN_MARKET,
+  GUARDIAN_PASS_DURATION_DAYS,
   GUARDIAN_PASS_DURATION_MS,
   GUARDIAN_PASS_NAME,
   GUARDIAN_PASS_PRICE,
   GUARDIAN_PASS_PRIVACY_VERSION,
   GUARDIAN_PASS_REFUND_VERSION,
   GUARDIAN_PASS_SKU,
+  GUARDIAN_PASS_SKUS,
   GUARDIAN_PASS_TERMS_VERSION,
+  type GuardianPassSku,
 } from '../../guardian/offer'
+import { guardianWeekDateKeys } from '../../guardian/pass-window'
 import {
   guardianDailyCardTable,
   guardianDailyCollectionTable,
@@ -307,13 +312,27 @@ export async function guardianPurchaseExists(db: Db, paymentId: string): Promise
   return Boolean(row)
 }
 
+export type ActiveGuardianPass = {
+  purchaseId: number
+  expiresAt: Date
+  sku: (typeof GUARDIAN_PASS_SKUS)[number]
+  paidAt: Date
+  timeZone: string
+}
+
 export async function findActiveGuardianPass(
   db: Db,
   collectionId: number,
   now: Date,
-): Promise<{ purchaseId: number; expiresAt: Date } | null> {
+): Promise<ActiveGuardianPass | null> {
   const [row] = await db
-    .select({ purchaseId: guardianPassPurchaseTable.id, expiresAt: guardianPassPurchaseTable.entitlementExpiresAt })
+    .select({
+      purchaseId: guardianPassPurchaseTable.id,
+      expiresAt: guardianPassPurchaseTable.entitlementExpiresAt,
+      sku: guardianPassPurchaseTable.sku,
+      paidAt: guardianPassPurchaseTable.paidAt,
+      timeZone: guardianPassPurchaseTable.timeZone,
+    })
     .from(guardianPassPurchaseTable)
     .where(
       and(
@@ -325,8 +344,49 @@ export async function findActiveGuardianPass(
     )
     .orderBy(desc(guardianPassPurchaseTable.entitlementExpiresAt))
     .limit(1)
-  if (!row?.expiresAt) return null
-  return { purchaseId: row.purchaseId, expiresAt: row.expiresAt }
+  if (!row?.expiresAt || !row.paidAt) return null
+  return { ...row, paidAt: row.paidAt, expiresAt: row.expiresAt }
+}
+
+export async function latestGuardianWeekPurchase(db: Db, collectionId: number) {
+  const [purchase] = await db
+    .select({
+      purchaseId: guardianPassPurchaseTable.id,
+      paidAt: guardianPassPurchaseTable.paidAt,
+      timeZone: guardianPassPurchaseTable.timeZone,
+      expiresAt: guardianPassPurchaseTable.entitlementExpiresAt,
+      startsAt: guardianPassPurchaseTable.entitlementStartsAt,
+      status: guardianPassPurchaseTable.status,
+    })
+    .from(guardianPassPurchaseTable)
+    .where(
+      and(
+        eq(guardianPassPurchaseTable.collectionId, collectionId),
+        eq(guardianPassPurchaseTable.sku, GUARDIAN_PASS_SKU),
+        inArray(guardianPassPurchaseTable.status, ['paid', 'refunded']),
+      ),
+    )
+    .orderBy(desc(guardianPassPurchaseTable.paidAt), desc(guardianPassPurchaseTable.id))
+    .limit(1)
+  if (!purchase?.paidAt || !purchase.expiresAt || !purchase.startsAt) return null
+
+  return {
+    ...purchase,
+    paidAt: purchase.paidAt,
+    expiresAt: purchase.expiresAt,
+    startsAt: purchase.startsAt,
+    dateKeys: guardianWeekDateKeys(purchase.paidAt, purchase.timeZone),
+  }
+}
+
+export async function listGuardianWeekCards(db: Db, collectionId: number, dateKeys: string[]) {
+  return db
+    .select({ snapshot: guardianDailyCardTable.snapshot, source: guardianDailyCardTable.source })
+    .from(guardianDailyCardTable)
+    .where(
+      and(eq(guardianDailyCardTable.collectionId, collectionId), inArray(guardianDailyCardTable.dateKey, dateKeys)),
+    )
+    .orderBy(asc(guardianDailyCardTable.dateKey))
 }
 
 export interface VerifiedGuardianPayment {
@@ -339,7 +399,7 @@ export interface VerifiedGuardianPayment {
 }
 
 export type ConfirmGuardianPurchaseResult =
-  | { status: 'granted' | 'already-granted'; accessExpiresAt: Date; collectionPublicId: string }
+  | { status: 'granted' | 'already-granted'; accessExpiresAt: Date; collectionPublicId: string; sku: GuardianPassSku }
   | { status: 'purchase-not-found' | 'payment-mismatch' | 'purchase-state-conflict' }
 
 export async function confirmGuardianPurchase(
@@ -369,6 +429,7 @@ export async function confirmGuardianPurchase(
         sku: guardianPassPurchaseTable.sku,
         amount: guardianPassPurchaseTable.amount,
         currency: guardianPassPurchaseTable.currency,
+        timeZone: guardianPassPurchaseTable.timeZone,
         entitlementExpiresAt: guardianPassPurchaseTable.entitlementExpiresAt,
       })
       .from(guardianPassPurchaseTable)
@@ -380,7 +441,7 @@ export async function confirmGuardianPurchase(
       return { status: 'purchase-state-conflict' as const }
     }
     if (
-      purchase.sku !== GUARDIAN_PASS_SKU ||
+      !GUARDIAN_PASS_SKUS.includes(purchase.sku) ||
       purchase.amount !== payment.amount ||
       purchase.currency !== payment.currency
     ) {
@@ -397,6 +458,7 @@ export async function confirmGuardianPurchase(
       if (!purchase.entitlementExpiresAt) return { status: 'purchase-state-conflict' as const }
       return {
         status: 'already-granted' as const,
+        sku: purchase.sku,
         accessExpiresAt: purchase.entitlementExpiresAt,
         collectionPublicId: collection.publicId,
       }
@@ -415,8 +477,24 @@ export async function confirmGuardianPurchase(
       .orderBy(desc(guardianPassPurchaseTable.entitlementExpiresAt))
       .limit(1)
       .for('update')
-    const startsAt = previous?.expiresAt && previous.expiresAt > payment.paidAt ? previous.expiresAt : payment.paidAt
-    const expiresAt = new Date(startsAt.getTime() + GUARDIAN_PASS_DURATION_MS)
+    let startsAt = payment.paidAt
+    let expiresAt: Date
+
+    if (purchase.sku === GUARDIAN_LEGACY_PASS_SKU) {
+      startsAt = previous?.expiresAt && previous.expiresAt > payment.paidAt ? previous.expiresAt : payment.paidAt
+      expiresAt = new Date(startsAt.getTime() + GUARDIAN_PASS_DURATION_MS)
+    } else {
+      const [window] = await tx
+        .select({
+          expiresAt: sql<string>`(((${payment.paidAt.toISOString()}::timestamptz at time zone ${purchase.timeZone})::date
+            + ${GUARDIAN_PASS_DURATION_DAYS + 1})::timestamp at time zone ${purchase.timeZone})`,
+        })
+        .from(guardianPassPurchaseTable)
+        .where(eq(guardianPassPurchaseTable.id, purchase.id))
+        .limit(1)
+      if (!window) return { status: 'purchase-state-conflict' as const }
+      expiresAt = new Date(window.expiresAt)
+    }
 
     await tx
       .update(guardianPassPurchaseTable)
@@ -438,6 +516,7 @@ export async function confirmGuardianPurchase(
 
     return {
       status: 'granted' as const,
+      sku: purchase.sku,
       accessExpiresAt: expiresAt,
       collectionPublicId: collection.publicId,
     }
@@ -550,6 +629,7 @@ export async function archiveGuardianDailyCard(
     source: 'today_free' | 'tomorrow_pass'
     publicId: string
     now: Date
+    requiredPurchaseId?: number
   },
 ): Promise<ArchiveGuardianDailyCardResult> {
   return db.transaction(async (tx) => {
@@ -573,6 +653,16 @@ export async function archiveGuardianDailyCard(
       .limit(1)
       .for('update')
     const active = await findActiveGuardianPass(tx, input.collectionId, input.now)
+    if (input.requiredPurchaseId && active?.purchaseId !== input.requiredPurchaseId) {
+      return { status: 'pass-required' as const }
+    }
+    if (
+      input.source === 'tomorrow_pass' &&
+      active?.sku === GUARDIAN_PASS_SKU &&
+      !guardianWeekDateKeys(active.paidAt, active.timeZone).includes(input.dateKey)
+    ) {
+      return { status: 'pass-required' as const }
+    }
     if (existing && active) return { status: 'already-archived' as const, card: existing, expiresAt: active.expiresAt }
     if (!active) return { status: 'pass-required' as const }
 

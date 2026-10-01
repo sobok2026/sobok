@@ -9,10 +9,13 @@ import {
 } from '../../guardian/daily-contract'
 import {
   GUARDIAN_CURRENCY,
+  GUARDIAN_LEGACY_PASS_SKU,
   GUARDIAN_MARKET,
+  GUARDIAN_PASS_DURATION_DAYS,
   GUARDIAN_PASS_DURATION_HOURS,
   GUARDIAN_PASS_PRICE,
   GUARDIAN_PASS_SKU,
+  type GuardianPassSku,
 } from '../../guardian/offer'
 import { stellaUser } from './auth'
 import { localeEnum, stella } from './common'
@@ -55,7 +58,7 @@ export const guardianDailyCollectionTable = stella.table(
   (table) => [index('idx_stella_guardian_daily_collection_owner').on(table.ownerUserId)],
 )
 
-// The pass never auto-renews. A paid row grants exactly 168 hours; renewal is another explicit purchase.
+// SKUs preserve the original 168-hour pass and the fixed seven-date bundle. Neither auto-renews.
 export const guardianPassPurchaseTable = stella.table(
   'guardian_pass_purchase',
   {
@@ -67,7 +70,7 @@ export const guardianPassPurchaseTable = stella.table(
       .references(() => guardianDailyCollectionTable.id, { onDelete: 'restrict' }),
     locale: localeEnum().notNull(),
     timeZone: varchar('time_zone', { length: 64 }).notNull(),
-    sku: varchar({ length: 64 }).$type<typeof GUARDIAN_PASS_SKU>().notNull(),
+    sku: varchar({ length: 64 }).$type<GuardianPassSku>().notNull(),
     orderName: varchar('order_name', { length: 128 }).notNull(),
     amount: bigint({ mode: 'number' }).notNull(),
     market: varchar({ length: 8 }).notNull(),
@@ -103,7 +106,7 @@ export const guardianPassPurchaseTable = stella.table(
     check('ck_stella_guardian_pass_amount', sql`${table.amount} = ${GUARDIAN_PASS_PRICE}`),
     check('ck_stella_guardian_pass_market', sql`${table.market} = ${GUARDIAN_MARKET}`),
     check('ck_stella_guardian_pass_currency', sql`${table.currency} = ${GUARDIAN_CURRENCY}`),
-    check('ck_stella_guardian_pass_sku', sql`${table.sku} = ${GUARDIAN_PASS_SKU}`),
+    check('ck_stella_guardian_pass_sku', sql`${table.sku} in (${GUARDIAN_LEGACY_PASS_SKU}, ${GUARDIAN_PASS_SKU})`),
     check(
       'ck_stella_guardian_pass_entitlement_shape',
       sql`(${table.status} in ('paid', 'refunded')
@@ -121,7 +124,14 @@ export const guardianPassPurchaseTable = stella.table(
     ),
     check(
       'ck_stella_guardian_pass_exact_duration',
-      sql`${table.entitlementExpiresAt} is null or ${table.entitlementExpiresAt} = ${table.entitlementStartsAt} + ${GUARDIAN_PASS_DURATION_HOURS} * interval '1 hour'`,
+      sql`${table.entitlementExpiresAt} is null
+        or (${table.sku} = ${GUARDIAN_LEGACY_PASS_SKU}
+          and ${table.entitlementExpiresAt} = ${table.entitlementStartsAt} + ${GUARDIAN_PASS_DURATION_HOURS} * interval '1 hour')
+        or (${table.sku} = ${GUARDIAN_PASS_SKU}
+          and ${table.entitlementStartsAt} = ${table.paidAt}
+          and ${table.entitlementExpiresAt} =
+            (((${table.paidAt} at time zone ${table.timeZone})::date + ${GUARDIAN_PASS_DURATION_DAYS + 1})::timestamp
+              at time zone ${table.timeZone}))`,
     ),
     check(
       'ck_stella_guardian_pass_refund_shape',
