@@ -599,7 +599,7 @@ export async function archiveGuardianDailyCard(
     if (input.source === 'tomorrow_pass') {
       await tx
         .update(guardianPassPurchaseTable)
-        .set({ firstUsedAt: sql`coalesce(${guardianPassPurchaseTable.firstUsedAt}, ${input.now})` })
+        .set({ firstUsedAt: sql`coalesce(${guardianPassPurchaseTable.firstUsedAt}, ${input.now.toISOString()})` })
         .where(eq(guardianPassPurchaseTable.id, active.purchaseId))
     }
 
