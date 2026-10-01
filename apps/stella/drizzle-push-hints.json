@@ -58,5 +58,15 @@
     "type": "create",
     "kind": "table",
     "entity": ["stella", "guardian_pass_reopen_access"]
+  },
+  {
+    "type": "create",
+    "kind": "check",
+    "entity": ["stella", "guardian_pass_purchase", "ck_stella_guardian_pass_sku_v2"]
+  },
+  {
+    "type": "create",
+    "kind": "check",
+    "entity": ["stella", "guardian_pass_purchase", "ck_stella_guardian_pass_exact_duration_v2"]
   }
 ]

@@ -106,7 +106,7 @@ export const guardianPassPurchaseTable = stella.table(
     check('ck_stella_guardian_pass_amount', sql`${table.amount} = ${GUARDIAN_PASS_PRICE}`),
     check('ck_stella_guardian_pass_market', sql`${table.market} = ${GUARDIAN_MARKET}`),
     check('ck_stella_guardian_pass_currency', sql`${table.currency} = ${GUARDIAN_CURRENCY}`),
-    check('ck_stella_guardian_pass_sku', sql`${table.sku} in (${GUARDIAN_LEGACY_PASS_SKU}, ${GUARDIAN_PASS_SKU})`),
+    check('ck_stella_guardian_pass_sku_v2', sql`${table.sku} in (${GUARDIAN_LEGACY_PASS_SKU}, ${GUARDIAN_PASS_SKU})`),
     check(
       'ck_stella_guardian_pass_entitlement_shape',
       sql`(${table.status} in ('paid', 'refunded')
@@ -123,7 +123,7 @@ export const guardianPassPurchaseTable = stella.table(
       sql`${table.entitlementExpiresAt} is null or ${table.entitlementExpiresAt} > ${table.entitlementStartsAt}`,
     ),
     check(
-      'ck_stella_guardian_pass_exact_duration',
+      'ck_stella_guardian_pass_exact_duration_v2',
       sql`${table.entitlementExpiresAt} is null
         or (${table.sku} = ${GUARDIAN_LEGACY_PASS_SKU}
           and ${table.entitlementExpiresAt} = ${table.entitlementStartsAt} + ${GUARDIAN_PASS_DURATION_HOURS} * interval '1 hour')

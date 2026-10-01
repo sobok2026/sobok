@@ -29,12 +29,9 @@
 ## 콘텐츠 경계
 
 - 그림 제작 원고·승인 기록은 에디션과 원화의 관계를 관리한다.
-- `content/guardian-cards/guardian-daily-copy-ko.json`은 별자리·상황별 한마디와 질문, 주제·상황·말투별
-  실천을 관리한다. 그림 에디션별로 같은 본문을 복제하지 않는다.
 - `worker/guardian/manifest.ts`는 그림 선택에 필요한 런타임 목록을 읽는다.
-- `worker/guardian/daily-copy.ts`는 선택한 에디션에 맞는 본문을 찾고 목록의 누락·중복·미사용 문구를 검증한다.
-- `worker/guardian/daily-card.ts`는 그림과 본문을 카드 스냅샷으로 결합한다.
-- `GuardianCardReading.tsx`는 오늘·내일 공개 카드의 표시만 담당한다. 문구를 다시 작성하거나 추측하지 않는다.
+- `worker/guardian/daily-card.ts`는 선택한 에디션의 본문과 행동 문장을 카드 스냅샷으로 결합한다.
+- `GuardianCardReading.tsx`는 오늘·내일·일주일 공개 카드의 표시를 담당한다.
 
 ## 상품
 
